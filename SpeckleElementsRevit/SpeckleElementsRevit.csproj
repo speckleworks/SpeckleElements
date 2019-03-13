@@ -53,5 +53,19 @@
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\SpeckleCore\SpeckleCore\SpeckleCore.csproj">
+      <Project>{cfe27d3d-8a1a-43f9-9387-8fd9e119e174}</Project>
+      <Name>SpeckleCore</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SpeckleElements\SpeckleElements.csproj">
+      <Project>{42e1db9c-e4d5-4190-9977-874e8143dcc5}</Project>
+      <Name>SpeckleElements</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SpeckleRevitReboot\SpeckleRevitReboot\SpeckleRevit.csproj">
+      <Project>{4937638c-8a51-4f50-9bd2-e7f7ac28dd01}</Project>
+      <Name>SpeckleRevit</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Autodesk.Revit.UI;
 using SpeckleCore;
 using SpeckleElements;
+using SpeckleRevit;
 
 namespace SpeckleElementsRevit
 {
@@ -15,9 +17,9 @@ namespace SpeckleElementsRevit
 
   public static partial class Conversions
   {
-    public static GetCurrentDocument( )
+    public static UIDocument GetCurrentDocument( )
     {
-      return Autodesk.Revit.UI.UIApplication
+      return SpeckleRevit.UI.SpeckleUiBindingsRevit.CurrentDoc;
     }
 
     public static Autodesk.Revit.DB.Grid ToNative(this GridLine myGridLine)
