@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{42E1DB9C-E4D5-4190-9977-874E8143DCC5}</ProjectGuid>
+    <ProjectGuid>{C08796BB-C109-4961-AB72-A2A74C06E510}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>SpeckleElements</RootNamespace>
-    <AssemblyName>SpeckleElements</AssemblyName>
+    <RootNamespace>SpeckleElementsRevit</RootNamespace>
+    <AssemblyName>SpeckleElementsRevit</AssemblyName>
     <TargetFrameworkVersion>v4.7.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
@@ -31,6 +31,12 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="RevitAPI, Version=19.0.0.0, Culture=neutral, processorArchitecture=AMD64">
+      <HintPath>..\packages\Revit.RevitApi.x64.2019.0.0\lib\net45\RevitAPI.dll</HintPath>
+    </Reference>
+    <Reference Include="RevitAPIUI, Version=19.0.0.0, Culture=neutral, processorArchitecture=AMD64">
+      <HintPath>..\packages\Revit.RevitApiUI.x64.2019.0.0\lib\net45\RevitAPIUI.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -45,14 +51,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\SpeckleCoreGeometry\SpeckleCoreGeometryClasses\SpeckleCoreGeometryClasses.csproj">
-      <Project>{ad40ce88-276b-45bf-9736-7180730e7281}</Project>
-      <Name>SpeckleCoreGeometryClasses</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\SpeckleCore\SpeckleCore\SpeckleCore.csproj">
-      <Project>{cfe27d3d-8a1a-43f9-9387-8fd9e119e174}</Project>
-      <Name>SpeckleCore</Name>
-    </ProjectReference>
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
