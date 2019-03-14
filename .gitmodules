@@ -1,6 +1,3 @@
-[submodule "SpeckleRevitReboot"]
-	path = SpeckleRevitReboot
-	url = https://github.com/didimitrie/SpeckleRevitReboot.git
 [submodule "SpeckleCoreGeometry"]
 	path = SpeckleCoreGeometry
 	url = https://github.com/speckleworks/SpeckleCoreGeometry.git
