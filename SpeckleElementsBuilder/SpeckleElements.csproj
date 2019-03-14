@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{42E1DB9C-E4D5-4190-9977-874E8143DCC5}</ProjectGuid>
+    <ProjectGuid>{F7980709-1E82-44B6-B3F8-0450A1FE6DC3}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>SpeckleElements</RootNamespace>
-    <AssemblyName>SpeckleElements</AssemblyName>
+    <RootNamespace>SpeckleElementsBuilder</RootNamespace>
+    <AssemblyName>SpeckleElementsBuilder</AssemblyName>
     <TargetFrameworkVersion>v4.7.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
@@ -29,6 +29,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -41,18 +42,27 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Class1.cs" />
+    <Compile Include="Base.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\SpeckleCoreGeometry\SpeckleCoreGeometryClasses\SpeckleCoreGeometryClasses.csproj">
-      <Project>{ad40ce88-276b-45bf-9736-7180730e7281}</Project>
-      <Name>SpeckleCoreGeometryClasses</Name>
+    <ProjectReference Include="..\SpeckleElementsRevit\SpeckleElementsRevit.csproj">
+      <Project>{c08796bb-c109-4961-ab72-a2a74c06e510}</Project>
+      <Name>SpeckleElementsRevit</Name>
     </ProjectReference>
-    <ProjectReference Include="..\SpeckleCore\SpeckleCore\SpeckleCore.csproj">
-      <Project>{cfe27d3d-8a1a-43f9-9387-8fd9e119e174}</Project>
-      <Name>SpeckleCore</Name>
+    <ProjectReference Include="..\SpeckleElements\SpeckleElementsClasses.csproj">
+      <Project>{42e1db9c-e4d5-4190-9977-874e8143dcc5}</Project>
+      <Name>SpeckleElementsClasses</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>
+      del "$(TargetDir)\$(ProjectName).dll"
+    </PostBuildEvent>
+    <PostBuildEvent>
+      if not exist C:\Users\Dim\AppData\Local\SpeckleKitsDebug\$(ProjectName) mkdir C:\Users\Dim\AppData\Local\SpeckleKitsDebug\$(ProjectName)
+      Copy "$(TargetDir)" "C:\Users\Dim\AppData\Local\SpeckleKitsDebug\$(ProjectName)"
+    </PostBuildEvent>
+  </PropertyGroup>
 </Project>

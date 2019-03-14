@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.28010.2048
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpeckleElements", "SpeckleElements\SpeckleElements.csproj", "{42E1DB9C-E4D5-4190-9977-874E8143DCC5}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpeckleElementsClasses", "SpeckleElements\SpeckleElementsClasses.csproj", "{42E1DB9C-E4D5-4190-9977-874E8143DCC5}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpeckleCoreGeometryClasses", "SpeckleCoreGeometry\SpeckleCoreGeometryClasses\SpeckleCoreGeometryClasses.csproj", "{AD40CE88-276B-45BF-9736-7180730E7281}"
 EndProject
@@ -11,13 +11,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpeckleCore", "SpeckleCore\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpeckleElementsRevit", "SpeckleElementsRevit\SpeckleElementsRevit.csproj", "{C08796BB-C109-4961-AB72-A2A74C06E510}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpeckleRevit", "SpeckleRevitReboot\SpeckleRevitReboot\SpeckleRevit.csproj", "{4937638C-8A51-4F50-9BD2-E7F7AC28DD01}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Core", "Core", "{8EBDB0B3-7D61-44CF-AAA4-90A723430FD8}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "RevitUiRef", "RevitUiRef", "{3C57E33B-F961-421E-AB72-4D7E7176467A}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpeckleUiBase", "SpeckleRevitReboot\SpeckleUi\SpeckleUiBase\SpeckleUiBase.csproj", "{CE40C576-3B05-443A-A1BA-CB3A796D0084}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpeckleElements", "SpeckleElementsBuilder\SpeckleElements.csproj", "{F7980709-1E82-44B6-B3F8-0450A1FE6DC3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -77,30 +73,18 @@ Global
 		{C08796BB-C109-4961-AB72-A2A74C06E510}.Release|Any CPU.Build.0 = Release|Any CPU
 		{C08796BB-C109-4961-AB72-A2A74C06E510}.Release|x64.ActiveCfg = Release|Any CPU
 		{C08796BB-C109-4961-AB72-A2A74C06E510}.Release|x64.Build.0 = Release|Any CPU
-		{4937638C-8A51-4F50-9BD2-E7F7AC28DD01}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{4937638C-8A51-4F50-9BD2-E7F7AC28DD01}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{4937638C-8A51-4F50-9BD2-E7F7AC28DD01}.Debug|x64.ActiveCfg = Debug|x64
-		{4937638C-8A51-4F50-9BD2-E7F7AC28DD01}.Debug|x64.Build.0 = Debug|x64
-		{4937638C-8A51-4F50-9BD2-E7F7AC28DD01}.DebugParallels|Any CPU.ActiveCfg = DebugParallels|Any CPU
-		{4937638C-8A51-4F50-9BD2-E7F7AC28DD01}.DebugParallels|Any CPU.Build.0 = DebugParallels|Any CPU
-		{4937638C-8A51-4F50-9BD2-E7F7AC28DD01}.DebugParallels|x64.ActiveCfg = DebugParallels|x64
-		{4937638C-8A51-4F50-9BD2-E7F7AC28DD01}.DebugParallels|x64.Build.0 = DebugParallels|x64
-		{4937638C-8A51-4F50-9BD2-E7F7AC28DD01}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{4937638C-8A51-4F50-9BD2-E7F7AC28DD01}.Release|Any CPU.Build.0 = Release|Any CPU
-		{4937638C-8A51-4F50-9BD2-E7F7AC28DD01}.Release|x64.ActiveCfg = Release|x64
-		{4937638C-8A51-4F50-9BD2-E7F7AC28DD01}.Release|x64.Build.0 = Release|x64
-		{CE40C576-3B05-443A-A1BA-CB3A796D0084}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{CE40C576-3B05-443A-A1BA-CB3A796D0084}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{CE40C576-3B05-443A-A1BA-CB3A796D0084}.Debug|x64.ActiveCfg = Debug|x64
-		{CE40C576-3B05-443A-A1BA-CB3A796D0084}.Debug|x64.Build.0 = Debug|x64
-		{CE40C576-3B05-443A-A1BA-CB3A796D0084}.DebugParallels|Any CPU.ActiveCfg = Debug|Any CPU
-		{CE40C576-3B05-443A-A1BA-CB3A796D0084}.DebugParallels|Any CPU.Build.0 = Debug|Any CPU
-		{CE40C576-3B05-443A-A1BA-CB3A796D0084}.DebugParallels|x64.ActiveCfg = Debug|x64
-		{CE40C576-3B05-443A-A1BA-CB3A796D0084}.DebugParallels|x64.Build.0 = Debug|x64
-		{CE40C576-3B05-443A-A1BA-CB3A796D0084}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{CE40C576-3B05-443A-A1BA-CB3A796D0084}.Release|Any CPU.Build.0 = Release|Any CPU
-		{CE40C576-3B05-443A-A1BA-CB3A796D0084}.Release|x64.ActiveCfg = Release|x64
-		{CE40C576-3B05-443A-A1BA-CB3A796D0084}.Release|x64.Build.0 = Release|x64
+		{F7980709-1E82-44B6-B3F8-0450A1FE6DC3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F7980709-1E82-44B6-B3F8-0450A1FE6DC3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F7980709-1E82-44B6-B3F8-0450A1FE6DC3}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{F7980709-1E82-44B6-B3F8-0450A1FE6DC3}.Debug|x64.Build.0 = Debug|Any CPU
+		{F7980709-1E82-44B6-B3F8-0450A1FE6DC3}.DebugParallels|Any CPU.ActiveCfg = Debug|Any CPU
+		{F7980709-1E82-44B6-B3F8-0450A1FE6DC3}.DebugParallels|Any CPU.Build.0 = Debug|Any CPU
+		{F7980709-1E82-44B6-B3F8-0450A1FE6DC3}.DebugParallels|x64.ActiveCfg = Debug|Any CPU
+		{F7980709-1E82-44B6-B3F8-0450A1FE6DC3}.DebugParallels|x64.Build.0 = Debug|Any CPU
+		{F7980709-1E82-44B6-B3F8-0450A1FE6DC3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F7980709-1E82-44B6-B3F8-0450A1FE6DC3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F7980709-1E82-44B6-B3F8-0450A1FE6DC3}.Release|x64.ActiveCfg = Release|Any CPU
+		{F7980709-1E82-44B6-B3F8-0450A1FE6DC3}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -108,8 +92,6 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{AD40CE88-276B-45BF-9736-7180730E7281} = {8EBDB0B3-7D61-44CF-AAA4-90A723430FD8}
 		{CFE27D3D-8A1A-43F9-9387-8FD9E119E174} = {8EBDB0B3-7D61-44CF-AAA4-90A723430FD8}
-		{4937638C-8A51-4F50-9BD2-E7F7AC28DD01} = {3C57E33B-F961-421E-AB72-4D7E7176467A}
-		{CE40C576-3B05-443A-A1BA-CB3A796D0084} = {3C57E33B-F961-421E-AB72-4D7E7176467A}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {D3CCDC3A-C634-452F-8395-CF6FE1B326E1}
