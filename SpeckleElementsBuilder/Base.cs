@@ -6,9 +6,10 @@ using System.Threading.Tasks;
 
 namespace SpeckleElements
 {
-  public class Class1
+  public class Base
   {
-    // In silence there is eloquence. Or something like that. 
-    // This project just builds all the rest and copies them in the right place.
+    // In silence there is eloquence.
+
+    // This project just builds all the rest and copies them in the right place(%localappdata%\SpeckleKitsDebug); check the csproj file.
   }
 }

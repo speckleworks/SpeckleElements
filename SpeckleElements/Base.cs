@@ -8,36 +8,21 @@ using SpeckleCoreGeometryClasses;
 
 namespace SpeckleElements
 {
-
-  public interface ISpeckleElement
+  /// <summary>
+  /// Lol interface to force some revit specific props. Not really sure it's needed. It might go.
+  /// </summary>
+  public interface ISpeckleElement : ISpeckleInitializer
   {
-    Dictionary<string, object> parameters { get; set; }
-    string GUID { get; set; }
+    //Dictionary<string, object> parameters { get; set; }
   }
 
   [Serializable]
   public class GridLine : SpeckleLine, ISpeckleElement
   {
-    public override string Type { get => "GridLine"; }
-
-    public Dictionary<string, object> parameters { get => Properties; set => Properties = value; }
-
-    public string GUID { get; set; } = Guid.NewGuid().ToString();
+    public override string Type { get => base.Type + "/GridLine"; }
+    // TODO: Re type: Mish's idea: have this path based, ie Line/GridLine. Could allow for graceful degradation in deserialisation (ie, try with "GridLine", fail, try with "Line" -> success! Could be automated;
+    // TODO: Requires changes in the core
 
     public GridLine( ) { }
-  }
-
-  [Serializable]
-  public class Level : SpeckleMesh, ISpeckleElement
-  {
-    public override string Type { get => "Level"; }
-
-    public Dictionary<string, object> parameters { get => Properties; set => Properties = value; }
-
-    public string GUID { get; set; } = Guid.NewGuid().ToString();
-
-    public double Elevation { get; set; }
-
-    public Level( ) { }
   }
 }
