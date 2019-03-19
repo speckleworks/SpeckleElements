@@ -13,15 +13,19 @@ namespace SpeckleElements
   /// </summary>
   public interface ISpeckleElement : ISpeckleInitializer
   {
-    //Dictionary<string, object> parameters { get; set; }
+    Dictionary<string, object> parameters { get; set; }
   }
 
   [Serializable]
   public class GridLine : SpeckleLine, ISpeckleElement
   {
-    public override string Type { get => base.Type + "/GridLine"; }
-    // TODO: Re type: Mish's idea: have this path based, ie Line/GridLine. Could allow for graceful degradation in deserialisation (ie, try with "GridLine", fail, try with "Line" -> success! Could be automated;
-    // TODO: Requires changes in the core
+    public override string Type { get => base.Type + "/" + "GridLine"; }
+
+    public Dictionary<string, object> parameters
+    {
+      get => Properties.ContainsKey( "parameters" ) ? Properties[ "parameters" ] as Dictionary<string, object> : null;
+      set => Properties[ "parameters" ] = value;
+    }
 
     public GridLine( ) { }
   }
