@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 using SpeckleCore;
 using SpeckleCoreGeometryClasses;
 
@@ -21,9 +22,10 @@ namespace SpeckleElements
   {
     public override string Type { get => base.Type + "/" + "GridLine"; }
 
+    [JsonIgnore]
     public Dictionary<string, object> parameters
     {
-      get => Properties.ContainsKey( "parameters" ) ? Properties[ "parameters" ] as Dictionary<string, object> : null;
+      get => ( Properties != null && Properties.ContainsKey( "parameters" ) ) ? ( Properties[ "parameters" ] as Dictionary<string, object> ) : null;
       set => Properties[ "parameters" ] = value;
     }
 
