@@ -93,5 +93,41 @@ namespace SpeckleElementsRevit
       myGrid.SetCurveInView( DatumExtentType.Model, Doc.ActiveView, Line.CreateBound( newStart, newEnd ) );
       return myGrid;
     }
+
+    // TODO: Create a proper method, this is just fun.
+    // TODO: Add parameters (if any? do grids have parameters?) 
+    public static GridLine ToSpeckle( this Grid myGrid )
+    {
+      var start = myGrid.Curve.GetEndPoint( 0 );
+      var end = myGrid.Curve.GetEndPoint( 1 );
+      var myGridLine = new GridLine()
+      {
+        ApplicationId = myGrid.UniqueId,
+        Value = new List<double>() { start.X, start.Y, start.Z, end.X, end.Y, end.Z }
+      };
+      myGridLine.GenerateHash();
+      return myGridLine;
+    }
+
+    public static Autodesk.Revit.DB.Level ToNative( this SpeckleElements.Level myLevel )
+    {
+      var (docObj, stateObj) = GetExistingElementByApplicationId( myLevel.ApplicationId );
+
+      // If no doc object, means we need to create it!
+      if ( docObj == null )
+      {
+        // TODO: CREATE LEVEL
+      }
+
+      // if the new and old have the same id (hash equivalent) and the doc obj is not marked as being modified, return the doc object
+      if ( docObj != null && myLevel._id == stateObj._id && ( bool ) stateObj.Properties[ "userModified" ] == false )
+      {
+        return ( Autodesk.Revit.DB.Level ) docObj;
+      }
+
+      // TODO: EDIT LEVEL
+
+      return null;
+    }
   }
 }

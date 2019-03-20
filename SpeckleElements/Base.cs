@@ -31,4 +31,26 @@ namespace SpeckleElements
 
     public GridLine( ) { }
   }
+
+  public class Level : SpeckleObject, ISpeckleElement
+  {
+    public override string Type { get => base.Type + "/" + "Level"; }
+
+    [JsonIgnore]
+    public double Elevation
+    {
+      get => ( Properties != null && Properties.ContainsKey( "Elevation" ) ) ? ( ( double ) Properties[ "Elevation" ] ) : 0;
+      set => Properties[ "Elevation" ] = value;
+    }
+
+    [JsonIgnore]
+    public Dictionary<string, object> parameters
+    {
+      get => ( Properties != null && Properties.ContainsKey( "parameters" ) ) ? ( Properties[ "parameters" ] as Dictionary<string, object> ) : null;
+      set => Properties[ "parameters" ] = value;
+    }
+
+    public Level( ) { }
+  }
+
 }
