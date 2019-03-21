@@ -61,8 +61,8 @@
       del "$(TargetDir)\$(ProjectName).dll"
     </PostBuildEvent>
     <PostBuildEvent>
-      if not exist C:\Users\Dim\AppData\Local\SpeckleKitsDebug\$(ProjectName) mkdir C:\Users\Dim\AppData\Local\SpeckleKitsDebug\$(ProjectName)
-      Copy "$(TargetDir)" "C:\Users\Dim\AppData\Local\SpeckleKitsDebug\$(ProjectName)"
+      if not exist %localappdata%\SpeckleKitsDebug\$(ProjectName) mkdir %localappdata%\SpeckleKitsDebug\$(ProjectName)
+      Copy "$(TargetDir)" "%localappdata%\SpeckleKitsDebug\$(ProjectName)"
     </PostBuildEvent>
   </PropertyGroup>
 </Project>
