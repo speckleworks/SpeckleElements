@@ -87,10 +87,21 @@ namespace SpeckleElementsRevit
       var newDirection = newStart.Subtract( newEnd ).Normalize();
 
       var angle = newDirection.AngleTo( currentDirection );
-      var crossProd = newDirection.CrossProduct( currentDirection ).Z;
-      ElementTransformUtils.RotateElement( Doc, myGrid.Id, Line.CreateUnbound( newStart, XYZ.BasisZ ), crossProd < 0 ? angle : -angle );
 
-      myGrid.SetCurveInView( DatumExtentType.Model, Doc.ActiveView, Line.CreateBound( newStart, newEnd ) );
+      if ( angle > 0.00001 )
+      {
+        var crossProd = newDirection.CrossProduct( currentDirection ).Z;
+        ElementTransformUtils.RotateElement( Doc, myGrid.Id, Line.CreateUnbound( newStart, XYZ.BasisZ ), crossProd < 0 ? angle : -angle );
+      }
+
+      try
+      {
+        myGrid.SetCurveInView( DatumExtentType.Model, Doc.ActiveView, Line.CreateBound( newStart, newEnd ) );
+      }
+      catch ( Exception e )
+      {
+        System.Diagnostics.Debug.WriteLine( "Failed to set grid endpoints." );
+      }
       return myGrid;
     }
 
