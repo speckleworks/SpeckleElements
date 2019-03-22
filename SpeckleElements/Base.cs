@@ -18,7 +18,7 @@ namespace SpeckleElements
   }
 
   [Serializable]
-  public class GridLine : SpeckleLine, ISpeckleElement
+  public partial class GridLine : SpeckleLine, ISpeckleElement
   {
     public override string Type { get => base.Type + "/" + "GridLine"; }
 
@@ -32,15 +32,15 @@ namespace SpeckleElements
     public GridLine( ) { }
   }
 
-  public class Level : SpeckleObject, ISpeckleElement
+  public partial class Level : SpecklePolyline, ISpeckleElement
   {
     public override string Type { get => base.Type + "/" + "Level"; }
 
     [JsonIgnore]
-    public double Elevation
+    public double elevation
     {
-      get => ( Properties != null && Properties.ContainsKey( "Elevation" ) ) ? ( ( double ) Properties[ "Elevation" ] ) : 0;
-      set => Properties[ "Elevation" ] = value;
+      get => ( Properties != null && Properties.ContainsKey( "elevation" ) ) ? ( ( double ) Properties[ "elevation" ] ) : 0;
+      set => Properties[ "elevation" ] = value;
     }
 
     [JsonIgnore]
@@ -51,6 +51,27 @@ namespace SpeckleElements
     }
 
     public Level( ) { }
+  }
+
+  public partial class Wall : SpecklePolyline, ISpeckleElement
+  {
+    public override string Type { get => base.Type + "/" + "Wall"; }
+
+    [JsonIgnore]
+    public double family
+    {
+      get => ( Properties != null && Properties.ContainsKey( "family" ) ) ? ( ( double ) Properties[ "family" ] ) : 0;
+      set => Properties[ "family" ] = value;
+    }
+
+    [JsonIgnore]
+    public Dictionary<string, object> parameters
+    {
+      get => ( Properties != null && Properties.ContainsKey( "parameters" ) ) ? ( Properties[ "parameters" ] as Dictionary<string, object> ) : null;
+      set => Properties[ "parameters" ] = value;
+    }
+
+    public Wall() { }
   }
 
 }

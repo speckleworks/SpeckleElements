@@ -10,49 +10,8 @@ using SpeckleElements;
 
 namespace SpeckleElementsRevit
 {
-  public class Initialiser : ISpeckleInitializer
-  {
-    public Initialiser( ) { }
-
-    /// <summary>
-    /// Revit doc will be injected in here by the revit plugin. 
-    /// To create a similar kit, make sure you declare this property in your initialiser class. 
-    /// </summary>
-    public static UIApplication RevitApp { get; set; }
-
-    /// <summary>
-    /// Local revit state (existing objects coming from a bake) will be injected here.
-    /// </summary>
-    public static List<SpeckleStream> LocalRevitState { get; set; }
-
-    /// <summary>
-    /// Scale will be set here by each individual stream bake. 
-    /// TODO: Potential race condition when we simulatenously start baking two or more streams that have different scales.
-    /// </summary>
-    public static double RevitScale = 3.2808399;
-  }
-
   public static partial class Conversions
   {
-    static double Scale { get => Initialiser.RevitScale; }
-    static Document Doc { get => Initialiser.RevitApp.ActiveUIDocument.Document; }
-
-    /// <summary>
-    /// Returns, if found, the corresponding doc element and its corresponding local state object.
-    /// The doc object can be null if the user deleted it. 
-    /// </summary>
-    /// <param name="ApplicationId"></param>
-    /// <returns></returns>
-    public static (Element, SpeckleObject) GetExistingElementByApplicationId( string ApplicationId )
-    {
-      foreach ( var stream in Initialiser.LocalRevitState )
-      {
-        var found = stream.Objects.FirstOrDefault( s => s.ApplicationId == ApplicationId );
-        if ( found != null )
-          return (Doc.GetElement( found.Properties[ "revitUniqueId" ] as string ), ( SpeckleObject ) found);
-      }
-      return (null, null);
-    }
 
     public static Grid ToNative( this GridLine myGridLine )
     {
@@ -120,25 +79,6 @@ namespace SpeckleElementsRevit
       return myGridLine;
     }
 
-    public static Autodesk.Revit.DB.Level ToNative( this SpeckleElements.Level myLevel )
-    {
-      var (docObj, stateObj) = GetExistingElementByApplicationId( myLevel.ApplicationId );
-
-      // If no doc object, means we need to create it!
-      if ( docObj == null )
-      {
-        // TODO: CREATE LEVEL
-      }
-
-      // if the new and old have the same id (hash equivalent) and the doc obj is not marked as being modified, return the doc object
-      if ( docObj != null && myLevel._id == stateObj._id && ( bool ) stateObj.Properties[ "userModified" ] == false )
-      {
-        return ( Autodesk.Revit.DB.Level ) docObj;
-      }
-
-      // TODO: EDIT LEVEL
-
-      return null;
-    }
   }
 }
+
