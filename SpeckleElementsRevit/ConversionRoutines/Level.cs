@@ -14,12 +14,26 @@ namespace SpeckleElementsRevit
   {
     public static Autodesk.Revit.DB.Level ToNative( this SpeckleElements.Level myLevel )
     {
-      var (docObj, stateObj) = GetExistingElementByApplicationId( myLevel.ApplicationId );
+      var (docObj, stateObj) = GetExistingElementByApplicationId( myLevel.ApplicationId, myLevel.Type );
 
       // If no doc object, means we need to create it!
       if ( docObj == null )
       {
         // TODO: CREATE LEVEL
+        var res = Autodesk.Revit.DB.Level.Create( Doc, myLevel.elevation * Scale );
+        if ( myLevel.Name != null )
+          try
+          {
+            res.Name = myLevel.Name;
+          }
+          catch { }
+
+        var vt = new FilteredElementCollector( Doc ).OfClass( typeof( ViewFamilyType ) ).Where( el => ( ( ViewFamilyType ) el ).ViewFamily == ViewFamily.FloorPlan ).First();
+
+        var view = Autodesk.Revit.DB.ViewPlan.Create( Doc, vt.Id, res.Id );
+        view.Name = myLevel.Name;
+
+        return res;
       }
 
       // if the new and old have the same id (hash equivalent) and the doc obj is not marked as being modified, return the doc object
@@ -29,11 +43,16 @@ namespace SpeckleElementsRevit
       }
 
       // TODO: EDIT LEVEL
-      return null;
+      var existingLevel = docObj as Autodesk.Revit.DB.Level;
+      existingLevel.Elevation = myLevel.elevation * Scale;
+      existingLevel.Name = myLevel.Name;
+
+      return existingLevel;
     }
 
-    public static SpeckleElements.Level ToSpeckle(this Autodesk.Revit.DB.Level myLevel)
+    public static SpeckleElements.Level ToSpeckle( this Autodesk.Revit.DB.Level myLevel )
     {
+
       throw new NotImplementedException();
     }
   }

@@ -32,6 +32,7 @@ namespace SpeckleElements
     public GridLine( ) { }
   }
 
+  [Serializable]
   public partial class Level : SpecklePolyline, ISpeckleElement
   {
     public override string Type { get => base.Type + "/" + "Level"; }
@@ -53,7 +54,7 @@ namespace SpeckleElements
     public Level( ) { }
   }
 
-  public partial class Wall : SpecklePolyline, ISpeckleElement
+  public partial class Wall : SpecklePolycurve, ISpeckleElement
   {
     public override string Type { get => base.Type + "/" + "Wall"; }
 

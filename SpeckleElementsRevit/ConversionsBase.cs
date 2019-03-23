@@ -43,11 +43,11 @@ namespace SpeckleElementsRevit
     /// </summary>
     /// <param name="ApplicationId"></param>
     /// <returns></returns>
-    public static (Element, SpeckleObject) GetExistingElementByApplicationId( string ApplicationId )
+    public static (Element, SpeckleObject) GetExistingElementByApplicationId( string ApplicationId, string ObjectType)
     {
       foreach ( var stream in Initialiser.LocalRevitState )
       {
-        var found = stream.Objects.FirstOrDefault( s => s.ApplicationId == ApplicationId );
+        var found = stream.Objects.FirstOrDefault( s => s.ApplicationId == ApplicationId && s.Type == ObjectType );
         if ( found != null )
           return (Doc.GetElement( found.Properties[ "revitUniqueId" ] as string ), ( SpeckleObject ) found);
       }
