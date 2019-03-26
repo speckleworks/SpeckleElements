@@ -16,6 +16,10 @@ namespace SpeckleElementsRevit
     {
       var (docObj, stateObj) = GetExistingElementByApplicationId( myLevel.ApplicationId, myLevel.Type );
 
+
+      if ( docObj == null )
+        docObj = ExistingLevelByName( myLevel.Name );
+
       // If no doc object, means we need to create it!
       if ( docObj == null )
       {
@@ -31,13 +35,17 @@ namespace SpeckleElementsRevit
         var vt = new FilteredElementCollector( Doc ).OfClass( typeof( ViewFamilyType ) ).Where( el => ( ( ViewFamilyType ) el ).ViewFamily == ViewFamily.FloorPlan ).First();
 
         var view = Autodesk.Revit.DB.ViewPlan.Create( Doc, vt.Id, res.Id );
-        view.Name = myLevel.Name;
+        try
+        {
+          view.Name = myLevel.Name;
+        }
+        catch { }
 
         return res;
       }
 
       // if the new and old have the same id (hash equivalent) and the doc obj is not marked as being modified, return the doc object
-      if ( docObj != null && myLevel._id == stateObj._id && ( bool ) stateObj.Properties[ "userModified" ] == false )
+      if ( stateObj != null && docObj != null && myLevel._id == stateObj._id && ( bool ) stateObj.Properties[ "userModified" ] == false )
       {
         return ( Autodesk.Revit.DB.Level ) docObj;
       }
@@ -52,8 +60,19 @@ namespace SpeckleElementsRevit
 
     public static SpeckleElements.Level ToSpeckle( this Autodesk.Revit.DB.Level myLevel )
     {
-
       throw new NotImplementedException();
+    }
+
+    private static Autodesk.Revit.DB.Level ExistingLevelByName( string name )
+    {
+      var collector = new FilteredElementCollector( Doc ).OfClass( typeof( Autodesk.Revit.DB.Level ) ).ToElements();
+      foreach ( var l in collector )
+      {
+        if ( ( ( Autodesk.Revit.DB.Level ) l ).Name == name )
+          return ( Autodesk.Revit.DB.Level ) l;
+      }
+
+      return null;
     }
   }
 

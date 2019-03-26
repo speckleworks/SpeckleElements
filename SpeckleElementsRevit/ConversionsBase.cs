@@ -43,7 +43,7 @@ namespace SpeckleElementsRevit
     /// </summary>
     /// <param name="ApplicationId"></param>
     /// <returns></returns>
-    public static (Element, SpeckleObject) GetExistingElementByApplicationId( string ApplicationId, string ObjectType)
+    public static (Element, SpeckleObject) GetExistingElementByApplicationId( string ApplicationId, string ObjectType )
     {
       foreach ( var stream in Initialiser.LocalRevitState )
       {

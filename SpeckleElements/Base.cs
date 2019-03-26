@@ -54,15 +54,44 @@ namespace SpeckleElements
     public Level( ) { }
   }
 
-  public partial class Wall : SpecklePolycurve, ISpeckleElement
+  [Serializable]
+  public partial class Wall : SpeckleMesh, ISpeckleElement
   {
     public override string Type { get => base.Type + "/" + "Wall"; }
 
     [JsonIgnore]
-    public double family
+    public SpeckleObject baseCurve
     {
-      get => ( Properties != null && Properties.ContainsKey( "family" ) ) ? ( ( double ) Properties[ "family" ] ) : 0;
-      set => Properties[ "family" ] = value;
+      get => ( Properties != null && Properties.ContainsKey( "baseCurve" ) ) ? ( ( SpeckleObject ) Properties[ "baseCurve" ] ) : null;
+      set => Properties[ "baseCurve" ] = value;
+    }
+
+    [JsonIgnore]
+    public string wallType
+    {
+      get => ( Properties != null && Properties.ContainsKey( "wallType" ) ) ? ( ( string ) Properties[ "wallType" ] ) : "";
+      set => Properties[ "wallType" ] = value;
+    }
+
+    [JsonIgnore]
+    public double height
+    {
+      get => ( Properties != null && Properties.ContainsKey( "height" ) ) ? ( ( double ) Properties[ "height" ] ) : 1;
+      set => Properties[ "height" ] = value;
+    }
+
+    [JsonIgnore]
+    public double offset
+    {
+      get => ( Properties != null && Properties.ContainsKey( "offset" ) ) ? ( ( double ) Properties[ "offset" ] ) : 0;
+      set => Properties[ "offset" ] = value;
+    }
+
+    [JsonIgnore]
+    public Level level
+    {
+      get => ( Properties != null && Properties.ContainsKey( "level" ) ) ? ( Properties[ "level" ] as Level ) : null;
+      set => Properties[ "level" ] = value;
     }
 
     [JsonIgnore]

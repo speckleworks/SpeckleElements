@@ -62,7 +62,7 @@
     </PostBuildEvent>
     <PostBuildEvent>
       if not exist %localappdata%\SpeckleKitsDebug\$(ProjectName) mkdir %localappdata%\SpeckleKitsDebug\$(ProjectName)
-      Copy "$(TargetDir)" "%localappdata%\SpeckleKitsDebug\$(ProjectName)"
+      Copy "$(TargetDir)\*.dll" "%localappdata%\SpeckleKitsDebug\$(ProjectName)"
     </PostBuildEvent>
   </PropertyGroup>
 </Project>
