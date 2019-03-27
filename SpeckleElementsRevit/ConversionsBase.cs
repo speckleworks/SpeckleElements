@@ -53,5 +53,15 @@ namespace SpeckleElementsRevit
       }
       return (null, null);
     }
+
+    public static (List<Element>, List<SpeckleObject>) GetExistingElementsByApplicationId( string ApplicationId, string ObjectType )
+    {
+      var allStateObjects = ( from p in Initialiser.LocalRevitState.SelectMany( s => s.Objects ) select p ).ToList();
+
+      var found = allStateObjects.Where( obj => obj.ApplicationId == ApplicationId && obj.Type == ObjectType );
+      var revitObjs = found.Select( obj => Doc.GetElement( obj.Properties[ "revitUniqueId" ] as string ) );
+
+      return (revitObjs.ToList(), found.ToList());
+    }
   }
 }

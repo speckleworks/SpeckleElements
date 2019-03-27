@@ -27,9 +27,7 @@ namespace SpeckleElementsRevit
 
       // if the new and old have the same id (hash equivalent) and the doc obj is not marked as being modified, return the doc object
       if ( docObj != null && myGridLine._id == stateObj._id && ( bool ) stateObj.Properties[ "userModified" ] == false )
-      {
         return ( Grid ) docObj;
-      }
 
       // Otherwise, enter "edit" mode: means the doc object has been modfied, or the original source object changed.
       var myGrid = docObj as Grid;

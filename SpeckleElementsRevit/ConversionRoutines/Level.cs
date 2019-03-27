@@ -16,14 +16,18 @@ namespace SpeckleElementsRevit
     {
       var (docObj, stateObj) = GetExistingElementByApplicationId( myLevel.ApplicationId, myLevel.Type );
 
+      // if the new and old have the same id (hash equivalent) and the doc obj is not marked as being modified, return the doc object
+      if ( stateObj != null && docObj != null && myLevel._id == stateObj._id && ( bool ) stateObj.Properties[ "userModified" ] == false )
+        return ( Autodesk.Revit.DB.Level ) docObj;
 
       if ( docObj == null )
         docObj = ExistingLevelByName( myLevel.Name );
+      if ( docObj == null )
+        docObj = ExistingLevelByElevation( myLevel.elevation );
 
       // If no doc object, means we need to create it!
       if ( docObj == null )
       {
-        // TODO: CREATE LEVEL
         var res = Autodesk.Revit.DB.Level.Create( Doc, myLevel.elevation * Scale );
         if ( myLevel.Name != null )
           try
@@ -44,13 +48,6 @@ namespace SpeckleElementsRevit
         return res;
       }
 
-      // if the new and old have the same id (hash equivalent) and the doc obj is not marked as being modified, return the doc object
-      if ( stateObj != null && docObj != null && myLevel._id == stateObj._id && ( bool ) stateObj.Properties[ "userModified" ] == false )
-      {
-        return ( Autodesk.Revit.DB.Level ) docObj;
-      }
-
-      // TODO: EDIT LEVEL
       var existingLevel = docObj as Autodesk.Revit.DB.Level;
       existingLevel.Elevation = myLevel.elevation * Scale;
       existingLevel.Name = myLevel.Name;
@@ -69,6 +66,18 @@ namespace SpeckleElementsRevit
       foreach ( var l in collector )
       {
         if ( ( ( Autodesk.Revit.DB.Level ) l ).Name == name )
+          return ( Autodesk.Revit.DB.Level ) l;
+      }
+
+      return null;
+    }
+
+    private static Autodesk.Revit.DB.Level ExistingLevelByElevation( double elevation )
+    {
+      var collector = new FilteredElementCollector( Doc ).OfClass( typeof( Autodesk.Revit.DB.Level ) ).ToElements();
+      foreach ( var l in collector )
+      {
+        if ( Math.Abs(( ( Autodesk.Revit.DB.Level ) l ).Elevation - elevation) < 0.001 )
           return ( Autodesk.Revit.DB.Level ) l;
       }
 
