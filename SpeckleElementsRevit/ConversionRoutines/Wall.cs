@@ -121,12 +121,25 @@ namespace SpeckleElementsRevit
           }
           else
           {
-            for ( int i = 1; i < poly.Value.Count / 3; i++ )
+            List<SpecklePoint> pts = new List<SpecklePoint>();
+            for ( int i = 0; i < poly.Value.Count; i += 3 )
             {
-              var arr = poly.Value.GetRange( ( i - 1 ) * 3, i * 3 );
-              var x = new SpeckleLine( arr );
-              myCurves.Add( ( Line ) SpeckleCore.Converter.Deserialise( x ) );
+              pts.Add( new SpecklePoint( poly.Value[ i ], poly.Value[ i + 1 ], poly.Value[ i + 2 ] ) );
             }
+
+            for ( int i = 1; i < pts.Count; i++ )
+            {
+              var speckleLine = new SpeckleLine( new double[ ] { pts[ i - 1 ].Value[ 0 ], pts[ i - 1 ].Value[ 1 ], pts[ i - 1 ].Value[ 2 ], pts[ i ].Value[ 0 ], pts[ i ].Value[ 1 ], pts[ i ].Value[ 2 ] } );
+
+              myCurves.Add( ( Line ) SpeckleCore.Converter.Deserialise( speckleLine ) );
+            }
+
+            if ( poly.Closed )
+            {
+              var speckleLine = new SpeckleLine( new double[ ] { pts[ pts.Count-1 ].Value[ 0 ], pts[ pts.Count - 1 ].Value[ 1 ], pts[ pts.Count - 1 ].Value[ 2 ], pts[ 0 ].Value[ 0 ], pts[ 0 ].Value[ 1 ], pts[ 0 ].Value[ 2 ] } );
+              myCurves.Add( ( Line ) SpeckleCore.Converter.Deserialise( speckleLine ) );
+            }
+
           }
           return myCurves;
         case SpecklePolycurve plc:
