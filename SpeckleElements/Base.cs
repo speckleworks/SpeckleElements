@@ -101,7 +101,52 @@ namespace SpeckleElements
       set => Properties[ "parameters" ] = value;
     }
 
-    public Wall() { }
+    public Wall( ) { }
   }
+
+  [Serializable]
+  public partial class Slab : SpeckleMesh, ISpeckleElement
+  {
+    public override string Type { get => base.Type + "/" + "Slab"; }
+
+    [JsonIgnore]
+    public SpeckleObject baseCurve
+    {
+      get => ( Properties != null && Properties.ContainsKey( "baseCurve" ) ) ? ( ( SpeckleObject ) Properties[ "baseCurve" ] ) : null;
+      set => Properties[ "baseCurve" ] = value;
+    }
+
+    [JsonIgnore]
+    public Level level
+    {
+      get => ( Properties != null && Properties.ContainsKey( "level" ) ) ? ( Properties[ "level" ] as Level ) : null;
+      set => Properties[ "level" ] = value;
+    }
+
+    [JsonIgnore]
+    public SpeckleLine slopedArrow
+    {
+      get => ( Properties != null && Properties.ContainsKey( "slopedArrow" ) ) ? ( Properties[ "slopedArrow" ] as SpeckleLine ) : null;
+      set => Properties[ "slopedArrow" ] = value;
+    }
+
+    [JsonIgnore]
+    public double slope
+    {
+      get => ( Properties != null && Properties.ContainsKey( "slope" ) ) ? ( ( double ) Properties[ "slope" ] ) : 0;
+      set => Properties[ "slope" ] = value;
+    }
+
+    [JsonIgnore]
+    public Dictionary<string, object> parameters
+    {
+      get => ( Properties != null && Properties.ContainsKey( "parameters" ) ) ? ( Properties[ "parameters" ] as Dictionary<string, object> ) : null;
+      set => Properties[ "parameters" ] = value;
+    }
+
+    public Slab( ) { }
+  }
+
+
 
 }
