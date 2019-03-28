@@ -101,55 +101,7 @@ namespace SpeckleElementsRevit
       return ret;
     }
 
-    public static List<Curve> GetSegmentList( object crv )
-    {
-      List<Curve> myCurves = new List<Curve>();
-      switch ( crv )
-      {
-        case SpeckleLine line:
-          myCurves.Add( ( Line ) SpeckleCore.Converter.Deserialise( line ) );
-          return myCurves;
-
-        case SpeckleArc arc:
-          myCurves.Add( ( Arc ) SpeckleCore.Converter.Deserialise( arc ) );
-          return myCurves;
-
-        case SpecklePolyline poly:
-          if ( poly.Value.Count == 6 )
-          {
-            myCurves.Add( ( Line ) SpeckleCore.Converter.Deserialise( new SpeckleLine( poly.Value ) ) );
-          }
-          else
-          {
-            List<SpecklePoint> pts = new List<SpecklePoint>();
-            for ( int i = 0; i < poly.Value.Count; i += 3 )
-            {
-              pts.Add( new SpecklePoint( poly.Value[ i ], poly.Value[ i + 1 ], poly.Value[ i + 2 ] ) );
-            }
-
-            for ( int i = 1; i < pts.Count; i++ )
-            {
-              var speckleLine = new SpeckleLine( new double[ ] { pts[ i - 1 ].Value[ 0 ], pts[ i - 1 ].Value[ 1 ], pts[ i - 1 ].Value[ 2 ], pts[ i ].Value[ 0 ], pts[ i ].Value[ 1 ], pts[ i ].Value[ 2 ] } );
-
-              myCurves.Add( ( Line ) SpeckleCore.Converter.Deserialise( speckleLine ) );
-            }
-
-            if ( poly.Closed )
-            {
-              var speckleLine = new SpeckleLine( new double[ ] { pts[ pts.Count-1 ].Value[ 0 ], pts[ pts.Count - 1 ].Value[ 1 ], pts[ pts.Count - 1 ].Value[ 2 ], pts[ 0 ].Value[ 0 ], pts[ 0 ].Value[ 1 ], pts[ 0 ].Value[ 2 ] } );
-              myCurves.Add( ( Line ) SpeckleCore.Converter.Deserialise( speckleLine ) );
-            }
-
-          }
-          return myCurves;
-        case SpecklePolycurve plc:
-          foreach ( var seg in plc.Segments )
-            myCurves.AddRange( GetSegmentList( seg ) );
-          return myCurves;
-
-      }
-      return null;
-    }
+    
 
     /// <summary>
     /// Deprecated, handles only single line/arc based walls

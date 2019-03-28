@@ -7,6 +7,7 @@ using Autodesk.Revit.UI;
 using Autodesk.Revit.DB;
 using SpeckleCore;
 using SpeckleElements;
+using SpeckleCoreGeometryClasses;
 
 namespace SpeckleElementsRevit
 {
@@ -63,5 +64,89 @@ namespace SpeckleElementsRevit
 
       return (revitObjs.ToList(), found.ToList());
     }
+
+    /// <summary>
+    /// Recursively creates an ordered list of curves from a polycurve/polyline.
+    /// Please note that a polyline is broken down into lines.
+    /// </summary>
+    /// <param name="crv">A speckle curve.</param>
+    /// <returns></returns>
+    public static List<Curve> GetSegmentList( object crv )
+    {
+      List<Curve> myCurves = new List<Curve>();
+      switch ( crv )
+      {
+        case SpeckleLine line:
+          myCurves.Add( ( Line ) SpeckleCore.Converter.Deserialise( line ) );
+          return myCurves;
+
+        case SpeckleArc arc:
+          myCurves.Add( ( Arc ) SpeckleCore.Converter.Deserialise( arc ) );
+          return myCurves;
+
+        case SpeckleCurve nurbs:
+          myCurves.Add( ( Curve ) SpeckleCore.Converter.Deserialise( nurbs ) );
+          return myCurves;
+
+        case SpecklePolyline poly:
+          if ( poly.Value.Count == 6 )
+          {
+            myCurves.Add( ( Line ) SpeckleCore.Converter.Deserialise( new SpeckleLine( poly.Value ) ) );
+          }
+          else
+          {
+            List<SpecklePoint> pts = new List<SpecklePoint>();
+            for ( int i = 0; i < poly.Value.Count; i += 3 )
+            {
+              pts.Add( new SpecklePoint( poly.Value[ i ], poly.Value[ i + 1 ], poly.Value[ i + 2 ] ) );
+            }
+
+            for ( int i = 1; i < pts.Count; i++ )
+            {
+              var speckleLine = new SpeckleLine( new double[ ] { pts[ i - 1 ].Value[ 0 ], pts[ i - 1 ].Value[ 1 ], pts[ i - 1 ].Value[ 2 ], pts[ i ].Value[ 0 ], pts[ i ].Value[ 1 ], pts[ i ].Value[ 2 ] } );
+
+              myCurves.Add( ( Line ) SpeckleCore.Converter.Deserialise( speckleLine ) );
+            }
+
+            if ( poly.Closed )
+            {
+              var speckleLine = new SpeckleLine( new double[ ] { pts[ pts.Count - 1 ].Value[ 0 ], pts[ pts.Count - 1 ].Value[ 1 ], pts[ pts.Count - 1 ].Value[ 2 ], pts[ 0 ].Value[ 0 ], pts[ 0 ].Value[ 1 ], pts[ 0 ].Value[ 2 ] } );
+              myCurves.Add( ( Line ) SpeckleCore.Converter.Deserialise( speckleLine ) );
+            }
+          }
+          return myCurves;
+
+        case SpecklePolycurve plc:
+          foreach ( var seg in plc.Segments )
+            myCurves.AddRange( GetSegmentList( seg ) );
+          return myCurves;
+
+      }
+      return null;
+    }
+
+
+    /// <summary>
+    /// Stolen from grevit.
+    /// </summary>
+    /// <param name="document"></param>
+    /// <param name="type"></param>
+    /// <param name="name"></param>
+    /// <returns></returns>
+    public static Element GetElementByClassAndName( Type type, string name = null )
+    {
+      var collector = new FilteredElementCollector( Doc ).OfClass( type );
+
+      // check against element name
+      if ( name == null )
+        return collector.FirstElement();
+
+      foreach ( var e in collector.ToElements() )
+        if ( e.Name == name )
+          return e;
+
+      return collector.FirstElement();
+    }
+
   }
 }

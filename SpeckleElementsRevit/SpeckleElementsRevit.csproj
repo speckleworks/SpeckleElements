@@ -54,7 +54,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ConversionRoutines\Level.cs" />
-    <Compile Include="ConversionRoutines\Slab.cs" />
+    <Compile Include="ConversionRoutines\Floor.cs" />
     <Compile Include="ConversionRoutines\Wall.cs" />
     <Compile Include="ConversionsBase.cs" />
     <Compile Include="ConversionRoutines\Grid.cs" />

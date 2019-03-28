@@ -17,6 +17,9 @@ namespace SpeckleElements
     Dictionary<string, object> parameters { get; set; }
   }
 
+  // TODO: We need a consensus on how to define/set family types or whatever they're called
+  // for the various objects that support them, ie walls, floors, etc.
+
   [Serializable]
   public partial class GridLine : SpeckleLine, ISpeckleElement
   {
@@ -69,7 +72,7 @@ namespace SpeckleElements
     [JsonIgnore]
     public string wallType
     {
-      get => ( Properties != null && Properties.ContainsKey( "wallType" ) ) ? ( ( string ) Properties[ "wallType" ] ) : "";
+      get => ( Properties != null && Properties.ContainsKey( "wallType" ) ) ? ( ( string ) Properties[ "wallType" ] ) : null;
       set => Properties[ "wallType" ] = value;
     }
 
@@ -105,15 +108,22 @@ namespace SpeckleElements
   }
 
   [Serializable]
-  public partial class Slab : SpeckleMesh, ISpeckleElement
+  public partial class Floor : SpeckleMesh, ISpeckleElement
   {
-    public override string Type { get => base.Type + "/" + "Slab"; }
+    public override string Type { get => base.Type + "/" + "Floor"; }
 
     [JsonIgnore]
     public SpeckleObject baseCurve
     {
       get => ( Properties != null && Properties.ContainsKey( "baseCurve" ) ) ? ( ( SpeckleObject ) Properties[ "baseCurve" ] ) : null;
       set => Properties[ "baseCurve" ] = value;
+    }
+
+    [JsonIgnore]
+    public string floorType
+    {
+      get => ( Properties != null && Properties.ContainsKey( "floorType" ) ) ? ( ( string ) Properties[ "floorType" ] ) : null;
+      set => Properties[ "floorType" ] = value;
     }
 
     [JsonIgnore]
@@ -144,7 +154,7 @@ namespace SpeckleElements
       set => Properties[ "parameters" ] = value;
     }
 
-    public Slab( ) { }
+    public Floor( ) { }
   }
 
 
