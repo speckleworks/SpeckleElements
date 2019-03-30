@@ -157,6 +157,76 @@ namespace SpeckleElements
     public Floor( ) { }
   }
 
+  [Serializable]
+  public partial class Column : SpeckleLine, ISpeckleElement
+  {
+    public override string Type { get => base.Type + "/" + "Column"; }
+
+    [JsonIgnore]
+    public string columnFamily
+    {
+      get => ( Properties != null && Properties.ContainsKey( "columnFamily" ) ) ? ( ( string ) Properties[ "columnFamily" ] ) : null;
+      set => Properties[ "columnFamily" ] = value;
+    }
+
+    [JsonIgnore]
+    public string columnType
+    {
+      get => ( Properties != null && Properties.ContainsKey( "columnType" ) ) ? ( ( string ) Properties[ "columnType" ] ) : null;
+      set => Properties[ "columnType" ] = value;
+    }
+
+    [JsonIgnore]
+    public Level level
+    {
+      get => ( Properties != null && Properties.ContainsKey( "level" ) ) ? ( Properties[ "level" ] as Level ) : null;
+      set => Properties[ "level" ] = value;
+    }
+
+    [JsonIgnore]
+    public Dictionary<string, object> parameters
+    {
+      get => ( Properties != null && Properties.ContainsKey( "parameters" ) ) ? ( Properties[ "parameters" ] as Dictionary<string, object> ) : null;
+      set => Properties[ "parameters" ] = value;
+    }
+    public Column() { }
+  }
+
+  public partial class Shaft : SpeckleMesh, ISpeckleElement
+  {
+    public override string Type { get => base.Type + "/" + "Shaft"; }
+
+    [JsonIgnore]
+    public Level bottomLevel
+    {
+      get => ( Properties != null && Properties.ContainsKey( "bottomLevel" ) ) ? ( Properties[ "bottomLevel" ] as Level ) : null;
+      set => Properties[ "bottomLevel" ] = value;
+    }
+
+    [JsonIgnore]
+    public Level topLevel
+    {
+      get => ( Properties != null && Properties.ContainsKey( "topLevel" ) ) ? ( Properties[ "topLevel" ] as Level ) : null;
+      set => Properties[ "topLevel" ] = value;
+    }
+
+    [JsonIgnore]
+    public SpeckleObject baseCurve
+    {
+      get => ( Properties != null && Properties.ContainsKey( "baseCurve" ) ) ? ( ( SpeckleObject ) Properties[ "baseCurve" ] ) : null;
+      set => Properties[ "baseCurve" ] = value;
+    }
+
+    [JsonIgnore]
+    public Dictionary<string, object> parameters
+    {
+      get => ( Properties != null && Properties.ContainsKey( "parameters" ) ) ? ( Properties[ "parameters" ] as Dictionary<string, object> ) : null;
+      set => Properties[ "parameters" ] = value;
+    }
+
+    public Shaft( ) { }
+  }
+
 
 
 }
