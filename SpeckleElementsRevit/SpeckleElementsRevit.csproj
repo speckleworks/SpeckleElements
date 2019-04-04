@@ -53,8 +53,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ConversionRoutines\Beam.cs" />
+    <Compile Include="ConversionRoutines\Column.cs" />
+    <Compile Include="ConversionRoutines\FamilyInstance.cs" />
     <Compile Include="ConversionRoutines\Level.cs" />
     <Compile Include="ConversionRoutines\Floor.cs" />
+    <Compile Include="ConversionRoutines\Shaft.cs" />
+    <Compile Include="ConversionRoutines\Topography.cs" />
     <Compile Include="ConversionRoutines\Wall.cs" />
     <Compile Include="ConversionsBase.cs" />
     <Compile Include="ConversionRoutines\Grid.cs" />

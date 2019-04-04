@@ -368,9 +368,19 @@ namespace SpeckleElements
       set => Properties[ "points" ] = value;
     }
 
-    public string view { get; set; }
+    [JsonIgnore]
+    public string view
+    {
+      get => ( Properties != null && Properties.ContainsKey( "view" ) ) ? ( ( string ) Properties[ "view" ] ) : null;
+      set => Properties[ "view" ] = value;
+    }
 
-    public Level level { get; set; }
+    [JsonIgnore]
+    public Level level
+    {
+      get => ( Properties != null && Properties.ContainsKey( "level" ) ) ? ( Properties[ "level" ] as Level ) : null;
+      set => Properties[ "level" ] = value;
+    }
 
     [JsonIgnore]
     public string familyName
