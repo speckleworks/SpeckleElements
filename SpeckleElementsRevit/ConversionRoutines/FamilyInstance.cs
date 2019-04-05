@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SpeckleElementsRevit.ConversionRoutines
+namespace SpeckleElementsRevit
 {
   public static partial class Conversions
   {

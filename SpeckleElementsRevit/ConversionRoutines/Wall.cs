@@ -29,7 +29,7 @@ namespace SpeckleElementsRevit
         foreach ( var baseCurve in segments )
         {
           if ( myWall.level == null )
-            myWall.level = new SpeckleElements.Level() { elevation = baseCurve.GetEndPoint( 0 ).Z / Scale, Name = "Speckle Level " + baseCurve.GetEndPoint( 0 ).Z / Scale };
+            myWall.level = new SpeckleElements.Level() { elevation = baseCurve.GetEndPoint( 0 ).Z / Scale, levelName = "Speckle Level " + baseCurve.GetEndPoint( 0 ).Z / Scale };
 
           var levelId = ( ( Level ) myWall.level.ToNative() ).Id;
           var revitWall = Wall.Create( Doc, baseCurve, levelId, false );
@@ -69,7 +69,7 @@ namespace SpeckleElementsRevit
         {
           var baseCurve = segments[ i ];
           if ( myWall.level == null )
-            myWall.level = new SpeckleElements.Level() { elevation = baseCurve.GetEndPoint( 0 ).Z, Name = "Speckle Level " + baseCurve.GetEndPoint( 0 ).Z };
+            myWall.level = new SpeckleElements.Level() { elevation = baseCurve.GetEndPoint( 0 ).Z, levelName = "Speckle Level " + baseCurve.GetEndPoint( 0 ).Z };
 
           var levelId = ( ( Level ) myWall.level.ToNative() ).Id;
           var revitWall = Wall.Create( Doc, baseCurve, levelId, false );
@@ -133,7 +133,7 @@ namespace SpeckleElementsRevit
       {
         if ( myWall.level == null )
         {
-          myWall.level = new SpeckleElements.Level() { elevation = baseCurve.GetEndPoint( 0 ).Z, Name = "Speckle Level " + baseCurve.GetEndPoint( 0 ).Z };
+          myWall.level = new SpeckleElements.Level() { elevation = baseCurve.GetEndPoint( 0 ).Z, levelName = "Speckle Level " + baseCurve.GetEndPoint( 0 ).Z };
         }
         var levelId = ( ( Level ) myWall.level.ToNative() ).Id;
         var revitWall = Wall.Create( Doc, baseCurve, levelId, false );

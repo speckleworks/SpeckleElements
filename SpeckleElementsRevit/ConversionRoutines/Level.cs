@@ -21,7 +21,7 @@ namespace SpeckleElementsRevit
         return ( Autodesk.Revit.DB.Level ) docObj;
 
       if ( docObj == null )
-        docObj = ExistingLevelByName( myLevel.Name );
+        docObj = ExistingLevelByName( myLevel.levelName );
       if ( docObj == null )
         docObj = ExistingLevelByElevation( myLevel.elevation );
 
@@ -29,10 +29,10 @@ namespace SpeckleElementsRevit
       if ( docObj == null )
       {
         var res = Autodesk.Revit.DB.Level.Create( Doc, myLevel.elevation * Scale );
-        if ( myLevel.Name != null )
+        if ( myLevel.levelName != null )
           try
           {
-            res.Name = myLevel.Name;
+            res.Name = myLevel.levelName;
           }
           catch { }
 
@@ -41,7 +41,7 @@ namespace SpeckleElementsRevit
         var view = Autodesk.Revit.DB.ViewPlan.Create( Doc, vt.Id, res.Id );
         try
         {
-          view.Name = myLevel.Name;
+          view.Name = myLevel.levelName;
         }
         catch { }
 
@@ -50,7 +50,7 @@ namespace SpeckleElementsRevit
 
       var existingLevel = docObj as Autodesk.Revit.DB.Level;
       existingLevel.Elevation = myLevel.elevation * Scale;
-      existingLevel.Name = myLevel.Name;
+      existingLevel.Name = myLevel.levelName != null ? myLevel.levelName : "Speckle Level @" + myLevel.elevation;
 
       return existingLevel;
     }

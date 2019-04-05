@@ -20,11 +20,12 @@ namespace SpeckleElementsRevit
       foreach ( var x in segments ) slabCurves.Append( x );
 
       if ( mySlab.level == null )
-        mySlab.level = new SpeckleElements.Level() { elevation = segments[ 0 ].GetEndPoint( 0 ).Z / Scale, Name = "Speckle Level " + segments[ 0 ].GetEndPoint( 0 ).Z / Scale };
+        mySlab.level = new SpeckleElements.Level() { elevation = segments[ 0 ].GetEndPoint( 0 ).Z / Scale, levelName = "Speckle Level " + segments[ 0 ].GetEndPoint( 0 ).Z / Scale };
 
       FloorType type = ( FloorType ) GetElementByClassAndName( typeof( Autodesk.Revit.DB.FloorType ), mySlab.floorType );
 
-      // Editing a slab profile is a pain apparently. Will defer to wiser minds, so we just delete the old one.
+      // TODO: Editing a slab profile is a pain apparently.
+      // See https://thebuildingcoder.typepad.com/blog/2008/11/editing-a-floor-profile.html
       if ( docObj != null )
         Doc.Delete( docObj.Id );
 
