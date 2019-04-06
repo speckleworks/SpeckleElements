@@ -18,16 +18,28 @@ namespace SpeckleElementsRevit
       var pts = new List<XYZ>();
       for( int i = 0; i < mySurface.Vertices.Count; i += 3 )
       {
-        pts.Add( new XYZ( mySurface.Vertices[ i ], mySurface.Vertices[ i + 1 ], mySurface.Vertices[ i + 2 ] ) );
+        pts.Add( new XYZ( mySurface.Vertices[ i ]*Scale, mySurface.Vertices[ i + 1 ]*Scale, mySurface.Vertices[ i + 2 ]*Scale ) );
       }
 
       if( docObj != null )
       {
-        var srf = (TopographySurface) docObj;
-        srf.DeletePoints( srf.GetPoints() );
-        srf.AddPoints( pts );
-        return srf;
+        Doc.Delete( docObj.Id );
+
+        // TODO: Can't start a transaction here as we have started a global transaction for the creation of all objects. 
+        // TODO: Let each individual ToNative method handle its own transactions. It's a big change, so will leave for later.
+
+        //var srf = (TopographySurface) docObj;
+
+        //using( TopographyEditScope e = new TopographyEditScope( Doc, "Speckle Topo Edit" ) )
+        //{
+        //  e.Start(srf.Id);
+        //  srf.DeletePoints( srf.GetPoints() );
+        //  srf.AddPoints( pts );
+        //  e.Commit( null );
+        //}
+        //return srf;
       }
+
       return TopographySurface.Create( Doc, pts );
     }
 
