@@ -125,7 +125,6 @@ namespace SpeckleElementsRevit
       return null;
     }
 
-
     /// <summary>
     /// Stolen from grevit.
     /// </summary>
@@ -148,5 +147,9 @@ namespace SpeckleElementsRevit
       return collector.FirstElement();
     }
 
+    public static Element GetElementByFamilyNameAndType()
+    {
+      return null;
+    }
   }
 }
