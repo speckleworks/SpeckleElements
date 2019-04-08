@@ -50,7 +50,7 @@ namespace SpeckleElementsRevit
       }
 
       if ( myBeam.level == null )
-        myBeam.level = new SpeckleElements.Level() { elevation = baseLine.GetEndPoint( 0 ).Z / Scale, levelName = "Speckle Level " + baseLine.GetEndPoint( 0 ).Z / Scale };
+        myBeam.level = new SpeckleElements.Level() { elevation = 0, levelName = "Speckle Level 0" };
       var myLevel = myBeam.level.ToNative() as Autodesk.Revit.DB.Level;
 
       if ( !sym.IsActive ) sym.Activate();
