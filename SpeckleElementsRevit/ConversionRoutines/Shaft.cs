@@ -32,8 +32,8 @@ namespace SpeckleElementsRevit
     // or create a generic opening class
     public static Shaft ToSpeckle(this Opening myShaft)
     {
+      // TODO: Shaft to speckle
       return null;
     }
-
   }
 }

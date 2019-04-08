@@ -76,6 +76,13 @@ namespace SpeckleElements
     }
 
     [JsonIgnore]
+    public bool createView
+    {
+      get => ( Properties != null && Properties.ContainsKey( "createView" ) ) ? ( ( bool ) Properties[ "createView" ] ) : false;
+      set => Properties[ "createView" ] = value;
+    }
+
+    [JsonIgnore]
     public Dictionary<string, object> parameters
     {
       get => ( Properties != null && Properties.ContainsKey( "parameters" ) ) ? ( Properties[ "parameters" ] as Dictionary<string, object> ) : null;

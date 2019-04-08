@@ -147,8 +147,22 @@ namespace SpeckleElementsRevit
       return collector.FirstElement();
     }
 
-    public static Element GetElementByFamilyNameAndType()
+    public static FamilySymbol GetFamilySymbolByFamilyNameAndTypeAndCategory( string familyName, string typeName, BuiltInCategory category )
     {
+      var collectorElems = new FilteredElementCollector( Doc ).WhereElementIsElementType().OfClass( typeof( FamilySymbol ) ).OfCategory( category ).ToElements().Cast<FamilySymbol>();
+
+      if ( ( familyName == null || typeName == null ) && collectorElems.Count() > 0 )
+        return collectorElems.First();
+
+      foreach ( var e in collectorElems )
+      {
+        if ( e.FamilyName == familyName && e.Name == typeName )
+          return e;
+      }
+
+      if ( collectorElems.Count() > 0 )
+        return collectorElems.First();
+
       return null;
     }
   }

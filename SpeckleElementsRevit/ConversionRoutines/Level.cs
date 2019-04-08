@@ -36,14 +36,17 @@ namespace SpeckleElementsRevit
           }
           catch { }
 
-        var vt = new FilteredElementCollector( Doc ).OfClass( typeof( ViewFamilyType ) ).Where( el => ( ( ViewFamilyType ) el ).ViewFamily == ViewFamily.FloorPlan ).First();
-
-        var view = Autodesk.Revit.DB.ViewPlan.Create( Doc, vt.Id, res.Id );
-        try
+        if ( myLevel.createView )
         {
-          view.Name = myLevel.levelName;
+          var vt = new FilteredElementCollector( Doc ).OfClass( typeof( ViewFamilyType ) ).Where( el => ( ( ViewFamilyType ) el ).ViewFamily == ViewFamily.FloorPlan ).First();
+
+          var view = Autodesk.Revit.DB.ViewPlan.Create( Doc, vt.Id, res.Id );
+          try
+          {
+            view.Name = myLevel.levelName;
+          }
+          catch { }
         }
-        catch { }
 
         return res;
       }
@@ -57,7 +60,8 @@ namespace SpeckleElementsRevit
 
     public static SpeckleElements.Level ToSpeckle( this Autodesk.Revit.DB.Level myLevel )
     {
-      throw new NotImplementedException();
+      // TODO
+      return null;
     }
 
     private static Autodesk.Revit.DB.Level ExistingLevelByName( string name )
@@ -77,7 +81,7 @@ namespace SpeckleElementsRevit
       var collector = new FilteredElementCollector( Doc ).OfClass( typeof( Autodesk.Revit.DB.Level ) ).ToElements();
       foreach ( var l in collector )
       {
-        if ( Math.Abs(( ( Autodesk.Revit.DB.Level ) l ).Elevation - elevation) < 0.001 )
+        if ( Math.Abs( ( ( Autodesk.Revit.DB.Level ) l ).Elevation - elevation ) < 0.001 )
           return ( Autodesk.Revit.DB.Level ) l;
       }
 

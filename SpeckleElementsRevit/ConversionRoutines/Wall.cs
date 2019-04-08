@@ -101,55 +101,6 @@ namespace SpeckleElementsRevit
       return ret;
     }
 
-    
-
-    /// <summary>
-    /// Deprecated, handles only single line/arc based walls
-    /// </summary>
-    /// <param name="myWall"></param>
-    /// <returns></returns>
-    public static Autodesk.Revit.DB.Wall ToNative2( this SpeckleElements.Wall myWall )
-    {
-      var (docObj, stateObj) = GetExistingElementByApplicationId( myWall.ApplicationId, myWall.Type );
-
-      // If the existing doc object is not marked as modified, return the original.
-      if ( stateObj != null && docObj != null && myWall._id == stateObj._id && ( bool ) stateObj.Properties[ "userModified" ] == false )
-        return ( Autodesk.Revit.DB.Wall ) docObj;
-
-      // Create the base curve
-      Curve baseCurve = null;
-      switch ( myWall.baseCurve )
-      {
-        case SpeckleLine line:
-          baseCurve = ( Line ) SpeckleCore.Converter.Deserialise( line );
-          break;
-        case SpeckleArc arc:
-          baseCurve = ( Arc ) SpeckleCore.Converter.Deserialise( arc );
-          break;
-      }
-
-      // If no existing document object, create it.
-      if ( docObj == null )
-      {
-        if ( myWall.level == null )
-        {
-          myWall.level = new SpeckleElements.Level() { elevation = baseCurve.GetEndPoint( 0 ).Z, levelName = "Speckle Level " + baseCurve.GetEndPoint( 0 ).Z };
-        }
-        var levelId = ( ( Level ) myWall.level.ToNative() ).Id;
-        var revitWall = Wall.Create( Doc, baseCurve, levelId, false );
-        revitWall = SetWallHeightOffset( revitWall, myWall.height, myWall.offset );
-
-        return revitWall;
-      }
-
-      // Otherwise, enter edit mode.
-      LocationCurve locationCurve = ( LocationCurve ) ( ( Wall ) docObj ).Location;
-      myWall.level?.ToNative();
-      locationCurve.Curve = baseCurve;
-
-      return SetWallHeightOffset( ( Wall ) docObj, myWall.height, myWall.offset );
-    }
-
     /// <summary>
     /// Sets params on wall.
     /// </summary>
@@ -170,5 +121,6 @@ namespace SpeckleElementsRevit
       return revitWall;
     }
 
+    // TODO: Wall to Speckle
   }
 }
