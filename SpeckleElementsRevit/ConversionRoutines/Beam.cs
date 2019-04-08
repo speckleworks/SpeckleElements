@@ -39,23 +39,13 @@ namespace SpeckleElementsRevit
       }
 
       FamilySymbol sym;
+      sym = GetFamilySymbolByFamilyNameAndTypeAndCategory( myBeam.beamFamily, myBeam.beamType, BuiltInCategory.OST_StructuralFraming );
 
-      try
-      {
-        sym = GetFamilySymbolByFamilyNameAndTypeAndCategory( myBeam.beamFamily, myBeam.beamType, BuiltInCategory.OST_StructuralFraming );
-        if(sym == null)
-          sym = GetFamilySymbolByFamilyNameAndTypeAndCategory( myBeam.beamFamily, myBeam.beamType, BuiltInCategory.OST_BeamAnalytical );
+      if ( sym == null )
+        sym = GetFamilySymbolByFamilyNameAndTypeAndCategory( myBeam.beamFamily, myBeam.beamType, BuiltInCategory.OST_BeamAnalytical );
 
-      }
-      catch
-      {
-        sym = GetFamilySymbolByFamilyNameAndTypeAndCategory( myBeam.beamFamily, myBeam.beamType, BuiltInCategory.OST_Columns );
-      }
-
-      if(sym == null)
-      {
+      if ( sym == null )
         return null;
-      }
 
       if ( myBeam.level == null )
         myBeam.level = new SpeckleElements.Level() { elevation = 0, levelName = "Speckle Level 0" };
@@ -63,7 +53,7 @@ namespace SpeckleElementsRevit
 
       if ( !sym.IsActive ) sym.Activate();
       var familyInstance = Doc.Create.NewFamilyInstance( baseLine, sym, myLevel, StructuralType.Beam );
-      
+
       return familyInstance;
     }
   }

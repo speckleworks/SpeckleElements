@@ -16,7 +16,7 @@ namespace SpeckleElementsRevit
       var (docObj, stateObj) = GetExistingElementByApplicationId( myCol.ApplicationId, myCol.Type );
 
       //var baseLine = GetSegmentList( myCol.baseLine )[ 0 ];
-      var baseLine = (Curve) SpeckleCore.Converter.Deserialise( myCol.baseLine );
+      var baseLine = ( Curve ) SpeckleCore.Converter.Deserialise( myCol.baseLine );
       var start = baseLine.GetEndPoint( 0 );
       var end = baseLine.GetEndPoint( 1 );
 
@@ -41,14 +41,10 @@ namespace SpeckleElementsRevit
 
       // below, new creation of a beam.
       FamilySymbol sym;
-      try
-      {
-        sym = GetFamilySymbolByFamilyNameAndTypeAndCategory( myCol.columnFamily, myCol.columnType, BuiltInCategory.OST_StructuralColumns );
-      }
-      catch
-      {
+      sym = GetFamilySymbolByFamilyNameAndTypeAndCategory( myCol.columnFamily, myCol.columnType, BuiltInCategory.OST_StructuralColumns );
+
+      if ( sym == null )
         sym = GetFamilySymbolByFamilyNameAndTypeAndCategory( myCol.columnFamily, myCol.columnType, BuiltInCategory.OST_Columns );
-      }
 
       if ( sym == null )
         return null;
