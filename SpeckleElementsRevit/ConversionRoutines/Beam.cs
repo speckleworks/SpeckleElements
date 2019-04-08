@@ -43,10 +43,18 @@ namespace SpeckleElementsRevit
       try
       {
         sym = GetFamilySymbolByFamilyNameAndTypeAndCategory( myBeam.beamFamily, myBeam.beamType, BuiltInCategory.OST_StructuralFraming );
+        if(sym == null)
+          sym = GetFamilySymbolByFamilyNameAndTypeAndCategory( myBeam.beamFamily, myBeam.beamType, BuiltInCategory.OST_BeamAnalytical );
+
       }
       catch
       {
         sym = GetFamilySymbolByFamilyNameAndTypeAndCategory( myBeam.beamFamily, myBeam.beamType, BuiltInCategory.OST_Columns );
+      }
+
+      if(sym == null)
+      {
+        return null;
       }
 
       if ( myBeam.level == null )
