@@ -28,17 +28,14 @@ namespace SpeckleElementsRevit
           Doc.Delete( docObj.Id );
           // Will create a new one, exits fully this nested if
         }
-        //  else if ( ( bool ) stateObj.Properties[ "userModified" ] == true )
-        //  {
-        //    // Edit Endpoints and return
-        //    var existingFamilyInstance = ( Autodesk.Revit.DB.FamilyInstance ) docObj;
-        //    existingFamilyInstance.get_Parameter( BuiltInParameter.SLANTED_COLUMN_TYPE_PARAM ).Set( ( double ) SlantedOrVerticalColumnType.CT_EndPoint );
-        //    var existingLocationCurve = existingFamilyInstance.Location as LocationCurve;
-        //    existingLocationCurve.Curve = baseLine;
-        //    return existingFamilyInstance;
-        //  }
-        //  else // nothing changed so get out
-        //    return docObj;
+        else
+        {
+          // Edit location curve
+          var existingFamilyInstance = ( Autodesk.Revit.DB.FamilyInstance ) docObj;
+          var existingLocationCurve = existingFamilyInstance.Location as LocationCurve;
+          existingLocationCurve.Curve = baseLine;
+          return existingFamilyInstance;
+        }
       }
 
       FamilySymbol sym;
@@ -57,9 +54,9 @@ namespace SpeckleElementsRevit
       var myLevel = myBeam.level.ToNative() as Autodesk.Revit.DB.Level;
 
       if ( !sym.IsActive ) sym.Activate();
-      var familyInstance = Doc.Create.NewFamilyInstance(baseLine, sym, )
-      //StructuralType.Beam;
-      return null;
+      var familyInstance = Doc.Create.NewFamilyInstance( baseLine, sym, myLevel, StructuralType.Beam );
+      
+      return familyInstance;
     }
   }
 }

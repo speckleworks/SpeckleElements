@@ -28,7 +28,7 @@ namespace SpeckleElementsRevit
           Doc.Delete( docObj.Id );
           // Will create a new one, exits fully this nested if
         }
-        else if ( ( bool ) stateObj.Properties[ "userModified" ] == true )
+        else
         {
           // Edit Endpoints and return
           var existingFamilyInstance = ( Autodesk.Revit.DB.FamilyInstance ) docObj;
@@ -37,8 +37,6 @@ namespace SpeckleElementsRevit
           existingLocationCurve.Curve = baseLine;
           return existingFamilyInstance;
         }
-        else // nothing changed so get out
-          return docObj;
       }
 
       // below, new creation of a beam.
