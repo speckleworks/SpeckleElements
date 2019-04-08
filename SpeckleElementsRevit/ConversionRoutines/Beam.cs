@@ -52,8 +52,12 @@ namespace SpeckleElementsRevit
         sym = GetFamilySymbolByFamilyNameAndTypeAndCategory( myBeam.beamFamily, myBeam.beamType, BuiltInCategory.OST_Columns );
       }
 
-      if ( !sym.IsActive ) sym.Activate();
+      if ( myBeam.level == null )
+        myBeam.level = new SpeckleElements.Level() { elevation = baseLine.GetEndPoint( 0 ).Z / Scale, levelName = "Speckle Level " + baseLine.GetEndPoint( 0 ).Z / Scale };
+      var myLevel = myBeam.level.ToNative() as Autodesk.Revit.DB.Level;
 
+      if ( !sym.IsActive ) sym.Activate();
+      var familyInstance = Doc.Create.NewFamilyInstance(baseLine, sym, )
       //StructuralType.Beam;
       return null;
     }

@@ -261,6 +261,13 @@ namespace SpeckleElements
     public override string Type { get => base.Type + "/" + "Beam"; }
 
     [JsonIgnore]
+    public SpeckleLine baseLine
+    {
+      get => ( Properties != null && Properties.ContainsKey( "baseLine" ) ) ? ( ( SpeckleLine ) Properties[ "baseLine" ] ) : null;
+      set => Properties[ "baseLine" ] = value;
+    }
+
+    [JsonIgnore]
     public string beamFamily
     {
       get => ( Properties != null && Properties.ContainsKey( "beamFamily" ) ) ? ( ( string ) Properties[ "beamFamily" ] ) : null;
@@ -275,10 +282,10 @@ namespace SpeckleElements
     }
 
     [JsonIgnore]
-    public SpeckleLine baseLine
+    public Level level
     {
-      get => ( Properties != null && Properties.ContainsKey( "baseLine" ) ) ? ( ( SpeckleLine ) Properties[ "baseLine" ] ) : null;
-      set => Properties[ "baseLine" ] = value;
+      get => ( Properties != null && Properties.ContainsKey( "level" ) ) ? ( Properties[ "level" ] as Level ) : null;
+      set => Properties[ "level" ] = value;
     }
 
     [JsonIgnore]
