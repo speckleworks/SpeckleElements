@@ -48,7 +48,7 @@ namespace SpeckleElementsRevit
     {
       foreach ( var stream in Initialiser.LocalRevitState )
       {
-        var found = stream.Objects.FirstOrDefault( s => s.ApplicationId == ApplicationId && s.Type == ObjectType );
+        var found = stream.Objects.FirstOrDefault( s => s.ApplicationId == ApplicationId && (string) s.Properties["__type"] == ObjectType );
         if ( found != null )
           return (Doc.GetElement( found.Properties[ "revitUniqueId" ] as string ), ( SpeckleObject ) found);
       }
@@ -59,7 +59,7 @@ namespace SpeckleElementsRevit
     {
       var allStateObjects = ( from p in Initialiser.LocalRevitState.SelectMany( s => s.Objects ) select p ).ToList();
 
-      var found = allStateObjects.Where( obj => obj.ApplicationId == ApplicationId && obj.Type == ObjectType );
+      var found = allStateObjects.Where( obj => obj.ApplicationId == ApplicationId && (string) obj.Properties[ "__type" ] == ObjectType );
       var revitObjs = found.Select( obj => Doc.GetElement( obj.Properties[ "revitUniqueId" ] as string ) );
 
       return (revitObjs.ToList(), found.ToList());

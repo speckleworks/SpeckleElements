@@ -20,7 +20,7 @@ namespace SpeckleElementsRevit
       foreach ( var x in segments ) slabCurves.Append( x );
 
       if ( mySlab.level == null )
-        mySlab.level = new SpeckleElements.Level() { elevation = segments[ 0 ].GetEndPoint( 0 ).Z / Scale, levelName = "Speckle Level " + segments[ 0 ].GetEndPoint( 0 ).Z / Scale };
+        mySlab.level = new SpeckleElements.Level() { createView = true, elevation = segments[ 0 ].GetEndPoint( 0 ).Z / Scale, levelName = "Speckle Level " + segments[ 0 ].GetEndPoint( 0 ).Z / Scale };
 
 
       // TODO: Editing a slab profile is a pain apparently.
