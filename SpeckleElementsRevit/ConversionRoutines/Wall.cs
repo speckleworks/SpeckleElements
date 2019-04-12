@@ -122,5 +122,68 @@ namespace SpeckleElementsRevit
     }
 
     // TODO: Wall to Speckle
+    public static SpeckleElements.Wall ToSpeckle( this Autodesk.Revit.DB.Wall myWall )
+    {
+      var speckleWall = new SpeckleElements.Wall();
+      speckleWall.baseCurve = SpeckleCore.Converter.Serialise( ( ( LocationCurve ) myWall.Location ).Curve );
+
+      var type = myWall.GetType();
+
+      speckleWall.parameters = new Dictionary<string, object>();
+
+      foreach ( Parameter p in myWall.Parameters )
+      {
+        var x = p.AsValueString();
+        var y = p.Definition.Name;
+        speckleWall.parameters[ y ] = x;
+      }
+      var opts = new Options(); opts.DetailLevel = ViewDetailLevel.Medium;
+      var geo = myWall.get_Geometry( opts );
+
+      foreach ( Solid mySolid in geo )
+      {
+        if ( mySolid == null ) continue;
+
+        var faceArr = new List<int>();
+        var vertexArr = new List<double>();
+
+        int prevVertCount = 0;
+
+        foreach ( Face f in mySolid.Faces )
+        {
+          //var f = mySolid.Faces.get_Item( 0 );
+          var m = f.Triangulate();
+          var points = m.Vertices;
+
+          foreach ( var point in m.Vertices )
+          {
+            vertexArr.AddRange( new double[ ] { point.X / Scale, point.Y / Scale, point.Z / Scale } );
+          }
+
+          for ( int i = 0; i < m.NumTriangles; i++ )
+          {
+            var triangle = m.get_Triangle( i );
+            var A = triangle.get_Index( 0 );
+            var B = triangle.get_Index( 1 );
+            var C = triangle.get_Index( 2 );
+
+            faceArr.Add( 0 ); // TRIANGLE
+            faceArr.Add( ( int ) A + prevVertCount );
+            faceArr.Add( ( int ) B + prevVertCount );
+            faceArr.Add( ( int ) C + prevVertCount );
+
+
+          }
+          prevVertCount += m.Vertices.Count;
+        }
+
+        speckleWall.Faces = faceArr;
+        speckleWall.Vertices = vertexArr;
+      }
+
+      speckleWall.GenerateHash();
+
+      return speckleWall;
+    }
   }
 }

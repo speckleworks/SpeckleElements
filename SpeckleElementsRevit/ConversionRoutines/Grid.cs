@@ -21,13 +21,14 @@ namespace SpeckleElementsRevit
       if ( docObj == null )
       {
         var res = Grid.Create( Doc, Line.CreateBound( new XYZ( myGridLine.Value[ 0 ] * Scale, myGridLine.Value[ 1 ] * Scale, myGridLine.Value[ 2 ] * Scale ), new XYZ( myGridLine.Value[ 3 ] * Scale, myGridLine.Value[ 4 ] * Scale, myGridLine.Value[ 5 ] * Scale ) ) );
-
         return res;
       }
 
       // if the new and old have the same id (hash equivalent) and the doc obj is not marked as being modified, return the doc object
       if ( docObj != null && myGridLine._id == stateObj._id && ( bool ) stateObj.Properties[ "userModified" ] == false )
+      {
         return ( Grid ) docObj;
+      }
 
       // Otherwise, enter "edit" mode: means the doc object has been modfied, or the original source object changed.
       var myGrid = docObj as Grid;
@@ -59,7 +60,9 @@ namespace SpeckleElementsRevit
       {
         System.Diagnostics.Debug.WriteLine( "Failed to set grid endpoints." );
       }
+
       return myGrid;
+
     }
 
     // TODO: Create a proper method, this is just fun.

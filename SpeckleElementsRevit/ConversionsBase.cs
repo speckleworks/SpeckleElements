@@ -38,6 +38,44 @@ namespace SpeckleElementsRevit
     static double Scale { get => Initialiser.RevitScale; }
     static Document Doc { get => Initialiser.RevitApp.ActiveUIDocument.Document; }
 
+
+    /// <summary>
+    /// Entry point for all revit conversions, as we can't rely on native casting because of
+    /// the confusion with FamilyInstances (columns, beams, etc.) vs 1st class elements such as Walls, Floors, etc.
+    /// </summary>
+    /// <param name="myElement"></param>
+    /// <returns></returns>
+    public static SpeckleObject ToSpeckle(this Autodesk.Revit.DB.FamilyInstance myFamily )
+    {
+      // TODO
+      //if(myElement is Autodesk.Revit.DB.Wall )
+      //{
+      //  return new SpeckleElements.Wall();
+      //}
+
+      //if ( myElement is Autodesk.Revit.DB.Architecture.TopographySurface )
+      //{
+      //  return new SpeckleElements.Topography();
+      //}
+
+      //if ( myElement is Autodesk.Revit.DB.Grid )
+      //{
+      //  return new SpeckleElements.GridLine();
+      //}
+
+      //if ( myElement is Autodesk.Revit.DB.Level )
+      //{
+      //  return new SpeckleElements.Level();
+      //}
+      var family = myFamily.Symbol.FamilyName;
+      var category = myFamily.Category;
+      var xxx = myFamily.Symbol.GetType();
+      var parameterSet = myFamily.Parameters;
+      return null;
+    }
+
+
+
     /// <summary>
     /// Returns, if found, the corresponding doc element and its corresponding local state object.
     /// The doc object can be null if the user deleted it. 
@@ -48,7 +86,7 @@ namespace SpeckleElementsRevit
     {
       foreach ( var stream in Initialiser.LocalRevitState )
       {
-        var found = stream.Objects.FirstOrDefault( s => s.ApplicationId == ApplicationId && s.Type == ObjectType );
+        var found = stream.Objects.FirstOrDefault( s => s.ApplicationId == ApplicationId && (string) s.Properties["__type"] == ObjectType );
         if ( found != null )
           return (Doc.GetElement( found.Properties[ "revitUniqueId" ] as string ), ( SpeckleObject ) found);
       }
@@ -59,7 +97,7 @@ namespace SpeckleElementsRevit
     {
       var allStateObjects = ( from p in Initialiser.LocalRevitState.SelectMany( s => s.Objects ) select p ).ToList();
 
-      var found = allStateObjects.Where( obj => obj.ApplicationId == ApplicationId && obj.Type == ObjectType );
+      var found = allStateObjects.Where( obj => obj.ApplicationId == ApplicationId && (string) obj.Properties[ "__type" ] == ObjectType );
       var revitObjs = found.Select( obj => Doc.GetElement( obj.Properties[ "revitUniqueId" ] as string ) );
 
       return (revitObjs.ToList(), found.ToList());

@@ -25,12 +25,13 @@ namespace SpeckleElementsRevit
       var bottomLevel = myShaft.bottomLevel.ToNative();
       var topLevel = myShaft.topLevel.ToNative();
 
-      return Doc.Create.NewOpening( bottomLevel, topLevel, shaftCurves );
+      var revitShaft = Doc.Create.NewOpening( bottomLevel, topLevel, shaftCurves );
+      return revitShaft;
     }
 
     // NOTE: if we will include more element based openings, we will need to figure out how to split this method, 
     // or create a generic opening class
-    public static Shaft ToSpeckle(this Opening myShaft)
+    public static Shaft ToSpeckle( this Opening myShaft )
     {
       // TODO: Shaft to speckle
       return null;
