@@ -47,31 +47,74 @@ namespace SpeckleElementsRevit
     /// <returns></returns>
     public static SpeckleObject ToSpeckle( this Autodesk.Revit.DB.FamilyInstance myFamily )
     {
-      // TODO
-      //if(myElement is Autodesk.Revit.DB.Wall )
-      //{
-      //  return new SpeckleElements.Wall();
-      //}
+      var speckleFamily = new SpeckleElements.FamilyInstance();
 
-      //if ( myElement is Autodesk.Revit.DB.Architecture.TopographySurface )
-      //{
-      //  return new SpeckleElements.Topography();
-      //}
+      speckleFamily.parameters = GetElementParams( myFamily );
+      (speckleFamily.Faces, speckleFamily.Vertices) = GetElementMesh( myFamily, ViewDetailLevel.Fine, true );
 
-      //if ( myElement is Autodesk.Revit.DB.Grid )
-      //{
-      //  return new SpeckleElements.GridLine();
-      //}
+      var myGeom = myFamily.get_Geometry( new Options() { DetailLevel = ViewDetailLevel.Fine, ComputeReferences = true } );
+      //myGeom = myGeom.GetTransformed( myFamily.GetTransform() );
+      var allSolids = GetAllSolidsFromGeometryElement( myGeom, Transform.Identity );
+      (speckleFamily.Faces, speckleFamily.Vertices) = GetFaceVertexArrFromSolids( allSolids );
 
-      //if ( myElement is Autodesk.Revit.DB.Level )
-      //{
-      //  return new SpeckleElements.Level();
-      //}
-      var family = myFamily.Symbol.FamilyName;
-      var category = myFamily.Category;
-      var xxx = myFamily.Symbol.GetType();
-      var parameterSet = myFamily.Parameters;
-      return null;
+      speckleFamily.GenerateHash();
+      speckleFamily.ApplicationId = myFamily.UniqueId;
+
+      return speckleFamily;
+    }
+
+    public static List<Solid> GetAllSolidsFromGeometryElement( GeometryElement myElement, Transform transfrom )
+    {
+      if ( transfrom == null ) transfrom = Transform.Identity;
+
+      var solids = new List<Solid>();
+      foreach ( var item in myElement )
+      {
+        
+        if ( item is Solid ) { solids.Add( item as Solid ); continue; }
+        if ( item is GeometryInstance )
+        {
+          var ginst = item as GeometryInstance;
+          var geoelement = ginst.GetInstanceGeometry( transfrom );
+          geoelement = geoelement.GetTransformed( transfrom );
+          solids.AddRange( GetAllSolidsFromGeometryElement( geoelement, transfrom ) );
+        }
+      }
+      return solids;
+    }
+
+    public static (List<int>, List<double>) GetFaceVertexArrFromSolids( IEnumerable<Solid> solids )
+    {
+      var faceArr = new List<int>();
+      var vertexArr = new List<double>();
+      var prevVertCount = 0;
+
+      foreach ( var solid in solids )
+      {
+        foreach ( Face face in solid.Faces )
+        {
+          var m = face.Triangulate();
+          var points = m.Vertices;
+
+          foreach ( var point in m.Vertices )
+          {
+            vertexArr.AddRange( new double[ ] { point.X / Scale, point.Y / Scale, point.Z / Scale } );
+          }
+
+          for ( int i = 0; i < m.NumTriangles; i++ )
+          {
+            var triangle = m.get_Triangle( i );
+
+            faceArr.Add( 0 ); // TRIANGLE flag
+            faceArr.Add( ( int ) triangle.get_Index( 0 ) + prevVertCount );
+            faceArr.Add( ( int ) triangle.get_Index( 1 ) + prevVertCount );
+            faceArr.Add( ( int ) triangle.get_Index( 2 ) + prevVertCount );
+          }
+          prevVertCount += m.Vertices.Count;
+        }
+      }
+
+      return (faceArr, vertexArr);
     }
 
     /// <summary>
@@ -125,19 +168,18 @@ namespace SpeckleElementsRevit
       return myParamDict;
     }
 
-
     /// <summary>
     /// Tries to extract a mesh out of an element. It will artificially merge all element solids
     /// and their faces into one single mesh, possibly disjointed and not watertight.
     /// </summary>
     /// <param name="myElement"></param>
     /// <returns>A tuple of Faces and flattened Vertices.</returns>
-    public static (List<int>, List<double>) GetElementMesh( Element myElement )
+    public static (List<int>, List<double>) GetElementMesh( Element myElement, ViewDetailLevel viewDetailLevel = ViewDetailLevel.Medium, bool ComputeReferences = false )
     {
       var faceArr = new List<int>();
       var vertexArr = new List<double>();
 
-      var geometry = myElement.get_Geometry( new Options() { DetailLevel = ViewDetailLevel.Medium } );
+      var geometry = myElement.get_Geometry( new Options() { DetailLevel = viewDetailLevel, ComputeReferences = ComputeReferences } );
 
       int prevVertCount = 0;
 
@@ -171,6 +213,16 @@ namespace SpeckleElementsRevit
 
       return (faceArr, vertexArr);
     }
+
+    //public List<Solid> GetSolids(GeometryElement geometryElement)
+    //{
+    //  var mySolidList = new List<Solid>();
+    //  foreach ( var item in geometryElement )
+    //  {
+    //    if ( item is Solid ) mySolidList.Add( item as Solid );
+    //    else mySolidList.Add()
+    //  }
+    //}
 
     /// <summary>
     /// Returns, if found, the corresponding doc element and its corresponding local state object.
