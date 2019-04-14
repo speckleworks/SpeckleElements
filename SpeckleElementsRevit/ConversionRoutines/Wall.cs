@@ -129,14 +129,9 @@ namespace SpeckleElementsRevit
 
       var type = myWall.GetType();
 
-      speckleWall.parameters = new Dictionary<string, object>();
+      speckleWall.parameters = GetElementParams( myWall );
 
-      foreach ( Parameter p in myWall.Parameters )
-      {
-        var x = p.AsValueString();
-        var y = p.Definition.Name;
-        speckleWall.parameters[ y ] = x;
-      }
+      // Get the mesh of the element
       var opts = new Options(); opts.DetailLevel = ViewDetailLevel.Medium;
       var geo = myWall.get_Geometry( opts );
 
@@ -151,7 +146,6 @@ namespace SpeckleElementsRevit
 
         foreach ( Face f in mySolid.Faces )
         {
-          //var f = mySolid.Faces.get_Item( 0 );
           var m = f.Triangulate();
           var points = m.Vertices;
 
@@ -167,12 +161,10 @@ namespace SpeckleElementsRevit
             var B = triangle.get_Index( 1 );
             var C = triangle.get_Index( 2 );
 
-            faceArr.Add( 0 ); // TRIANGLE
+            faceArr.Add( 0 ); // TRIANGLE flag
             faceArr.Add( ( int ) A + prevVertCount );
             faceArr.Add( ( int ) B + prevVertCount );
             faceArr.Add( ( int ) C + prevVertCount );
-
-
           }
           prevVertCount += m.Vertices.Count;
         }

@@ -75,6 +75,34 @@ namespace SpeckleElementsRevit
     }
 
 
+    public static Dictionary<string,object> GetElementParams(Element myElement)
+    {
+      var myParamDict = new Dictionary<string, object>();
+      foreach ( Parameter p in myElement.Parameters )
+      {
+        switch ( p.StorageType )
+        {
+          case StorageType.Double:
+            myParamDict[ p.Definition.Name ] = p.AsDouble();
+            break;
+          case StorageType.Integer:
+            myParamDict[ p.Definition.Name ] = p.AsInteger();
+            break;
+          case StorageType.String:
+            myParamDict[ p.Definition.Name ] = p.AsString();
+            break;
+          case StorageType.ElementId:
+            // TODO: Properly get ref elemenet and serialise it in here.
+            myParamDict[ p.Definition.Name ] = p.AsValueString();
+            break;
+          case StorageType.None:
+            break;
+        }
+      }
+      return myParamDict;
+    }
+
+
 
     /// <summary>
     /// Returns, if found, the corresponding doc element and its corresponding local state object.
