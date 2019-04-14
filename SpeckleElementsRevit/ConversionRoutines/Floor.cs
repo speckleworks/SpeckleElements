@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Autodesk.Revit.DB;
+using SpeckleCore;
+using SpeckleCoreGeometryClasses;
 using SpeckleElements;
 
 namespace SpeckleElementsRevit
@@ -43,8 +45,56 @@ namespace SpeckleElementsRevit
     public static SpeckleElements.Floor ToSpeckle( this Autodesk.Revit.DB.Floor myFloor )
     {
       // TODO: convert floor to slaby slab
-      return null;
+      var speckleFloor = new SpeckleElements.Floor();
+
+      speckleFloor.parameters = GetElementParams( myFloor );
+      (speckleFloor.Faces, speckleFloor.Vertices) = GetElementMesh( myFloor );
+
+      var geo = myFloor.get_Geometry( new Options() { DetailLevel = ViewDetailLevel.Medium });
+
+      speckleFloor.baseCurve = getFloorOutline( myFloor );
+
+      speckleFloor.ApplicationId = myFloor.UniqueId;
+      speckleFloor.GenerateHash();
+
+      return speckleFloor;
     }
 
+    public static SpecklePolycurve getFloorOutline( Autodesk.Revit.DB.Floor myFloor )
+    {
+      var geometry = myFloor.get_Geometry( new Options() { DetailLevel = ViewDetailLevel.Medium });
+      var poly = new SpecklePolycurve();
+      poly.Segments = new List<SpeckleObject>();
+
+      foreach (Solid solid in geometry) // let's hope it's only one?
+      {
+        if ( solid == null ) continue;
+        var f = GetLowestFace( solid );
+        var crvLoops = f.GetEdgesAsCurveLoops();
+        foreach(var crvloop in crvLoops)
+        {
+          foreach(var curve in crvloop )
+          {
+            var c = curve as Curve;
+            if ( c == null ) continue;
+            poly.Segments.Add( SpeckleCore.Converter.Serialise( c ));
+          }
+        }
+      }
+      return poly;
+    }
+
+    public static Face GetLowestFace(Solid mySolid)
+    {
+      PlanarFace lowest = null;
+      foreach(var face in mySolid.Faces)
+      {
+        var planarFace = face as PlanarFace;
+        if ( planarFace == null ) continue;
+        if ( lowest == null ) lowest = planarFace;
+        if ( lowest.Origin.Z < planarFace.Origin.Z ) lowest = planarFace;
+      }
+      return lowest;
+    }
   }
 }

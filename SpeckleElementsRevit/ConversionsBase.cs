@@ -45,7 +45,7 @@ namespace SpeckleElementsRevit
     /// </summary>
     /// <param name="myElement"></param>
     /// <returns></returns>
-    public static SpeckleObject ToSpeckle(this Autodesk.Revit.DB.FamilyInstance myFamily )
+    public static SpeckleObject ToSpeckle( this Autodesk.Revit.DB.FamilyInstance myFamily )
     {
       // TODO
       //if(myElement is Autodesk.Revit.DB.Wall )
@@ -74,8 +74,12 @@ namespace SpeckleElementsRevit
       return null;
     }
 
-
-    public static Dictionary<string,object> GetElementParams(Element myElement)
+    /// <summary>
+    /// Gets a dictionary representation of all this element's parameters.
+    /// </summary>
+    /// <param name="myElement"></param>
+    /// <returns></returns>
+    public static Dictionary<string, object> GetElementParams( Element myElement )
     {
       var myParamDict = new Dictionary<string, object>();
       foreach ( Parameter p in myElement.Parameters )
@@ -99,10 +103,74 @@ namespace SpeckleElementsRevit
             break;
         }
       }
+
+      // santise keys (TO TEST)
+      // TODO: Actually test this sanitisation routine
+      //foreach ( var kvp in myParamDict )
+      //{
+      //  if ( kvp.Key == "Type" || kvp.Key == "type" )
+      //  {
+      //    var value = kvp.Value;
+      //    myParamDict.Remove( kvp.Key );
+      //    myParamDict.Add( "revit-type", value );
+      //  }
+      //  if ( kvp.Key.Contains( '.' ) )
+      //  {
+      //    var value = kvp.Value;
+      //    myParamDict.Remove( kvp.Key );
+      //    myParamDict.Add( kvp.Key.Replace( '.', ':' ), value );
+      //  }
+      //}
+
       return myParamDict;
     }
 
 
+    /// <summary>
+    /// Tries to extract a mesh out of an element. It will artificially merge all element solids
+    /// and their faces into one single mesh, possibly disjointed and not watertight.
+    /// </summary>
+    /// <param name="myElement"></param>
+    /// <returns>A tuple of Faces and flattened Vertices.</returns>
+    public static (List<int>, List<double>) GetElementMesh( Element myElement )
+    {
+      var faceArr = new List<int>();
+      var vertexArr = new List<double>();
+
+      var geometry = myElement.get_Geometry( new Options() { DetailLevel = ViewDetailLevel.Medium } );
+
+      int prevVertCount = 0;
+
+      foreach ( var item in geometry )
+      {
+        var mySolid = item as Solid;
+        if ( mySolid == null ) continue;
+
+        foreach ( Face f in mySolid.Faces )
+        {
+          var m = f.Triangulate();
+          var points = m.Vertices;
+
+          foreach ( var point in m.Vertices )
+          {
+            vertexArr.AddRange( new double[ ] { point.X / Scale, point.Y / Scale, point.Z / Scale } );
+          }
+
+          for ( int i = 0; i < m.NumTriangles; i++ )
+          {
+            var triangle = m.get_Triangle( i );
+
+            faceArr.Add( 0 ); // TRIANGLE flag
+            faceArr.Add( ( int ) triangle.get_Index( 0 ) + prevVertCount );
+            faceArr.Add( ( int ) triangle.get_Index( 1 ) + prevVertCount );
+            faceArr.Add( ( int ) triangle.get_Index( 2 ) + prevVertCount );
+          }
+          prevVertCount += m.Vertices.Count;
+        }
+      }
+
+      return (faceArr, vertexArr);
+    }
 
     /// <summary>
     /// Returns, if found, the corresponding doc element and its corresponding local state object.
@@ -114,7 +182,7 @@ namespace SpeckleElementsRevit
     {
       foreach ( var stream in Initialiser.LocalRevitState )
       {
-        var found = stream.Objects.FirstOrDefault( s => s.ApplicationId == ApplicationId && (string) s.Properties["__type"] == ObjectType );
+        var found = stream.Objects.FirstOrDefault( s => s.ApplicationId == ApplicationId && ( string ) s.Properties[ "__type" ] == ObjectType );
         if ( found != null )
           return (Doc.GetElement( found.Properties[ "revitUniqueId" ] as string ), ( SpeckleObject ) found);
       }
@@ -125,7 +193,7 @@ namespace SpeckleElementsRevit
     {
       var allStateObjects = ( from p in Initialiser.LocalRevitState.SelectMany( s => s.Objects ) select p ).ToList();
 
-      var found = allStateObjects.Where( obj => obj.ApplicationId == ApplicationId && (string) obj.Properties[ "__type" ] == ObjectType );
+      var found = allStateObjects.Where( obj => obj.ApplicationId == ApplicationId && ( string ) obj.Properties[ "__type" ] == ObjectType );
       var revitObjs = found.Select( obj => Doc.GetElement( obj.Properties[ "revitUniqueId" ] as string ) );
 
       return (revitObjs.ToList(), found.ToList());

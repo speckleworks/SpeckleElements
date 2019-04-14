@@ -11,7 +11,7 @@ namespace SpeckleElementsRevit
 {
   public static partial class Conversions
   {
-
+    // TODO: A polycurve spawning multiple walls is not yet handled properly with diffing, etc.
     public static List<Autodesk.Revit.DB.Wall> ToNative( this SpeckleElements.Wall myWall )
     {
       var (docObjs, stateObjs) = GetExistingElementsByApplicationId( myWall.ApplicationId, myWall.Type );
@@ -127,52 +127,10 @@ namespace SpeckleElementsRevit
       var speckleWall = new SpeckleElements.Wall();
       speckleWall.baseCurve = SpeckleCore.Converter.Serialise( ( ( LocationCurve ) myWall.Location ).Curve );
 
-      var type = myWall.GetType();
-
       speckleWall.parameters = GetElementParams( myWall );
+      (speckleWall.Faces, speckleWall.Vertices) = GetElementMesh( myWall );
 
-      // Get the mesh of the element
-      var opts = new Options(); opts.DetailLevel = ViewDetailLevel.Medium;
-      var geo = myWall.get_Geometry( opts );
-
-      foreach ( Solid mySolid in geo )
-      {
-        if ( mySolid == null ) continue;
-
-        var faceArr = new List<int>();
-        var vertexArr = new List<double>();
-
-        int prevVertCount = 0;
-
-        foreach ( Face f in mySolid.Faces )
-        {
-          var m = f.Triangulate();
-          var points = m.Vertices;
-
-          foreach ( var point in m.Vertices )
-          {
-            vertexArr.AddRange( new double[ ] { point.X / Scale, point.Y / Scale, point.Z / Scale } );
-          }
-
-          for ( int i = 0; i < m.NumTriangles; i++ )
-          {
-            var triangle = m.get_Triangle( i );
-            var A = triangle.get_Index( 0 );
-            var B = triangle.get_Index( 1 );
-            var C = triangle.get_Index( 2 );
-
-            faceArr.Add( 0 ); // TRIANGLE flag
-            faceArr.Add( ( int ) A + prevVertCount );
-            faceArr.Add( ( int ) B + prevVertCount );
-            faceArr.Add( ( int ) C + prevVertCount );
-          }
-          prevVertCount += m.Vertices.Count;
-        }
-
-        speckleWall.Faces = faceArr;
-        speckleWall.Vertices = vertexArr;
-      }
-
+      speckleWall.ApplicationId = myWall.UniqueId;
       speckleWall.GenerateHash();
 
       return speckleWall;
