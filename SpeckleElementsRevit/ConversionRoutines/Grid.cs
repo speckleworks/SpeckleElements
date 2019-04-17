@@ -71,11 +71,15 @@ namespace SpeckleElementsRevit
     {
       var start = myGrid.Curve.GetEndPoint( 0 );
       var end = myGrid.Curve.GetEndPoint( 1 );
+
       var myGridLine = new GridLine()
       {
         ApplicationId = myGrid.UniqueId,
-        Value = new List<double>() { start.X, start.Y, start.Z, end.X, end.Y, end.Z }
+        Value = new List<double>() { start.X / Scale, start.Y / Scale, start.Z / Scale, end.X / Scale, end.Y / Scale, end.Z / Scale },
+        parameters = GetElementParams( myGrid )
       };
+
+      myGridLine.ApplicationId = myGrid.UniqueId;
       myGridLine.GenerateHash();
       return myGridLine;
     }

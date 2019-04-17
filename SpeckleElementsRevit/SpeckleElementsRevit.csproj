@@ -63,6 +63,7 @@
     <Compile Include="ConversionRoutines\Wall.cs" />
     <Compile Include="ConversionsBase.cs" />
     <Compile Include="ConversionRoutines\Grid.cs" />
+    <Compile Include="MeshingUtils.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

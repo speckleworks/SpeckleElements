@@ -61,7 +61,14 @@ namespace SpeckleElementsRevit
     public static SpeckleElements.Level ToSpeckle( this Autodesk.Revit.DB.Level myLevel )
     {
       // TODO
-      return null;
+      var speckleLevel = new SpeckleElements.Level();
+      speckleLevel.elevation = myLevel.Elevation / Scale; // UnitUtils.ConvertFromInternalUnits(myLevel.Elevation, DisplayUnitType.Meters)
+      speckleLevel.Name = myLevel.Name;
+      speckleLevel.parameters = GetElementParams( myLevel );
+
+      speckleLevel.ApplicationId = myLevel.UniqueId;
+      speckleLevel.GenerateHash();
+      return speckleLevel;
     }
 
     private static Autodesk.Revit.DB.Level ExistingLevelByName( string name )

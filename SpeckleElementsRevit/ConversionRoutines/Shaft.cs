@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Autodesk.Revit.DB;
+using SpeckleCore;
+using SpeckleCoreGeometryClasses;
 using SpeckleElements;
 
 namespace SpeckleElementsRevit
@@ -31,9 +33,22 @@ namespace SpeckleElementsRevit
 
     // NOTE: if we will include more element based openings, we will need to figure out how to split this method, 
     // or create a generic opening class
+    // TODO: actually test this
     public static Shaft ToSpeckle( this Opening myShaft )
     {
-      // TODO: Shaft to speckle
+      var spkShaft = new SpeckleElements.Shaft();      
+      var poly = new SpecklePolycurve();
+      poly.Segments = new List<SpeckleObject>();
+
+      foreach ( Curve curve in myShaft.BoundaryCurves )
+      {
+        if ( curve == null ) continue;
+        poly.Segments.Add( SpeckleCore.Converter.Serialise( curve ) );
+      }
+
+      spkShaft.baseCurve = poly;
+      spkShaft.ApplicationId = myShaft.UniqueId;
+      spkShaft.GenerateHash();
       return null;
     }
   }

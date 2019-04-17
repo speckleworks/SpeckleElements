@@ -48,7 +48,7 @@ namespace SpeckleElementsRevit
       var speckleFloor = new SpeckleElements.Floor();
 
       speckleFloor.parameters = GetElementParams( myFloor );
-      (speckleFloor.Faces, speckleFloor.Vertices) = GetElementMesh( myFloor );
+      (speckleFloor.Faces, speckleFloor.Vertices) = GetFaceVertexArrayFromElement( myFloor, new Options() { DetailLevel = ViewDetailLevel.Fine, ComputeReferences = false } );
 
       var geo = myFloor.get_Geometry( new Options() { DetailLevel = ViewDetailLevel.Medium });
 

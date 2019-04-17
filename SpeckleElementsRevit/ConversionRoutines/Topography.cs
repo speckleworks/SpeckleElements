@@ -46,7 +46,14 @@ namespace SpeckleElementsRevit
     public static Topography ToSpeckle( this TopographySurface mySurface )
     {
       // TODO: Topograhy to speckle
-      return null;
+      var speckleTopo = new Topography();
+      (speckleTopo.Faces, speckleTopo.Vertices) = GetFaceVertexArrayFromElement( mySurface, new Options() { DetailLevel = ViewDetailLevel.Fine, ComputeReferences = false } );
+
+      speckleTopo.parameters = GetElementParams( mySurface );
+      speckleTopo.ApplicationId = mySurface.UniqueId;
+
+      speckleTopo.GenerateHash();
+      return speckleTopo;
     }
   }
 }

@@ -38,87 +38,10 @@ namespace SpeckleElementsRevit
     static double Scale { get => Initialiser.RevitScale; }
     static Document Doc { get => Initialiser.RevitApp.ActiveUIDocument.Document; }
 
-
-    /// <summary>
-    /// Entry point for all revit conversions, as we can't rely on native casting because of
-    /// the confusion with FamilyInstances (columns, beams, etc.) vs 1st class elements such as Walls, Floors, etc.
-    /// </summary>
-    /// <param name="myElement"></param>
-    /// <returns></returns>
-    public static SpeckleObject ToSpeckle( this Autodesk.Revit.DB.FamilyInstance myFamily )
-    {
-      var speckleFamily = new SpeckleElements.FamilyInstance();
-
-      speckleFamily.parameters = GetElementParams( myFamily );
-      (speckleFamily.Faces, speckleFamily.Vertices) = GetElementMesh( myFamily, ViewDetailLevel.Fine, true );
-
-      var myGeom = myFamily.get_Geometry( new Options() { DetailLevel = ViewDetailLevel.Fine, ComputeReferences = true } );
-      //myGeom = myGeom.GetTransformed( myFamily.GetTransform() );
-      var allSolids = GetAllSolidsFromGeometryElement( myGeom, Transform.Identity );
-      (speckleFamily.Faces, speckleFamily.Vertices) = GetFaceVertexArrFromSolids( allSolids );
-
-      speckleFamily.GenerateHash();
-      speckleFamily.ApplicationId = myFamily.UniqueId;
-
-      return speckleFamily;
-    }
-
-    public static List<Solid> GetAllSolidsFromGeometryElement( GeometryElement myElement, Transform transfrom )
-    {
-      if ( transfrom == null ) transfrom = Transform.Identity;
-
-      var solids = new List<Solid>();
-      foreach ( var item in myElement )
-      {
-        
-        if ( item is Solid ) { solids.Add( item as Solid ); continue; }
-        if ( item is GeometryInstance )
-        {
-          var ginst = item as GeometryInstance;
-          var geoelement = ginst.GetInstanceGeometry( transfrom );
-          geoelement = geoelement.GetTransformed( transfrom );
-          solids.AddRange( GetAllSolidsFromGeometryElement( geoelement, transfrom ) );
-        }
-      }
-      return solids;
-    }
-
-    public static (List<int>, List<double>) GetFaceVertexArrFromSolids( IEnumerable<Solid> solids )
-    {
-      var faceArr = new List<int>();
-      var vertexArr = new List<double>();
-      var prevVertCount = 0;
-
-      foreach ( var solid in solids )
-      {
-        foreach ( Face face in solid.Faces )
-        {
-          var m = face.Triangulate();
-          var points = m.Vertices;
-
-          foreach ( var point in m.Vertices )
-          {
-            vertexArr.AddRange( new double[ ] { point.X / Scale, point.Y / Scale, point.Z / Scale } );
-          }
-
-          for ( int i = 0; i < m.NumTriangles; i++ )
-          {
-            var triangle = m.get_Triangle( i );
-
-            faceArr.Add( 0 ); // TRIANGLE flag
-            faceArr.Add( ( int ) triangle.get_Index( 0 ) + prevVertCount );
-            faceArr.Add( ( int ) triangle.get_Index( 1 ) + prevVertCount );
-            faceArr.Add( ( int ) triangle.get_Index( 2 ) + prevVertCount );
-          }
-          prevVertCount += m.Vertices.Count;
-        }
-      }
-
-      return (faceArr, vertexArr);
-    }
-
     /// <summary>
     /// Gets a dictionary representation of all this element's parameters.
+    /// TODO: manage (somehow!) units; essentially set them back to whatever the current document
+    /// setting is (meters, millimiters, etc). 
     /// </summary>
     /// <param name="myElement"></param>
     /// <returns></returns>
@@ -147,82 +70,11 @@ namespace SpeckleElementsRevit
         }
       }
 
-      // santise keys (TO TEST)
-      // TODO: Actually test this sanitisation routine
-      //foreach ( var kvp in myParamDict )
-      //{
-      //  if ( kvp.Key == "Type" || kvp.Key == "type" )
-      //  {
-      //    var value = kvp.Value;
-      //    myParamDict.Remove( kvp.Key );
-      //    myParamDict.Add( "revit-type", value );
-      //  }
-      //  if ( kvp.Key.Contains( '.' ) )
-      //  {
-      //    var value = kvp.Value;
-      //    myParamDict.Remove( kvp.Key );
-      //    myParamDict.Add( kvp.Key.Replace( '.', ':' ), value );
-      //  }
-      //}
+      // TODO: Sanitise keys
+      // ...
 
       return myParamDict;
     }
-
-    /// <summary>
-    /// Tries to extract a mesh out of an element. It will artificially merge all element solids
-    /// and their faces into one single mesh, possibly disjointed and not watertight.
-    /// </summary>
-    /// <param name="myElement"></param>
-    /// <returns>A tuple of Faces and flattened Vertices.</returns>
-    public static (List<int>, List<double>) GetElementMesh( Element myElement, ViewDetailLevel viewDetailLevel = ViewDetailLevel.Medium, bool ComputeReferences = false )
-    {
-      var faceArr = new List<int>();
-      var vertexArr = new List<double>();
-
-      var geometry = myElement.get_Geometry( new Options() { DetailLevel = viewDetailLevel, ComputeReferences = ComputeReferences } );
-
-      int prevVertCount = 0;
-
-      foreach ( var item in geometry )
-      {
-        var mySolid = item as Solid;
-        if ( mySolid == null ) continue;
-
-        foreach ( Face f in mySolid.Faces )
-        {
-          var m = f.Triangulate();
-          var points = m.Vertices;
-
-          foreach ( var point in m.Vertices )
-          {
-            vertexArr.AddRange( new double[ ] { point.X / Scale, point.Y / Scale, point.Z / Scale } );
-          }
-
-          for ( int i = 0; i < m.NumTriangles; i++ )
-          {
-            var triangle = m.get_Triangle( i );
-
-            faceArr.Add( 0 ); // TRIANGLE flag
-            faceArr.Add( ( int ) triangle.get_Index( 0 ) + prevVertCount );
-            faceArr.Add( ( int ) triangle.get_Index( 1 ) + prevVertCount );
-            faceArr.Add( ( int ) triangle.get_Index( 2 ) + prevVertCount );
-          }
-          prevVertCount += m.Vertices.Count;
-        }
-      }
-
-      return (faceArr, vertexArr);
-    }
-
-    //public List<Solid> GetSolids(GeometryElement geometryElement)
-    //{
-    //  var mySolidList = new List<Solid>();
-    //  foreach ( var item in geometryElement )
-    //  {
-    //    if ( item is Solid ) mySolidList.Add( item as Solid );
-    //    else mySolidList.Add()
-    //  }
-    //}
 
     /// <summary>
     /// Returns, if found, the corresponding doc element and its corresponding local state object.

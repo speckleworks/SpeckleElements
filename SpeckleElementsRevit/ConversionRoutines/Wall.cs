@@ -128,7 +128,8 @@ namespace SpeckleElementsRevit
       speckleWall.baseCurve = SpeckleCore.Converter.Serialise( ( ( LocationCurve ) myWall.Location ).Curve );
 
       speckleWall.parameters = GetElementParams( myWall );
-      (speckleWall.Faces, speckleWall.Vertices) = GetElementMesh( myWall );
+      
+      (speckleWall.Faces, speckleWall.Vertices) = GetFaceVertexArrayFromElement( myWall, new Options() { DetailLevel = ViewDetailLevel.Fine, ComputeReferences = false } );
 
       speckleWall.ApplicationId = myWall.UniqueId;
       speckleWall.GenerateHash();
