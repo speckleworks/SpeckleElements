@@ -45,9 +45,7 @@ namespace SpeckleElementsRevit
 
     public static Topography ToSpeckle( this TopographySurface mySurface )
     {
-      // TODO: Topograhy to speckle
       var speckleTopo = new Topography();
-      //(speckleTopo.Faces, speckleTopo.Vertices) = GetFaceVertexArrayFromElement( mySurface, new Options() { DetailLevel = ViewDetailLevel.Fine, ComputeReferences = false } );
 
       speckleTopo.Vertices = new List<double>();
       speckleTopo.Faces = new List<int>();
@@ -71,7 +69,7 @@ namespace SpeckleElementsRevit
             var B = triangle.get_Index( 1 );
             var C = triangle.get_Index( 2 );
             speckleTopo.Faces.Add( 0 );
-            speckleTopo.Faces.AddRange( new int[ ] { (int) A, (int) B, (int) C } );
+            speckleTopo.Faces.AddRange( new int[ ] { ( int ) A, ( int ) B, ( int ) C } );
           }
         }
       }
