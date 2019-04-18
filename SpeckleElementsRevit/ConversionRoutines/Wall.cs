@@ -128,8 +128,25 @@ namespace SpeckleElementsRevit
       speckleWall.baseCurve = SpeckleCore.Converter.Serialise( ( ( LocationCurve ) myWall.Location ).Curve );
 
       speckleWall.parameters = GetElementParams( myWall );
-      
-      (speckleWall.Faces, speckleWall.Vertices) = GetFaceVertexArrayFromElement( myWall, new Options() { DetailLevel = ViewDetailLevel.Fine, ComputeReferences = false } );
+
+      //Autodesk.Revit.DB.
+      var grid = myWall.CurtainGrid;
+
+      if ( grid != null )
+      {
+        var mySolids = new List<Solid>();
+        foreach(ElementId panelId in grid.GetPanelIds() )
+        {
+          mySolids.AddRange( GetElementSolids( Doc.GetElement( panelId ) ) );
+        }
+        foreach(ElementId mullionId in grid.GetMullionIds())
+        {
+          mySolids.AddRange( GetElementSolids( Doc.GetElement( mullionId ) ) );
+        }
+        (speckleWall.Faces, speckleWall.Vertices) = GetFaceVertexArrFromSolids( mySolids );
+      }
+      else
+        (speckleWall.Faces, speckleWall.Vertices) = GetFaceVertexArrayFromElement( myWall, new Options() { DetailLevel = ViewDetailLevel.Fine, ComputeReferences = false } );
 
       speckleWall.ApplicationId = myWall.UniqueId;
       speckleWall.GenerateHash();

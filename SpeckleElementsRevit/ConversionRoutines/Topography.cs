@@ -16,12 +16,12 @@ namespace SpeckleElementsRevit
       var (docObj, stateObj) = GetExistingElementByApplicationId( mySurface.ApplicationId, mySurface.Type );
 
       var pts = new List<XYZ>();
-      for( int i = 0; i < mySurface.Vertices.Count; i += 3 )
+      for ( int i = 0; i < mySurface.Vertices.Count; i += 3 )
       {
-        pts.Add( new XYZ( mySurface.Vertices[ i ]*Scale, mySurface.Vertices[ i + 1 ]*Scale, mySurface.Vertices[ i + 2 ]*Scale ) );
+        pts.Add( new XYZ( mySurface.Vertices[ i ] * Scale, mySurface.Vertices[ i + 1 ] * Scale, mySurface.Vertices[ i + 2 ] * Scale ) );
       }
 
-      if( docObj != null )
+      if ( docObj != null )
       {
         Doc.Delete( docObj.Id );
 
@@ -47,7 +47,34 @@ namespace SpeckleElementsRevit
     {
       // TODO: Topograhy to speckle
       var speckleTopo = new Topography();
-      (speckleTopo.Faces, speckleTopo.Vertices) = GetFaceVertexArrayFromElement( mySurface, new Options() { DetailLevel = ViewDetailLevel.Fine, ComputeReferences = false } );
+      //(speckleTopo.Faces, speckleTopo.Vertices) = GetFaceVertexArrayFromElement( mySurface, new Options() { DetailLevel = ViewDetailLevel.Fine, ComputeReferences = false } );
+
+      speckleTopo.Vertices = new List<double>();
+      speckleTopo.Faces = new List<int>();
+
+      var geom = mySurface.get_Geometry( new Options() );
+      foreach ( var element in geom )
+      {
+        if ( element is Mesh )
+        {
+          var mesh = ( Mesh ) element;
+
+          foreach ( var vert in mesh.Vertices )
+          {
+            speckleTopo.Vertices.AddRange( new double[ ] { vert.X / Scale, vert.Y / Scale, vert.Z / Scale } );
+          }
+
+          for ( int i = 0; i < mesh.NumTriangles; i++ )
+          {
+            var triangle = mesh.get_Triangle( i );
+            var A = triangle.get_Index( 0 );
+            var B = triangle.get_Index( 1 );
+            var C = triangle.get_Index( 2 );
+            speckleTopo.Faces.Add( 0 );
+            speckleTopo.Faces.AddRange( new int[ ] { (int) A, (int) B, (int) C } );
+          }
+        }
+      }
 
       speckleTopo.parameters = GetElementParams( mySurface );
       speckleTopo.ApplicationId = mySurface.UniqueId;

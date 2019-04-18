@@ -420,4 +420,19 @@ namespace SpeckleElements
     public FamilyInstance( ) { }
   }
 
+  [Serializable]
+  public partial class GenericElement : SpeckleMesh, ISpeckleElement
+  {
+    public override string Type { get => base.Type + "/" + "GenericElement"; }
+
+    [JsonIgnore]
+    public Dictionary<string, object> parameters
+    {
+      get => ( Properties != null && Properties.ContainsKey( "parameters" ) ) ? ( Properties[ "parameters" ] as Dictionary<string, object> ) : null;
+      set => Properties[ "parameters" ] = value;
+    }
+
+    public GenericElement( ) { }
+  }
+
 }

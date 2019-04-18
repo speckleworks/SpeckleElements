@@ -38,6 +38,20 @@ namespace SpeckleElementsRevit
     static double Scale { get => Initialiser.RevitScale; }
     static Document Doc { get => Initialiser.RevitApp.ActiveUIDocument.Document; }
 
+
+    public static GenericElement ToSpeckle(this Element myElement)
+    {
+      var generic = new GenericElement();
+
+      (generic.Faces, generic.Vertices) = GetFaceVertexArrayFromElement( myElement );
+
+      generic.parameters = GetElementParams( myElement );
+
+      generic.ApplicationId = myElement.UniqueId;
+      generic.GenerateHash();
+      return generic;
+    }
+
     /// <summary>
     /// Gets a dictionary representation of all this element's parameters.
     /// TODO: manage (somehow!) units; essentially set them back to whatever the current document
