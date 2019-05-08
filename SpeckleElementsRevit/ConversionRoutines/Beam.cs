@@ -56,5 +56,24 @@ namespace SpeckleElementsRevit
 
       return familyInstance;
     }
+
+    public static Beam BeamToSpeckle( Autodesk.Revit.DB.FamilyInstance myFamily )
+    {
+      var myBeam = new Beam();
+      var allSolids = GetElementSolids( myFamily, opt: new Options() { DetailLevel = ViewDetailLevel.Fine, ComputeReferences = true } );
+
+      (myBeam.Faces, myBeam.Vertices) = GetFaceVertexArrFromSolids( allSolids );
+      var baseCurve = myFamily.Location as LocationCurve;
+      myBeam.baseLine = (SpeckleCoreGeometryClasses.SpeckleLine) SpeckleCore.Converter.Serialise( baseCurve.Curve );
+
+      myBeam.beamFamily = myFamily.Symbol.FamilyName;
+      myBeam.beamType = Doc.GetElement( myFamily.GetTypeId() ).Name;
+
+      myBeam.parameters = GetElementParams( myFamily );
+
+      myBeam.GenerateHash();
+      myBeam.ApplicationId = myFamily.UniqueId;
+      return myBeam;
+    }
   }
 }

@@ -63,5 +63,24 @@ namespace SpeckleElementsRevit
       return familyInstance;
     }
 
+    public static Column ColumnToSpeckle( Autodesk.Revit.DB.FamilyInstance myFamily )
+    {
+      var myColumn = new Column();
+      var allSolids = GetElementSolids( myFamily, opt: new Options() { DetailLevel = ViewDetailLevel.Fine, ComputeReferences = true } );
+
+      (myColumn.Faces, myColumn.Vertices) = GetFaceVertexArrFromSolids( allSolids );
+      
+      myColumn.baseLine = (SpeckleCoreGeometryClasses.SpeckleLine) SpeckleCore.Converter.Serialise(  myFamily.GetAnalyticalModel().GetCurve() );
+
+      myColumn.columnFamily = myFamily.Symbol.FamilyName;
+      myColumn.columnType = Doc.GetElement( myFamily.GetTypeId()).Name;
+
+      myColumn.parameters = GetElementParams( myFamily );
+
+      myColumn.GenerateHash();
+      myColumn.ApplicationId = myFamily.UniqueId;
+
+      return myColumn;
+    }
   }
 }

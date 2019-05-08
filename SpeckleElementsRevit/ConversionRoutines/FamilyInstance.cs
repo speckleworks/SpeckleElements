@@ -21,6 +21,19 @@ namespace SpeckleElementsRevit
     /// <returns></returns>
     public static SpeckleObject ToSpeckle( this Autodesk.Revit.DB.FamilyInstance myFamily )
     {
+      // TODO: check if this family is a column (BuiltInCategory.OST_StructuralColumns)
+      // or a beam (BuiltInCategory.OST_StructuralFraming or BuiltInCategory.OST_BeamAnalytical?)
+
+      if( myFamily.Category.Id.IntegerValue == (int) BuiltInCategory.OST_StructuralFraming )
+      {
+        return BeamToSpeckle( myFamily );
+      }
+
+      if(myFamily.Category.Id.IntegerValue == (int) BuiltInCategory.OST_StructuralColumns )
+      {
+        return ColumnToSpeckle( myFamily );
+      }
+
       var speckleFamily = new SpeckleElements.FamilyInstance();
 
       speckleFamily.parameters = GetElementParams( myFamily );
@@ -28,27 +41,12 @@ namespace SpeckleElementsRevit
       var allSolids = GetElementSolids( myFamily, opt: new Options() { DetailLevel = ViewDetailLevel.Fine, ComputeReferences = true } );
 
       var famSubElements = GetFamSubElements( myFamily );
-      foreach(var sb in famSubElements)
+      foreach( var sb in famSubElements )
       {
         allSolids.AddRange( GetElementSolids( sb ) );
       }
 
       (speckleFamily.Faces, speckleFamily.Vertices) = GetFaceVertexArrFromSolids( allSolids );
-
-      // TODO: Get all subfamilies and sub-sub-sub families
-      // get their frigging solids
-      // mesh the fuckers
-
-
-      //var test = myFamily.GetSubComponentIds();
-      //var test2 = myFamily.GetSubelements();
-      //var test3 = 1;
-
-      //var test4 = Doc.GetElement( test.ToList()[0] );
-      //var test234 = 1;
-
-      //var allsolids2 = GetElementSolids( test4, opt: new Options() { DetailLevel = ViewDetailLevel.Fine, ComputeReferences = true } );
-      //(speckleFamily.Faces, speckleFamily.Vertices) = GetFaceVertexArrFromSolids( allsolids2 );
 
       speckleFamily.GenerateHash();
       speckleFamily.ApplicationId = myFamily.UniqueId;
@@ -59,11 +57,11 @@ namespace SpeckleElementsRevit
     public static List<Element> GetFamSubElements( Autodesk.Revit.DB.FamilyInstance myFamily )
     {
       var mySubElements = new List<Element>();
-      foreach ( var id in myFamily.GetSubComponentIds() )
+      foreach( var id in myFamily.GetSubComponentIds() )
       {
         var element = Doc.GetElement( id );
         mySubElements.Add( element );
-        if(element is Autodesk.Revit.DB.FamilyInstance )
+        if( element is Autodesk.Revit.DB.FamilyInstance )
         {
           mySubElements.AddRange( GetFamSubElements( element as Autodesk.Revit.DB.FamilyInstance ) );
         }
