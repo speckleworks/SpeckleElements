@@ -435,4 +435,68 @@ namespace SpeckleElements
     public GenericElement( ) { }
   }
 
+  [Serializable]
+  public partial class Room: SpeckleMesh, ISpeckleElement
+  {
+    public override string Type { get => base.Type + "/" + "Room"; }
+
+    [JsonIgnore]
+    public SpeckleObject baseCurve
+    {
+      get => (Properties != null && Properties.ContainsKey( "baseCurve" )) ? ((SpeckleObject) Properties[ "baseCurve" ]) : null;
+      set => Properties[ "baseCurve" ] = value;
+    }
+
+    [JsonIgnore]
+    public SpecklePoint roomLocation
+    {
+      get => (Properties != null && Properties.ContainsKey( "roomLocation" )) ? ((SpecklePoint) Properties[ "roomLocation" ]) : null;
+      set => Properties[ "roomLocation" ] = value;
+    }
+
+    [JsonIgnore]
+    public string roomName
+    {
+      get => (Properties != null && Properties.ContainsKey( "roomName" )) ? ((string) Properties[ "roomName" ]) : null;
+      set => Properties[ "roomName" ] = value;
+    }
+    
+    // WTF Moment: room number is a string property in revit. LOLOLOL
+    [JsonIgnore]
+    public string roomNumber
+    {
+      get => (Properties != null && Properties.ContainsKey( "roomNumber" )) ? ((string) Properties[ "roomNumber" ]) : null;
+      set => Properties[ "roomNumber" ] = value;
+    }
+
+    [JsonIgnore]
+    public double roomArea
+    {
+      get => (Properties != null && Properties.ContainsKey( "roomArea" )) ? ((double) Properties[ "roomArea" ]) : 0;
+      set => Properties[ "roomArea" ] = value;
+    }
+
+    [JsonIgnore]
+    public double roomVolume
+    {
+      get => (Properties != null && Properties.ContainsKey( "roomVolume" )) ? ((double) Properties[ "roomVolume" ]) : 0;
+      set => Properties[ "roomVolume" ] = value;
+    }
+
+
+    // Number
+    // Name
+    // Center Point
+    // Area
+    // 
+
+    [JsonIgnore]
+    public Dictionary<string, object> parameters
+    {
+      get => (Properties != null && Properties.ContainsKey( "parameters" )) ? (Properties[ "parameters" ] as Dictionary<string, object>) : null;
+      set => Properties[ "parameters" ] = value;
+    }
+
+    public Room() { }
+  }
 }
