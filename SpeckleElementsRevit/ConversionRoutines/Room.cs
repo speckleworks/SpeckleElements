@@ -1,4 +1,5 @@
-﻿using SpeckleCoreGeometryClasses;
+﻿using Autodesk.Revit.DB;
+using SpeckleCoreGeometryClasses;
 using SpeckleElements;
 using System;
 using System.Collections.Generic;
@@ -16,22 +17,31 @@ namespace SpeckleElementsRevit
       var speckleRoom = new Room();
 
       speckleRoom.roomName = myRoom.get_Parameter(Autodesk.Revit.DB.BuiltInParameter.ROOM_NAME).AsString();
-      speckleRoom.roomName = myRoom.Number;
+      speckleRoom.roomNumber = myRoom.Number;
 
-      speckleRoom.roomLocation = (SpecklePoint) SpeckleCore.Converter.Serialise( myRoom.Location );
+
+      var locPt = ((Autodesk.Revit.DB.LocationPoint) myRoom.Location).Point;
+      speckleRoom.roomLocation = new SpecklePoint( locPt.X / Scale, locPt.Y / Scale, locPt.Z / Scale );
 
       (speckleRoom.Faces, speckleRoom.Vertices) = GetFaceVertexArrayFromElement( myRoom );
 
+      // TODO: Get and set the boundary curve
       var seg = myRoom.GetBoundarySegments( new Autodesk.Revit.DB.SpatialElementBoundaryOptions() );
 
-      //var shell = myRoom.ClosedShell;
+      var myPolyCurve = new SpecklePolycurve() { Segments = new List<SpeckleCore.SpeckleObject>() };
+      foreach(BoundarySegment segment in seg[0])
+      {
+        var crv = segment.GetCurve();
+        var converted = SpeckleCore.Converter.Serialise( crv );
+        myPolyCurve.Segments.Add( converted );
+      }
+      speckleRoom.baseCurve = myPolyCurve;
       speckleRoom.parameters = GetElementParams( myRoom );
 
       speckleRoom.ApplicationId = myRoom.UniqueId;
       speckleRoom.GenerateHash();
 
       return speckleRoom;
-      return null;
     }
 
   }

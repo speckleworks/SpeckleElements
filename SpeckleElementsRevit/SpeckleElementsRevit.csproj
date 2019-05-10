@@ -58,6 +58,7 @@
     <Compile Include="ConversionRoutines\FamilyInstance.cs" />
     <Compile Include="ConversionRoutines\Level.cs" />
     <Compile Include="ConversionRoutines\Floor.cs" />
+    <Compile Include="ConversionRoutines\Room.cs" />
     <Compile Include="ConversionRoutines\Shaft.cs" />
     <Compile Include="ConversionRoutines\Topography.cs" />
     <Compile Include="ConversionRoutines\Wall.cs" />
