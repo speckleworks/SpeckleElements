@@ -118,6 +118,8 @@ namespace SpeckleElementsRevit
       var vertexArr = new List<double>();
       var prevVertCount = 0;
 
+      if( solids == null ) return (faceArr, vertexArr);
+
       foreach ( var solid in solids )
       {
         foreach ( Face face in solid.Faces )
