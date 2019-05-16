@@ -18,16 +18,16 @@ namespace SpeckleElementsRevit
       var (docObj, stateObj) = GetExistingElementByApplicationId( myGridLine.ApplicationId, myGridLine.Type );
 
       // If no doc object, means we need to create it!
-      if ( docObj == null )
+      if( docObj == null )
       {
-        var res = Grid.Create( Doc, Line.CreateBound( new XYZ( myGridLine.Value[ 0 ] * Scale, myGridLine.Value[ 1 ] * Scale, myGridLine.Value[ 2 ] * Scale ), new XYZ( myGridLine.Value[ 3 ] * Scale, myGridLine.Value[ 4 ] * Scale, myGridLine.Value[ 5 ] * Scale ) ) );
+        var res = Grid.Create( Doc, Line.CreateBound( new XYZ( myGridLine.Value[ 0 ] * Scale, myGridLine.Value[ 1 ] * Scale, 0 ), new XYZ( myGridLine.Value[ 3 ] * Scale, myGridLine.Value[ 4 ] * Scale, 0 ) ) );
         return res;
       }
 
       // if the new and old have the same id (hash equivalent) and the doc obj is not marked as being modified, return the doc object
-      if ( docObj != null && myGridLine._id == stateObj._id && ( bool ) stateObj.Properties[ "userModified" ] == false )
+      if( docObj != null && myGridLine._id == stateObj._id && (bool) stateObj.Properties[ "userModified" ] == false )
       {
-        return ( Grid ) docObj;
+        return (Grid) docObj;
       }
 
       // Otherwise, enter "edit" mode: means the doc object has been modfied, or the original source object changed.
@@ -35,8 +35,10 @@ namespace SpeckleElementsRevit
       var oldStart = myGrid.Curve.GetEndPoint( 0 );
       var oldEnd = myGrid.Curve.GetEndPoint( 1 );
 
-      var newStart = new XYZ( myGridLine.Value[ 0 ] * Scale, myGridLine.Value[ 1 ] * Scale, myGridLine.Value[ 2 ] * Scale );
-      var newEnd = new XYZ( myGridLine.Value[ 3 ] * Scale, myGridLine.Value[ 4 ] * Scale, myGridLine.Value[ 5 ] * Scale );
+      var newStart = new XYZ( myGridLine.Value[ 0 ] * Scale, myGridLine.Value[ 1 ] * Scale, 0 );
+      //var newStart = new XYZ( myGridLine.Value[ 0 ] * Scale, myGridLine.Value[ 1 ] * Scale, myGridLine.Value[ 2 ] * Scale );
+      var newEnd = new XYZ( myGridLine.Value[ 3 ] * Scale, myGridLine.Value[ 4 ] * Scale, 0 );
+      //var newEnd = new XYZ( myGridLine.Value[ 3 ] * Scale, myGridLine.Value[ 4 ] * Scale, myGridLine.Value[ 5 ] * Scale );
 
       var translate = newStart.Subtract( oldStart );
       ElementTransformUtils.MoveElement( Doc, myGrid.Id, translate );
@@ -46,7 +48,7 @@ namespace SpeckleElementsRevit
 
       var angle = newDirection.AngleTo( currentDirection );
 
-      if ( angle > 0.00001 )
+      if( angle > 0.00001 )
       {
         var crossProd = newDirection.CrossProduct( currentDirection ).Z;
         ElementTransformUtils.RotateElement( Doc, myGrid.Id, Line.CreateUnbound( newStart, XYZ.BasisZ ), crossProd < 0 ? angle : -angle );
@@ -56,7 +58,7 @@ namespace SpeckleElementsRevit
       {
         myGrid.SetCurveInView( DatumExtentType.Model, Doc.ActiveView, Line.CreateBound( newStart, newEnd ) );
       }
-      catch ( Exception e )
+      catch( Exception e )
       {
         System.Diagnostics.Debug.WriteLine( "Failed to set grid endpoints." );
       }
