@@ -62,12 +62,18 @@ namespace SpeckleElementsRevit
     public static Dictionary<string, object> GetElementParams( Element myElement )
     {
       var myParamDict = new Dictionary<string, object>();
+      var unitsDict = new Dictionary<string, string>();
+
       foreach( Parameter p in myElement.Parameters )
       {
         switch( p.StorageType )
         {
           case StorageType.Double:
-          myParamDict[ p.Definition.Name ] = UnitUtils.ConvertFromInternalUnits( p.AsDouble(), p.DisplayUnitType );
+          // NOTE: do not use p.AsDouble() as direct input for unit utils conversion, it doesn't work. 
+          // ¯\_(ツ)_/¯
+          var val = p.AsDouble();
+          myParamDict[ p.Definition.Name ] = UnitUtils.ConvertFromInternalUnits( val, p.DisplayUnitType );
+          myParamDict[ "____units_" + p.Definition.Name ] = p.DisplayUnitType.ToString();
           break;
           case StorageType.Integer:
           myParamDict[ p.Definition.Name ] = p.AsInteger();
@@ -84,7 +90,7 @@ namespace SpeckleElementsRevit
           //if( !(spk is SpeckleNull) )
           //  myParamDict[ p.Definition.Name ] = spk;
           //else
-            myParamDict[ p.Definition.Name ] = p.AsValueString();
+          myParamDict[ p.Definition.Name ] = p.AsValueString();
           break;
           case StorageType.None:
           break;
@@ -93,7 +99,8 @@ namespace SpeckleElementsRevit
 
       // TODO: Sanitise keys
       // ...
-
+      // myParamDict["__units"] = unitsDict;
+      // TODO: BIG CORE PROBLEM: failure to serialise things with nested dictionary (like the line above).
       return myParamDict;
     }
 
