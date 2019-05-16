@@ -13,7 +13,7 @@ namespace SpeckleElementsRevit
 {
   public class Initialiser : ISpeckleInitializer
   {
-    public Initialiser( ) { }
+    public Initialiser() { }
 
     /// <summary>
     /// Revit doc will be injected in here by the revit plugin. 
@@ -39,7 +39,7 @@ namespace SpeckleElementsRevit
     static Document Doc { get => Initialiser.RevitApp.ActiveUIDocument.Document; }
 
 
-    public static GenericElement ToSpeckle(this Element myElement)
+    public static GenericElement ToSpeckle( this Element myElement )
     {
       var generic = new GenericElement();
 
@@ -62,25 +62,32 @@ namespace SpeckleElementsRevit
     public static Dictionary<string, object> GetElementParams( Element myElement )
     {
       var myParamDict = new Dictionary<string, object>();
-      foreach ( Parameter p in myElement.Parameters )
+      foreach( Parameter p in myElement.Parameters )
       {
-        switch ( p.StorageType )
+        switch( p.StorageType )
         {
           case StorageType.Double:
-            myParamDict[ p.Definition.Name ] = p.AsDouble();
-            break;
+          myParamDict[ p.Definition.Name ] = UnitUtils.ConvertFromInternalUnits( p.AsDouble(), p.DisplayUnitType );
+          break;
           case StorageType.Integer:
-            myParamDict[ p.Definition.Name ] = p.AsInteger();
-            break;
+          myParamDict[ p.Definition.Name ] = p.AsInteger();
+          //myParamDict[ p.Definition.Name ] = UnitUtils.ConvertFromInternalUnits( p.AsInteger(), p.DisplayUnitType);
+          break;
           case StorageType.String:
-            myParamDict[ p.Definition.Name ] = p.AsString();
-            break;
+          myParamDict[ p.Definition.Name ] = p.AsString();
+          break;
           case StorageType.ElementId:
-            // TODO: Properly get ref elemenet and serialise it in here.
+          // TODO: Properly get ref elemenet and serialise it in here.
+          // NOTE: Too much garbage for too little info...
+          //var docEl = Doc.GetElement( p.AsElementId() );
+          //var spk = SpeckleCore.Converter.Serialise( docEl );
+          //if( !(spk is SpeckleNull) )
+          //  myParamDict[ p.Definition.Name ] = spk;
+          //else
             myParamDict[ p.Definition.Name ] = p.AsValueString();
-            break;
+          break;
           case StorageType.None:
-            break;
+          break;
         }
       }
 
@@ -98,20 +105,20 @@ namespace SpeckleElementsRevit
     /// <returns></returns>
     public static (Element, SpeckleObject) GetExistingElementByApplicationId( string ApplicationId, string ObjectType )
     {
-      foreach ( var stream in Initialiser.LocalRevitState )
+      foreach( var stream in Initialiser.LocalRevitState )
       {
-        var found = stream.Objects.FirstOrDefault( s => s.ApplicationId == ApplicationId && ( string ) s.Properties[ "__type" ] == ObjectType );
-        if ( found != null )
-          return (Doc.GetElement( found.Properties[ "revitUniqueId" ] as string ), ( SpeckleObject ) found);
+        var found = stream.Objects.FirstOrDefault( s => s.ApplicationId == ApplicationId && (string) s.Properties[ "__type" ] == ObjectType );
+        if( found != null )
+          return (Doc.GetElement( found.Properties[ "revitUniqueId" ] as string ), (SpeckleObject) found);
       }
       return (null, null);
     }
 
     public static (List<Element>, List<SpeckleObject>) GetExistingElementsByApplicationId( string ApplicationId, string ObjectType )
     {
-      var allStateObjects = ( from p in Initialiser.LocalRevitState.SelectMany( s => s.Objects ) select p ).ToList();
+      var allStateObjects = (from p in Initialiser.LocalRevitState.SelectMany( s => s.Objects ) select p).ToList();
 
-      var found = allStateObjects.Where( obj => obj.ApplicationId == ApplicationId && ( string ) obj.Properties[ "__type" ] == ObjectType );
+      var found = allStateObjects.Where( obj => obj.ApplicationId == ApplicationId && (string) obj.Properties[ "__type" ] == ObjectType );
       var revitObjs = found.Select( obj => Doc.GetElement( obj.Properties[ "revitUniqueId" ] as string ) );
 
       return (revitObjs.ToList(), found.ToList());
@@ -126,52 +133,52 @@ namespace SpeckleElementsRevit
     public static List<Curve> GetSegmentList( object crv )
     {
       List<Curve> myCurves = new List<Curve>();
-      switch ( crv )
+      switch( crv )
       {
         case SpeckleLine line:
-          myCurves.Add( ( Line ) SpeckleCore.Converter.Deserialise( line, excludeAssebmlies: new string[ ] { "SpeckleCoreGeometryDynamo" } ) );
-          return myCurves;
+        myCurves.Add( (Line) SpeckleCore.Converter.Deserialise( line, excludeAssebmlies: new string[ ] { "SpeckleCoreGeometryDynamo" } ) );
+        return myCurves;
 
         case SpeckleArc arc:
-          myCurves.Add( ( Arc ) SpeckleCore.Converter.Deserialise( arc, excludeAssebmlies: new string[ ] { "SpeckleCoreGeometryDynamo" } ) );
-          return myCurves;
+        myCurves.Add( (Arc) SpeckleCore.Converter.Deserialise( arc, excludeAssebmlies: new string[ ] { "SpeckleCoreGeometryDynamo" } ) );
+        return myCurves;
 
         case SpeckleCurve nurbs:
-          myCurves.Add( ( Curve ) SpeckleCore.Converter.Deserialise( nurbs, excludeAssebmlies: new string[ ] { "SpeckleCoreGeometryDynamo" } ) );
-          return myCurves;
+        myCurves.Add( (Curve) SpeckleCore.Converter.Deserialise( nurbs, excludeAssebmlies: new string[ ] { "SpeckleCoreGeometryDynamo" } ) );
+        return myCurves;
 
         case SpecklePolyline poly:
-          if ( poly.Value.Count == 6 )
+        if( poly.Value.Count == 6 )
+        {
+          myCurves.Add( (Line) SpeckleCore.Converter.Deserialise( new SpeckleLine( poly.Value ), excludeAssebmlies: new string[ ] { "SpeckleCoreGeometryDynamo" } ) );
+        }
+        else
+        {
+          List<SpecklePoint> pts = new List<SpecklePoint>();
+          for( int i = 0; i < poly.Value.Count; i += 3 )
           {
-            myCurves.Add( ( Line ) SpeckleCore.Converter.Deserialise( new SpeckleLine( poly.Value ), excludeAssebmlies: new string[ ] { "SpeckleCoreGeometryDynamo" } ) );
+            pts.Add( new SpecklePoint( poly.Value[ i ], poly.Value[ i + 1 ], poly.Value[ i + 2 ] ) );
           }
-          else
+
+          for( int i = 1; i < pts.Count; i++ )
           {
-            List<SpecklePoint> pts = new List<SpecklePoint>();
-            for ( int i = 0; i < poly.Value.Count; i += 3 )
-            {
-              pts.Add( new SpecklePoint( poly.Value[ i ], poly.Value[ i + 1 ], poly.Value[ i + 2 ] ) );
-            }
+            var speckleLine = new SpeckleLine( new double[ ] { pts[ i - 1 ].Value[ 0 ], pts[ i - 1 ].Value[ 1 ], pts[ i - 1 ].Value[ 2 ], pts[ i ].Value[ 0 ], pts[ i ].Value[ 1 ], pts[ i ].Value[ 2 ] } );
 
-            for ( int i = 1; i < pts.Count; i++ )
-            {
-              var speckleLine = new SpeckleLine( new double[ ] { pts[ i - 1 ].Value[ 0 ], pts[ i - 1 ].Value[ 1 ], pts[ i - 1 ].Value[ 2 ], pts[ i ].Value[ 0 ], pts[ i ].Value[ 1 ], pts[ i ].Value[ 2 ] } );
-
-              myCurves.Add( ( Line ) SpeckleCore.Converter.Deserialise( speckleLine, excludeAssebmlies: new string[ ] { "SpeckleCoreGeometryDynamo" } ) );
-            }
-
-            if ( poly.Closed )
-            {
-              var speckleLine = new SpeckleLine( new double[ ] { pts[ pts.Count - 1 ].Value[ 0 ], pts[ pts.Count - 1 ].Value[ 1 ], pts[ pts.Count - 1 ].Value[ 2 ], pts[ 0 ].Value[ 0 ], pts[ 0 ].Value[ 1 ], pts[ 0 ].Value[ 2 ] } );
-              myCurves.Add( ( Line ) SpeckleCore.Converter.Deserialise( speckleLine, excludeAssebmlies: new string[ ] { "SpeckleCoreGeometryDynamo" } ) );
-            }
+            myCurves.Add( (Line) SpeckleCore.Converter.Deserialise( speckleLine, excludeAssebmlies: new string[ ] { "SpeckleCoreGeometryDynamo" } ) );
           }
-          return myCurves;
+
+          if( poly.Closed )
+          {
+            var speckleLine = new SpeckleLine( new double[ ] { pts[ pts.Count - 1 ].Value[ 0 ], pts[ pts.Count - 1 ].Value[ 1 ], pts[ pts.Count - 1 ].Value[ 2 ], pts[ 0 ].Value[ 0 ], pts[ 0 ].Value[ 1 ], pts[ 0 ].Value[ 2 ] } );
+            myCurves.Add( (Line) SpeckleCore.Converter.Deserialise( speckleLine, excludeAssebmlies: new string[ ] { "SpeckleCoreGeometryDynamo" } ) );
+          }
+        }
+        return myCurves;
 
         case SpecklePolycurve plc:
-          foreach ( var seg in plc.Segments )
-            myCurves.AddRange( GetSegmentList( seg ) );
-          return myCurves;
+        foreach( var seg in plc.Segments )
+          myCurves.AddRange( GetSegmentList( seg ) );
+        return myCurves;
 
       }
       return null;
@@ -189,11 +196,11 @@ namespace SpeckleElementsRevit
       var collector = new FilteredElementCollector( Doc ).OfClass( type );
 
       // check against element name
-      if ( name == null )
+      if( name == null )
         return collector.FirstElement();
 
-      foreach ( var e in collector.ToElements() )
-        if ( e.Name == name )
+      foreach( var e in collector.ToElements() )
+        if( e.Name == name )
           return e;
 
       return collector.FirstElement();
@@ -203,16 +210,16 @@ namespace SpeckleElementsRevit
     {
       var collectorElems = new FilteredElementCollector( Doc ).WhereElementIsElementType().OfClass( typeof( FamilySymbol ) ).OfCategory( category ).ToElements().Cast<FamilySymbol>();
 
-      if ( ( familyName == null || typeName == null ) && collectorElems.Count() > 0 )
+      if( (familyName == null || typeName == null) && collectorElems.Count() > 0 )
         return collectorElems.First();
 
-      foreach ( var e in collectorElems )
+      foreach( var e in collectorElems )
       {
-        if ( e.FamilyName == familyName && e.Name == typeName )
+        if( e.FamilyName == familyName && e.Name == typeName )
           return e;
       }
 
-      if ( collectorElems.Count() > 0 )
+      if( collectorElems.Count() > 0 )
         return collectorElems.First();
 
       return null;

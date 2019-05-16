@@ -122,15 +122,21 @@ namespace SpeckleElementsRevit
     }
 
     // TODO: Wall to Speckle
+    // TODO: Set levels, heights, etc.
+    // Does not go through nicely from revit to revit
     public static SpeckleElements.Wall ToSpeckle( this Autodesk.Revit.DB.Wall myWall )
     {
       var speckleWall = new SpeckleElements.Wall();
       speckleWall.baseCurve = SpeckleCore.Converter.Serialise( ( ( LocationCurve ) myWall.Location ).Curve );
 
       speckleWall.parameters = GetElementParams( myWall );
+      
+      var barwick = myWall.GetAnalyticalModel();
 
       //Autodesk.Revit.DB.
       var grid = myWall.CurtainGrid;
+
+      
 
       if ( grid != null )
       {
