@@ -1,9 +1,10 @@
-﻿using System;
+﻿extern alias SpeckleNewtonsoft;
+using SNJ = SpeckleNewtonsoft.Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
 using SpeckleCore;
 using SpeckleCoreGeometryClasses;
 
@@ -25,21 +26,21 @@ namespace SpeckleElements
   {
     public override string Type { get => base.Type + "/" + "GridLine"; }
 
-    [JsonIgnore]
+    [SNJ.JsonIgnore]
     public SpeckleLine baseLine
     {
       get => this as SpeckleLine;
       set => this.Value = value.Value;
     }
 
-    [JsonIgnore]
+    [SNJ.JsonIgnore]
     public Level level
     {
       get => ( Properties != null && Properties.ContainsKey( "level" ) ) ? ( Properties[ "level" ] as Level ) : null;
       set => Properties[ "level" ] = value;
     }
 
-    [JsonIgnore]
+    [SNJ.JsonIgnore]
     public Dictionary<string, object> parameters
     {
       get => ( Properties != null && Properties.ContainsKey( "parameters" ) ) ? ( Properties[ "parameters" ] as Dictionary<string, object> ) : null;
@@ -54,35 +55,35 @@ namespace SpeckleElements
   {
     public override string Type { get => base.Type + "/" + "Level"; }
 
-    [JsonIgnore]
+    [SNJ.JsonIgnore]
     public SpecklePolyline baseCurve
     {
       get => this as SpecklePolyline;
       set => this.Value = value.Value;
     }
 
-    [JsonIgnore]
+    [SNJ.JsonIgnore]
     public double elevation
     {
       get => ( Properties != null && Properties.ContainsKey( "elevation" ) ) ? ( ( double ) Properties[ "elevation" ] ) : 0;
       set => Properties[ "elevation" ] = value;
     }
 
-    [JsonIgnore]
+    [SNJ.JsonIgnore]
     public string levelName
     {
       get => ( Properties != null && Properties.ContainsKey( "levelName" ) ) ? ( ( string ) Properties[ "levelName" ] ) : null;
       set => Properties[ "levelName" ] = value;
     }
 
-    [JsonIgnore]
+    [SNJ.JsonIgnore]
     public bool createView
     {
       get => ( Properties != null && Properties.ContainsKey( "createView" ) ) ? ( ( bool ) Properties[ "createView" ] ) : false;
       set => Properties[ "createView" ] = value;
     }
 
-    [JsonIgnore]
+    [SNJ.JsonIgnore]
     public Dictionary<string, object> parameters
     {
       get => ( Properties != null && Properties.ContainsKey( "parameters" ) ) ? ( Properties[ "parameters" ] as Dictionary<string, object> ) : null;
@@ -97,49 +98,49 @@ namespace SpeckleElements
   {
     public override string Type { get => base.Type + "/" + "Wall"; }
 
-    [JsonIgnore]
+    [SNJ.JsonIgnore]
     public SpeckleObject baseCurve
     {
       get => ( Properties != null && Properties.ContainsKey( "baseCurve" ) ) ? ( ( SpeckleObject ) Properties[ "baseCurve" ] ) : null;
       set => Properties[ "baseCurve" ] = value;
     }
 
-    [JsonIgnore]
+    [SNJ.JsonIgnore]
     public SpeckleMesh displayMesh
     {
       get => this as SpeckleMesh;
       set { this.Vertices = value.Vertices; this.Faces = value.Faces; }
     }
 
-    [JsonIgnore]
+    [SNJ.JsonIgnore]
     public string wallType
     {
       get => ( Properties != null && Properties.ContainsKey( "wallType" ) ) ? ( ( string ) Properties[ "wallType" ] ) : null;
       set => Properties[ "wallType" ] = value;
     }
 
-    [JsonIgnore]
+    [SNJ.JsonIgnore]
     public double height
     {
       get => ( Properties != null && Properties.ContainsKey( "height" ) ) ? ( ( double ) Properties[ "height" ] ) : 1;
       set => Properties[ "height" ] = value;
     }
 
-    [JsonIgnore]
+    [SNJ.JsonIgnore]
     public double offset
     {
       get => ( Properties != null && Properties.ContainsKey( "offset" ) ) ? ( ( double ) Properties[ "offset" ] ) : 0;
       set => Properties[ "offset" ] = value;
     }
 
-    [JsonIgnore]
+    [SNJ.JsonIgnore]
     public Level level
     {
       get => ( Properties != null && Properties.ContainsKey( "level" ) ) ? ( Properties[ "level" ] as Level ) : null;
       set => Properties[ "level" ] = value;
     }
 
-    [JsonIgnore]
+    [SNJ.JsonIgnore]
     public Dictionary<string, object> parameters
     {
       get => ( Properties != null && Properties.ContainsKey( "parameters" ) ) ? ( Properties[ "parameters" ] as Dictionary<string, object> ) : null;
@@ -154,49 +155,49 @@ namespace SpeckleElements
   {
     public override string Type { get => base.Type + "/" + "Floor"; }
 
-    [JsonIgnore]
+    [SNJ.JsonIgnore]
     public SpeckleObject baseCurve
     {
       get => ( Properties != null && Properties.ContainsKey( "baseCurve" ) ) ? ( ( SpeckleObject ) Properties[ "baseCurve" ] ) : null;
       set => Properties[ "baseCurve" ] = value;
     }
 
-    [JsonIgnore]
+    [SNJ.JsonIgnore]
     public SpeckleMesh displayMesh
     {
       get => this as SpeckleMesh;
       set { this.Vertices = value.Vertices; this.Faces = value.Faces; }
     }
 
-    [JsonIgnore]
+    [SNJ.JsonIgnore]
     public string floorType
     {
       get => ( Properties != null && Properties.ContainsKey( "floorType" ) ) ? ( ( string ) Properties[ "floorType" ] ) : null;
       set => Properties[ "floorType" ] = value;
     }
 
-    [JsonIgnore]
+    [SNJ.JsonIgnore]
     public Level level
     {
       get => ( Properties != null && Properties.ContainsKey( "level" ) ) ? ( Properties[ "level" ] as Level ) : null;
       set => Properties[ "level" ] = value;
     }
 
-    [JsonIgnore]
+    [SNJ.JsonIgnore]
     public SpeckleLine slopedArrow
     {
       get => ( Properties != null && Properties.ContainsKey( "slopedArrow" ) ) ? ( Properties[ "slopedArrow" ] as SpeckleLine ) : null;
       set => Properties[ "slopedArrow" ] = value;
     }
 
-    [JsonIgnore]
+    [SNJ.JsonIgnore]
     public double slope
     {
       get => ( Properties != null && Properties.ContainsKey( "slope" ) ) ? ( ( double ) Properties[ "slope" ] ) : 0;
       set => Properties[ "slope" ] = value;
     }
 
-    [JsonIgnore]
+    [SNJ.JsonIgnore]
     public Dictionary<string, object> parameters
     {
       get => ( Properties != null && Properties.ContainsKey( "parameters" ) ) ? ( Properties[ "parameters" ] as Dictionary<string, object> ) : null;
@@ -211,42 +212,42 @@ namespace SpeckleElements
   {
     public override string Type { get => base.Type + "/" + "Column"; }
 
-    [JsonIgnore]
+    [SNJ.JsonIgnore]
     public SpeckleLine baseLine
     {
       get => ( Properties != null && Properties.ContainsKey( "baseLine" ) ) ? ( ( SpeckleLine ) Properties[ "baseLine" ] ) : null;
       set => Properties[ "baseLine" ] = value;
     }
 
-    [JsonIgnore]
+    [SNJ.JsonIgnore]
     public SpeckleMesh displayMesh
     {
       get => this as SpeckleMesh;
       set { this.Vertices = value.Vertices; this.Faces = value.Faces; }
     }
 
-    [JsonIgnore]
+    [SNJ.JsonIgnore]
     public string columnFamily
     {
       get => ( Properties != null && Properties.ContainsKey( "columnFamily" ) ) ? ( ( string ) Properties[ "columnFamily" ] ) : null;
       set => Properties[ "columnFamily" ] = value;
     }
 
-    [JsonIgnore]
+    [SNJ.JsonIgnore]
     public string columnType
     {
       get => ( Properties != null && Properties.ContainsKey( "columnType" ) ) ? ( ( string ) Properties[ "columnType" ] ) : null;
       set => Properties[ "columnType" ] = value;
     }
 
-    [JsonIgnore]
+    [SNJ.JsonIgnore]
     public Level level
     {
       get => ( Properties != null && Properties.ContainsKey( "level" ) ) ? ( Properties[ "level" ] as Level ) : null;
       set => Properties[ "level" ] = value;
     }
 
-    [JsonIgnore]
+    [SNJ.JsonIgnore]
     public Dictionary<string, object> parameters
     {
       get => ( Properties != null && Properties.ContainsKey( "parameters" ) ) ? ( Properties[ "parameters" ] as Dictionary<string, object> ) : null;
@@ -260,42 +261,42 @@ namespace SpeckleElements
   {
     public override string Type { get => base.Type + "/" + "Beam"; }
 
-    [JsonIgnore]
+    [SNJ.JsonIgnore]
     public SpeckleLine baseLine
     {
       get => ( Properties != null && Properties.ContainsKey( "baseLine" ) ) ? ( ( SpeckleLine ) Properties[ "baseLine" ] ) : null;
       set => Properties[ "baseLine" ] = value;
     }
 
-    [JsonIgnore]
+    [SNJ.JsonIgnore]
     public string beamFamily
     {
       get => ( Properties != null && Properties.ContainsKey( "beamFamily" ) ) ? ( ( string ) Properties[ "beamFamily" ] ) : null;
       set => Properties[ "beamFamily" ] = value;
     }
 
-    [JsonIgnore]
+    [SNJ.JsonIgnore]
     public string beamType
     {
       get => ( Properties != null && Properties.ContainsKey( "beamType" ) ) ? ( ( string ) Properties[ "beamType" ] ) : null;
       set => Properties[ "beamType" ] = value;
     }
 
-    [JsonIgnore]
+    [SNJ.JsonIgnore]
     public Level level
     {
       get => ( Properties != null && Properties.ContainsKey( "level" ) ) ? ( Properties[ "level" ] as Level ) : null;
       set => Properties[ "level" ] = value;
     }
 
-    [JsonIgnore]
+    [SNJ.JsonIgnore]
     public SpeckleMesh displayMesh
     {
       get => this as SpeckleMesh;
       set { this.Vertices = value.Vertices; this.Faces = value.Faces; }
     }
 
-    [JsonIgnore]
+    [SNJ.JsonIgnore]
     public Dictionary<string, object> parameters
     {
       get => ( Properties != null && Properties.ContainsKey( "parameters" ) ) ? ( Properties[ "parameters" ] as Dictionary<string, object> ) : null;
@@ -310,35 +311,35 @@ namespace SpeckleElements
   {
     public override string Type { get => base.Type + "/" + "Shaft"; }
 
-    [JsonIgnore]
+    [SNJ.JsonIgnore]
     public Level bottomLevel
     {
       get => ( Properties != null && Properties.ContainsKey( "bottomLevel" ) ) ? ( Properties[ "bottomLevel" ] as Level ) : null;
       set => Properties[ "bottomLevel" ] = value;
     }
 
-    [JsonIgnore]
+    [SNJ.JsonIgnore]
     public Level topLevel
     {
       get => ( Properties != null && Properties.ContainsKey( "topLevel" ) ) ? ( Properties[ "topLevel" ] as Level ) : null;
       set => Properties[ "topLevel" ] = value;
     }
 
-    [JsonIgnore]
+    [SNJ.JsonIgnore]
     public SpeckleObject baseCurve
     {
       get => ( Properties != null && Properties.ContainsKey( "baseCurve" ) ) ? ( ( SpeckleObject ) Properties[ "baseCurve" ] ) : null;
       set => Properties[ "baseCurve" ] = value;
     }
 
-    [JsonIgnore]
+    [SNJ.JsonIgnore]
     public SpeckleMesh displayMesh
     {
       get => this as SpeckleMesh;
       set { this.Vertices = value.Vertices; this.Faces = value.Faces; }
     }
 
-    [JsonIgnore]
+    [SNJ.JsonIgnore]
     public Dictionary<string, object> parameters
     {
       get => ( Properties != null && Properties.ContainsKey( "parameters" ) ) ? ( Properties[ "parameters" ] as Dictionary<string, object> ) : null;
@@ -353,14 +354,14 @@ namespace SpeckleElements
   {
     public override string Type { get => base.Type + "/" + "Topography"; }
 
-    [JsonIgnore]
+    [SNJ.JsonIgnore]
     public SpeckleMesh topographyMesh
     {
       get => this as SpeckleMesh;
       set { this.Vertices = value.Vertices; this.Faces = value.Faces; }
     }
 
-    [JsonIgnore]
+    [SNJ.JsonIgnore]
     public Dictionary<string, object> parameters
     {
       get => ( Properties != null && Properties.ContainsKey( "parameters" ) ) ? ( Properties[ "parameters" ] as Dictionary<string, object> ) : null;
@@ -375,42 +376,42 @@ namespace SpeckleElements
   {
     public override string Type { get => base.Type + "/" + "FamilyInstance"; }
 
-    [JsonIgnore]
+    [SNJ.JsonIgnore]
     public List<SpecklePoint> points
     {
       get => ( Properties != null && Properties.ContainsKey( "points" ) ) ? ( Properties[ "points" ] as List<SpecklePoint> ) : null;
       set => Properties[ "points" ] = value;
     }
 
-    [JsonIgnore]
+    [SNJ.JsonIgnore]
     public string view
     {
       get => ( Properties != null && Properties.ContainsKey( "view" ) ) ? ( ( string ) Properties[ "view" ] ) : null;
       set => Properties[ "view" ] = value;
     }
 
-    [JsonIgnore]
+    [SNJ.JsonIgnore]
     public Level level
     {
       get => ( Properties != null && Properties.ContainsKey( "level" ) ) ? ( Properties[ "level" ] as Level ) : null;
       set => Properties[ "level" ] = value;
     }
 
-    [JsonIgnore]
+    [SNJ.JsonIgnore]
     public string familyName
     {
       get => ( Properties != null && Properties.ContainsKey( "familyName" ) ) ? ( ( string ) Properties[ "familyName" ] ) : null;
       set => Properties[ "familyName" ] = value;
     }
 
-    [JsonIgnore]
+    [SNJ.JsonIgnore]
     public string familyType
     {
       get => ( Properties != null && Properties.ContainsKey( "familyType" ) ) ? ( ( string ) Properties[ "familyType" ] ) : null;
       set => Properties[ "familyType" ] = value;
     }
 
-    [JsonIgnore]
+    [SNJ.JsonIgnore]
     public Dictionary<string, object> parameters
     {
       get => ( Properties != null && Properties.ContainsKey( "parameters" ) ) ? ( Properties[ "parameters" ] as Dictionary<string, object> ) : null;
@@ -425,7 +426,7 @@ namespace SpeckleElements
   {
     public override string Type { get => base.Type + "/" + "GenericElement"; }
 
-    [JsonIgnore]
+    [SNJ.JsonIgnore]
     public Dictionary<string, object> parameters
     {
       get => ( Properties != null && Properties.ContainsKey( "parameters" ) ) ? ( Properties[ "parameters" ] as Dictionary<string, object> ) : null;
@@ -440,21 +441,21 @@ namespace SpeckleElements
   {
     public override string Type { get => base.Type + "/" + "Room"; }
 
-    [JsonIgnore]
+    [SNJ.JsonIgnore]
     public SpeckleObject baseCurve
     {
       get => (Properties != null && Properties.ContainsKey( "baseCurve" )) ? ((SpeckleObject) Properties[ "baseCurve" ]) : null;
       set => Properties[ "baseCurve" ] = value;
     }
 
-    [JsonIgnore]
+    [SNJ.JsonIgnore]
     public SpecklePoint roomLocation
     {
       get => (Properties != null && Properties.ContainsKey( "roomLocation" )) ? ((SpecklePoint) Properties[ "roomLocation" ]) : null;
       set => Properties[ "roomLocation" ] = value;
     }
 
-    [JsonIgnore]
+    [SNJ.JsonIgnore]
     public string roomName
     {
       get => (Properties != null && Properties.ContainsKey( "roomName" )) ? ((string) Properties[ "roomName" ]) : null;
@@ -462,21 +463,21 @@ namespace SpeckleElements
     }
     
     // WTF Moment: room number is a string property in revit. LOLOLOL
-    [JsonIgnore]
+    [SNJ.JsonIgnore]
     public string roomNumber
     {
       get => (Properties != null && Properties.ContainsKey( "roomNumber" )) ? ((string) Properties[ "roomNumber" ]) : null;
       set => Properties[ "roomNumber" ] = value;
     }
 
-    [JsonIgnore]
+    [SNJ.JsonIgnore]
     public double roomArea
     {
       get => (Properties != null && Properties.ContainsKey( "roomArea" )) ? ((double) Properties[ "roomArea" ]) : 0;
       set => Properties[ "roomArea" ] = value;
     }
 
-    [JsonIgnore]
+    [SNJ.JsonIgnore]
     public double roomVolume
     {
       get => (Properties != null && Properties.ContainsKey( "roomVolume" )) ? ((double) Properties[ "roomVolume" ]) : 0;
@@ -490,7 +491,7 @@ namespace SpeckleElements
     // Area
     // 
 
-    [JsonIgnore]
+    [SNJ.JsonIgnore]
     public Dictionary<string, object> parameters
     {
       get => (Properties != null && Properties.ContainsKey( "parameters" )) ? (Properties[ "parameters" ] as Dictionary<string, object>) : null;
