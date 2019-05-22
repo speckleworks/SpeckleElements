@@ -37,6 +37,9 @@ namespace SpeckleElementsRevit
       }
 
       FloorType type = ( FloorType ) GetElementByClassAndName( typeof( Autodesk.Revit.DB.FloorType ), mySlab.floorType );
+
+      var fltype = GetElementByName( typeof( FloorType ), mySlab.floorType );
+
       var myTypeBasedFloor = Doc.Create.NewFloor( slabCurves, type, ( ( Autodesk.Revit.DB.Level ) mySlab.level.ToNative() ), false );
 
       return myTypeBasedFloor;
@@ -52,6 +55,7 @@ namespace SpeckleElementsRevit
 
       var geo = myFloor.get_Geometry( new Options() { DetailLevel = ViewDetailLevel.Medium });
 
+      speckleFloor.floorType = myFloor.FloorType.Name;
       speckleFloor.baseCurve = getFloorOutline( myFloor );
 
       speckleFloor.ApplicationId = myFloor.UniqueId;

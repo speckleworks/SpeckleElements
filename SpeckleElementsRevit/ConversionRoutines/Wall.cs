@@ -17,7 +17,7 @@ namespace SpeckleElementsRevit
     {
       var (docObjs, stateObjs) = GetExistingElementsByApplicationId( myWall.ApplicationId, myWall.Type );
 
-      var wallType = Doc.GetDefaultElementTypeId( ElementTypeGroup.WallType );
+      //var wallType = Doc.GetDefaultElementTypeId( ElementTypeGroup.WallType );
       var myWallType = GetElementByName( typeof( Autodesk.Revit.DB.WallType ), myWall.wallType );
 
       // filter null elements!
@@ -57,9 +57,10 @@ namespace SpeckleElementsRevit
           LocationCurve locationCurve = (LocationCurve) ((Wall) docObjs[ i ]).Location;
           myWall.baseLevel?.ToNative();
           locationCurve.Curve = segments[ i ];
-          SetWallHeightOffset( (Wall) docObjs[ i ], myWall.height, myWall.offset );
-          SetElementParams( docObjs[ i ], myWall.parameters );
 
+          SetWallHeightOffset( (Wall) docObjs[ i ], myWall.height, myWall.offset );
+          ((Wall) docObjs[ i ]).WallType = myWallType as WallType;
+          SetElementParams( docObjs[ i ], myWall.parameters );
           ret.Add( docObjs[ i ] as Wall );
         }
         return ret;
@@ -73,7 +74,9 @@ namespace SpeckleElementsRevit
           LocationCurve locationCurve = (LocationCurve) ((Wall) docObjs[ i ]).Location;
           myWall.baseLevel?.ToNative();
           locationCurve.Curve = segments[ i ];
+
           SetWallHeightOffset( (Wall) docObjs[ i ], myWall.height, myWall.offset );
+          ((Wall) docObjs[ i ]).WallType = myWallType as WallType;
           SetElementParams( docObjs[ i ], myWall.parameters );
 
           ret.Add( docObjs[ i ] as Wall );
@@ -89,6 +92,7 @@ namespace SpeckleElementsRevit
           var levelId = ((Level) myWall.baseLevel.ToNative()).Id;
           var revitWall = Wall.Create( Doc, baseCurve, levelId, false );
           revitWall = SetWallHeightOffset( revitWall, myWall.height, myWall.offset );
+          ((Wall) docObjs[ i ]).WallType = myWallType as WallType;
           SetElementParams( revitWall, myWall.parameters );
           ret.Add( revitWall );
         }
@@ -110,6 +114,8 @@ namespace SpeckleElementsRevit
           myWall.baseLevel?.ToNative();
           locationCurve.Curve = segments[ i ];
           SetWallHeightOffset( (Wall) docObjs[ i ], myWall.height, myWall.offset );
+          ((Wall) docObjs[ i ]).WallType = myWallType as WallType;
+
           ret.Add( docObjs[ i ] as Wall );
         }
         return ret;
