@@ -118,7 +118,7 @@ namespace SpeckleElementsRevit
     {
       var heightParam = revitWall.get_Parameter( BuiltInParameter.WALL_USER_HEIGHT_PARAM );
       if ( heightParam != null && !heightParam.IsReadOnly )
-        heightParam.Set( height );
+        heightParam.Set( height * Scale );
 
       var offsetParam = revitWall.get_Parameter( BuiltInParameter.WALL_BASE_OFFSET );
       if ( offsetParam != null && !offsetParam.IsReadOnly )
