@@ -72,8 +72,15 @@ namespace SpeckleElementsRevit
           // NOTE: do not use p.AsDouble() as direct input for unit utils conversion, it doesn't work. 
           // ¯\_(ツ)_/¯
           var val = p.AsDouble();
-          myParamDict[ p.Definition.Name ] = UnitUtils.ConvertFromInternalUnits( val, p.DisplayUnitType );
-          myParamDict[ "____units_" + p.Definition.Name ] = p.DisplayUnitType.ToString();
+          try
+          {
+            myParamDict[ p.Definition.Name ] = UnitUtils.ConvertFromInternalUnits( val, p.DisplayUnitType );
+            myParamDict[ "____units_" + p.Definition.Name ] = p.DisplayUnitType.ToString();
+          }
+          catch( Exception e )
+          {
+            myParamDict[ p.Definition.Name ] = val;
+          }
           break;
           case StorageType.Integer:
           myParamDict[ p.Definition.Name ] = p.AsInteger();
@@ -102,6 +109,50 @@ namespace SpeckleElementsRevit
       // myParamDict["__units"] = unitsDict;
       // TODO: BIG CORE PROBLEM: failure to serialise things with nested dictionary (like the line above).
       return myParamDict;
+    }
+
+    public static void SetElementParams( Element myElement, Dictionary<string, object> parameters )
+    {
+      // TODO: Set parameters please
+      if( myElement == null ) return;
+      if( parameters == null ) return;
+
+      //myElement.LookupParameter
+      foreach(var kvp in parameters)
+      {
+        var myParam = myElement.LookupParameter( kvp.Key );
+        if( myParam == null ) continue;
+        switch(myParam.StorageType)
+        {
+          case StorageType.Double:
+          break;
+          case StorageType.Integer:
+          break;
+          case StorageType.String:
+          break;
+          case StorageType.ElementId:
+          break;
+        }
+      }
+
+    }
+
+    /// <summary>
+    /// Gets an element by its type and name. If nothing found, returns the first one.
+    /// </summary>
+    /// <param name="type"></param>
+    /// <param name="name"></param>
+    /// <returns></returns>
+    public static Element GetElementByName(Type type, string name)
+    {
+      var collector = new FilteredElementCollector( Doc ).OfClass( type );
+
+      if( name == null ) return collector.FirstElement();
+
+      foreach(var myElement in collector.ToElements() )
+        if( myElement.Name == name ) return myElement;
+      
+      return collector.FirstElement();
     }
 
     /// <summary>

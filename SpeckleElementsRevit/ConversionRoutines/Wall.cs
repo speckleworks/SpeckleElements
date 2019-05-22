@@ -16,6 +16,9 @@ namespace SpeckleElementsRevit
     {
       var (docObjs, stateObjs) = GetExistingElementsByApplicationId( myWall.ApplicationId, myWall.Type );
 
+      var wallType = Doc.GetDefaultElementTypeId( ElementTypeGroup.WallType );
+      var myWallType = GetElementByName( typeof( Autodesk.Revit.DB.WallType ), myWall.wallType);
+
       // filter null elements!
       docObjs = docObjs.Where( obj => obj != null ).ToList();
       stateObjs = stateObjs.Where( obj => obj != null ).ToList();
@@ -32,8 +35,11 @@ namespace SpeckleElementsRevit
             myWall.level = new SpeckleElements.Level() { elevation = baseCurve.GetEndPoint( 0 ).Z / Scale, levelName = "Speckle Level " + baseCurve.GetEndPoint( 0 ).Z / Scale };
 
           var levelId = ( ( Level ) myWall.level.ToNative() ).Id;
-          var revitWall = Wall.Create( Doc, baseCurve, levelId, false );
-          revitWall = SetWallHeightOffset( revitWall, myWall.height, myWall.offset );
+          //var revitWall = Wall.Create( Doc, baseCurve, levelId, false );
+          //UnitUtils.ConvertToInternalUnits( myWall.height, DisplayUnitType.)
+          var revitWall = Wall.Create( Doc, baseCurve, myWallType.Id, levelId, myWall.height * Scale, 0, false, true );
+         
+          //revitWall = SetWallHeightOffset( revitWall, myWall.height, myWall.offset );
           ret.Add( revitWall );
         }
         return ret;
@@ -112,7 +118,7 @@ namespace SpeckleElementsRevit
     {
       var heightParam = revitWall.get_Parameter( BuiltInParameter.WALL_USER_HEIGHT_PARAM );
       if ( heightParam != null && !heightParam.IsReadOnly )
-        heightParam.Set( height * Scale );
+        heightParam.Set( height );
 
       var offsetParam = revitWall.get_Parameter( BuiltInParameter.WALL_BASE_OFFSET );
       if ( offsetParam != null && !offsetParam.IsReadOnly )
@@ -129,15 +135,19 @@ namespace SpeckleElementsRevit
       var speckleWall = new SpeckleElements.Wall();
       speckleWall.baseCurve = SpeckleCore.Converter.Serialise( ( ( LocationCurve ) myWall.Location ).Curve );
 
-      speckleWall.parameters = GetElementParams( myWall );
-      
-      var barwick = myWall.GetAnalyticalModel();
+      var heightParam = myWall.get_Parameter( BuiltInParameter.WALL_USER_HEIGHT_PARAM );
+      var heightValue = heightParam.AsDouble();
+      var height = UnitUtils.ConvertFromInternalUnits( heightValue, heightParam.DisplayUnitType );
 
-      //Autodesk.Revit.DB.
+      speckleWall.height = heightValue / Scale;
+
+      speckleWall.wallType = myWall.WallType.Name;
+
+      speckleWall.parameters = GetElementParams( myWall );
+     
       var grid = myWall.CurtainGrid;
 
-      
-
+      // meshing for walls
       if ( grid != null )
       {
         var mySolids = new List<Solid>();
