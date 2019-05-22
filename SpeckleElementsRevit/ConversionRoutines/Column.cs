@@ -35,6 +35,8 @@ namespace SpeckleElementsRevit
           existingFamilyInstance.get_Parameter( BuiltInParameter.SLANTED_COLUMN_TYPE_PARAM ).Set( ( double ) SlantedOrVerticalColumnType.CT_EndPoint );
           var existingLocationCurve = existingFamilyInstance.Location as LocationCurve;
           existingLocationCurve.Curve = baseLine;
+
+          //existingFamilyInstance.ChangeTypeId();
           return existingFamilyInstance;
         }
       }
@@ -46,8 +48,11 @@ namespace SpeckleElementsRevit
       if ( sym == null )
         sym = GetFamilySymbolByFamilyNameAndTypeAndCategory( myCol.columnFamily, myCol.columnType, BuiltInCategory.OST_Columns );
 
-      if ( sym == null )
+      if( sym == null )
+      {
+        MissingFamilies.Add( myCol.columnFamily + " " + myCol.columnType );
         return null;
+      }
 
       if ( myCol.level == null )
         myCol.level = new SpeckleElements.Level() { elevation = baseLine.GetEndPoint( 0 ).Z / Scale, levelName = "Speckle Level " + baseLine.GetEndPoint( 0 ).Z / Scale };

@@ -31,13 +31,19 @@ namespace SpeckleElementsRevit
     /// TODO: Potential race condition when we simulatenously start baking two or more streams that have different scales.
     /// </summary>
     public static double RevitScale = 3.2808399;
+
+    /// <summary>
+    /// Keeps track of the missing families and their types from the bake process. It's a quite roundabout way of doing things, but it keeps concerns separated. 
+    /// More and more doubts about this architecture every day...
+    /// </summary>
+    public static HashSet<string> MissingFamilies = new HashSet<string>();
   }
 
   public static partial class Conversions
   {
     static double Scale { get => Initialiser.RevitScale; }
     static Document Doc { get => Initialiser.RevitApp.ActiveUIDocument.Document; }
-
+    static HashSet<string> MissingFamilies { get => Initialiser.MissingFamilies; }
 
     public static GenericElement ToSpeckle( this Element myElement )
     {
