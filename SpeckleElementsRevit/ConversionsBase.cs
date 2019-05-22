@@ -94,9 +94,10 @@ namespace SpeckleElementsRevit
           // NOTE: Too much garbage for too little info...
           //var docEl = Doc.GetElement( p.AsElementId() );
           //var spk = SpeckleCore.Converter.Serialise( docEl );
-          //if( !(spk is SpeckleNull) )
-          //  myParamDict[ p.Definition.Name ] = spk;
-          //else
+          //if( !(spk is SpeckleNull) ) {
+          //  myParamDict[ p.Definition.Name + "_el" ] = spk;
+          //  myParamDict[ p.Definition.Name ] = p.AsValueString();
+          //} else
           myParamDict[ p.Definition.Name ] = p.AsValueString();
           break;
           case StorageType.None:
@@ -118,21 +119,28 @@ namespace SpeckleElementsRevit
       if( parameters == null ) return;
 
       //myElement.LookupParameter
-      foreach(var kvp in parameters)
+      foreach( var kvp in parameters )
       {
-        var myParam = myElement.LookupParameter( kvp.Key );
-        if( myParam == null ) continue;
-        switch(myParam.StorageType)
+        try
         {
-          case StorageType.Double:
-          break;
-          case StorageType.Integer:
-          break;
-          case StorageType.String:
-          break;
-          case StorageType.ElementId:
-          break;
-        }
+          var myParam = myElement.LookupParameter( kvp.Key );
+          if( myParam == null ) continue;
+          switch( myParam.StorageType )
+          {
+            case StorageType.Double:
+              //TODO: Set Double param, risky as it's potentially overriding things?
+            break;
+            case StorageType.Integer:
+            myParam.Set( (int) kvp.Value );
+            break;
+            case StorageType.String:
+            myParam.Set( (string) kvp.Value );
+            break;
+            case StorageType.ElementId:
+              //TODO
+            break;
+          }
+        }catch(Exception e) { }
       }
 
     }
@@ -143,15 +151,15 @@ namespace SpeckleElementsRevit
     /// <param name="type"></param>
     /// <param name="name"></param>
     /// <returns></returns>
-    public static Element GetElementByName(Type type, string name)
+    public static Element GetElementByName( Type type, string name )
     {
       var collector = new FilteredElementCollector( Doc ).OfClass( type );
 
       if( name == null ) return collector.FirstElement();
 
-      foreach(var myElement in collector.ToElements() )
+      foreach( var myElement in collector.ToElements() )
         if( myElement.Name == name ) return myElement;
-      
+
       return collector.FirstElement();
     }
 
