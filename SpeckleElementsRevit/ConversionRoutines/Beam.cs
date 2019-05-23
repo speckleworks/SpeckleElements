@@ -16,7 +16,7 @@ namespace SpeckleElementsRevit
     {
       var (docObj, stateObj) = GetExistingElementByApplicationId( myBeam.ApplicationId, myBeam.Type );
 
-      var baseLine = ( Curve ) SpeckleCore.Converter.Deserialise( myBeam.baseLine );
+      var baseLine = ( Curve ) SpeckleCore.Converter.Deserialise( myBeam.baseLine, new string[ ] { "SpeckleCoreGeometryDynamo" } );
       var start = baseLine.GetEndPoint( 0 );
       var end = baseLine.GetEndPoint( 1 );
 
@@ -44,10 +44,12 @@ namespace SpeckleElementsRevit
       if ( sym == null )
         sym = GetFamilySymbolByFamilyNameAndTypeAndCategory( myBeam.beamFamily, myBeam.beamType, BuiltInCategory.OST_BeamAnalytical );
 
-      if ( sym == null )
+      if( sym == null )
+      {
+        MissingFamiliesAndTypes.Add( myBeam.beamFamily + " " + myBeam.beamType );
         return null;
-
-      if ( myBeam.level == null )
+      }
+        if ( myBeam.level == null )
         myBeam.level = new SpeckleElements.Level() { elevation = 0, levelName = "Speckle Level 0" };
       var myLevel = myBeam.level.ToNative() as Autodesk.Revit.DB.Level;
 
