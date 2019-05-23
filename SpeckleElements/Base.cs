@@ -248,10 +248,31 @@ namespace SpeckleElements
     }
 
     [SNJ.JsonIgnore]
-    public Level level
+    public Level baseLevel
     {
-      get => ( Properties != null && Properties.ContainsKey( "level" ) ) ? ( Properties[ "level" ] as Level ) : null;
-      set => Properties[ "level" ] = value;
+      get => (Properties != null && Properties.ContainsKey( "baseLevel" )) ? (Properties[ "baseLevel" ] as Level) : null;
+      set => Properties[ "baseLevel" ] = value;
+    }
+
+    [SNJ.JsonIgnore]
+    public Level topLevel
+    {
+      get => (Properties != null && Properties.ContainsKey( "topLevel" )) ? (Properties[ "topLevel" ] as Level) : null;
+      set => Properties[ "topLevel" ] = value;
+    }
+
+    [SNJ.JsonIgnore]
+    public double topOffset
+    {
+      get => (Properties != null && Properties.ContainsKey( "topOffset" )) ? ((double) Properties[ "topOffset" ]) : 0;
+      set => Properties[ "topOffset" ] = value;
+    }
+
+    [SNJ.JsonIgnore]
+    public double bottomOffset
+    {
+      get => (Properties != null && Properties.ContainsKey( "bottomOffset" )) ? ((double) Properties[ "bottomOffset" ]) : 0;
+      set => Properties[ "bottomOffset" ] = value;
     }
 
     [SNJ.JsonIgnore]

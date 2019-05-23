@@ -20,10 +20,10 @@ namespace SpeckleElementsRevit
       var start = baseLine.GetEndPoint( 0 );
       var end = baseLine.GetEndPoint( 1 );
 
-      if ( docObj != null )
+      if( docObj != null )
       {
         var type = Doc.GetElement( docObj.GetTypeId() ) as ElementType;
-        if ( myCol.columnType != null && ( myCol.columnType != type.Name || myCol.columnFamily != type.FamilyName ) )
+        if( myCol.columnType != null && (myCol.columnType != type.Name || myCol.columnFamily != type.FamilyName) )
         {
           Doc.Delete( docObj.Id );
           // Will create a new one, exits fully this nested if
@@ -31,8 +31,8 @@ namespace SpeckleElementsRevit
         else
         {
           // Edit Endpoints and return
-          var existingFamilyInstance = ( Autodesk.Revit.DB.FamilyInstance ) docObj;
-          existingFamilyInstance.get_Parameter( BuiltInParameter.SLANTED_COLUMN_TYPE_PARAM ).Set( ( double ) SlantedOrVerticalColumnType.CT_EndPoint );
+          var existingFamilyInstance = (Autodesk.Revit.DB.FamilyInstance) docObj;
+          existingFamilyInstance.get_Parameter( BuiltInParameter.SLANTED_COLUMN_TYPE_PARAM ).Set( (double) SlantedOrVerticalColumnType.CT_EndPoint );
           var existingLocationCurve = existingFamilyInstance.Location as LocationCurve;
           existingLocationCurve.Curve = baseLine;
 
@@ -56,14 +56,25 @@ namespace SpeckleElementsRevit
         return null;
       }
 
-      if ( myCol.level == null )
-        myCol.level = new SpeckleElements.Level() { elevation = baseLine.GetEndPoint( 0 ).Z / Scale, levelName = "Speckle Level " + baseLine.GetEndPoint( 0 ).Z / Scale };
-      var myLevel = myCol.level.ToNative() as Autodesk.Revit.DB.Level;
+      if( myCol.baseLevel == null )
+        myCol.baseLevel = new SpeckleElements.Level() { elevation = baseLine.GetEndPoint( 0 ).Z / Scale, levelName = "Speckle Level " + baseLine.GetEndPoint( 0 ).Z / Scale };
+      var myLevel = myCol.baseLevel.ToNative() as Autodesk.Revit.DB.Level;
 
-      if ( !sym.IsActive ) sym.Activate();
+      if( !sym.IsActive ) sym.Activate();
 
       var familyInstance = Doc.Create.NewFamilyInstance( start, sym, myLevel, Autodesk.Revit.DB.Structure.StructuralType.Column );
-      familyInstance.get_Parameter( BuiltInParameter.SLANTED_COLUMN_TYPE_PARAM ).Set( ( double ) SlantedOrVerticalColumnType.CT_EndPoint );
+
+      familyInstance.get_Parameter( BuiltInParameter.SLANTED_COLUMN_TYPE_PARAM ).Set( (double) SlantedOrVerticalColumnType.CT_EndPoint );
+
+      if( myCol.topLevel != null )
+      {
+        var myTopLevel = myCol.topLevel.ToNative();
+        familyInstance.get_Parameter( BuiltInParameter.FAMILY_TOP_LEVEL_PARAM ).Set( myTopLevel.Id );
+      }
+
+      familyInstance.get_Parameter( BuiltInParameter.FAMILY_BASE_LEVEL_OFFSET_PARAM ).Set( myCol.bottomOffset * Scale );
+      familyInstance.get_Parameter( BuiltInParameter.FAMILY_TOP_LEVEL_OFFSET_PARAM ).Set( myCol.topOffset * Scale );
+
       var locationCurve = familyInstance.Location as LocationCurve;
       locationCurve.Curve = baseLine;
 
@@ -76,13 +87,25 @@ namespace SpeckleElementsRevit
       var allSolids = GetElementSolids( myFamily, opt: new Options() { DetailLevel = ViewDetailLevel.Fine, ComputeReferences = true } );
 
       (myColumn.Faces, myColumn.Vertices) = GetFaceVertexArrFromSolids( allSolids );
-      
-      myColumn.baseLine = (SpeckleCoreGeometryClasses.SpeckleLine) SpeckleCore.Converter.Serialise(  myFamily.GetAnalyticalModel().GetCurve() );
+
+      myColumn.baseLine = (SpeckleCoreGeometryClasses.SpeckleLine) SpeckleCore.Converter.Serialise( myFamily.GetAnalyticalModel().GetCurve() );
 
       myColumn.columnFamily = myFamily.Symbol.FamilyName;
-      myColumn.columnType = Doc.GetElement( myFamily.GetTypeId()).Name;
+      myColumn.columnType = Doc.GetElement( myFamily.GetTypeId() ).Name;
 
       myColumn.parameters = GetElementParams( myFamily );
+
+      var baseLevel = (Autodesk.Revit.DB.Level) Doc.GetElement( myFamily.get_Parameter( BuiltInParameter.FAMILY_BASE_LEVEL_PARAM ).AsElementId() );
+      var topLevel = (Autodesk.Revit.DB.Level) Doc.GetElement( myFamily.get_Parameter( BuiltInParameter.FAMILY_TOP_LEVEL_PARAM ).AsElementId() );
+
+      myColumn.baseLevel = baseLevel?.ToSpeckle();
+      myColumn.topLevel = topLevel?.ToSpeckle();
+
+      var bottomAttOffset = myFamily.get_Parameter( BuiltInParameter.FAMILY_BASE_LEVEL_OFFSET_PARAM )?.AsDouble();
+      myColumn.bottomOffset = bottomAttOffset != null ? (double) bottomAttOffset / Scale : 0.0;
+
+      var topAttOffset = myFamily.get_Parameter( BuiltInParameter.FAMILY_TOP_LEVEL_OFFSET_PARAM )?.AsDouble();
+      myColumn.topOffset = topAttOffset != null ? (double) topAttOffset / Scale : 0.0;
 
       myColumn.GenerateHash();
       myColumn.ApplicationId = myFamily.UniqueId;
