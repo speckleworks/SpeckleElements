@@ -37,6 +37,12 @@ namespace SpeckleElementsRevit
     /// More and more doubts about this architecture every day...
     /// </summary>
     public static HashSet<string> MissingFamiliesAndTypes { get; set; } = new HashSet<string>();
+
+    /// <summary>
+    /// Gets populated with the UnitTypes and UnitDisplayTypes during conversion. 
+    /// </summary>
+    public static Dictionary<string, string> UnitDictionary { get; set; } = new Dictionary<string, string>();
+
   }
 
   public static partial class Conversions
@@ -44,6 +50,7 @@ namespace SpeckleElementsRevit
     static double Scale { get => Initialiser.RevitScale; }
     static Document Doc { get => Initialiser.RevitApp.ActiveUIDocument.Document; }
     static HashSet<string> MissingFamiliesAndTypes { get => Initialiser.MissingFamiliesAndTypes; }
+    static Dictionary<string, string> UnitDictionary { get => Initialiser.UnitDictionary; }
 
     public static GenericElement ToSpeckle( this Element myElement )
     {
@@ -68,20 +75,20 @@ namespace SpeckleElementsRevit
     public static Dictionary<string, object> GetElementParams( Element myElement )
     {
       var myParamDict = new Dictionary<string, object>();
-      var unitsDict = new Dictionary<string, string>();
 
       foreach( Parameter p in myElement.Parameters )
       {
         switch( p.StorageType )
         {
           case StorageType.Double:
-          // NOTE: do not use p.AsDouble() as direct input for unit utils conversion, it doesn't work. 
-          // ¯\_(ツ)_/¯
+          // NOTE: do not use p.AsDouble() as direct input for unit utils conversion, it doesn't work.  ¯\_(ツ)_/¯
           var val = p.AsDouble();
           try
           {
             myParamDict[ p.Definition.Name ] = UnitUtils.ConvertFromInternalUnits( val, p.DisplayUnitType );
-            myParamDict[ "____units_" + p.Definition.Name ] = p.DisplayUnitType.ToString();
+            myParamDict[ "__unitType::" + p.Definition.Name ] = p.Definition.UnitType.ToString();
+            // populate units dictionary
+            UnitDictionary[ p.Definition.UnitType.ToString() ] = p.DisplayUnitType.ToString();
           }
           catch( Exception e )
           {
@@ -124,9 +131,12 @@ namespace SpeckleElementsRevit
       if( myElement == null ) return;
       if( parameters == null ) return;
 
+      var questForTheBest = UnitDictionary;
+
       //myElement.LookupParameter
       foreach( var kvp in parameters )
       {
+        if( kvp.Key.Contains( "__unitType::" ) ) continue; // skip unit types please
         try
         {
           var myParam = myElement.LookupParameter( kvp.Key );
@@ -134,7 +144,7 @@ namespace SpeckleElementsRevit
           switch( myParam.StorageType )
           {
             case StorageType.Double:
-              //TODO: Set Double param, risky as it's potentially overriding things?
+            //TODO: Set Double param, risky as it's potentially overriding things?
             break;
             case StorageType.Integer:
             myParam.Set( (int) kvp.Value );
@@ -143,10 +153,11 @@ namespace SpeckleElementsRevit
             myParam.Set( (string) kvp.Value );
             break;
             case StorageType.ElementId:
-              //TODO
+            //TODO
             break;
           }
-        }catch(Exception e) { }
+        }
+        catch( Exception e ) { }
       }
 
     }
