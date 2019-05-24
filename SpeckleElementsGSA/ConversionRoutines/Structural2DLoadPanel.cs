@@ -124,7 +124,7 @@ namespace SpeckleElementsGSA
             if (load.Loading == null)
                 return;
 
-            string keyword = typeof(Structural2DLoadPanel).GetGSAKeyword();
+            string keyword = typeof(GSAGridAreaLoad).GetGSAKeyword();
 
             int polylineIndex = GSA.Indexer.ResolveIndex("POLYLINE.1", load);
             int gridSurfaceIndex = GSA.Indexer.ResolveIndex("GRID_SURFACE.1", load);
