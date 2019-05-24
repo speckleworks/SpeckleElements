@@ -282,6 +282,20 @@ namespace SpeckleElementsGSA
 
     public static partial class Conversions
     {
+        public static bool ToNative(this SpecklePoint inputObject)
+        {
+            StructuralNode convertedObject = new StructuralNode();
+
+            foreach (PropertyInfo p in convertedObject.GetType().GetProperties().Where(p => p.CanWrite))
+            {
+                PropertyInfo inputProperty = inputObject.GetType().GetProperty(p.Name);
+                if (inputProperty != null)
+                    p.SetValue(convertedObject, inputProperty.GetValue(inputObject));
+            }
+
+            return convertedObject.ToNative();
+        }
+
         public static bool ToNative(this StructuralNode node)
         {
             new GSANode() { Value = node }.SetGWACommand(GSA);

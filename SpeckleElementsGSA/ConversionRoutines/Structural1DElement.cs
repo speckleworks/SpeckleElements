@@ -435,6 +435,20 @@ namespace SpeckleElementsGSA
 
     public static partial class Conversions
     {
+        public static bool ToNative(this SpeckleLine inputObject)
+        {
+            Structural1DElement convertedObject = new Structural1DElement();
+
+            foreach (PropertyInfo p in convertedObject.GetType().GetProperties().Where(p => p.CanWrite))
+            {
+                PropertyInfo inputProperty = inputObject.GetType().GetProperty(p.Name);
+                if (inputProperty != null)
+                    p.SetValue(convertedObject, inputProperty.GetValue(inputObject));
+            }
+
+            return convertedObject.ToNative();
+        }
+
         public static bool ToNative(this Structural1DElement load)
         {
             if (Conversions.GSATargetLayer == GSATargetLayer.Analysis)

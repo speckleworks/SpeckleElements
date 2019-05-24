@@ -5,6 +5,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using SpeckleCore;
+using SpeckleCoreGeometryClasses;
 using SpeckleElements;
 
 namespace SpeckleElementsGSA
@@ -39,6 +40,20 @@ namespace SpeckleElementsGSA
     
     public static partial class Conversions
     {
+        public static bool ToNative(this SpecklePolyline inputObject)
+        {
+            Structural1DElementPolyline convertedObject = new Structural1DElementPolyline();
+
+            foreach (PropertyInfo p in convertedObject.GetType().GetProperties().Where(p => p.CanWrite))
+            {
+                PropertyInfo inputProperty = inputObject.GetType().GetProperty(p.Name);
+                if (inputProperty != null)
+                    p.SetValue(convertedObject, inputProperty.GetValue(inputObject));
+            }
+
+            return convertedObject.ToNative();
+        }
+
         public static bool ToNative(this Structural1DElementPolyline poly)
         {
             new GSA1DElementPolyline() { Value = poly }.SetGWACommand(GSA);
