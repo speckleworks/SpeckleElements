@@ -40,6 +40,9 @@ namespace SpeckleElementsGSA
 
                 obj.NodeRefs = nodes.Select(n => (n.Value as StructuralNode).StructuralId).ToList();
                 this.SubGWACommand.AddRange(nodes.Select(n => n.GWACommand));
+
+                foreach(GSANode n in targetNodes)
+                    n.ForceSend = true;
             }
 
             obj.LoadCaseRef = pieces[counter++];

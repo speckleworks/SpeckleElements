@@ -13,7 +13,7 @@ namespace SpeckleElementsGSA
     [GSAObject("NODE.2", new string[] { "AXIS" }, "nodes", true, true, new Type[] { }, new Type[] { typeof(GSA1DElement), typeof(GSA1DMember), typeof(GSA2DElement), typeof(GSA2DMember) })]
     public class GSANode : IGSASpeckleContainer
     {
-        public bool ForceSend;
+        public bool ForceSend; // This is to filter only "important" nodes
 
         public string GWACommand { get; set; }
         public List<string> SubGWACommand { get; set; } = new List<string>();
@@ -132,6 +132,8 @@ namespace SpeckleElementsGSA
                     subLs.Add(node.Restraint.Value[3] ? "1" : "0");
                     subLs.Add(node.Restraint.Value[4] ? "1" : "0");
                     subLs.Add(node.Restraint.Value[5] ? "1" : "0");
+
+                    this.ForceSend = true;
                 }
 
                 ls.AddRange(subLs);
@@ -154,6 +156,8 @@ namespace SpeckleElementsGSA
                     subLs.Add(node.Stiffness.Value[3].ToString());
                     subLs.Add(node.Stiffness.Value[4].ToString());
                     subLs.Add(node.Stiffness.Value[5].ToString());
+
+                    this.ForceSend = true;
                 }
 
                 ls.AddRange(subLs);
@@ -374,6 +378,8 @@ namespace SpeckleElementsGSA
                         match.Value.Mass = massNode.Value.Mass;
                         match.SubGWACommand.AddRange(massNode.SubGWACommand.Concat(new string[] { p }));
 
+                        match.ForceSend = true;
+
                         changed = true;
                     }
                 }
@@ -417,6 +423,8 @@ namespace SpeckleElementsGSA
                         node.Value.Result[loadCase] = new StructuralNodeResult();
 
                     (node.Value.Result[loadCase] as StructuralNodeResult).Reaction = resultExport;
+
+                    node.ForceSend = true;
                 }
             }
 
@@ -442,6 +450,8 @@ namespace SpeckleElementsGSA
                         node.Value.Result[loadCase] = new StructuralNodeResult();
 
                     (node.Value.Result[loadCase] as StructuralNodeResult).Displacement = resultExport;
+
+                    node.ForceSend = true;
                 }
             }
 
