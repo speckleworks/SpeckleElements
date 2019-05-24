@@ -141,6 +141,32 @@ namespace SpeckleElements
     }
 
     [Serializable]
+    public partial class StructuralLoadTaskBuckling : SpeckleObject, IStructural
+    {
+        public override string Type { get => "StructuralLoadTaskBuckling"; }
+
+        /// <summary>Structural ID to reference from other objects.</summary>
+        [SNJ.JsonProperty("structuralId", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
+        public string StructuralId { get; set; }
+
+        /// <summary>Number of modes.</summary>
+        [SNJ.JsonProperty("NumModes", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
+        public int NumModes { get; set; }
+
+        /// <summary>Maximum number of iterations.</summary>
+        [SNJ.JsonProperty("MaxNumIterations", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
+        public int MaxNumIterations { get; set; }
+
+        /// <summary>Name of the combination case.</summary>
+        [SNJ.JsonProperty("ResultCaseRef", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
+        public string ResultCaseRef { get; set; }
+
+        /// <summary>Stage definition for the task</summary>
+        [SNJ.JsonProperty("stageDefinitionRef", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
+        public string StageDefinitionRef { get; set; }
+    }
+
+    [Serializable]
     public partial class StructuralLoadCombo : SpeckleObject, IStructural
     {
         public override string Type { get => "StructuralLoadCombo"; }
@@ -301,6 +327,24 @@ namespace SpeckleElements
             get => StructuralProperties.ContainsKey("loadCaseRef") ? (StructuralProperties["loadCaseRef"] as string) : null;
             set => StructuralProperties["loadCaseRef"] = value;
         }
+    }
+
+    [Serializable]
+    public partial class StructuralStageDefinition : SpeckleObject, IStructural
+    {
+        public override string Type { get => "StructuralStageDefinition"; }
+
+        /// <summary>Structural ID to reference from other objects.</summary>
+        [SNJ.JsonProperty("structuralId", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
+        public string StructuralId { get; set; }
+
+        /// <summary>Structural ID of members to include in the stage of the construction sequence.</summary>
+        [SNJ.JsonProperty("memberRefs", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
+        public List<string> MemberRefs { get; set; }
+
+        /// <summary>Number of days in the stage</summary>
+        [SNJ.JsonProperty("stageDays", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
+        public int StageDays { get; set; }
     }
     #endregion
 
