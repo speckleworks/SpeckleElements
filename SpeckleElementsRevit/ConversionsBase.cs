@@ -133,7 +133,6 @@ namespace SpeckleElementsRevit
 
       var questForTheBest = UnitDictionary;
 
-      //myElement.LookupParameter
       foreach( var kvp in parameters )
       {
         if( kvp.Key.Contains( "__unitType::" ) ) continue; // skip unit types please
@@ -141,23 +140,45 @@ namespace SpeckleElementsRevit
         {
           var myParam = myElement.LookupParameter( kvp.Key );
           if( myParam == null ) continue;
+          if( myParam.IsReadOnly ) continue;
+
           switch( myParam.StorageType )
           {
             case StorageType.Double:
-            //TODO: Set Double param, risky as it's potentially overriding things?
+            var hasUnitKey = parameters.ContainsKey( "__unitType::" + myParam.Definition.Name );
+            if( hasUnitKey )
+            {
+              var unitType = (string) parameters[ "__unitType::" + kvp.Key ];
+              var sourceUnitString = UnitDictionary[ unitType ];
+              DisplayUnitType sourceUnit;
+              Enum.TryParse<DisplayUnitType>( sourceUnitString, out sourceUnit );
+
+              var convertedValue = UnitUtils.ConvertToInternalUnits( Convert.ToDouble( kvp.Value ), sourceUnit );
+
+              myParam.Set( convertedValue );
+            }
+            else
+            {
+              myParam.Set( Convert.ToDouble( kvp.Value ) );
+            }
             break;
+
             case StorageType.Integer:
-            myParam.Set( (int) kvp.Value );
+            myParam.Set( Convert.ToInt32( kvp.Value ) );
             break;
+
             case StorageType.String:
-            myParam.Set( (string) kvp.Value );
+            myParam.Set( Convert.ToString( kvp.Value ) );
             break;
+
             case StorageType.ElementId:
-            //TODO
+            // TODO/Fake out: most important element id params should go as props in the object model
             break;
           }
         }
-        catch( Exception e ) { }
+        catch( Exception e )
+        {
+        }
       }
 
     }
