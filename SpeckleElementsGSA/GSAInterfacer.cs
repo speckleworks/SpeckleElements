@@ -183,11 +183,11 @@ namespace SpeckleElementsGSA
 
             for (int i = 0; i < prevSets.Count(); i++)
             {
-                string[] split = prevSets[i].ListSplit("\t");
+                string[] split = Regex.Replace(prevSets[i], ":{speckle_app_id:.*}", "").ListSplit("\t");
                 prevSets[i] = split[1] + "\t" + split[2] + "\t";
             }
 
-            prevSets = prevSets.Where(l => !GSASetCache.Keys.Any(x => x.Contains(l))).ToList();
+            prevSets = prevSets.Where(l => !GSASetCache.Keys.Any(x => Regex.Replace(x, ":{speckle_app_id:.*}", "").Contains(l))).ToList();
 
             for (int i = 0; i < prevSets.Count(); i++)
             {
