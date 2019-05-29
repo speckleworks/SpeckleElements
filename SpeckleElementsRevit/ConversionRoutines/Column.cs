@@ -53,7 +53,7 @@ namespace SpeckleElementsRevit
           }
 
           // Final preparations for good measure
-          MatchFlipping( existingFamilyInstance, myCol );
+          MatchFlippingAndRotation( existingFamilyInstance, myCol, baseLine );
           SetElementParams( existingFamilyInstance, myCol.parameters );
           return existingFamilyInstance;
         }
@@ -83,7 +83,7 @@ namespace SpeckleElementsRevit
       locationCurve.Curve = baseLine;
 
       // Final preparations
-      MatchFlipping( familyInstance, myCol );
+      MatchFlippingAndRotation( familyInstance, myCol, baseLine );
       SetElementParams( familyInstance, myCol.parameters );
 
       return familyInstance;
@@ -107,7 +107,7 @@ namespace SpeckleElementsRevit
       return sym;
     }
 
-    public static void MatchFlipping( Autodesk.Revit.DB.FamilyInstance myInstance, Column myColumn )
+    public static void MatchFlippingAndRotation( Autodesk.Revit.DB.FamilyInstance myInstance, Column myColumn, Curve baseLine )
     {
       try
       {
@@ -124,6 +124,16 @@ namespace SpeckleElementsRevit
           myInstance.flipFacing();
       }
       catch { }
+
+      try {
+        // TODO: Check against existing rotation (if any) and deduct that)
+        var rotation = Convert.ToDouble( myColumn.Properties[ "__rotation" ] );
+
+        var start = baseLine.GetEndPoint( 0 );
+        var end = baseLine.GetEndPoint( 1 );
+        var myLine = Line.CreateBound( start, end );
+        ((LocationCurve) myInstance.Location).Rotate( myLine, rotation );
+      } catch (Exception e) { }
     }
 
     public static Column ColumnToSpeckle( Autodesk.Revit.DB.FamilyInstance myFamily )
@@ -145,6 +155,7 @@ namespace SpeckleElementsRevit
 
       myColumn.Properties[ "__facingFlipped" ] = myFamily.FacingFlipped;
       myColumn.Properties[ "__handFlipped" ] = myFamily.HandFlipped;
+      myColumn.Properties[ "__rotation" ] = ((LocationPoint) myFamily.Location).Rotation;
 
       myColumn.GenerateHash();
       myColumn.ApplicationId = myFamily.UniqueId;
