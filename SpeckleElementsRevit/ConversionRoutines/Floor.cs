@@ -81,7 +81,7 @@ namespace SpeckleElementsRevit
           {
             var c = curve as Curve;
             if ( c == null ) continue;
-            poly.Segments.Add( SpeckleCore.Converter.Serialise( c ));
+            poly.Segments.Add( SpeckleCore.Converter.Serialise( c ) as SpeckleObject );
           }
         }
       }

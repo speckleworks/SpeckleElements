@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Autodesk.Revit.DB;
+using SpeckleCore;
 using SpeckleElements;
 
 namespace SpeckleElementsRevit
@@ -81,7 +82,7 @@ namespace SpeckleElementsRevit
       return familyInstance;
     }
 
-    public static Column ColumnToSpeckle( Autodesk.Revit.DB.FamilyInstance myFamily )
+    public static List<SpeckleObject> ColumnToSpeckle( Autodesk.Revit.DB.FamilyInstance myFamily )
     {
       var myColumn = new Column();
       var allSolids = GetElementSolids( myFamily, opt: new Options() { DetailLevel = ViewDetailLevel.Fine, ComputeReferences = true } );
@@ -110,7 +111,9 @@ namespace SpeckleElementsRevit
       myColumn.GenerateHash();
       myColumn.ApplicationId = myFamily.UniqueId;
 
-      return myColumn;
+      var analyticalModel = AnalyticalStickToSpeckle(myFamily);
+
+      return new List<SpeckleObject>() { myColumn }.Concat(analyticalModel).ToList();
     }
   }
 }

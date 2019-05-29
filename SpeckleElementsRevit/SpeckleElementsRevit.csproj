@@ -49,6 +49,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ConversionRoutines\AnalyticalStick.cs" />
     <Compile Include="ConversionRoutines\Beam.cs" />
     <Compile Include="ConversionRoutines\Column.cs" />
     <Compile Include="ConversionRoutines\FamilyInstance.cs" />

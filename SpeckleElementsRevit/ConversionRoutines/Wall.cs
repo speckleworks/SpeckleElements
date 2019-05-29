@@ -149,7 +149,7 @@ namespace SpeckleElementsRevit
     public static SpeckleElements.Wall ToSpeckle( this Autodesk.Revit.DB.Wall myWall )
     {
       var speckleWall = new SpeckleElements.Wall();
-      speckleWall.baseCurve = SpeckleCore.Converter.Serialise( ((LocationCurve) myWall.Location).Curve );
+      speckleWall.baseCurve = SpeckleCore.Converter.Serialise( ((LocationCurve) myWall.Location).Curve ) as SpeckleObject;
 
       var heightParam = myWall.get_Parameter( BuiltInParameter.WALL_USER_HEIGHT_PARAM );
       var heightValue = heightParam.AsDouble();

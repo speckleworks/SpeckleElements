@@ -19,7 +19,7 @@ namespace SpeckleElementsRevit
     /// </summary>
     /// <param name="myElement"></param>
     /// <returns></returns>
-    public static SpeckleObject ToSpeckle( this Autodesk.Revit.DB.FamilyInstance myFamily )
+    public static object ToSpeckle( this Autodesk.Revit.DB.FamilyInstance myFamily )
     {
       // TODO: check if this family is a column (BuiltInCategory.OST_StructuralColumns)
       // or a beam (BuiltInCategory.OST_StructuralFraming or BuiltInCategory.OST_BeamAnalytical?)
