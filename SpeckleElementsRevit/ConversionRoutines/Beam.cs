@@ -16,7 +16,7 @@ namespace SpeckleElementsRevit
     {
       var (docObj, stateObj) = GetExistingElementByApplicationId( myBeam.ApplicationId, myBeam.Type );
 
-      var baseLine = ( Curve ) SpeckleCore.Converter.Deserialise( myBeam.baseLine, new string[ ] { "SpeckleCoreGeometryDynamo" } );
+      var baseLine = ( Curve ) SpeckleCore.Converter.Deserialise( obj: myBeam.baseLine, excludeAssebmlies: new string[ ] { "SpeckleCoreGeometryDynamo" } );
       var start = baseLine.GetEndPoint( 0 );
       var end = baseLine.GetEndPoint( 1 );
 

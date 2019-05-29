@@ -242,21 +242,21 @@ namespace SpeckleElementsRevit
       switch( crv )
       {
         case SpeckleLine line:
-        myCurves.Add( (Line) SpeckleCore.Converter.Deserialise( line, excludeAssebmlies: new string[ ] { "SpeckleCoreGeometryDynamo" } ) );
+        myCurves.Add( (Line) SpeckleCore.Converter.Deserialise( obj: line, excludeAssebmlies: new string[ ] { "SpeckleCoreGeometryDynamo" } ) );
         return myCurves;
 
         case SpeckleArc arc:
-        myCurves.Add( (Arc) SpeckleCore.Converter.Deserialise( arc, excludeAssebmlies: new string[ ] { "SpeckleCoreGeometryDynamo" } ) );
+        myCurves.Add( (Arc) SpeckleCore.Converter.Deserialise( obj: arc, excludeAssebmlies: new string[ ] { "SpeckleCoreGeometryDynamo" } ) );
         return myCurves;
 
         case SpeckleCurve nurbs:
-        myCurves.Add( (Curve) SpeckleCore.Converter.Deserialise( nurbs, excludeAssebmlies: new string[ ] { "SpeckleCoreGeometryDynamo" } ) );
+        myCurves.Add( (Curve) SpeckleCore.Converter.Deserialise( obj: nurbs, excludeAssebmlies: new string[ ] { "SpeckleCoreGeometryDynamo" } ) );
         return myCurves;
 
         case SpecklePolyline poly:
         if( poly.Value.Count == 6 )
         {
-          myCurves.Add( (Line) SpeckleCore.Converter.Deserialise( new SpeckleLine( poly.Value ), excludeAssebmlies: new string[ ] { "SpeckleCoreGeometryDynamo" } ) );
+          myCurves.Add( (Line) SpeckleCore.Converter.Deserialise( obj: new SpeckleLine( poly.Value ), excludeAssebmlies: new string[ ] { "SpeckleCoreGeometryDynamo" } ) );
         }
         else
         {
@@ -270,13 +270,13 @@ namespace SpeckleElementsRevit
           {
             var speckleLine = new SpeckleLine( new double[ ] { pts[ i - 1 ].Value[ 0 ], pts[ i - 1 ].Value[ 1 ], pts[ i - 1 ].Value[ 2 ], pts[ i ].Value[ 0 ], pts[ i ].Value[ 1 ], pts[ i ].Value[ 2 ] } );
 
-            myCurves.Add( (Line) SpeckleCore.Converter.Deserialise( speckleLine, excludeAssebmlies: new string[ ] { "SpeckleCoreGeometryDynamo" } ) );
+            myCurves.Add( (Line) SpeckleCore.Converter.Deserialise( obj: speckleLine, excludeAssebmlies: new string[ ] { "SpeckleCoreGeometryDynamo" } ) );
           }
 
           if( poly.Closed )
           {
             var speckleLine = new SpeckleLine( new double[ ] { pts[ pts.Count - 1 ].Value[ 0 ], pts[ pts.Count - 1 ].Value[ 1 ], pts[ pts.Count - 1 ].Value[ 2 ], pts[ 0 ].Value[ 0 ], pts[ 0 ].Value[ 1 ], pts[ 0 ].Value[ 2 ] } );
-            myCurves.Add( (Line) SpeckleCore.Converter.Deserialise( speckleLine, excludeAssebmlies: new string[ ] { "SpeckleCoreGeometryDynamo" } ) );
+            myCurves.Add( (Line) SpeckleCore.Converter.Deserialise( obj: speckleLine, excludeAssebmlies: new string[ ] { "SpeckleCoreGeometryDynamo" } ) );
           }
         }
         return myCurves;

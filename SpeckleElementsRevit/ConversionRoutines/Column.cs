@@ -15,18 +15,20 @@ namespace SpeckleElementsRevit
     {
       var (docObj, stateObj) = GetExistingElementByApplicationId( myCol.ApplicationId, myCol.Type );
 
-      //var baseLine = GetSegmentList( myCol.baseLine )[ 0 ];
-      var baseLine = (Curve) SpeckleCore.Converter.Deserialise( myCol.baseLine, new string[ ] { "dynamo" } );
+      var baseLine = (Curve) SpeckleCore.Converter.Deserialise( obj: myCol.baseLine, excludeAssebmlies: new string[ ] { "SpeckleCoreGeometryDynamo" } );
       var start = baseLine.GetEndPoint( 0 );
       var end = baseLine.GetEndPoint( 1 );
 
+      // get family symbol; it's used throughout
+      FamilySymbol familySymbol = TryGetColumnFamilySymbol( myCol.columnFamily, myCol.columnType );
+      
       if( docObj != null )
       {
         var type = Doc.GetElement( docObj.GetTypeId() ) as ElementType;
-        if( myCol.columnType != null && (myCol.columnType != type.Name || myCol.columnFamily != type.FamilyName) )
+
+        // if family changed, tough luck - delete and rewind
+        if( myCol.columnFamily != type.FamilyName) 
         {
-          // Will create a new one, exits fully this nested if
-          // Theoretically we could be careful here and set things properly, but does it make sense - too much work for now
           Doc.Delete( docObj.Id );
         }
         else
@@ -37,35 +39,32 @@ namespace SpeckleElementsRevit
           var existingLocationCurve = existingFamilyInstance.Location as LocationCurve;
           existingLocationCurve.Curve = baseLine;
 
-          //existingFamilyInstance.ChangeTypeId();
+          // check if type changed, and try and change it
+          if( myCol.columnType != null && (myCol.columnType != type.Name))
+          {
+            existingFamilyInstance.ChangeTypeId( familySymbol.Id );
+          }
+          
+          SetElementParams( existingFamilyInstance, myCol.parameters );
           return existingFamilyInstance;
         }
       }
 
       // below, new creation of a column.
-      FamilySymbol sym;
-      sym = GetFamilySymbolByFamilyNameAndTypeAndCategory( myCol.columnFamily, myCol.columnType, BuiltInCategory.OST_StructuralColumns );
-
-      if( sym == null )
-      {
-        sym = GetFamilySymbolByFamilyNameAndTypeAndCategory( myCol.columnFamily, myCol.columnType, BuiltInCategory.OST_Columns );
-      }
-
-      if( sym == null )
-      {
-        MissingFamiliesAndTypes.Add( myCol.columnFamily + " " + myCol.columnType );
+      // fake out if we don't have a symbol.
+      if( familySymbol == null )
         return null;
-      }
 
-      if( !sym.IsActive ) sym.Activate();
+
+      if( !familySymbol.IsActive ) familySymbol.Activate();
 
       // Set base level
       if( myCol.baseLevel == null )
         myCol.baseLevel = new SpeckleElements.Level() { elevation = baseLine.GetEndPoint( 0 ).Z / Scale, levelName = "Speckle Level " + baseLine.GetEndPoint( 0 ).Z / Scale };
-      var myLevel = myCol.baseLevel.ToNative() as Autodesk.Revit.DB.Level;
+      var baseLevel = myCol.baseLevel.ToNative() as Autodesk.Revit.DB.Level;
 
      
-      var familyInstance = Doc.Create.NewFamilyInstance( start, sym, myLevel, Autodesk.Revit.DB.Structure.StructuralType.Column );
+      var familyInstance = Doc.Create.NewFamilyInstance( start, familySymbol, baseLevel, Autodesk.Revit.DB.Structure.StructuralType.Column );
 
       familyInstance.get_Parameter( BuiltInParameter.SLANTED_COLUMN_TYPE_PARAM ).Set( (double) SlantedOrVerticalColumnType.CT_EndPoint );
 
@@ -81,6 +80,24 @@ namespace SpeckleElementsRevit
       SetElementParams( familyInstance, myCol.parameters );
 
       return familyInstance;
+    }
+
+    public static FamilySymbol TryGetColumnFamilySymbol(string columnFamily, string columnType )
+    {
+      FamilySymbol sym;
+      sym = GetFamilySymbolByFamilyNameAndTypeAndCategory(columnFamily, columnType, BuiltInCategory.OST_StructuralColumns );
+
+      if( sym == null )
+      {
+        sym = GetFamilySymbolByFamilyNameAndTypeAndCategory( columnFamily, columnType, BuiltInCategory.OST_Columns );
+      }
+
+      if( sym == null )
+      {
+        MissingFamiliesAndTypes.Add( columnFamily + " " + columnType );
+      }
+
+      return sym;
     }
 
     public static Column ColumnToSpeckle( Autodesk.Revit.DB.FamilyInstance myFamily )
@@ -100,11 +117,8 @@ namespace SpeckleElementsRevit
       myColumn.baseLevel = baseLevel?.ToSpeckle();
       myColumn.topLevel = topLevel?.ToSpeckle();
 
-      //var bottomAttOffset = myFamily.get_Parameter( BuiltInParameter.FAMILY_BASE_LEVEL_OFFSET_PARAM )?.AsDouble();
-      //myColumn.bottomOffset = bottomAttOffset != null ? (double) bottomAttOffset / Scale : 0.0;
-
-      //var topAttOffset = myFamily.get_Parameter( BuiltInParameter.FAMILY_TOP_LEVEL_OFFSET_PARAM )?.AsDouble();
-      //myColumn.topOffset = topAttOffset != null ? (double) topAttOffset / Scale : 0.0;
+      myColumn.Properties[ "facingFlipped" ] = myFamily.FacingFlipped;
+      myColumn.Properties[ "handFlipped" ] = myFamily.HandFlipped;
 
       myColumn.GenerateHash();
       myColumn.ApplicationId = myFamily.UniqueId;
