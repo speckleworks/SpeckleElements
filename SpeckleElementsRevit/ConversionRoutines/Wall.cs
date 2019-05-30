@@ -13,154 +13,64 @@ namespace SpeckleElementsRevit
   {
     // TODO: A polycurve spawning multiple walls is not yet handled properly with diffing, etc.
     // TODO: Most probably, just get rid of the polyline wall handling stuff. It's rather annyoing and confusing...
-    public static List<Autodesk.Revit.DB.Wall> ToNative( this SpeckleElements.Wall myWall )
+    public static Wall ToNative( this SpeckleElements.Wall myWall )
     {
-      var (docObjs, stateObjs) = GetExistingElementsByApplicationId( myWall.ApplicationId, myWall.Type );
+      var (docObj, stateObj) = GetExistingElementByApplicationId( myWall.ApplicationId, myWall.Type );
 
       var myWallType = GetElementByName( typeof( WallType ), myWall.wallType ) as WallType;
 
-
-      // filter null elements!
-      docObjs = docObjs.Where( obj => obj != null ).ToList();
-      stateObjs = stateObjs.Where( obj => obj != null ).ToList();
-
-      List<Autodesk.Revit.DB.Wall> ret = new List<Autodesk.Revit.DB.Wall>();
-      List<Curve> segments = GetSegmentList( myWall.baseCurve );
+      // cheating a bit. 
+      var segments = GetSegmentList( myWall.baseCurve );
+      var baseCurve = segments[ 0 ];
 
       // If there are no existing document objects, create them.
-      if( docObjs.Count == 0 )
+      if( docObj == null )
       {
-        foreach( var baseCurve in segments )
+
+        if( myWall.baseLevel == null )
+          myWall.baseLevel = new SpeckleElements.Level() { elevation = baseCurve.GetEndPoint( 0 ).Z / Scale, levelName = "Speckle Level " + baseCurve.GetEndPoint( 0 ).Z / Scale };
+
+        var levelId = ((Level) myWall.baseLevel.ToNative()).Id;
+        var revitWall = Wall.Create( Doc, baseCurve, myWallType.Id, levelId, myWall.height * Scale, myWall.offset * Scale, false, true );
+
+        if( myWall.topLevel != null )
         {
-          if( myWall.baseLevel == null )
-            myWall.baseLevel = new SpeckleElements.Level() { elevation = baseCurve.GetEndPoint( 0 ).Z / Scale, levelName = "Speckle Level " + baseCurve.GetEndPoint( 0 ).Z / Scale };
-
-          var levelId = ((Level) myWall.baseLevel.ToNative()).Id;
-          var revitWall = Wall.Create( Doc, baseCurve, myWallType.Id, levelId, myWall.height * Scale, myWall.offset * Scale, false, true );
-
-          if( myWall.topLevel != null )
-          {
-            var topLevelId = ((Level) myWall.topLevel.ToNative()).Id;
-            revitWall.get_Parameter( BuiltInParameter.WALL_HEIGHT_TYPE ).Set( topLevelId );
-          }
-
-          if( myWall.Properties.ContainsKey( "__flipped" ) )
-          {
-            var flipped = Convert.ToBoolean( myWall.Properties[ "_flipped" ] );
-            if( flipped != revitWall.Flipped )
-              revitWall.Flip();
-          }
-
-          SetElementParams( revitWall, myWall.parameters );
-          ret.Add( revitWall );
+          var topLevelId = ((Level) myWall.topLevel.ToNative()).Id;
+          revitWall.get_Parameter( BuiltInParameter.WALL_HEIGHT_TYPE ).Set( topLevelId );
         }
 
-        return ret;
+        if( myWall.Properties.ContainsKey( "__flipped" ) )
+        {
+          var flipped = Convert.ToBoolean( myWall.Properties[ "__flipped" ] );
+          if( flipped != revitWall.Flipped )
+            revitWall.Flip();
+        }
+
+        SetElementParams( revitWall, myWall.parameters );
+        return revitWall;
       }
 
-      // If there are as many docobjects as segments, edit them all
-      else if( segments.Count == docObjs.Count )
+      // TODO CREATE WALL
+      var existingRevitWall = (Wall) docObj;
+
+      LocationCurve locationCurve = (LocationCurve) existingRevitWall.Location;
+      myWall.baseLevel?.ToNative();
+      locationCurve.Curve = baseCurve;
+
+      SetWallHeightOffset( existingRevitWall, myWall.height, myWall.offset );
+      existingRevitWall.WallType = myWallType as WallType;
+
+
+      if( myWall.Properties.ContainsKey( "__flipped" ) )
       {
-        for( int i = 0; i < segments.Count; i++ )
-        {
-          var revitWall = (Wall) docObjs[ i ];
-
-          LocationCurve locationCurve = (LocationCurve) ((Wall) docObjs[ i ]).Location;
-          myWall.baseLevel?.ToNative();
-          locationCurve.Curve = segments[ i ];
-
-          SetWallHeightOffset( (Wall) docObjs[ i ], myWall.height, myWall.offset );
-          ((Wall) docObjs[ i ]).WallType = myWallType as WallType;
-
-
-          if( myWall.Properties.ContainsKey( "__flipped" ) )
-          {
-            var flipped = Convert.ToBoolean( myWall.Properties[ "_flipped" ] );
-            if( flipped != revitWall.Flipped )
-              revitWall.Flip();
-          }
-
-          SetElementParams( docObjs[ i ], myWall.parameters );
-          ret.Add( docObjs[ i ] as Wall );
-        }
-        return ret;
+        var flipped = Convert.ToBoolean( myWall.Properties[ "__flipped" ] );
+        if( flipped != existingRevitWall.Flipped )
+          existingRevitWall.Flip();
       }
-      // If there are more new segments than doc objects, edit the existing and create the new
-      else if( segments.Count > docObjs.Count )
-      {
-        //Edit existing walls
-        for( int i = 0; i < docObjs.Count; i++ )
-        {
-          var revitWall = (Wall) docObjs[ i ];
 
-          LocationCurve locationCurve = (LocationCurve) revitWall.Location;
-          myWall.baseLevel?.ToNative();
-          locationCurve.Curve = segments[ i ];
+      SetElementParams( existingRevitWall, myWall.parameters );
 
-          SetWallHeightOffset( revitWall, myWall.height, myWall.offset );
-          revitWall.WallType = myWallType as WallType;
-
-
-          if( myWall.Properties.ContainsKey( "__flipped" ) )
-          {
-            var flipped = Convert.ToBoolean( myWall.Properties[ "_flipped" ] );
-            if( flipped != revitWall.Flipped )
-              revitWall.Flip();
-          }
-
-          SetElementParams( revitWall, myWall.parameters );
-          ret.Add( docObjs[ i ] as Wall );
-        }
-
-        //Add new walls
-        for( int i = docObjs.Count; i < segments.Count; i++ )
-        {
-          var baseCurve = segments[ i ];
-          if( myWall.baseLevel == null )
-            myWall.baseLevel = new SpeckleElements.Level() { elevation = baseCurve.GetEndPoint( 0 ).Z, levelName = "Speckle Level " + baseCurve.GetEndPoint( 0 ).Z };
-
-          var levelId = ((Level) myWall.baseLevel.ToNative()).Id;
-          var revitWall = Wall.Create( Doc, baseCurve, levelId, false );
-          revitWall = SetWallHeightOffset( revitWall, myWall.height, myWall.offset );
-
-          ((Wall) docObjs[ i ]).WallType = myWallType as WallType;
-
-          if( myWall.Properties.ContainsKey( "__flipped" ) )
-          {
-            var flipped = Convert.ToBoolean( myWall.Properties[ "_flipped" ] );
-            if( flipped != revitWall.Flipped )
-              revitWall.Flip();
-          }
-
-          SetElementParams( revitWall, myWall.parameters );
-          ret.Add( revitWall );
-        }
-
-        return ret;
-      }
-      // If there are more doc objects than segments, edit the existing ones and delete the rest!
-      else if( segments.Count < docObjs.Count )
-      {
-        // Deletion
-        for( int i = segments.Count; i < docObjs.Count; i++ )
-        {
-          Doc.Delete( docObjs[ i ].Id );
-        }
-
-        // Editing
-        for( int i = 0; i < segments.Count; i++ )
-        {
-          LocationCurve locationCurve = (LocationCurve) ((Wall) docObjs[ i ]).Location;
-          myWall.baseLevel?.ToNative();
-          locationCurve.Curve = segments[ i ];
-          SetWallHeightOffset( (Wall) docObjs[ i ], myWall.height, myWall.offset );
-          ((Wall) docObjs[ i ]).WallType = myWallType as WallType;
-
-          ret.Add( docObjs[ i ] as Wall );
-        }
-        return ret;
-      }
-      return ret;
+      return existingRevitWall;
     }
 
     /// <summary>
