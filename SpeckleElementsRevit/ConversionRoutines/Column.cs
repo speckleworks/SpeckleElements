@@ -19,6 +19,8 @@ namespace SpeckleElementsRevit
       var start = baseLine.GetEndPoint( 0 );
       var end = baseLine.GetEndPoint( 1 );
 
+      var isVertical = IsColumnVertical( myCol );
+
       // get family symbol; it's used throughout
       FamilySymbol familySymbol = TryGetColumnFamilySymbol( myCol.columnFamily, myCol.columnType );
 
@@ -42,9 +44,19 @@ namespace SpeckleElementsRevit
         {
           // Edit Endpoints and return
           var existingFamilyInstance = (Autodesk.Revit.DB.FamilyInstance) docObj;
-          existingFamilyInstance.get_Parameter( BuiltInParameter.SLANTED_COLUMN_TYPE_PARAM ).Set( (double) SlantedOrVerticalColumnType.CT_EndPoint );
-          var existingLocationCurve = existingFamilyInstance.Location as LocationCurve;
-          existingLocationCurve.Curve = baseLine;
+
+          // Edit curve only if i'm not vertical
+          if( !isVertical )
+          {
+            existingFamilyInstance.get_Parameter( BuiltInParameter.SLANTED_COLUMN_TYPE_PARAM ).Set( (double) SlantedOrVerticalColumnType.CT_EndPoint );
+
+            var existingLocationCurve = existingFamilyInstance.Location as LocationCurve;
+            existingLocationCurve.Curve = baseLine;
+          } else
+          {
+            var existingLocationPoint = existingFamilyInstance.Location as LocationPoint;
+            existingLocationPoint.Point = start;
+          }
 
           // check if type changed, and try and change it
           if( myCol.columnType != null && (myCol.columnType != type.Name) )
@@ -69,7 +81,8 @@ namespace SpeckleElementsRevit
       var familyInstance = Doc.Create.NewFamilyInstance( start, familySymbol, baseLevel, Autodesk.Revit.DB.Structure.StructuralType.Column );
 
       // Make it slanted to avoid potential errors when not straight
-      familyInstance.get_Parameter( BuiltInParameter.SLANTED_COLUMN_TYPE_PARAM ).Set( (double) SlantedOrVerticalColumnType.CT_EndPoint );
+      if( !isVertical )
+        familyInstance.get_Parameter( BuiltInParameter.SLANTED_COLUMN_TYPE_PARAM ).Set( (double) SlantedOrVerticalColumnType.CT_EndPoint );
 
       // Set the top level
       if( myCol.topLevel != null )
@@ -79,8 +92,11 @@ namespace SpeckleElementsRevit
       }
 
       // Set the location curve
-      var locationCurve = familyInstance.Location as LocationCurve;
-      locationCurve.Curve = baseLine;
+      if( !isVertical )
+      {
+        var locationCurve = familyInstance.Location as LocationCurve;
+        locationCurve.Curve = baseLine;
+      }
 
       // Final preparations
       MatchFlippingAndRotation( familyInstance, myCol, baseLine );
@@ -107,8 +123,10 @@ namespace SpeckleElementsRevit
       return sym;
     }
 
-    public static void MatchFlippingAndRotation( Autodesk.Revit.DB.FamilyInstance myInstance, Column myColumn, Curve baseLine )
+    private static void MatchFlippingAndRotation( Autodesk.Revit.DB.FamilyInstance myInstance, Column myColumn, Curve baseLine )
     {
+
+      // TODO: All these try catches can be replaced with if ( Dictionary.ContainsKey(LOLOLO) )
       try
       {
         var handFlip = Convert.ToBoolean( myColumn.Properties[ "__handFlipped" ] );
@@ -125,15 +143,38 @@ namespace SpeckleElementsRevit
       }
       catch { }
 
-      try {
+      try
+      {
         // TODO: Check against existing rotation (if any) and deduct that)
         var rotation = Convert.ToDouble( myColumn.Properties[ "__rotation" ] );
 
         var start = baseLine.GetEndPoint( 0 );
         var end = baseLine.GetEndPoint( 1 );
         var myLine = Line.CreateBound( start, end );
-        ((LocationCurve) myInstance.Location).Rotate( myLine, rotation );
-      } catch (Exception e) { }
+
+        if( myInstance.Location is LocationPoint )
+          ((LocationPoint) myInstance.Location).Rotate( myLine, rotation - ((LocationPoint) myInstance.Location).Rotation );
+        //else
+        //  ElementTransformUtils.RotateElement( Doc, myInstance.Id, myLine, rotation );
+      }
+      catch( Exception e ) { }
+    }
+
+    /// <summary>
+    /// Checks whether the column is vertical or not.
+    /// </summary>
+    /// <param name="myCol"></param>
+    /// <returns></returns>
+    private static bool IsColumnVertical( Column myCol )
+    {
+      var lineArr = myCol.baseLine.Value;
+      var diffX = Math.Abs( lineArr[ 0 ] - lineArr[ 3 ] );
+      var diffY = Math.Abs( lineArr[ 1 ] - lineArr[ 4 ] );
+
+      if( diffX < 0.1 && diffY < 0.1 )
+        return true;
+
+      return false;
     }
 
     public static Column ColumnToSpeckle( Autodesk.Revit.DB.FamilyInstance myFamily )
@@ -153,9 +194,21 @@ namespace SpeckleElementsRevit
       myColumn.baseLevel = baseLevel?.ToSpeckle();
       myColumn.topLevel = topLevel?.ToSpeckle();
 
+      // TODO: Maybe move this column properties in the class defintion
       myColumn.Properties[ "__facingFlipped" ] = myFamily.FacingFlipped;
       myColumn.Properties[ "__handFlipped" ] = myFamily.HandFlipped;
-      myColumn.Properties[ "__rotation" ] = ((LocationPoint) myFamily.Location).Rotation;
+
+      if( myFamily.Location is LocationPoint )
+      {
+        myColumn.Properties[ "__rotation" ] = ((LocationPoint) myFamily.Location).Rotation;
+      }
+      else if( myFamily.Location is LocationCurve )
+      {
+        // TODO: Figure this column rotation shit out. 
+        // For now... Do nothing??
+        //var t = myFamily.GetTotalTransform();
+      }
+
 
       myColumn.GenerateHash();
       myColumn.ApplicationId = myFamily.UniqueId;

@@ -17,8 +17,8 @@ namespace SpeckleElementsRevit
     {
       var (docObjs, stateObjs) = GetExistingElementsByApplicationId( myWall.ApplicationId, myWall.Type );
 
-      //var wallType = Doc.GetDefaultElementTypeId( ElementTypeGroup.WallType );
-      var myWallType = GetElementByName( typeof( Autodesk.Revit.DB.WallType ), myWall.wallType );
+      var myWallType = GetElementByName( typeof( WallType ), myWall.wallType ) as WallType;
+
 
       // filter null elements!
       docObjs = docObjs.Where( obj => obj != null ).ToList();
@@ -41,25 +41,45 @@ namespace SpeckleElementsRevit
           if( myWall.topLevel != null )
           {
             var topLevelId = ((Level) myWall.topLevel.ToNative()).Id;
-            revitWall.get_Parameter( BuiltInParameter.WALL_HEIGHT_TYPE ).Set(topLevelId);
+            revitWall.get_Parameter( BuiltInParameter.WALL_HEIGHT_TYPE ).Set( topLevelId );
+          }
+
+          if( myWall.Properties.ContainsKey( "__flipped" ) )
+          {
+            var flipped = Convert.ToBoolean( myWall.Properties[ "_flipped" ] );
+            if( flipped != revitWall.Flipped )
+              revitWall.Flip();
           }
 
           SetElementParams( revitWall, myWall.parameters );
           ret.Add( revitWall );
         }
+
         return ret;
       }
+
       // If there are as many docobjects as segments, edit them all
       else if( segments.Count == docObjs.Count )
       {
         for( int i = 0; i < segments.Count; i++ )
         {
+          var revitWall = (Wall) docObjs[ i ];
+
           LocationCurve locationCurve = (LocationCurve) ((Wall) docObjs[ i ]).Location;
           myWall.baseLevel?.ToNative();
           locationCurve.Curve = segments[ i ];
 
           SetWallHeightOffset( (Wall) docObjs[ i ], myWall.height, myWall.offset );
           ((Wall) docObjs[ i ]).WallType = myWallType as WallType;
+
+
+          if( myWall.Properties.ContainsKey( "__flipped" ) )
+          {
+            var flipped = Convert.ToBoolean( myWall.Properties[ "_flipped" ] );
+            if( flipped != revitWall.Flipped )
+              revitWall.Flip();
+          }
+
           SetElementParams( docObjs[ i ], myWall.parameters );
           ret.Add( docObjs[ i ] as Wall );
         }
@@ -71,14 +91,24 @@ namespace SpeckleElementsRevit
         //Edit existing walls
         for( int i = 0; i < docObjs.Count; i++ )
         {
-          LocationCurve locationCurve = (LocationCurve) ((Wall) docObjs[ i ]).Location;
+          var revitWall = (Wall) docObjs[ i ];
+
+          LocationCurve locationCurve = (LocationCurve) revitWall.Location;
           myWall.baseLevel?.ToNative();
           locationCurve.Curve = segments[ i ];
 
-          SetWallHeightOffset( (Wall) docObjs[ i ], myWall.height, myWall.offset );
-          ((Wall) docObjs[ i ]).WallType = myWallType as WallType;
-          SetElementParams( docObjs[ i ], myWall.parameters );
+          SetWallHeightOffset( revitWall, myWall.height, myWall.offset );
+          revitWall.WallType = myWallType as WallType;
 
+
+          if( myWall.Properties.ContainsKey( "__flipped" ) )
+          {
+            var flipped = Convert.ToBoolean( myWall.Properties[ "_flipped" ] );
+            if( flipped != revitWall.Flipped )
+              revitWall.Flip();
+          }
+
+          SetElementParams( revitWall, myWall.parameters );
           ret.Add( docObjs[ i ] as Wall );
         }
 
@@ -92,7 +122,16 @@ namespace SpeckleElementsRevit
           var levelId = ((Level) myWall.baseLevel.ToNative()).Id;
           var revitWall = Wall.Create( Doc, baseCurve, levelId, false );
           revitWall = SetWallHeightOffset( revitWall, myWall.height, myWall.offset );
+
           ((Wall) docObjs[ i ]).WallType = myWallType as WallType;
+
+          if( myWall.Properties.ContainsKey( "__flipped" ) )
+          {
+            var flipped = Convert.ToBoolean( myWall.Properties[ "_flipped" ] );
+            if( flipped != revitWall.Flipped )
+              revitWall.Flip();
+          }
+
           SetElementParams( revitWall, myWall.parameters );
           ret.Add( revitWall );
         }
@@ -107,6 +146,7 @@ namespace SpeckleElementsRevit
         {
           Doc.Delete( docObjs[ i ].Id );
         }
+
         // Editing
         for( int i = 0; i < segments.Count; i++ )
         {
@@ -177,6 +217,12 @@ namespace SpeckleElementsRevit
 
       var grid = myWall.CurtainGrid;
 
+      // TODO: Should move maybe in base class defintion
+      speckleWall.Properties[ "__flipped" ] = myWall.Flipped;
+
+      speckleWall.ApplicationId = myWall.UniqueId;
+      speckleWall.GenerateHash();
+
       // meshing for walls in case they are curtain grids
       if( grid != null )
       {
@@ -193,9 +239,6 @@ namespace SpeckleElementsRevit
       }
       else
         (speckleWall.Faces, speckleWall.Vertices) = GetFaceVertexArrayFromElement( myWall, new Options() { DetailLevel = ViewDetailLevel.Fine, ComputeReferences = false } );
-
-      speckleWall.ApplicationId = myWall.UniqueId;
-      speckleWall.GenerateHash();
 
       return speckleWall;
     }
