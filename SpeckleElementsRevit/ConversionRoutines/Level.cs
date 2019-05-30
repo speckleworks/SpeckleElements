@@ -55,7 +55,7 @@ namespace SpeckleElementsRevit
 
       var existingLevel = docObj as Autodesk.Revit.DB.Level;
       existingLevel.Elevation = myLevel.elevation * Scale;
-      existingLevel.Name = myLevel.levelName != null ? myLevel.levelName : "Level @ " + Math.Round( myLevel.elevation, 2 );
+      existingLevel.Name = myLevel.levelName != null && existingLevel.Name == null ? myLevel.levelName : existingLevel.Name;
 
       SetElementParams( existingLevel, myLevel.parameters );
       existingLevel.Maximize3DExtents();
