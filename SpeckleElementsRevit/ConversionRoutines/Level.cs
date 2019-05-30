@@ -28,11 +28,11 @@ namespace SpeckleElementsRevit
       // If no doc object, means we need to create it!
       if( docObj == null )
       {
-        var res = Autodesk.Revit.DB.Level.Create( Doc, myLevel.elevation * Scale );
+        var myNewLevel = Autodesk.Revit.DB.Level.Create( Doc, myLevel.elevation * Scale );
         if( myLevel.levelName != null )
           try
           {
-            res.Name = myLevel.levelName;
+            myNewLevel.Name = myLevel.levelName;
           }
           catch { }
 
@@ -40,7 +40,7 @@ namespace SpeckleElementsRevit
         {
           var vt = new FilteredElementCollector( Doc ).OfClass( typeof( ViewFamilyType ) ).Where( el => ((ViewFamilyType) el).ViewFamily == ViewFamily.FloorPlan ).First();
 
-          var view = Autodesk.Revit.DB.ViewPlan.Create( Doc, vt.Id, res.Id );
+          var view = Autodesk.Revit.DB.ViewPlan.Create( Doc, vt.Id, myNewLevel.Id );
           try
           {
             view.Name = myLevel.levelName;
@@ -48,13 +48,17 @@ namespace SpeckleElementsRevit
           catch { }
         }
 
-        return res;
+        SetElementParams( myNewLevel, myLevel.parameters );
+        myNewLevel.Maximize3DExtents();
+        return myNewLevel;
       }
 
       var existingLevel = docObj as Autodesk.Revit.DB.Level;
       existingLevel.Elevation = myLevel.elevation * Scale;
-      //existingLevel.Name = myLevel.levelName != null ? myLevel.levelName : "Level @ " + Math.Round( myLevel.elevation, 2 );
+      existingLevel.Name = myLevel.levelName != null ? myLevel.levelName : "Level @ " + Math.Round( myLevel.elevation, 2 );
 
+      SetElementParams( existingLevel, myLevel.parameters );
+      existingLevel.Maximize3DExtents();
       return existingLevel;
     }
 
@@ -63,7 +67,7 @@ namespace SpeckleElementsRevit
       // TODO
       var speckleLevel = new SpeckleElements.Level();
       speckleLevel.elevation = myLevel.Elevation / Scale; // UnitUtils.ConvertFromInternalUnits(myLevel.Elevation, DisplayUnitType.Meters)
-      speckleLevel.Name = myLevel.Name;
+      speckleLevel.levelName = myLevel.Name;
       speckleLevel.parameters = GetElementParams( myLevel );
 
       speckleLevel.ApplicationId = myLevel.UniqueId;
