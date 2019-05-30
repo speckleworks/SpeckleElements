@@ -23,7 +23,7 @@ namespace SpeckleElementsRevit
       var segments = GetSegmentList( myWall.baseCurve );
       var baseCurve = segments[ 0 ];
 
-      // If there are no existing document objects, create them.
+      // Create new wall case
       if( docObj == null )
       {
 
@@ -50,8 +50,13 @@ namespace SpeckleElementsRevit
         return revitWall;
       }
 
-      // TODO CREATE WALL
+      // Edit existing wall case
       var existingRevitWall = (Wall) docObj;
+
+      if( existingRevitWall.WallType.Name != myWallType.Name )
+      {
+        existingRevitWall.ChangeTypeId( myWallType.Id );
+      }
 
       LocationCurve locationCurve = (LocationCurve) existingRevitWall.Location;
       myWall.baseLevel?.ToNative();
