@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Autodesk.Revit.DB;
 using SpeckleCore;
+using SpeckleElements;
 
 namespace SpeckleElementsRevit
 {
