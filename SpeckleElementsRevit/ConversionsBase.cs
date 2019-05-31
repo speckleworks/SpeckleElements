@@ -37,6 +37,12 @@ namespace SpeckleElementsRevit
     /// More and more doubts about this architecture every day...
     /// </summary>
     public static HashSet<string> MissingFamiliesAndTypes { get; set; } = new HashSet<string>();
+
+    /// <summary>
+    /// Gets populated with the UnitTypes and UnitDisplayTypes during conversion. 
+    /// </summary>
+    public static Dictionary<string, string> UnitDictionary { get; set; } = new Dictionary<string, string>();
+
   }
 
   public static partial class Conversions
@@ -44,6 +50,7 @@ namespace SpeckleElementsRevit
     static double Scale { get => Initialiser.RevitScale; }
     static Document Doc { get => Initialiser.RevitApp.ActiveUIDocument.Document; }
     static HashSet<string> MissingFamiliesAndTypes { get => Initialiser.MissingFamiliesAndTypes; }
+    static Dictionary<string, string> UnitDictionary { get => Initialiser.UnitDictionary; }
 
     public static GenericElement ToSpeckle( this Element myElement )
     {
@@ -68,20 +75,20 @@ namespace SpeckleElementsRevit
     public static Dictionary<string, object> GetElementParams( Element myElement )
     {
       var myParamDict = new Dictionary<string, object>();
-      var unitsDict = new Dictionary<string, string>();
 
       foreach( Parameter p in myElement.Parameters )
       {
         switch( p.StorageType )
         {
           case StorageType.Double:
-          // NOTE: do not use p.AsDouble() as direct input for unit utils conversion, it doesn't work. 
-          // ¯\_(ツ)_/¯
+          // NOTE: do not use p.AsDouble() as direct input for unit utils conversion, it doesn't work.  ¯\_(ツ)_/¯
           var val = p.AsDouble();
           try
           {
             myParamDict[ p.Definition.Name ] = UnitUtils.ConvertFromInternalUnits( val, p.DisplayUnitType );
-            myParamDict[ "____units_" + p.Definition.Name ] = p.DisplayUnitType.ToString();
+            myParamDict[ "__unitType::" + p.Definition.Name ] = p.Definition.UnitType.ToString();
+            // populate units dictionary
+            UnitDictionary[ p.Definition.UnitType.ToString() ] = p.DisplayUnitType.ToString();
           }
           catch( Exception e )
           {
@@ -124,29 +131,54 @@ namespace SpeckleElementsRevit
       if( myElement == null ) return;
       if( parameters == null ) return;
 
-      //myElement.LookupParameter
+      var questForTheBest = UnitDictionary;
+
       foreach( var kvp in parameters )
       {
+        if( kvp.Key.Contains( "__unitType::" ) ) continue; // skip unit types please
         try
         {
           var myParam = myElement.LookupParameter( kvp.Key );
           if( myParam == null ) continue;
+          if( myParam.IsReadOnly ) continue;
+
           switch( myParam.StorageType )
           {
             case StorageType.Double:
-              //TODO: Set Double param, risky as it's potentially overriding things?
+            var hasUnitKey = parameters.ContainsKey( "__unitType::" + myParam.Definition.Name );
+            if( hasUnitKey )
+            {
+              var unitType = (string) parameters[ "__unitType::" + kvp.Key ];
+              var sourceUnitString = UnitDictionary[ unitType ];
+              DisplayUnitType sourceUnit;
+              Enum.TryParse<DisplayUnitType>( sourceUnitString, out sourceUnit );
+
+              var convertedValue = UnitUtils.ConvertToInternalUnits( Convert.ToDouble( kvp.Value ), sourceUnit );
+
+              myParam.Set( convertedValue );
+            }
+            else
+            {
+              myParam.Set( Convert.ToDouble( kvp.Value ) );
+            }
             break;
+
             case StorageType.Integer:
-            myParam.Set( (int) kvp.Value );
+            myParam.Set( Convert.ToInt32( kvp.Value ) );
             break;
+
             case StorageType.String:
-            myParam.Set( (string) kvp.Value );
+            myParam.Set( Convert.ToString( kvp.Value ) );
             break;
+
             case StorageType.ElementId:
-              //TODO
+            // TODO/Fake out: most important element id params should go as props in the object model
             break;
           }
-        }catch(Exception e) { }
+        }
+        catch( Exception e )
+        {
+        }
       }
 
     }
@@ -210,21 +242,21 @@ namespace SpeckleElementsRevit
       switch( crv )
       {
         case SpeckleLine line:
-        myCurves.Add( (Line) SpeckleCore.Converter.Deserialise( line, excludeAssebmlies: new string[ ] { "SpeckleCoreGeometryDynamo" } ) );
+        myCurves.Add( (Line) SpeckleCore.Converter.Deserialise( obj: line, excludeAssebmlies: new string[ ] { "SpeckleCoreGeometryDynamo" } ) );
         return myCurves;
 
         case SpeckleArc arc:
-        myCurves.Add( (Arc) SpeckleCore.Converter.Deserialise( arc, excludeAssebmlies: new string[ ] { "SpeckleCoreGeometryDynamo" } ) );
+        myCurves.Add( (Arc) SpeckleCore.Converter.Deserialise( obj: arc, excludeAssebmlies: new string[ ] { "SpeckleCoreGeometryDynamo" } ) );
         return myCurves;
 
         case SpeckleCurve nurbs:
-        myCurves.Add( (Curve) SpeckleCore.Converter.Deserialise( nurbs, excludeAssebmlies: new string[ ] { "SpeckleCoreGeometryDynamo" } ) );
+        myCurves.Add( (Curve) SpeckleCore.Converter.Deserialise( obj: nurbs, excludeAssebmlies: new string[ ] { "SpeckleCoreGeometryDynamo" } ) );
         return myCurves;
 
         case SpecklePolyline poly:
         if( poly.Value.Count == 6 )
         {
-          myCurves.Add( (Line) SpeckleCore.Converter.Deserialise( new SpeckleLine( poly.Value ), excludeAssebmlies: new string[ ] { "SpeckleCoreGeometryDynamo" } ) );
+          myCurves.Add( (Line) SpeckleCore.Converter.Deserialise( obj: new SpeckleLine( poly.Value ), excludeAssebmlies: new string[ ] { "SpeckleCoreGeometryDynamo" } ) );
         }
         else
         {
@@ -238,13 +270,13 @@ namespace SpeckleElementsRevit
           {
             var speckleLine = new SpeckleLine( new double[ ] { pts[ i - 1 ].Value[ 0 ], pts[ i - 1 ].Value[ 1 ], pts[ i - 1 ].Value[ 2 ], pts[ i ].Value[ 0 ], pts[ i ].Value[ 1 ], pts[ i ].Value[ 2 ] } );
 
-            myCurves.Add( (Line) SpeckleCore.Converter.Deserialise( speckleLine, excludeAssebmlies: new string[ ] { "SpeckleCoreGeometryDynamo" } ) );
+            myCurves.Add( (Line) SpeckleCore.Converter.Deserialise( obj: speckleLine, excludeAssebmlies: new string[ ] { "SpeckleCoreGeometryDynamo" } ) );
           }
 
           if( poly.Closed )
           {
             var speckleLine = new SpeckleLine( new double[ ] { pts[ pts.Count - 1 ].Value[ 0 ], pts[ pts.Count - 1 ].Value[ 1 ], pts[ pts.Count - 1 ].Value[ 2 ], pts[ 0 ].Value[ 0 ], pts[ 0 ].Value[ 1 ], pts[ 0 ].Value[ 2 ] } );
-            myCurves.Add( (Line) SpeckleCore.Converter.Deserialise( speckleLine, excludeAssebmlies: new string[ ] { "SpeckleCoreGeometryDynamo" } ) );
+            myCurves.Add( (Line) SpeckleCore.Converter.Deserialise( obj: speckleLine, excludeAssebmlies: new string[ ] { "SpeckleCoreGeometryDynamo" } ) );
           }
         }
         return myCurves;
