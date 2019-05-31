@@ -77,6 +77,8 @@ namespace SpeckleElementsGSA
     NodeReactions,
     NodeDisplacements,
     Element1DForces,
+    Element1DDisplacements,
+    Element1DStresses,
     Element2DDisplacements,
     Element2DForces,
     Element2DStresses,

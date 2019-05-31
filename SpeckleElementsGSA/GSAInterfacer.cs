@@ -1031,9 +1031,43 @@ namespace SpeckleElementsGSA
     }
 
     /// <summary>
+    /// Extracts the displacements for the given element.
+    /// </summary>
+    /// <param name="id">GSA element ID</param>
+    /// <param name="loadCase">Load case</param>
+    /// <param name="axis">Result axis</param>
+    /// <returns>Dictionary of displacements with keys {x,y,z,xx,yy,zz}.</returns>
+    public Dictionary<string, double[]> Get1DElementDisplacements(int id, string loadCase, string axis = "local")
+    {
+      try
+      {
+        if (ResultMode != GSAResultMode.Element1DDisplacements)
+        {
+          GSAObject.Output_Init_Arr(0x20, axis, loadCase, ResHeader.REF_DISP_EL1D, 0);
+          ResultMode = GSAResultMode.Element1DDisplacements;
+        }
+
+        GsaResults[] res;
+        int num;
+        GSAObject.Output_Extract_Arr(id, out res, out num);
+
+        Dictionary<string, double[]> ret = new Dictionary<string, double[]>() {
+          {"x", res.Select(x => x.dynaResults[1]).ToArray() },
+          {"y", res.Select(x => x.dynaResults[2]).ToArray()},
+          {"z", res.Select(x => x.dynaResults[3]).ToArray()},
+          {"xx", res.Select(x => x.dynaResults[5]).ToArray()},
+          {"yy", res.Select(x => x.dynaResults[6]).ToArray()},
+          {"zz", res.Select(x => x.dynaResults[7]).ToArray()},
+        };
+        return ret;
+      }
+      catch { return null; }
+    }
+
+    /// <summary>
     /// Extracts the reactions for the given element.
     /// </summary>
-    /// <param name="id">GSA node ID</param>
+    /// <param name="id">GSA element ID</param>
     /// <param name="loadCase">Load case</param>
     /// <param name="axis">Result axis</param>
     /// <returns>Dictionary of forces with keys {fx,fy,fz,mx,my,mz}.</returns>
@@ -1058,6 +1092,43 @@ namespace SpeckleElementsGSA
           {"mx", res.Select(x => x.dynaResults[5]).ToArray()},
           {"my", res.Select(x => x.dynaResults[6]).ToArray()},
           {"mz", res.Select(x => x.dynaResults[7]).ToArray()},
+        };
+        return ret;
+      }
+      catch { return null; }
+    }
+
+    /// <summary>
+    /// Extracts the stresses for the given element.
+    /// </summary>
+    /// <param name="id">GSA element ID</param>
+    /// <param name="loadCase">Load case</param>
+    /// <param name="axis">Result axis</param>
+    /// <returns>Dictionary of stresses with keys {a,sy,sz,by+,by-,bz+,bz-,comb+,comb-}.</returns>
+    public Dictionary<string, double[]> Get1DElementStresses(int id, string loadCase, string axis = "local")
+    {
+      try
+      {
+        if (ResultMode != GSAResultMode.Element1DStresses)
+        {
+          GSAObject.Output_Init_Arr(0x20, axis, loadCase, ResHeader.REF_STRESS_EL1D, 0);
+          ResultMode = GSAResultMode.Element1DStresses;
+        }
+
+        GsaResults[] res;
+        int num;
+        GSAObject.Output_Extract_Arr(id, out res, out num);
+
+        Dictionary<string, double[]> ret = new Dictionary<string, double[]>() {
+          {"a", res.Select(x => x.dynaResults[1]).ToArray() },
+          {"sy", res.Select(x => x.dynaResults[2]).ToArray()},
+          {"sz", res.Select(x => x.dynaResults[3]).ToArray()},
+          {"by+", res.Select(x => x.dynaResults[4]).ToArray()},
+          {"by-", res.Select(x => x.dynaResults[5]).ToArray()},
+          {"bz+", res.Select(x => x.dynaResults[6]).ToArray()},
+          {"bz-", res.Select(x => x.dynaResults[7]).ToArray()},
+          {"comb+", res.Select(x => x.dynaResults[8]).ToArray()},
+          {"comb-", res.Select(x => x.dynaResults[9]).ToArray()},
         };
         return ret;
       }

@@ -588,6 +588,31 @@ namespace SpeckleElementsGSA
           if (element.Value.Result == null)
             element.Value.Result = new Dictionary<string, object>();
 
+          var resultExport = GSA.Get1DElementDisplacements(id, loadCase, GSAResultInLocalAxis ? "local" : "global");
+
+          if (resultExport == null)
+            continue;
+
+          if (!element.Value.Result.ContainsKey(loadCase))
+            element.Value.Result[loadCase] = new Structural1DElementResult();
+
+          (element.Value.Result[loadCase] as Structural1DElementResult).Displacement = resultExport;
+        }
+      }
+
+      // Extract forces
+      foreach (string loadCase in GSAResultCases)
+      {
+        if (!GSA.CaseExist(loadCase))
+          continue;
+
+        foreach (GSA1DElement element in elements)
+        {
+          int id = Convert.ToInt32(element.Value.StructuralId);
+
+          if (element.Value.Result == null)
+            element.Value.Result = new Dictionary<string, object>();
+
           var resultExport = GSA.Get1DElementForces(id, loadCase, GSAResultInLocalAxis ? "local" : "global");
 
           if (resultExport == null)
@@ -599,7 +624,32 @@ namespace SpeckleElementsGSA
           (element.Value.Result[loadCase] as Structural1DElementResult).Force = resultExport;
         }
       }
-      
+
+      // Extract stresses
+      foreach (string loadCase in GSAResultCases)
+      {
+        if (!GSA.CaseExist(loadCase))
+          continue;
+
+        foreach (GSA1DElement element in elements)
+        {
+          int id = Convert.ToInt32(element.Value.StructuralId);
+
+          if (element.Value.Result == null)
+            element.Value.Result = new Dictionary<string, object>();
+
+          var resultExport = GSA.Get1DElementStresses(id, loadCase, GSAResultInLocalAxis ? "local" : "global");
+
+          if (resultExport == null)
+            continue;
+
+          if (!element.Value.Result.ContainsKey(loadCase))
+            element.Value.Result[loadCase] = new Structural1DElementResult();
+
+          (element.Value.Result[loadCase] as Structural1DElementResult).Stress = resultExport;
+        }
+      }
+
       return new SpeckleObject();
     }
   }
