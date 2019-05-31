@@ -162,16 +162,19 @@ namespace SpeckleElementsRevit
         case Autodesk.Revit.DB.Structure.StructuralMaterialType.Concrete:
           var concMat = new StructuralMaterialConcrete();
           concMat.StructuralId = Doc.GetElement(myFamily.StructuralMaterialId).Name;
+          concMat.Name = concMat.StructuralId;
           myMaterial = concMat;
           break;
         case Autodesk.Revit.DB.Structure.StructuralMaterialType.Steel:
           var steelMat = new StructuralMaterialSteel();
           steelMat.StructuralId = Doc.GetElement(myFamily.StructuralMaterialId).Name;
+          steelMat.Name = steelMat.StructuralId;
           myMaterial = steelMat;
           break;
         default:
           var defMat = new StructuralMaterialSteel();
           defMat.StructuralId = Doc.GetElement(myFamily.StructuralMaterialId).Name;
+          defMat.Name = defMat.StructuralId;
           myMaterial = defMat;
           break;
       }
