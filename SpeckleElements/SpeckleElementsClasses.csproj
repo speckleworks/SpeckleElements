@@ -31,6 +31,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="PresentationCore" />
     <Reference Include="SpeckleNewtonsoft">
       <HintPath>..\SpeckleCore\SpeckleNewtonsoft.dll</HintPath>
       <Aliases>SpeckleNewtonsoft</Aliases>
@@ -48,6 +49,9 @@
   <ItemGroup>
     <Compile Include="Base.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="StructuralBase.cs" />
+    <Compile Include="StructuralEnum.cs" />
+    <Compile Include="StructuralExtension.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\SpeckleCoreGeometry\SpeckleCoreGeometryClasses\SpeckleCoreGeometryClasses.csproj">

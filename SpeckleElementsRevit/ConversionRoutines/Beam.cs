@@ -5,6 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 using Autodesk.Revit.DB;
 using Autodesk.Revit.DB.Structure;
+using SpeckleCore;
+using SpeckleCoreGeometryClasses;
 using SpeckleElements;
 
 namespace SpeckleElementsRevit
@@ -74,25 +76,29 @@ namespace SpeckleElementsRevit
       return familyInstance;
     }
 
-    public static Beam BeamToSpeckle( Autodesk.Revit.DB.FamilyInstance myFamily )
+    public static List<SpeckleObject> BeamToSpeckle( Autodesk.Revit.DB.FamilyInstance myFamily )
     {
+      // Generate Beam
       var myBeam = new Beam();
-      var allSolids = GetElementSolids( myFamily, opt: new Options() { DetailLevel = ViewDetailLevel.Fine, ComputeReferences = true } );
+      var allSolids = GetElementSolids(myFamily, opt: new Options() { DetailLevel = ViewDetailLevel.Fine, ComputeReferences = true });
 
-      (myBeam.Faces, myBeam.Vertices) = GetFaceVertexArrFromSolids( allSolids );
+      (myBeam.Faces, myBeam.Vertices) = GetFaceVertexArrFromSolids(allSolids);
       var baseCurve = myFamily.Location as LocationCurve;
-      myBeam.baseLine = (SpeckleCoreGeometryClasses.SpeckleLine) SpeckleCore.Converter.Serialise( baseCurve.Curve );
+      myBeam.baseLine = (SpeckleCoreGeometryClasses.SpeckleLine)SpeckleCore.Converter.Serialise(baseCurve.Curve);
 
       myBeam.beamFamily = myFamily.Symbol.FamilyName;
-      myBeam.beamType = Doc.GetElement( myFamily.GetTypeId() ).Name;
+      myBeam.beamType = Doc.GetElement(myFamily.GetTypeId()).Name;
 
-      myBeam.parameters = GetElementParams( myFamily );
+      myBeam.parameters = GetElementParams(myFamily);
 
       //myFamily.just
 
       myBeam.GenerateHash();
       myBeam.ApplicationId = myFamily.UniqueId;
-      return myBeam;
+
+      //var analyticalModel = AnalyticalStickToSpeckle(myFamily);
+
+      return new List<SpeckleObject>() { myBeam };//.Concat(analyticalModel).ToList();
     }
   }
 }
