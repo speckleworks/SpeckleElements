@@ -13,21 +13,23 @@ namespace SpeckleElementsRevit
 {
   public static partial class Conversions
   {
+    //TODO
     public static Element ToNative(this Structural1DElement myBeam)
     {
       return null;
     }
 
-    public static List<SpeckleObject> AnalyticalStickToSpeckle(Autodesk.Revit.DB.FamilyInstance myFamily)
+    public static List<SpeckleObject> ToSpeckle(this Autodesk.Revit.DB.Structure.AnalyticalModelStick myStick)
     {
-      // Generate Analytical Model
-      var myStick = (Autodesk.Revit.DB.Structure.AnalyticalModelStick)myFamily.GetAnalyticalModel();
-
       if (!myStick.IsEnabled())
         return new List<SpeckleObject>();
 
+      // Get the family
+      var myFamily = (Autodesk.Revit.DB.FamilyInstance)Doc.GetElement(myStick.GetElementId());
+
       var myElement = new Structural1DElement();
-      myElement.baseLine = (SpeckleCoreGeometryClasses.SpeckleLine)SpeckleCore.Converter.Serialise(myStick.GetCurve());
+      var line = (SpeckleCoreGeometryClasses.SpeckleLine)SpeckleCore.Converter.Serialise(myStick.GetCurve());
+      myElement.baseLine = line;
 
       var coordinateSystem = myStick.GetLocalCoordinateSystem();
       myElement.ZAxis = new StructuralVectorThree(new double[] { coordinateSystem.BasisZ.X, coordinateSystem.BasisZ.Y, coordinateSystem.BasisZ.Z });
@@ -35,8 +37,8 @@ namespace SpeckleElementsRevit
       // Property
       var mySection = new Structural1DProperty();
 
-      mySection.Name = myFamily.Symbol.GetStructuralSection().StructuralSectionShapeName;
-      mySection.StructuralId = myFamily.Symbol.GetStructuralSection().StructuralSectionShapeName;
+      mySection.Name = Doc.GetElement(myStick.GetElementId()).Name;
+      mySection.StructuralId = mySection.Name;
 
       switch (myFamily.Symbol.GetStructuralSection().StructuralSectionGeneralShape)
       {
@@ -51,12 +53,18 @@ namespace SpeckleElementsRevit
         case Autodesk.Revit.DB.Structure.StructuralSections.StructuralSectionGeneralShape.GeneralH:
           mySection.Shape = Structural1DPropertyShape.Rectangular;
           mySection.Hollow = true;
-          mySection.Thickness = (double)typeof(Autodesk.Revit.DB.Structure.StructuralSections.StructuralSectionGeneralH).GetProperty("WallNominalThickness").GetValue(myFamily.Symbol.GetStructuralSection());
+          mySection.Thickness = (double)typeof(Autodesk.Revit.DB.Structure.StructuralSections.StructuralSectionGeneralH).GetProperty("WallNominalThickness").GetValue(myFamily.Symbol.GetStructuralSection()) / Scale;
           break;
         case Autodesk.Revit.DB.Structure.StructuralSections.StructuralSectionGeneralShape.GeneralR:
           mySection.Shape = Structural1DPropertyShape.Circular;
           mySection.Hollow = true;
-          mySection.Thickness = (double)typeof(Autodesk.Revit.DB.Structure.StructuralSections.StructuralSectionGeneralR).GetProperty("WallNominalThickness").GetValue(myFamily.Symbol.GetStructuralSection());
+          mySection.Thickness = (double)typeof(Autodesk.Revit.DB.Structure.StructuralSections.StructuralSectionGeneralR).GetProperty("WallNominalThickness").GetValue(myFamily.Symbol.GetStructuralSection()) / Scale;
+          mySection.Profile = new SpeckleCircle(
+            new SpecklePlane(new SpecklePoint(0, 0, 0),
+              new SpeckleVector(0, 0, 1),
+              new SpeckleVector(1, 0, 0),
+              new SpeckleVector(0, 1, 0)),
+            (double)typeof(Autodesk.Revit.DB.Structure.StructuralSections.StructuralSectionGeneralR).GetProperty("Diameter").GetValue(myFamily.Symbol.GetStructuralSection()) / 2 / Scale);
           break;
         case Autodesk.Revit.DB.Structure.StructuralSections.StructuralSectionGeneralShape.GeneralF:
           mySection.Shape = Structural1DPropertyShape.Rectangular;
@@ -64,6 +72,12 @@ namespace SpeckleElementsRevit
           break;
         case Autodesk.Revit.DB.Structure.StructuralSections.StructuralSectionGeneralShape.GeneralS:
           mySection.Shape = Structural1DPropertyShape.Circular;
+          mySection.Profile = new SpeckleCircle(
+            new SpecklePlane(new SpecklePoint(0, 0, 0),
+              new SpeckleVector(0, 0, 1),
+              new SpeckleVector(1, 0, 0),
+              new SpeckleVector(0, 1, 0)),
+            (double)typeof(Autodesk.Revit.DB.Structure.StructuralSections.StructuralSectionGeneralR).GetProperty("Diameter").GetValue(myFamily.Symbol.GetStructuralSection()) / 2 / Scale);
           mySection.Hollow = false;
           break;
         default:
@@ -75,23 +89,7 @@ namespace SpeckleElementsRevit
       // Generate section profile
       var profile = myFamily.GetSweptProfile().GetSweptProfile();
 
-      if (mySection.Shape == Structural1DPropertyShape.Circular)
-      {
-        var myProfile = new SpeckleCircle();
-
-        var sectionArc = SpeckleCore.Converter.Serialise(profile.Curves.get_Item(0)) as SpeckleArc;
-        double radius = Math.Round(Math.Sqrt(sectionArc.StartPoint.Value.Sum(x => x * x)));
-
-        myProfile.Radius = radius;
-        myProfile.Plane = new SpecklePlane(new SpecklePoint(0, 0, 0),
-          new SpeckleVector(0, 0, 1),
-          new SpeckleVector(1, 0, 0),
-          new SpeckleVector(0, 1, 0));
-        myProfile.GenerateHash();
-
-        mySection.Profile = myProfile;
-      }
-      else
+      if (mySection.Shape != Structural1DPropertyShape.Circular)
       {
         var myProfile = new SpecklePolyline();
 
@@ -146,21 +144,49 @@ namespace SpeckleElementsRevit
           else
             myProfile.Value.AddRange(nextCoordinates);
         }
-
+        
         myProfile.GenerateHash();
 
         mySection.Profile = myProfile;
       }
-      
+
       myElement.PropertyRef = mySection.StructuralId;
 
+      // Material
+      var matType = myFamily.StructuralMaterialType;
+
+      SpeckleObject myMaterial = null;
+
+      switch(matType)
+      {
+        case Autodesk.Revit.DB.Structure.StructuralMaterialType.Concrete:
+          var concMat = new StructuralMaterialConcrete();
+          concMat.StructuralId = Doc.GetElement(myFamily.StructuralMaterialId).Name;
+          myMaterial = concMat;
+          break;
+        case Autodesk.Revit.DB.Structure.StructuralMaterialType.Steel:
+          var steelMat = new StructuralMaterialSteel();
+          steelMat.StructuralId = Doc.GetElement(myFamily.StructuralMaterialId).Name;
+          myMaterial = steelMat;
+          break;
+        default:
+          var defMat = new StructuralMaterialSteel();
+          defMat.StructuralId = Doc.GetElement(myFamily.StructuralMaterialId).Name;
+          myMaterial = defMat;
+          break;
+      }
+
+      mySection.MaterialRef = (myMaterial as IStructural).StructuralId;
+
+      myMaterial.GenerateHash();
       mySection.GenerateHash();
       myElement.GenerateHash();
 
-      myElement.ApplicationId = myStick.UniqueId;
+      mySection.ApplicationId = myStick.UniqueId + "_material";
       mySection.ApplicationId = myStick.UniqueId + "_section";
+      myElement.ApplicationId = myStick.UniqueId;
 
-      return new List<SpeckleObject>() { myElement, mySection };
+      return new List<SpeckleObject>() { myElement, mySection, myMaterial };
     }
   }
 }

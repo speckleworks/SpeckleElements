@@ -79,9 +79,9 @@ namespace SpeckleElementsRevit
       myBeam.GenerateHash();
       myBeam.ApplicationId = myFamily.UniqueId;
 
-      var analyticalModel = AnalyticalStickToSpeckle(myFamily);
-      
-      return new List<SpeckleObject>() { myBeam }.Concat(analyticalModel).ToList();
+      //var analyticalModel = AnalyticalStickToSpeckle(myFamily);
+
+      return new List<SpeckleObject>() { myBeam };//.Concat(analyticalModel).ToList();
     }
   }
 }

@@ -10,181 +10,181 @@ using SpeckleElements;
 
 namespace SpeckleElementsGSA
 {
-    [GSAObject("COMBINATION.1", new string[] { }, "loads", true, true, new Type[] { typeof(GSALoadCase), typeof(GSALoadTask) }, new Type[] { typeof(GSALoadCase), typeof(GSALoadTask) })]
-    public class GSALoadCombo : IGSASpeckleContainer
+  [GSAObject("COMBINATION.1", new string[] { }, "loads", true, true, new Type[] { typeof(GSALoadCase), typeof(GSALoadTask) }, new Type[] { typeof(GSALoadCase), typeof(GSALoadTask) })]
+  public class GSALoadCombo : IGSASpeckleContainer
+  {
+    public string GWACommand { get; set; }
+    public List<string> SubGWACommand { get; set; } = new List<string>();
+    public dynamic Value { get; set; } = new StructuralLoadCombo();
+
+    public void ParseGWACommand(GSAInterfacer GSA)
     {
-        public string GWACommand { get; set; }
-        public List<string> SubGWACommand { get; set; } = new List<string>();
-        public dynamic Value { get; set; } = new StructuralLoadCombo();
+      if (this.GWACommand == null)
+        return;
 
-        public void ParseGWACommand(GSAInterfacer GSA)
+      StructuralLoadCombo obj = new StructuralLoadCombo();
+
+      string[] pieces = this.GWACommand.ListSplit(",");
+
+      int counter = 1; // Skip identifier
+
+      obj.StructuralId = pieces[counter++];
+      obj.Name = pieces[counter++];
+
+      // Parse type
+      string description = pieces[counter++];
+      if (description.Contains("+"))
+        obj.ComboType = StructuralLoadComboType.LinearAdd;
+      else if (description.Contains("or"))
+        obj.ComboType = StructuralLoadComboType.Envelope;
+      else
+        obj.ComboType = StructuralLoadComboType.LinearAdd;
+
+      obj.LoadTaskRefs = new List<string>();
+      obj.LoadTaskFactors = new List<double>();
+      obj.LoadComboRefs = new List<string>();
+      obj.LoadComboFactors = new List<double>();
+
+      // TODO: this only parses the super simple linear add descriptions
+      try
+      {
+        List<Tuple<string, double>> desc = HelperClass.ParseLoadDescription(description);
+
+        foreach (Tuple<string, double> t in desc)
         {
-            if (this.GWACommand == null)
-                return;
+          switch (t.Item1[0])
+          {
+            case 'A':
+              obj.LoadTaskRefs.Add(t.Item1.Substring(1));
+              obj.LoadTaskFactors.Add(t.Item2);
+              break;
+            case 'C':
+              obj.LoadComboRefs.Add(t.Item1.Substring(1));
+              obj.LoadComboFactors.Add(t.Item2);
+              break;
+          }
+        }
+      }
+      catch
+      {
+      }
 
-            StructuralLoadCombo obj = new StructuralLoadCombo();
-            
-            string[] pieces = this.GWACommand.ListSplit(",");
+      this.Value = obj;
+    }
 
-            int counter = 1; // Skip identifier
+    public void SetGWACommand(GSAInterfacer GSA)
+    {
+      if (this.Value == null)
+        return;
 
-            obj.StructuralId = pieces[counter++];
-            obj.Name = pieces[counter++];
+      StructuralLoadCombo loadCombo = this.Value as StructuralLoadCombo;
 
-            // Parse type
-            string description = pieces[counter++];
-            if (description.Contains("+"))
-                obj.ComboType = StructuralLoadComboType.LinearAdd;
-            else if (description.Contains("or"))
-                obj.ComboType = StructuralLoadComboType.Envelope;
+      string keyword = typeof(GSALoadCase).GetGSAKeyword();
+
+      int index = GSA.Indexer.ResolveIndex(typeof(GSALoadCombo), loadCombo);
+
+      List<string> ls = new List<string>();
+
+      ls.Add("SET");
+      ls.Add(keyword + ":" + GSA.GenerateSID(loadCombo));
+      ls.Add(index.ToString());
+      ls.Add(loadCombo.Name == null || loadCombo.Name == "" ? " " : loadCombo.Name);
+
+      List<string> subLs = new List<string>();
+      if (loadCombo.LoadTaskRefs != null)
+      {
+        for (int i = 0; i < loadCombo.LoadTaskRefs.Count(); i++)
+        {
+          int? loadTaskRef = GSA.Indexer.LookupIndex(typeof(GSALoadTask), loadCombo.LoadTaskRefs[i]);
+
+          if (loadTaskRef.HasValue)
+          {
+            if (loadCombo.LoadTaskFactors != null && loadCombo.LoadTaskFactors.Count() > i)
+              subLs.Add(loadCombo.LoadTaskFactors[i].ToString() + "A" + loadTaskRef.Value.ToString());
             else
-                obj.ComboType = StructuralLoadComboType.LinearAdd;
-
-            obj.LoadTaskRefs = new List<string>();
-            obj.LoadTaskFactors = new List<double>();
-            obj.LoadComboRefs = new List<string>();
-            obj.LoadComboFactors = new List<double>();
-
-            // TODO: this only parses the super simple linear add descriptions
-            try
-            {
-                List<Tuple<string, double>> desc = HelperClass.ParseLoadDescription(description);
-
-                foreach (Tuple<string, double> t in desc)
-                {
-                    switch (t.Item1[0])
-                    {
-                        case 'A':
-                            obj.LoadTaskRefs.Add(t.Item1.Substring(1));
-                            obj.LoadTaskFactors.Add(t.Item2);
-                            break;
-                        case 'C':
-                            obj.LoadComboRefs.Add(t.Item1.Substring(1));
-                            obj.LoadComboFactors.Add(t.Item2);
-                            break;
-                    }
-                }
-            }
-            catch
-            {
-            }
-
-            this.Value = obj;
+              subLs.Add("A" + loadTaskRef.Value.ToString());
+          }
         }
+      }
 
-        public void SetGWACommand(GSAInterfacer GSA)
+      if (loadCombo.LoadComboRefs != null)
+      {
+        for (int i = 0; i < loadCombo.LoadComboRefs.Count(); i++)
         {
-            if (this.Value == null)
-                return;
+          int? loadComboRef = GSA.Indexer.LookupIndex(typeof(GSALoadTask), loadCombo.LoadComboRefs[i]);
 
-            StructuralLoadCombo loadCombo = this.Value as StructuralLoadCombo;
-            
-            string keyword = typeof(GSALoadCase).GetGSAKeyword();
-
-            int index = GSA.Indexer.ResolveIndex(typeof(GSALoadCombo), loadCombo);
-
-            List<string> ls = new List<string>();
-
-            ls.Add("SET");
-            ls.Add(keyword + ":" + GSA.GenerateSID(loadCombo));
-            ls.Add(index.ToString());
-            ls.Add(loadCombo.Name == null || loadCombo.Name == "" ? " " : loadCombo.Name);
-
-            List<string> subLs = new List<string>();
-            if (loadCombo.LoadTaskRefs != null)
-            {
-                for (int i = 0; i < loadCombo.LoadTaskRefs.Count(); i++)
-                {
-                    int? loadTaskRef = GSA.Indexer.LookupIndex(typeof(GSALoadTask), loadCombo.LoadTaskRefs[i]);
-
-                    if (loadTaskRef.HasValue)
-                    {
-                        if (loadCombo.LoadTaskFactors != null && loadCombo.LoadTaskFactors.Count() > i)
-                            subLs.Add(loadCombo.LoadTaskFactors[i].ToString() + "A" + loadTaskRef.Value.ToString());
-                        else
-                            subLs.Add("A" + loadTaskRef.Value.ToString());
-                    }
-                }
-            }
-
-            if (loadCombo.LoadComboRefs != null)
-            {
-                for (int i = 0; i < loadCombo.LoadComboRefs.Count(); i++)
-                {
-                    int? loadComboRef = GSA.Indexer.LookupIndex(typeof(GSALoadTask), loadCombo.LoadComboRefs[i]);
-
-                    if (loadComboRef.HasValue)
-                    {
-                        if (loadCombo.LoadComboFactors != null && loadCombo.LoadComboFactors.Count() > i)
-                            subLs.Add(loadCombo.LoadComboFactors[i].ToString() + "C" + loadComboRef.Value.ToString());
-                        else
-                            subLs.Add("C" + loadComboRef.Value.ToString());
-                    }
-                }
-            }
-
-            switch (loadCombo.ComboType)
-            {
-                case StructuralLoadComboType.LinearAdd:
-                    ls.Add(string.Join(" + ", subLs));
-                    break;
-                case StructuralLoadComboType.Envelope:
-                    ls.Add(string.Join(" or ", subLs));
-                    break;
-                default:
-                    ls.Add(string.Join(" + ", subLs));
-                    break;
-            }
-
-            GSA.RunGWACommand(string.Join("\t", ls));
+          if (loadComboRef.HasValue)
+          {
+            if (loadCombo.LoadComboFactors != null && loadCombo.LoadComboFactors.Count() > i)
+              subLs.Add(loadCombo.LoadComboFactors[i].ToString() + "C" + loadComboRef.Value.ToString());
+            else
+              subLs.Add("C" + loadComboRef.Value.ToString());
+          }
         }
-    }
+      }
 
-    public static partial class Conversions
+      switch (loadCombo.ComboType)
+      {
+        case StructuralLoadComboType.LinearAdd:
+          ls.Add(string.Join(" + ", subLs));
+          break;
+        case StructuralLoadComboType.Envelope:
+          ls.Add(string.Join(" or ", subLs));
+          break;
+        default:
+          ls.Add(string.Join(" + ", subLs));
+          break;
+      }
+
+      GSA.RunGWACommand(string.Join("\t", ls));
+    }
+  }
+
+  public static partial class Conversions
+  {
+    public static bool ToNative(this StructuralLoadCombo loadCombo)
     {
-        public static bool ToNative(this StructuralLoadCombo loadCombo)
-        {
-            new GSALoadCombo() { Value = loadCombo }.SetGWACommand(GSA);
+      new GSALoadCombo() { Value = loadCombo }.SetGWACommand(GSA);
 
-            return true;
-        }
-
-        public static SpeckleObject ToSpeckle(this GSALoadCombo dummyObject)
-        {
-            if (!GSASenderObjects.ContainsKey(typeof(GSALoadCombo)))
-                GSASenderObjects[typeof(GSALoadCombo)] = new List<object>();
-
-            List<GSALoadCombo> loadCombos = new List<GSALoadCombo>();
-
-            string keyword = typeof(GSALoadCombo).GetGSAKeyword();
-            string[] subKeywords = typeof(GSALoadCombo).GetSubGSAKeyword();
-
-            string[] lines = GSA.GetGWARecords("GET_ALL," + keyword);
-            List<string> deletedLines = GSA.GetDeletedGWARecords("GET_ALL," + keyword).ToList();
-            foreach (string k in subKeywords)
-                deletedLines.AddRange(GSA.GetDeletedGWARecords("GET_ALL," + k));
-
-            // Remove deleted lines
-            GSASenderObjects[typeof(GSALoadCombo)].RemoveAll(l => deletedLines.Contains((l as IGSASpeckleContainer).GWACommand));
-            foreach (KeyValuePair<Type, List<object>> kvp in GSASenderObjects)
-                kvp.Value.RemoveAll(l => (l as IGSASpeckleContainer).SubGWACommand.Any(x => deletedLines.Contains(x)));
-
-            // Filter only new lines
-            string[] prevLines = GSASenderObjects[typeof(GSALoadCombo)].Select(l => (l as IGSASpeckleContainer).GWACommand).ToArray();
-            string[] newLines = lines.Where(l => !prevLines.Contains(l)).ToArray();
-
-            foreach (string p in newLines)
-            {
-                GSALoadCombo combo = new GSALoadCombo() { GWACommand = p };
-                combo.ParseGWACommand(GSA);
-                loadCombos.Add(combo);
-            }
-
-            GSASenderObjects[typeof(GSALoadCombo)].AddRange(loadCombos);
-
-            if (loadCombos.Count() > 0 || deletedLines.Count() > 0) return new SpeckleObject();
-
-            return new SpeckleNull();
-        }
+      return true;
     }
+
+    public static SpeckleObject ToSpeckle(this GSALoadCombo dummyObject)
+    {
+      if (!GSASenderObjects.ContainsKey(typeof(GSALoadCombo)))
+        GSASenderObjects[typeof(GSALoadCombo)] = new List<object>();
+
+      List<GSALoadCombo> loadCombos = new List<GSALoadCombo>();
+
+      string keyword = typeof(GSALoadCombo).GetGSAKeyword();
+      string[] subKeywords = typeof(GSALoadCombo).GetSubGSAKeyword();
+
+      string[] lines = GSA.GetGWARecords("GET_ALL," + keyword);
+      List<string> deletedLines = GSA.GetDeletedGWARecords("GET_ALL," + keyword).ToList();
+      foreach (string k in subKeywords)
+        deletedLines.AddRange(GSA.GetDeletedGWARecords("GET_ALL," + k));
+
+      // Remove deleted lines
+      GSASenderObjects[typeof(GSALoadCombo)].RemoveAll(l => deletedLines.Contains((l as IGSASpeckleContainer).GWACommand));
+      foreach (KeyValuePair<Type, List<object>> kvp in GSASenderObjects)
+        kvp.Value.RemoveAll(l => (l as IGSASpeckleContainer).SubGWACommand.Any(x => deletedLines.Contains(x)));
+
+      // Filter only new lines
+      string[] prevLines = GSASenderObjects[typeof(GSALoadCombo)].Select(l => (l as IGSASpeckleContainer).GWACommand).ToArray();
+      string[] newLines = lines.Where(l => !prevLines.Contains(l)).ToArray();
+
+      foreach (string p in newLines)
+      {
+        GSALoadCombo combo = new GSALoadCombo() { GWACommand = p };
+        combo.ParseGWACommand(GSA);
+        loadCombos.Add(combo);
+      }
+
+      GSASenderObjects[typeof(GSALoadCombo)].AddRange(loadCombos);
+
+      if (loadCombos.Count() > 0 || deletedLines.Count() > 0) return new SpeckleObject();
+
+      return new SpeckleNull();
+    }
+  }
 }

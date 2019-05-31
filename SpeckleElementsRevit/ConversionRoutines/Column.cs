@@ -111,9 +111,9 @@ namespace SpeckleElementsRevit
       myColumn.GenerateHash();
       myColumn.ApplicationId = myFamily.UniqueId;
 
-      var analyticalModel = AnalyticalStickToSpeckle(myFamily);
+      //var analyticalModel = AnalyticalStickToSpeckle(myFamily);
 
-      return new List<SpeckleObject>() { myColumn }.Concat(analyticalModel).ToList();
+      return new List<SpeckleObject>() { myColumn };//.Concat(analyticalModel).ToList();
     }
   }
 }
