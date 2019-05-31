@@ -5,7 +5,6 @@ using System.Text;
 using System.Threading.Tasks;
 using Autodesk.Revit.DB;
 using SpeckleCore;
-https://github.com/speckleworks/SpeckleElements/pull/4/conflict?name=SpeckleElementsRevit%252FConversionRoutines%252FColumn.cs&ancestor_oid=ca0f6b7e2d30ad789df8db6f81855b99be75de1b&base_oid=67cde83c370c38763e168545ff59b7f7616fe283&head_oid=903606f3309e0018c8345c028621c442359da64ausing SpeckleElements;
 
 namespace SpeckleElementsRevit
 {
