@@ -344,7 +344,7 @@ namespace SpeckleElementsGSA
   {
     public string GWACommand { get; set; }
     public List<string> SubGWACommand { get; set; } = new List<string>();
-    public dynamic Value { get; set; } = new Structural2DElementMesh();
+    public dynamic Value { get; set; } = new Structural2DElementResult();
   }
 
   public static partial class Conversions
@@ -475,7 +475,7 @@ namespace SpeckleElementsGSA
       if (!GSASendResults)
         return new SpeckleNull();
 
-      if (!GSASenderObjects.ContainsKey(typeof(GSANode)))
+      if (!GSASenderObjects.ContainsKey(typeof(GSA2DElement)))
         return new SpeckleNull();
 
       List<GSA2DElement> elements = GSASenderObjects[typeof(GSA2DElement)].Cast<GSA2DElement>().ToList();

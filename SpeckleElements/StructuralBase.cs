@@ -628,6 +628,14 @@ namespace SpeckleElements
       get => StructuralProperties.ContainsKey("gsaDummy") ? ((bool)StructuralProperties["gsaDummy"]) : false;
       set => StructuralProperties["gsaDummy"] = value;
     }
+
+    /// <summary>Analysis results.</summary>
+    [SNJ.JsonIgnore]
+    public Dictionary<string, object> Result
+    {
+      get => StructuralProperties.ContainsKey("result") ? (StructuralProperties["result"] as Dictionary<string, object>) : null;
+      set => StructuralProperties["result"] = value;
+    }
   }
 
   [Serializable]
@@ -924,6 +932,32 @@ namespace SpeckleElements
     /// <summary>Node acceleration.</summary>
     [SNJ.JsonProperty("acceleration", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
     public Dictionary<string, double> Acceleration { get; set; }
+  }
+
+  [Serializable]
+  public partial class Structural1DElementResult : SpeckleObject, IStructural
+  {
+    public override string Type { get => "Structural2DElementResult"; }
+
+    /// <summary>Structural ID to reference from other objects.</summary>
+    [SNJ.JsonProperty("structuralId", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
+    public string StructuralId { get; set; }
+
+    /// <summary>Indicates whether the results are in the global or local axis.</summary>
+    [SNJ.JsonProperty("isGlobal", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
+    public bool IsGlobal { get; set; }
+
+    /// <summary>Element displacement.</summary>
+    [SNJ.JsonProperty("displacement", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
+    public Dictionary<string, double[]> Displacement { get; set; }
+
+    /// <summary>Element force.</summary>
+    [SNJ.JsonProperty("force", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
+    public Dictionary<string, double[]> Force { get; set; }
+
+    /// <summary>Element stress.</summary>
+    [SNJ.JsonProperty("stress", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
+    public Dictionary<string, double[]> Stress { get; set; }
   }
 
   [Serializable]

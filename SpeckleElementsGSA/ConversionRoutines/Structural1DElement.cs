@@ -433,6 +433,14 @@ namespace SpeckleElementsGSA
     }
   }
 
+  [GSAObject("", new string[] { }, "elements", true, false, new Type[] { typeof(GSA1DElement) }, new Type[] { })]
+  public class GSA1DElementResult : IGSASpeckleContainer
+  {
+    public string GWACommand { get; set; }
+    public List<string> SubGWACommand { get; set; } = new List<string>();
+    public dynamic Value { get; set; } = new Structural1DElementResult();
+  }
+
   public static partial class Conversions
   {
     public static bool ToNative(this SpeckleLine inputObject)
@@ -469,7 +477,7 @@ namespace SpeckleElementsGSA
       return true;
     }
 
-    public static SpeckleBoolean ToSpeckle(this GSA1DElement dummyObject)
+    public static SpeckleObject ToSpeckle(this GSA1DElement dummyObject)
     {
       if (!GSASenderObjects.ContainsKey(typeof(GSA1DElement)))
         GSASenderObjects[typeof(GSA1DElement)] = new List<object>();
@@ -507,9 +515,9 @@ namespace SpeckleElementsGSA
 
       GSASenderObjects[typeof(GSA1DElement)].AddRange(elements);
 
-      if (elements.Count() > 0 || deletedLines.Count() > 0) return new SpeckleBoolean(true);
+      if (elements.Count() > 0 || deletedLines.Count() > 0) return new SpeckleObject();
 
-      return new SpeckleBoolean(false);
+      return new SpeckleNull();
     }
 
     public static SpeckleObject ToSpeckle(this GSA1DMember dummyObject)
@@ -553,6 +561,46 @@ namespace SpeckleElementsGSA
       if (members.Count() > 0 || deletedLines.Count() > 0) return new SpeckleObject();
 
       return new SpeckleNull();
+    }
+
+    public static SpeckleObject ToSpeckle(this GSA1DElementResult dummyObject)
+    {
+      if (!GSASendResults)
+        return new SpeckleNull();
+
+      if (!GSASenderObjects.ContainsKey(typeof(GSA1DElement)))
+        return new SpeckleNull();
+
+      List<GSA1DElement> elements = GSASenderObjects[typeof(GSA1DElement)].Cast<GSA1DElement>().ToList();
+
+      // Note: A lot faster to extract by type of result
+
+      // Extract displacements
+      foreach (string loadCase in GSAResultCases)
+      {
+        if (!GSA.CaseExist(loadCase))
+          continue;
+
+        foreach (GSA1DElement element in elements)
+        {
+          int id = Convert.ToInt32(element.Value.StructuralId);
+
+          if (element.Value.Result == null)
+            element.Value.Result = new Dictionary<string, object>();
+
+          var resultExport = GSA.Get1DElementForces(id, loadCase, GSAResultInLocalAxis ? "local" : "global");
+
+          if (resultExport == null)
+            continue;
+
+          if (!element.Value.Result.ContainsKey(loadCase))
+            element.Value.Result[loadCase] = new Structural1DElementResult();
+
+          (element.Value.Result[loadCase] as Structural1DElementResult).Force = resultExport;
+        }
+      }
+      
+      return new SpeckleObject();
     }
   }
 }

@@ -1031,6 +1031,40 @@ namespace SpeckleElementsGSA
     }
 
     /// <summary>
+    /// Extracts the reactions for the given element.
+    /// </summary>
+    /// <param name="id">GSA node ID</param>
+    /// <param name="loadCase">Load case</param>
+    /// <param name="axis">Result axis</param>
+    /// <returns>Dictionary of forces with keys {fx,fy,fz,mx,my,mz}.</returns>
+    public Dictionary<string, double[]> Get1DElementForces(int id, string loadCase, string axis = "local")
+    {
+      try
+      {
+        if (ResultMode != GSAResultMode.Element1DForces)
+        {
+          GSAObject.Output_Init_Arr(0x20, axis, loadCase, ResHeader.REF_FORCE_EL1D, 0);
+          ResultMode = GSAResultMode.Element1DForces;
+        }
+
+        GsaResults[] res;
+        int num;
+        GSAObject.Output_Extract_Arr(id, out res, out num);
+
+        Dictionary<string, double[]> ret = new Dictionary<string, double[]>() {
+          {"fx", res.Select(x => x.dynaResults[1]).ToArray() },
+          {"fy", res.Select(x => x.dynaResults[2]).ToArray()},
+          {"fz", res.Select(x => x.dynaResults[3]).ToArray()},
+          {"mx", res.Select(x => x.dynaResults[5]).ToArray()},
+          {"my", res.Select(x => x.dynaResults[6]).ToArray()},
+          {"mz", res.Select(x => x.dynaResults[7]).ToArray()},
+        };
+        return ret;
+      }
+      catch { return null; }
+    }
+
+    /// <summary>
     /// Extracts the displacements for the given 2D element.
     /// </summary>
     /// <param name="id">GSA element ID</param>
