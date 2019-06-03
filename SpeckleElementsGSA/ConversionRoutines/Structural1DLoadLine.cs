@@ -278,7 +278,24 @@ namespace SpeckleElementsGSA
       {
         GSAGridLineLoad load = new GSAGridLineLoad() { GWACommand = p };
         load.ParseGWACommand(GSA);
-        loads.Add(load);
+        
+        // Break them apart
+        for (int i = 0; i < load.Value.Value.Count - 3; i += 3)
+        {
+          GSAGridLineLoad actualLoad = new GSAGridLineLoad() {
+            GWACommand = load.GWACommand,
+            SubGWACommand = new List<string>(load.SubGWACommand.ToArray()),
+            Value = new Structural1DLoadLine()
+            {
+              Name = load.Value.Name,
+              Value = (load.Value.Value as List<double>).Skip(i).Take(6).ToList(),
+              Loading = load.Value.Loading,
+              LoadCaseRef = load.Value.LoadCaseRef
+            }
+          };
+
+          loads.Add(actualLoad);
+        }
       }
 
       GSASenderObjects[typeof(GSAGridLineLoad)].AddRange(loads);
