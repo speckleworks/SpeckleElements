@@ -98,16 +98,19 @@ namespace SpeckleElementsRevit
         case "Concrete":
           var concMat = new StructuralMaterialConcrete();
           concMat.StructuralId = matID;
+          concMat.Name = matID;
           myMaterial = concMat;
           break;
         case "Steel":
           var steelMat = new StructuralMaterialSteel();
           steelMat.StructuralId = matID;
+          steelMat.Name = matID;
           myMaterial = steelMat;
           break;
         default:
           var defMat = new StructuralMaterialSteel();
           defMat.StructuralId = matID;
+          defMat.Name = matID;
           myMaterial = defMat;
           break;
       }
