@@ -178,7 +178,7 @@ namespace SpeckleElementsRevit
       return false;
     }
 
-    public static List<SpeckleObject> ColumnToSpeckle( Autodesk.Revit.DB.FamilyInstance myFamily )
+    public static SpeckleObject ColumnToSpeckle( Autodesk.Revit.DB.FamilyInstance myFamily )
     {
       var myColumn = new Column();
 
@@ -219,7 +219,7 @@ namespace SpeckleElementsRevit
       var allSolids = GetElementSolids( myFamily, opt: new Options() { DetailLevel = ViewDetailLevel.Fine, ComputeReferences = true } );
       (myColumn.Faces, myColumn.Vertices) = GetFaceVertexArrFromSolids( allSolids );
 
-      return new List<SpeckleObject>() { myColumn };
+      return myColumn;
     }
   }
 }

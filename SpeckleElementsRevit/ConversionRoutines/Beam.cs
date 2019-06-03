@@ -76,7 +76,7 @@ namespace SpeckleElementsRevit
       return familyInstance;
     }
 
-    public static List<SpeckleObject> BeamToSpeckle( Autodesk.Revit.DB.FamilyInstance myFamily )
+    public static SpeckleObject BeamToSpeckle( Autodesk.Revit.DB.FamilyInstance myFamily )
     {
       // Generate Beam
       var myBeam = new Beam();
@@ -98,7 +98,7 @@ namespace SpeckleElementsRevit
 
       //var analyticalModel = AnalyticalStickToSpeckle(myFamily);
 
-      return new List<SpeckleObject>() { myBeam };//.Concat(analyticalModel).ToList();
+      return myBeam;//.Concat(analyticalModel).ToList();
     }
   }
 }
