@@ -54,12 +54,14 @@ namespace SpeckleElementsGSA
           obj.Restraint = new StructuralVectorBoolSix(new bool[6]);
           for (int i = 0; i < 6; i++)
             obj.Restraint.Value[i] = pieces[counter++] == "0" ? false : true;
+          this.ForceSend = true;
         }
         else if (s == "STIFF")
         {
           obj.Stiffness = new StructuralVectorSix(new double[6]);
           for (int i = 0; i < 6; i++)
             obj.Stiffness.Value[i] = Convert.ToDouble(pieces[counter++]);
+          this.ForceSend = true;
         }
         else if (s == "MESH")
         {
