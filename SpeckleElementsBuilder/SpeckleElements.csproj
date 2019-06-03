@@ -60,12 +60,13 @@
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <PropertyGroup>
-    <PostBuildEvent>
-      del "$(TargetDir)\$(ProjectName).dll"
-    </PostBuildEvent>
-    <PostBuildEvent>if not exist %25localappdata%25\SpeckleKitsDebug\$(ProjectName) mkdir %25localappdata%25\SpeckleKitsDebug\$(ProjectName)
-      Copy "$(TargetDir)\*.dll" "%25localappdata%25\SpeckleKitsDebug\$(ProjectName)"
-</PostBuildEvent>
-  </PropertyGroup>
+  <Target Name="AfterBuild">
+    <!-- REMOVES CRUFT FROM SQLITE -->
+    <RemoveDir Directories="$(TargetDir)x64" />
+    <RemoveDir Directories="$(TargetDir)x86" />    
+    <ItemGroup>
+      <BuildFiles Include="$(TargetDir)\*.*" />
+    </ItemGroup>
+    <Copy SourceFiles="@(BuildFiles)" DestinationFolder="$(LocalAppData)\SpeckleKitsDebug\$(ProjectName)" />
+  </Target>
 </Project>
