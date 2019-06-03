@@ -238,6 +238,71 @@ namespace SpeckleElements
   }
 
   [Serializable]
+  public partial class Structural1DLoadLine : SpeckleLine, IStructural
+  {
+    public override string Type { get => base.Type + "/Structural1DLoadLine"; }
+
+    [SNJ.JsonIgnore]
+    private Dictionary<string, object> StructuralProperties
+    {
+      get
+      {
+        if (base.Properties == null)
+          base.Properties = new Dictionary<string, object>();
+
+        if (!base.Properties.ContainsKey("structural"))
+          base.Properties["structural"] = new Dictionary<string, object>();
+
+        return base.Properties["structural"] as Dictionary<string, object>;
+
+      }
+      set
+      {
+        if (base.Properties == null)
+          base.Properties = new Dictionary<string, object>();
+
+        base.Properties["structural"] = value;
+      }
+    }
+
+    /// <summary>Structural ID to reference from other objects.</summary>
+    [SNJ.JsonIgnore]
+    public string StructuralId
+    {
+      get => StructuralProperties.ContainsKey("structuralId") ? (StructuralProperties["structuralId"] as string) : null;
+      set => StructuralProperties["structuralId"] = value;
+    }
+
+    /// <summary>Base SpeckleLine.</summary>
+    [SNJ.JsonIgnore]
+    public SpeckleLine baseLine
+    {
+      get => this as SpeckleLine;
+      set
+      {
+        this.Value = value.Value;
+        this.Domain = value.Domain;
+      }
+    }
+
+    /// <summary>A list of Fx, Fy, Fz, Mx, My, and Mz loads.</summary>
+    [SNJ.JsonIgnore]
+    public StructuralVectorSix Loading
+    {
+      get => StructuralProperties.ContainsKey("loading") ? (StructuralProperties["loading"] as StructuralVectorSix) : null;
+      set => StructuralProperties["loading"] = value;
+    }
+
+    /// <summary>Structural ID of StructuralLoadCase.</summary>
+    [SNJ.JsonIgnore]
+    public string LoadCaseRef
+    {
+      get => StructuralProperties.ContainsKey("loadCaseRef") ? (StructuralProperties["loadCaseRef"] as string) : null;
+      set => StructuralProperties["loadCaseRef"] = value;
+    }
+  }
+
+  [Serializable]
   public partial class Structural2DLoadPanel : SpecklePolyline, IStructural
   {
     public override string Type { get => base.Type + "/Structural2DLoadPanel"; }
