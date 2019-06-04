@@ -5,6 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 using Autodesk.Revit.DB;
 using Autodesk.Revit.DB.Structure;
+using SpeckleCore;
+using SpeckleCoreGeometryClasses;
 using SpeckleElements;
 
 namespace SpeckleElementsRevit
@@ -16,66 +18,87 @@ namespace SpeckleElementsRevit
     {
       var (docObj, stateObj) = GetExistingElementByApplicationId( myBeam.ApplicationId, myBeam.Type );
 
-      var baseLine = ( Curve ) SpeckleCore.Converter.Deserialise( myBeam.baseLine, new string[ ] { "SpeckleCoreGeometryDynamo" } );
+      var baseLine = (Curve) SpeckleCore.Converter.Deserialise( obj: myBeam.baseLine, excludeAssebmlies: new string[ ] { "SpeckleCoreGeometryDynamo" } );
       var start = baseLine.GetEndPoint( 0 );
       var end = baseLine.GetEndPoint( 1 );
 
-      if ( docObj != null )
-      {
-        var type = Doc.GetElement( docObj.GetTypeId() ) as ElementType;
-        if ( myBeam.beamType != null && ( myBeam.beamType != type.Name || myBeam.beamFamily != type.FamilyName ) )
-        {
-          Doc.Delete( docObj.Id );
-          // Will create a new one, exits fully this nested if
-        }
-        else
-        {
-          // Edit location curve
-          var existingFamilyInstance = ( Autodesk.Revit.DB.FamilyInstance ) docObj;
-          var existingLocationCurve = existingFamilyInstance.Location as LocationCurve;
-          existingLocationCurve.Curve = baseLine;
-          return existingFamilyInstance;
-        }
-      }
+      FamilySymbol familySymbol;
+      familySymbol = GetFamilySymbolByFamilyNameAndTypeAndCategory( myBeam.beamFamily, myBeam.beamType, BuiltInCategory.OST_StructuralFraming );
 
-      FamilySymbol sym;
-      sym = GetFamilySymbolByFamilyNameAndTypeAndCategory( myBeam.beamFamily, myBeam.beamType, BuiltInCategory.OST_StructuralFraming );
+      if( familySymbol == null )
+        familySymbol = GetFamilySymbolByFamilyNameAndTypeAndCategory( myBeam.beamFamily, myBeam.beamType, BuiltInCategory.OST_BeamAnalytical );
 
-      if ( sym == null )
-        sym = GetFamilySymbolByFamilyNameAndTypeAndCategory( myBeam.beamFamily, myBeam.beamType, BuiltInCategory.OST_BeamAnalytical );
-
-      if( sym == null )
+      // Freak out if we don't have a symbol.
+      if( familySymbol == null )
       {
         MissingFamiliesAndTypes.Add( myBeam.beamFamily + " " + myBeam.beamType );
         return null;
       }
-        if ( myBeam.level == null )
+
+      // Activate the symbol yo! 
+      if( !familySymbol.IsActive ) familySymbol.Activate();
+
+      // If we have an existing element we can edit: 
+      if( docObj != null )
+      {
+        var type = Doc.GetElement( docObj.GetTypeId() ) as ElementType;
+
+        // if family changed, tough luck. delete and let us create a new one.
+        if( myBeam.beamFamily != type.FamilyName )
+        {
+          Doc.Delete( docObj.Id );
+        }
+        else
+        {
+          var existingFamilyInstance = (Autodesk.Revit.DB.FamilyInstance) docObj;
+          var existingLocationCurve = existingFamilyInstance.Location as LocationCurve;
+          existingLocationCurve.Curve = baseLine;
+
+          // check for a type change
+          if( myBeam.beamType != null && myBeam.beamType != type.Name )
+          {
+            existingFamilyInstance.ChangeTypeId( familySymbol.Id );
+          }
+
+          SetElementParams( existingFamilyInstance, myBeam.parameters );
+          return existingFamilyInstance;
+        }
+      }
+
+      if( myBeam.level == null )
         myBeam.level = new SpeckleElements.Level() { elevation = 0, levelName = "Speckle Level 0" };
       var myLevel = myBeam.level.ToNative() as Autodesk.Revit.DB.Level;
 
-      if ( !sym.IsActive ) sym.Activate();
-      var familyInstance = Doc.Create.NewFamilyInstance( baseLine, sym, myLevel, StructuralType.Beam );
+      var familyInstance = Doc.Create.NewFamilyInstance( baseLine, familySymbol, myLevel, StructuralType.Beam );
 
+
+      SetElementParams( familyInstance, myBeam.parameters );
       return familyInstance;
     }
 
-    public static Beam BeamToSpeckle( Autodesk.Revit.DB.FamilyInstance myFamily )
+    public static SpeckleObject BeamToSpeckle( Autodesk.Revit.DB.FamilyInstance myFamily )
     {
+      // Generate Beam
       var myBeam = new Beam();
-      var allSolids = GetElementSolids( myFamily, opt: new Options() { DetailLevel = ViewDetailLevel.Fine, ComputeReferences = true } );
+      var allSolids = GetElementSolids(myFamily, opt: new Options() { DetailLevel = ViewDetailLevel.Fine, ComputeReferences = true });
 
-      (myBeam.Faces, myBeam.Vertices) = GetFaceVertexArrFromSolids( allSolids );
+      (myBeam.Faces, myBeam.Vertices) = GetFaceVertexArrFromSolids(allSolids);
       var baseCurve = myFamily.Location as LocationCurve;
-      myBeam.baseLine = (SpeckleCoreGeometryClasses.SpeckleLine) SpeckleCore.Converter.Serialise( baseCurve.Curve );
+      myBeam.baseLine = (SpeckleCoreGeometryClasses.SpeckleLine)SpeckleCore.Converter.Serialise(baseCurve.Curve);
 
       myBeam.beamFamily = myFamily.Symbol.FamilyName;
-      myBeam.beamType = Doc.GetElement( myFamily.GetTypeId() ).Name;
+      myBeam.beamType = Doc.GetElement(myFamily.GetTypeId()).Name;
 
-      myBeam.parameters = GetElementParams( myFamily );
+      myBeam.parameters = GetElementParams(myFamily);
+
+      //myFamily.just
 
       myBeam.GenerateHash();
       myBeam.ApplicationId = myFamily.UniqueId;
-      return myBeam;
+
+      //var analyticalModel = AnalyticalStickToSpeckle(myFamily);
+
+      return myBeam;//.Concat(analyticalModel).ToList();
     }
   }
 }

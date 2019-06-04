@@ -43,7 +43,7 @@ namespace SpeckleElementsRevit
       foreach ( Curve curve in myShaft.BoundaryCurves )
       {
         if ( curve == null ) continue;
-        poly.Segments.Add( SpeckleCore.Converter.Serialise( curve ) );
+        poly.Segments.Add( SpeckleCore.Converter.Serialise( curve ) as SpeckleObject );
       }
 
       spkShaft.baseCurve = poly;

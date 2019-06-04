@@ -10,43 +10,43 @@ using SQLite;
 
 namespace SpeckleElementsGSA
 {
-    public class Initialiser : ISpeckleInitializer
-    {
-        public Initialiser() { }
+  public class Initialiser : ISpeckleInitializer
+  {
+    public Initialiser() { }
 
-        public static GSAInterfacer GSA { get; set; } = new GSAInterfacer();
-        
-        public static Dictionary<Type, List<object>> GSASenderObjects { get; set; }
+    public static GSAInterfacer GSA { get; set; } = new GSAInterfacer();
 
-        public static string GSAUnits { get; set; }
-        
-        public static GSATargetLayer GSATargetLayer { get; set; }
+    public static Dictionary<Type, List<object>> GSASenderObjects { get; set; }
 
-        public static bool GSATargetDesignLayer { set => GSATargetLayer = value ? GSATargetLayer.Design : GSATargetLayer.Analysis; }
+    public static string GSAUnits { get; set; }
 
-        public static bool GSATargetAnalysisLayer { set => GSATargetLayer = value ? GSATargetLayer.Analysis : GSATargetLayer.Design; }
+    public static GSATargetLayer GSATargetLayer { get; set; }
 
-        public static bool GSASendResults { get; set; }
+    public static bool GSATargetDesignLayer { set => GSATargetLayer = value ? GSATargetLayer.Design : GSATargetLayer.Analysis; }
 
-        public static List<string> GSAResultCases { get; set; }
+    public static bool GSATargetAnalysisLayer { set => GSATargetLayer = value ? GSATargetLayer.Analysis : GSATargetLayer.Design; }
 
-        public static bool GSAResultInLocalAxis { get; set; }
-    }
+    public static bool GSASendResults { get; set; }
 
-    public static partial class Conversions
-    {
-        public static Dictionary<Type, List<object>> GSASenderObjects { get => Initialiser.GSASenderObjects; }
+    public static List<string> GSAResultCases { get; set; }
 
-        public static GSAInterfacer GSA { get => Initialiser.GSA; }
-        
-        public static string GSAUnits { get => Initialiser.GSAUnits; }
+    public static bool GSAResultInLocalAxis { get; set; }
+  }
 
-        public static GSATargetLayer GSATargetLayer { get => Initialiser.GSATargetLayer; }
+  public static partial class Conversions
+  {
+    public static Dictionary<Type, List<object>> GSASenderObjects { get => Initialiser.GSASenderObjects; }
 
-        public static bool GSASendResults { get => Initialiser.GSASendResults; }
+    public static GSAInterfacer GSA { get => Initialiser.GSA; }
 
-        public static List<string> GSAResultCases { get => Initialiser.GSAResultCases; }
+    public static string GSAUnits { get => Initialiser.GSAUnits; }
 
-        public static bool GSAResultInLocalAxis { get => Initialiser.GSAResultInLocalAxis; }
-    }
+    public static GSATargetLayer GSATargetLayer { get => Initialiser.GSATargetLayer; }
+
+    public static bool GSASendResults { get => Initialiser.GSASendResults; }
+
+    public static List<string> GSAResultCases { get => Initialiser.GSAResultCases; }
+
+    public static bool GSAResultInLocalAxis { get => Initialiser.GSAResultInLocalAxis; }
+  }
 }

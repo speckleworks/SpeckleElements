@@ -1,4 +1,5 @@
 ﻿using Autodesk.Revit.DB;
+using SpeckleCore;
 using SpeckleCoreGeometryClasses;
 using SpeckleElements;
 using System;
@@ -33,7 +34,7 @@ namespace SpeckleElementsRevit
       {
         var crv = segment.GetCurve();
         var converted = SpeckleCore.Converter.Serialise( crv );
-        myPolyCurve.Segments.Add( converted );
+        myPolyCurve.Segments.Add( converted as SpeckleObject );
       }
       speckleRoom.baseCurve = myPolyCurve;
       speckleRoom.parameters = GetElementParams( myRoom );
