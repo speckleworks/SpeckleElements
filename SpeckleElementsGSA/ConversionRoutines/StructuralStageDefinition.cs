@@ -119,9 +119,11 @@ namespace SpeckleElementsGSA
 
     public static partial class Conversions
     {
-        public static bool ToNative(this StructuralStageDefinition loadTask)
+        public static bool ToNative(this StructuralStageDefinition stageDefinition)
         {
-            new GSALoadTaskBuckling() { Value = loadTask }.SetGWACommand(GSA);
+            var gsaStageDefinition = new GSAStageDefinition() { Value = stageDefinition };
+
+            gsaStageDefinition.SetGWACommand(GSA);
 
             return true;
         }

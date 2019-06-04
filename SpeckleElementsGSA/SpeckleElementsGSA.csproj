@@ -71,6 +71,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ConversionRoutines\StructuralAssembly.cs" />
     <Compile Include="ConversionRoutines\StructuralLoadTaskBuckling.cs" />
     <Compile Include="ConversionRoutines\StructuralStageDefinition.cs" />
     <Compile Include="ConversionRoutines\Structural2DLoadPanel.cs" />

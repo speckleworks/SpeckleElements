@@ -330,6 +330,75 @@ namespace SpeckleElements
     }
 
     [Serializable]
+    public partial class StructuralAssembly : SpeckleLine, IStructural
+    {
+        public override string Type { get => base.Type + "/StructuralAssembly"; }
+
+        [SNJ.JsonIgnore]
+        private Dictionary<string, object> StructuralProperties
+        {
+            get
+            {
+                if (base.Properties == null)
+                    base.Properties = new Dictionary<string, object>();
+
+                if (!base.Properties.ContainsKey("structural"))
+                    base.Properties["structural"] = new Dictionary<string, object>();
+
+                return base.Properties["structural"] as Dictionary<string, object>;
+
+            }
+            set
+            {
+                if (base.Properties == null)
+                    base.Properties = new Dictionary<string, object>();
+
+                base.Properties["structural"] = value;
+            }
+        }
+
+        /// <summary>Structural ID to reference from other objects.</summary>
+        [SNJ.JsonIgnore]
+        public string StructuralId
+        {
+            get => StructuralProperties.ContainsKey("structuralId") ? (StructuralProperties["structuralId"] as string) : null;
+            set => StructuralProperties["structuralId"] = value;
+        }
+
+        /// <summary>Base SpecklePolyline.</summary>
+        [SNJ.JsonIgnore]
+        public SpeckleLine baseLine
+        {
+            get => this as SpeckleLine;
+            set
+            {
+                this.Value = value.Value;
+                this.Domain = value.Domain;
+            }
+        }
+
+        /// <summary>Structural ID of StructuralLoadCase.</summary>
+        [SNJ.JsonIgnore]
+        public List<string> MemberRefs
+        {
+            get
+            {
+                var list = new List<String>();
+                if (StructuralProperties.ContainsKey("memberRefs"))
+                {
+                    var memberRefs = (List<object>)StructuralProperties["memberRefs"];
+                    foreach (var memberRef in memberRefs)
+                    {
+                        list.Add((string)memberRef);
+                    }
+                }
+                return list;
+            }
+            set => StructuralProperties["memberRefs"] = value.ToArray();
+        }
+    }
+
+    [Serializable]
     public partial class StructuralStageDefinition : SpeckleObject, IStructural
     {
         public override string Type { get => "StructuralStageDefinition"; }

@@ -10,7 +10,7 @@ using SpeckleElements;
 
 namespace SpeckleElementsGSA
 {
-    [GSAObject("ANAL.1", new string[] { "TASK.1" }, "loads", true, true, new Type[] { typeof(GSALoadCase) }, new Type[] { typeof(GSALoadCase), typeof(GSALoadCombo) })]
+    [GSAObject("ANAL.1", new string[] { "TASK.1" }, "loads", true, true, new Type[] { typeof(GSALoadCase), typeof(GSAStageDefinition), typeof(GSALoadCombo) }, new Type[] { typeof(GSALoadCase), typeof(GSAStageDefinition), typeof(GSALoadCombo) })]
     public class GSALoadTaskBuckling : IGSASpeckleContainer
     {
         public string GWACommand { get; set; }
@@ -58,7 +58,7 @@ namespace SpeckleElementsGSA
             string subkeyword = typeof(GSALoadTaskBuckling).GetSubGSAKeyword().First();
 
             int taskIndex = GSA.Indexer.ResolveIndex("TASK.1", loadTask);
-            int comboIndex = GSA.Indexer.ResolveIndex(typeof(GSALoadCombo), loadTask.ResultCaseRef);
+            int? comboIndex = GSA.Indexer.LookupIndex(typeof(GSALoadCombo), loadTask.ResultCaseRef);
             int? stageIndex = GSA.Indexer.LookupIndex(typeof(GSAStageDefinition), loadTask.StageDefinitionRef);
 
             List<string> ls = new List<string>
@@ -73,7 +73,7 @@ namespace SpeckleElementsGSA
                 "1",
                 loadTask.NumModes.ToString(),
                 loadTask.MaxNumIterations.ToString(),
-                "C" + comboIndex,
+                (comboIndex == null) ? "0" : "C" + comboIndex,
                 "none",
                 "none",
                 "DRCMEFNSQBHU*",
