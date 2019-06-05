@@ -1037,7 +1037,7 @@ namespace SpeckleElementsGSA
     /// <param name="loadCase">Load case</param>
     /// <param name="axis">Result axis</param>
     /// <returns>Dictionary of displacements with keys {x,y,z,xx,yy,zz}.</returns>
-    public Dictionary<string, double[]> Get1DElementDisplacements(int id, string loadCase, string axis = "local")
+    public Dictionary<string, List<double>> Get1DElementDisplacements(int id, string loadCase, string axis = "local")
     {
       try
       {
@@ -1051,13 +1051,13 @@ namespace SpeckleElementsGSA
         int num;
         GSAObject.Output_Extract_Arr(id, out res, out num);
 
-        Dictionary<string, double[]> ret = new Dictionary<string, double[]>() {
-          {"x", res.Select(x => x.dynaResults[1]).ToArray() },
-          {"y", res.Select(x => x.dynaResults[2]).ToArray()},
-          {"z", res.Select(x => x.dynaResults[3]).ToArray()},
-          {"xx", res.Select(x => x.dynaResults[5]).ToArray()},
-          {"yy", res.Select(x => x.dynaResults[6]).ToArray()},
-          {"zz", res.Select(x => x.dynaResults[7]).ToArray()},
+        Dictionary<string, List<double>> ret = new Dictionary<string, List<double>>() {
+          {"x", res.Select(x => x.dynaResults[1]).ToList() },
+          {"y", res.Select(x => x.dynaResults[2]).ToList()},
+          {"z", res.Select(x => x.dynaResults[3]).ToList()},
+          {"xx", res.Select(x => x.dynaResults[5]).ToList()},
+          {"yy", res.Select(x => x.dynaResults[6]).ToList()},
+          {"zz", res.Select(x => x.dynaResults[7]).ToList()},
         };
         return ret;
       }
@@ -1071,7 +1071,7 @@ namespace SpeckleElementsGSA
     /// <param name="loadCase">Load case</param>
     /// <param name="axis">Result axis</param>
     /// <returns>Dictionary of forces with keys {fx,fy,fz,mx,my,mz}.</returns>
-    public Dictionary<string, double[]> Get1DElementForces(int id, string loadCase, string axis = "local")
+    public Dictionary<string, List<double>> Get1DElementForces(int id, string loadCase, string axis = "local")
     {
       try
       {
@@ -1085,13 +1085,13 @@ namespace SpeckleElementsGSA
         int num;
         GSAObject.Output_Extract_Arr(id, out res, out num);
 
-        Dictionary<string, double[]> ret = new Dictionary<string, double[]>() {
-          {"fx", res.Select(x => x.dynaResults[1]).ToArray() },
-          {"fy", res.Select(x => x.dynaResults[2]).ToArray()},
-          {"fz", res.Select(x => x.dynaResults[3]).ToArray()},
-          {"mx", res.Select(x => x.dynaResults[5]).ToArray()},
-          {"my", res.Select(x => x.dynaResults[6]).ToArray()},
-          {"mz", res.Select(x => x.dynaResults[7]).ToArray()},
+        Dictionary<string, List<double>> ret = new Dictionary<string, List<double>>() {
+          {"fx", res.Select(x => x.dynaResults[1]).ToList() },
+          {"fy", res.Select(x => x.dynaResults[2]).ToList()},
+          {"fz", res.Select(x => x.dynaResults[3]).ToList()},
+          {"mx", res.Select(x => x.dynaResults[5]).ToList()},
+          {"my", res.Select(x => x.dynaResults[6]).ToList()},
+          {"mz", res.Select(x => x.dynaResults[7]).ToList()},
         };
         return ret;
       }
@@ -1105,7 +1105,7 @@ namespace SpeckleElementsGSA
     /// <param name="loadCase">Load case</param>
     /// <param name="axis">Result axis</param>
     /// <returns>Dictionary of stresses with keys {a,sy,sz,by+,by-,bz+,bz-,comb+,comb-}.</returns>
-    public Dictionary<string, double[]> Get1DElementStresses(int id, string loadCase, string axis = "local")
+    public Dictionary<string, List<double>> Get1DElementStresses(int id, string loadCase, string axis = "local")
     {
       try
       {
@@ -1119,16 +1119,16 @@ namespace SpeckleElementsGSA
         int num;
         GSAObject.Output_Extract_Arr(id, out res, out num);
 
-        Dictionary<string, double[]> ret = new Dictionary<string, double[]>() {
-          {"a", res.Select(x => x.dynaResults[1]).ToArray() },
-          {"sy", res.Select(x => x.dynaResults[2]).ToArray()},
-          {"sz", res.Select(x => x.dynaResults[3]).ToArray()},
-          {"by+", res.Select(x => x.dynaResults[4]).ToArray()},
-          {"by-", res.Select(x => x.dynaResults[5]).ToArray()},
-          {"bz+", res.Select(x => x.dynaResults[6]).ToArray()},
-          {"bz-", res.Select(x => x.dynaResults[7]).ToArray()},
-          {"comb+", res.Select(x => x.dynaResults[8]).ToArray()},
-          {"comb-", res.Select(x => x.dynaResults[9]).ToArray()},
+        Dictionary<string, List<double>> ret = new Dictionary<string, List<double>>() {
+          {"a", res.Select(x => x.dynaResults[1]).ToList() },
+          {"sy", res.Select(x => x.dynaResults[2]).ToList()},
+          {"sz", res.Select(x => x.dynaResults[3]).ToList()},
+          {"by+", res.Select(x => x.dynaResults[4]).ToList()},
+          {"by-", res.Select(x => x.dynaResults[5]).ToList()},
+          {"bz+", res.Select(x => x.dynaResults[6]).ToList()},
+          {"bz-", res.Select(x => x.dynaResults[7]).ToList()},
+          {"comb+", res.Select(x => x.dynaResults[8]).ToList()},
+          {"comb-", res.Select(x => x.dynaResults[9]).ToList()},
         };
         return ret;
       }
@@ -1142,7 +1142,7 @@ namespace SpeckleElementsGSA
     /// <param name="loadCase">Load case</param>
     /// <param name="axis">Result axis</param>
     /// <returns>Dictionary of displacements with keys {x,y,z}.</returns>
-    public Dictionary<string, double> Get2DElementDisplacements(int id, string loadCase, string axis = "local")
+    public Dictionary<string, List<double>> Get2DElementDisplacements(int id, string loadCase, string axis = "local")
     {
       try
       {
@@ -1156,12 +1156,11 @@ namespace SpeckleElementsGSA
         int num;
         GSAObject.Output_Extract_Arr(id, out res, out num);
 
-        Dictionary<string, double> ret = new Dictionary<string, double>()
-                {
-                    {"x", res.Last().dynaResults[0]},
-                    {"y", res.Last().dynaResults[1]},
-                    {"z", res.Last().dynaResults[2]},
-                };
+        Dictionary<string, List<double>> ret = new Dictionary<string, List<double>>() {
+          {"x", new List<double>() {res.Last().dynaResults[0]} },
+          {"y", new List<double>() {res.Last().dynaResults[1]} },
+          {"z", new List<double>() {res.Last().dynaResults[2]} },
+        };
 
         //Dictionary<string, double> ret = new Dictionary<string, double>();
 
@@ -1190,7 +1189,7 @@ namespace SpeckleElementsGSA
     /// <param name="loadCase">Load case</param>
     /// <param name="axis">Result axis</param>
     /// <returns>Dictionary of forces with keys {nx,ny,nxy,mx,my,mxy,vx,vy}.</returns>
-    public Dictionary<string, double> Get2DElementForces(int id, string loadCase, string axis = "local")
+    public Dictionary<string, List<double>> Get2DElementForces(int id, string loadCase, string axis = "local")
     {
       try
       {
@@ -1207,17 +1206,16 @@ namespace SpeckleElementsGSA
         int momentNum;
         GSAObject.Output_Extract_Arr(id, out momentRes, out momentNum);
 
-        Dictionary<string, double> ret = new Dictionary<string, double>()
-                {
-                    {"nx", forceRes.Last().dynaResults[2]},
-                    {"ny", forceRes.Last().dynaResults[3]},
-                    {"nxy", forceRes.Last().dynaResults[4]},
-                    {"mx", momentRes.Last().dynaResults[1]},
-                    {"my", momentRes.Last().dynaResults[2]},
-                    {"mxy", momentRes.Last().dynaResults[3]},
-                    {"vx", forceRes.Last().dynaResults[5]},
-                    {"vy", forceRes.Last().dynaResults[6]},
-                };
+        Dictionary<string, List<double>> ret = new Dictionary<string, List<double>>() {
+          {"nx", new List<double>() { forceRes.Last().dynaResults[2] } },
+          {"ny", new List<double>() { forceRes.Last().dynaResults[3] } },
+          {"nxy", new List<double>() { forceRes.Last().dynaResults[4] } },
+          {"mx", new List<double>() { momentRes.Last().dynaResults[1] } },
+          {"my", new List<double>() { momentRes.Last().dynaResults[2] } },
+          {"mxy", new List<double>() { momentRes.Last().dynaResults[3] } },
+          {"vx", new List<double>() { forceRes.Last().dynaResults[5] } },
+          {"vy", new List<double>() { forceRes.Last().dynaResults[6] } },
+        };
 
         //Dictionary<string, double> ret = new Dictionary<string, double>();
 
@@ -1251,7 +1249,7 @@ namespace SpeckleElementsGSA
     /// <param name="axis">Result axis</param>
     /// <param name="layer">Layer of element to extract results from</param>
     /// <returns>Dictionary of stresses with keys {sxx,syy,tzx,tzy,txy}.</returns>
-    public Dictionary<string, double> Get2DElementStresses(int id, string loadCase, string axis = "local", GSA2DElementLayer layer = GSA2DElementLayer.Middle)
+    public Dictionary<string, List<double>> Get2DElementStresses(int id, string loadCase, string axis = "local", GSA2DElementLayer layer = GSA2DElementLayer.Middle)
     {
       try
       {
@@ -1265,14 +1263,13 @@ namespace SpeckleElementsGSA
         int num;
         GSAObject.Output_Extract_Arr(id, out res, out num);
 
-        Dictionary<string, double> ret = new Dictionary<string, double>()
-                {
-                    {"sxx", res.Last().dynaResults[0]},
-                    {"syy", res.Last().dynaResults[1]},
-                    {"tzx", res.Last().dynaResults[5]},
-                    {"tzy", res.Last().dynaResults[4]},
-                    {"txy", res.Last().dynaResults[3]},
-                };
+        Dictionary<string, List<double>> ret = new Dictionary<string, List<double>> () {
+          {"sxx", new List<double>() { res.Last().dynaResults[0] } },
+          {"syy", new List<double>() { res.Last().dynaResults[1] } },
+          {"tzx", new List<double>() { res.Last().dynaResults[5] } },
+          {"tzy", new List<double>() { res.Last().dynaResults[4] } },
+          {"txy", new List<double>() { res.Last().dynaResults[3] } },
+        };
 
         //Dictionary<string, double> ret = new Dictionary<string, double>();
 

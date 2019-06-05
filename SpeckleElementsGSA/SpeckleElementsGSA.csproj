@@ -72,6 +72,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ConversionRoutines\Structural1DLoadLine.cs" />
+    <Compile Include="ConversionRoutines\Structural2DElement.cs" />
     <Compile Include="ConversionRoutines\Structural2DLoadPanel.cs" />
     <Compile Include="ConversionRoutines\Structural2DLoad.cs" />
     <Compile Include="ConversionRoutines\Structural2DVoid.cs" />

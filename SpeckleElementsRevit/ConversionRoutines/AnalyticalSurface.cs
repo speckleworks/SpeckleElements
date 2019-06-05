@@ -157,7 +157,15 @@ namespace SpeckleElementsRevit
       
       foreach(double[] coor in polylines)
       {
-        var dummyMesh = new Structural2DElementMesh(coor, null, type, null, axis, 0);
+        var dummyMesh = new Structural2DElementMesh(coor, null, type, null, null, null);
+        
+        int numFaces = 0;
+        for (int i = 0; i < dummyMesh.Faces.Count(); i++)
+        {
+          numFaces++;
+          i += dummyMesh.Faces[i] + 3;
+        }
+
         var mesh = new Structural2DElementMesh();
         mesh.Vertices = dummyMesh.Vertices;
         mesh.Faces = dummyMesh.Faces;
@@ -166,8 +174,8 @@ namespace SpeckleElementsRevit
         if (sectionID != null)
           mesh.PropertyRef = sectionID;
         if (axis != null)
-          mesh.Axis = axis;
-        mesh.Offset = 0; //TODO
+          mesh.Axis = Enumerable.Repeat(axis, numFaces).ToList();
+        mesh.Offset = Enumerable.Repeat(0, numFaces).Cast<double>().ToList(); //TODO
 
         mesh.GenerateHash();
         mesh.ApplicationId = mySurface.UniqueId; // THIS IS NOT UNIQUE ANYMORE
