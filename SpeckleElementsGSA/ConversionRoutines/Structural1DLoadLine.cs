@@ -189,10 +189,10 @@ namespace SpeckleElementsGSA
       ls.Add(gridSurfaceIndex.ToString());
       ls.Add(load.Name == null || load.Name == "" ? " " : load.Name);
       ls.Add(gridPlaneIndex.ToString());
-      ls.Add("2"); // Dimension of elements to target
+      ls.Add("1"); // Dimension of elements to target
       ls.Add("all"); // List of elements to target
       ls.Add("0.01"); // Tolerance
-      ls.Add("ONE"); // Span option
+      ls.Add("TWO_SIMPLE"); // Span option
       ls.Add("0"); // Span angle
       GSA.RunGWACommand(string.Join("\t", ls));
 
