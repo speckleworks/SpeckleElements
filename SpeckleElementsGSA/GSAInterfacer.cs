@@ -22,13 +22,45 @@ namespace SpeckleElementsGSA
 
     public Indexer Indexer = new Indexer();
 
-    public double CoincidentNodeAllowance = 0.1;
-
     private Dictionary<string, object> PreviousGSAGetCache = new Dictionary<string, object>();
     private Dictionary<string, object> GSAGetCache = new Dictionary<string, object>();
 
     private Dictionary<string, object> PreviousGSASetCache = new Dictionary<string, object>();
     private Dictionary<string, object> GSASetCache = new Dictionary<string, object>();
+
+    #region Communication
+    public void InitializeReceiver(ComAuto GSAObject)
+    {
+      FullClearCache();
+      this.GSAObject = GSAObject;
+    }
+
+    public void PreReceiving()
+    {
+      ClearCache();
+    }
+
+    public void PostReceiving()
+    {
+      BlankDepreciatedGWASetCommands();
+    }
+
+    public void InitializeSender(ComAuto GSAObject)
+    {
+      FullClearCache();
+      this.GSAObject = GSAObject;
+    }
+
+    public void PreSending()
+    {
+      ClearCache();
+    }
+
+    public void PostSending()
+    {
+
+    }
+    #endregion
 
     #region GWA Command
     /// <summary>
@@ -256,9 +288,9 @@ namespace SpeckleElementsGSA
     /// <param name="z">Z coordinate of the node</param>
     /// <param name="structuralID">Structural ID of the node</param>
     /// <returns>Node index</returns>
-    public int NodeAt(double x, double y, double z, string structuralID = null)
+    public int NodeAt(double x, double y, double z, double coincidentNodeAllowance, string structuralID = null)
     {
-      int idx = GSAObject.Gen_NodeAt(x, y, z, CoincidentNodeAllowance);
+      int idx = GSAObject.Gen_NodeAt(x, y, z, coincidentNodeAllowance);
 
       if (structuralID != null)
         Indexer.ReserveIndicesAndMap(typeof(GSANode), new List<int>() { idx }, new List<string>() { structuralID });
@@ -777,6 +809,76 @@ namespace SpeckleElementsGSA
     }
     #endregion
 
+    #region Polyline and Grids
+    public (string, string) GetPolylineDesc(int polylineRef)
+    {
+      string res = GetGWARecords("GET,POLYLINE.1," + polylineRef.ToString()).FirstOrDefault();
+      string[] pieces = res.ListSplit(",");
+      
+      // TODO: commas are used to seperate both data and polyline coordinate values...
+      return (string.Join(",", pieces.Skip(6)), res);
+    }
+
+    public (int, string) GetGridPlaneRef(int gridSurfaceRef)
+    {
+      string res = GetGWARecords("GET,GRID_SURFACE.1," + gridSurfaceRef.ToString()).FirstOrDefault();
+      string[] pieces = res.ListSplit(",");
+      
+      return (Convert.ToInt32(pieces[3]), res);
+    }
+
+    public (int, double, string) GetGridPlaneData(int gridPlaneRef)
+    {
+      string res = GetGWARecords("GET,GRID_PLANE.4," + gridPlaneRef.ToString()).FirstOrDefault();
+      string[] pieces = res.ListSplit(",");
+      
+      return (Convert.ToInt32(pieces[4]), Convert.ToDouble(pieces[5]), res);
+    }
+    #endregion
+
+    #region Elements
+    public (double, string) GetGSATotal2DElementOffset(int propIndex, double insertionPointOffset)
+    {
+      double materialInsertionPointOffset = 0;
+      double zMaterialOffset = 0;
+
+      string res = GetGWARecords("GET,PROP_2D," + propIndex.ToString()).FirstOrDefault();
+
+      if (res == null || res == "")
+        return (insertionPointOffset, null);
+      
+      string[] pieces = res.ListSplit(",");
+
+      zMaterialOffset = -Convert.ToDouble(pieces[12]);
+      return (insertionPointOffset + zMaterialOffset + materialInsertionPointOffset, res);
+    }
+    #endregion
+
+    #region Loads
+    public (StructuralLoadTaskType, string) GetLoadTaskType(string taskRef)
+    {
+      string[] commands = GetGWARecords("GET,TASK.1," + taskRef);
+
+      string[] taskPieces = commands[0].ListSplit(",");
+      StructuralLoadTaskType taskType = StructuralLoadTaskType.LinearStatic;
+
+      if (taskPieces[4] == "GSS")
+      {
+        if (taskPieces[5] == "STATIC")
+          taskType = StructuralLoadTaskType.LinearStatic;
+        else if (taskPieces[5] == "MODAL")
+          taskType = StructuralLoadTaskType.Modal;
+      }
+      else if (taskPieces[4] == "GSRELAX")
+      {
+        if (taskPieces[5] == "BUCKLING_NL")
+          taskType = StructuralLoadTaskType.NonlinearStatic;
+      }
+
+      return (taskType, commands[0]);
+    }
+    #endregion
+
     #region List
     /// <summary>
     /// Converts a GSA list to a list of indices.
@@ -1161,22 +1263,7 @@ namespace SpeckleElementsGSA
           {"y", new List<double>() {res.Last().dynaResults[1]} },
           {"z", new List<double>() {res.Last().dynaResults[2]} },
         };
-
-        //Dictionary<string, double> ret = new Dictionary<string, double>();
-
-        //GSAObject.Output_Init(0x2, axis, loadCase, (int)ResHeader.REF_DISP_EL2D + 1, 1);
-        //ret["x"] = GSAObject.Output_Extract(id, 0);
-        //GSAObject.Output_Init(0x2, axis, loadCase, (int)ResHeader.REF_DISP_EL2D + 2, 1);
-        //ret["y"] = GSAObject.Output_Extract(id, 0);
-        //GSAObject.Output_Init(0x2, axis, loadCase, (int)ResHeader.REF_DISP_EL2D + 3, 1);
-        //ret["z"] = GSAObject.Output_Extract(id, 0);
-        //GSAObject.Output_Init(0x2, axis, loadCase, (int)ResHeader.REF_DISP_EL2D + 5, 1);
-        //ret["xx"] = GSAObject.Output_Extract(id, 0);
-        //GSAObject.Output_Init(0x2, axis, loadCase, (int)ResHeader.REF_DISP_EL2D + 6, 1);
-        //ret["yy"] = GSAObject.Output_Extract(id, 0);
-        //GSAObject.Output_Init(0x2, axis, loadCase, (int)ResHeader.REF_DISP_EL2D + 7, 1);
-        //ret["zz"] = GSAObject.Output_Extract(id, 0);
-
+        
         return ret;
       }
       catch { return null; }
@@ -1216,26 +1303,7 @@ namespace SpeckleElementsGSA
           {"vx", new List<double>() { forceRes.Last().dynaResults[5] } },
           {"vy", new List<double>() { forceRes.Last().dynaResults[6] } },
         };
-
-        //Dictionary<string, double> ret = new Dictionary<string, double>();
-
-        //GSAObject.Output_Init(0x2, axis, loadCase, (int)ResHeader.REF_FORCE_EL2D_PRJ + 3, 1);
-        //ret["nx"] = GSAObject.Output_Extract(id, 0);
-        //GSAObject.Output_Init(0x2, axis, loadCase, (int)ResHeader.REF_FORCE_EL2D_PRJ + 4, 1);
-        //ret["ny"] = GSAObject.Output_Extract(id, 0);
-        //GSAObject.Output_Init(0x2, axis, loadCase, (int)ResHeader.REF_FORCE_EL2D_PRJ + 5, 1);
-        //ret["nxy"] = GSAObject.Output_Extract(id, 0);
-        //GSAObject.Output_Init(0x2, axis, loadCase, (int)ResHeader.REF_MOMENT_EL2D_PRJ + 2, 1);
-        //ret["mx"] = GSAObject.Output_Extract(id, 0);
-        //GSAObject.Output_Init(0x2, axis, loadCase, (int)ResHeader.REF_MOMENT_EL2D_PRJ + 3, 1);
-        //ret["my"] = GSAObject.Output_Extract(id, 0);
-        //GSAObject.Output_Init(0x2, axis, loadCase, (int)ResHeader.REF_MOMENT_EL2D_PRJ + 4, 1);
-        //ret["mxy"] = GSAObject.Output_Extract(id, 0);
-        //GSAObject.Output_Init(0x2, axis, loadCase, (int)ResHeader.REF_FORCE_EL2D_PRJ + 6, 1);
-        //ret["vx"] = GSAObject.Output_Extract(id, 0);
-        //GSAObject.Output_Init(0x2, axis, loadCase, (int)ResHeader.REF_FORCE_EL2D_PRJ + 7, 1);
-        //ret["vy"] = GSAObject.Output_Extract(id, 0);
-
+        
         return ret;
       }
       catch { return null; }
@@ -1270,20 +1338,7 @@ namespace SpeckleElementsGSA
           {"tzy", new List<double>() { res.Last().dynaResults[4] } },
           {"txy", new List<double>() { res.Last().dynaResults[3] } },
         };
-
-        //Dictionary<string, double> ret = new Dictionary<string, double>();
-
-        //GSAObject.Output_Init(0x10 | (int)layer, axis, loadCase, (int)ResHeader.REF_STRESS_EL2D_PRJ + 1, 1);
-        //ret["sxx"] = GSAObject.Output_Extract(id, 0);
-        //GSAObject.Output_Init(0x10 | (int)layer, axis, loadCase, (int)ResHeader.REF_STRESS_EL2D_PRJ + 2, 1);
-        //ret["syy"] = GSAObject.Output_Extract(id, 0);
-        //GSAObject.Output_Init(0x10 | (int)layer, axis, loadCase, (int)ResHeader.REF_STRESS_EL2D_PRJ + 6, 1);
-        //ret["tzx"] = GSAObject.Output_Extract(id, 0);
-        //GSAObject.Output_Init(0x10 | (int)layer, axis, loadCase, (int)ResHeader.REF_STRESS_EL2D_PRJ + 5, 1);
-        //ret["tzy"] = GSAObject.Output_Extract(id, 0);
-        //GSAObject.Output_Init(0x10 | (int)layer, axis, loadCase, (int)ResHeader.REF_STRESS_EL2D_PRJ + 4, 1);
-        //ret["txy"] = GSAObject.Output_Extract(id, 0);
-
+        
         return ret;
       }
       catch { return null; }

@@ -804,8 +804,10 @@ namespace SpeckleElements
 
       this.ElementType = elementType;
       this.PropertyRef = propertyRef;
-      this.Axis = axis.ToList();
-      this.Offset = offset.ToList();
+      if (axis != null)
+        this.Axis = axis.ToList();
+      if (offset != null)
+        this.Offset = offset.ToList();
       this.StructuralId = structuralId;
 
       this.TextureCoordinates = null;

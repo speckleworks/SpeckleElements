@@ -112,7 +112,7 @@ namespace SpeckleElementsGSA
       GSA.RunGWACommand(string.Join("\t", ls));
     }
 
-    public Structural1DProperty SetDesc(Structural1DProperty prop, string desc, string gsaUnit)
+    private Structural1DProperty SetDesc(Structural1DProperty prop, string desc, string gsaUnit)
     {
       string[] pieces = desc.ListSplit("%");
 
@@ -132,7 +132,7 @@ namespace SpeckleElementsGSA
       }
     }
 
-    public Structural1DProperty SetStandardDesc(Structural1DProperty prop, string desc, string gsaUnit)
+    private Structural1DProperty SetStandardDesc(Structural1DProperty prop, string desc, string gsaUnit)
     {
       string[] pieces = desc.ListSplit("%");
 
@@ -351,7 +351,7 @@ namespace SpeckleElementsGSA
       return prop;
     }
 
-    public Structural1DProperty SetGeometryDesc(Structural1DProperty prop, string desc, string gsaUnit)
+    private Structural1DProperty SetGeometryDesc(Structural1DProperty prop, string desc, string gsaUnit)
     {
       string[] pieces = desc.ListSplit("%");
 
@@ -387,7 +387,7 @@ namespace SpeckleElementsGSA
       }
     }
 
-    public string GetGSADesc(Structural1DProperty prop, string gsaUnit)
+    private string GetGSADesc(Structural1DProperty prop, string gsaUnit)
     {
       if (prop.Profile == null)
         return "";

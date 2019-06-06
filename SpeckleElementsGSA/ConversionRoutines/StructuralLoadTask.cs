@@ -33,7 +33,9 @@ namespace SpeckleElementsGSA
 
       //Find task type
       string taskRef = pieces[counter++];
-      obj.TaskType = GetLoadTaskType(GSA, taskRef);
+      string taskRec;
+      (obj.TaskType, taskRec) = GSA.GetLoadTaskType(taskRef);
+      this.SubGWACommand.Add(taskRec);
 
       // Parse description
       string description = pieces[counter++];
@@ -229,29 +231,6 @@ namespace SpeckleElementsGSA
         ls.Add(string.Join(" + ", subLs));
       }
       GSA.RunGWACommand(string.Join("\t", ls));
-    }
-
-    public static StructuralLoadTaskType GetLoadTaskType(GSAInterfacer GSA, string taskRef)
-    {
-      string[] commands = GSA.GetGWARecords("GET,TASK.1," + taskRef);
-
-      string[] taskPieces = commands[0].ListSplit(",");
-      StructuralLoadTaskType taskType = StructuralLoadTaskType.LinearStatic;
-
-      if (taskPieces[4] == "GSS")
-      {
-        if (taskPieces[5] == "STATIC")
-          taskType = StructuralLoadTaskType.LinearStatic;
-        else if (taskPieces[5] == "MODAL")
-          taskType = StructuralLoadTaskType.Modal;
-      }
-      else if (taskPieces[4] == "GSRELAX")
-      {
-        if (taskPieces[5] == "BUCKLING_NL")
-          taskType = StructuralLoadTaskType.NonlinearStatic;
-      }
-
-      return taskType;
     }
   }
 

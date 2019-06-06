@@ -30,8 +30,10 @@ namespace SpeckleElementsGSA
       int counter = 1; // Skip identifier
       obj.Name = pieces[counter++].Trim(new char[] { '"' });
 
-      var gridPlaneRefRet = GetGridPlaneRef(GSA, Convert.ToInt32(pieces[counter++]));
-      var (gridPlaneAxis, gridPlaneElevation) = GetGridPlaneData(GSA, gridPlaneRefRet);
+      var (gridPlaneRefRet, gridSurfaceRec) = GSA.GetGridPlaneRef(Convert.ToInt32(pieces[counter++]));
+      var (gridPlaneAxis, gridPlaneElevation, gridPlaneRec) = GSA.GetGridPlaneData(gridPlaneRefRet);
+      this.SubGWACommand.Add(gridSurfaceRec);
+      this.SubGWACommand.Add(gridPlaneRec);
 
       string gwaRec = null;
       StructuralAxis axis = GSA.Parse0DAxis(gridPlaneAxis, out gwaRec);
@@ -48,7 +50,9 @@ namespace SpeckleElementsGSA
           return;
         case "POLYREF":
           string polylineRef = pieces[counter++];
-          polylineDescription = GetPolylineDesc(GSA, Convert.ToInt32(polylineRef));
+          string newRec = null;
+          (polylineDescription, newRec) = GSA.GetPolylineDesc(Convert.ToInt32(polylineRef));
+          this.SubGWACommand.Add(newRec);
           break;
         case "POLYGON":
           polylineDescription = pieces[counter++];
@@ -207,37 +211,6 @@ namespace SpeckleElementsGSA
       ls.Add("0"); // Elevation above
       ls.Add("0"); // Elevation below
       GSA.RunGWACommand(string.Join("\t", ls));
-    }
-
-    private string GetPolylineDesc(GSAInterfacer GSA, int polylineRef)
-    {
-      string res = GSA.GetGWARecords("GET,POLYLINE.1," + polylineRef.ToString()).FirstOrDefault();
-      string[] pieces = res.ListSplit(",");
-
-      this.SubGWACommand.Add(res);
-
-      // TODO: commas are used to seperate both data and polyline coordinate values...
-      return string.Join(",", pieces.Skip(6));
-    }
-
-    private int GetGridPlaneRef(GSAInterfacer GSA, int gridSurfaceRef)
-    {
-      string res = GSA.GetGWARecords("GET,GRID_SURFACE.1," + gridSurfaceRef.ToString()).FirstOrDefault();
-      string[] pieces = res.ListSplit(",");
-
-      this.SubGWACommand.Add(res);
-
-      return Convert.ToInt32(pieces[3]);
-    }
-
-    private (int, double) GetGridPlaneData(GSAInterfacer GSA, int gridPlaneRef)
-    {
-      string res = GSA.GetGWARecords("GET,GRID_PLANE.4," + gridPlaneRef.ToString()).FirstOrDefault();
-      string[] pieces = res.ListSplit(",");
-
-      this.SubGWACommand.Add(res);
-
-      return (Convert.ToInt32(pieces[4]), Convert.ToDouble(pieces[5]));
     }
   }
 

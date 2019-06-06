@@ -76,9 +76,10 @@ namespace SpeckleElementsGSA
       counter++; //Ofsset x-end
       counter++; //Ofsset y
 
-      var offsetRet = GetGSATotalElementOffset(GSA, Convert.ToInt32(obj.PropertyRef), Convert.ToDouble(pieces[counter++]));
+      var (offset, offsetRec) = GSA.GetGSATotal2DElementOffset(Convert.ToInt32(obj.PropertyRef), Convert.ToDouble(pieces[counter++]));
+      this.SubGWACommand.Add(offsetRec);
 
-      obj.Offset = offsetRet;
+      obj.Offset = offset;
 
       counter++; // Dummy
 
@@ -119,7 +120,7 @@ namespace SpeckleElementsGSA
       for (int i = 1; i < mesh.Faces.Count(); i++)
       {
         coor.AddRange(mesh.Vertices.Skip(mesh.Faces[i] * 3).Take(3));
-        ls.Add(GSA.NodeAt(mesh.Vertices[mesh.Faces[i] * 3], mesh.Vertices[mesh.Faces[i] * 3 + 1], mesh.Vertices[mesh.Faces[i] * 3 + 2]).ToString());
+        ls.Add(GSA.NodeAt(mesh.Vertices[mesh.Faces[i] * 3], mesh.Vertices[mesh.Faces[i] * 3 + 1], mesh.Vertices[mesh.Faces[i] * 3 + 2], Conversions.GSACoincidentNodeAllowance).ToString());
       }
       ls.Add("0"); //Orientation node
       try
@@ -140,26 +141,9 @@ namespace SpeckleElementsGSA
       GSA.RunGWACommand(string.Join("\t", ls));
     }
 
-    private double GetGSATotalElementOffset(GSAInterfacer GSA, int propIndex, double insertionPointOffset)
-    {
-      double materialInsertionPointOffset = 0;
-      double zMaterialOffset = 0;
-
-      string res = GSA.GetGWARecords("GET,PROP_2D," + propIndex.ToString()).FirstOrDefault();
-
-      if (res == null || res == "")
-        return insertionPointOffset;
-
-      this.SubGWACommand.Add(res);
-
-      string[] pieces = res.ListSplit(",");
-
-      zMaterialOffset = -Convert.ToDouble(pieces[12]);
-      return insertionPointOffset + zMaterialOffset + materialInsertionPointOffset;
-    }
   }
 
-  [GSAObject("MEMB.7", new string[] { "NODE.2" }, "elements", false, true, new Type[] { typeof(GSANode) }, new Type[] { typeof(GSA1DProperty) })]
+  [GSAObject("MEMB.7", new string[] { "NODE.2" }, "elements", false, true, new Type[] { typeof(GSANode), typeof(GSA2DProperty) }, new Type[] { typeof(GSA1DProperty) })]
   public class GSA2DMember : IGSASpeckleContainer
   {
     public int Group; // Keep for load targetting
@@ -233,9 +217,10 @@ namespace SpeckleElementsGSA
       // Skip to offsets at second to last
       counter = pieces.Length - 2;
 
-      var offsetRet = GetGSATotalElementOffset(GSA, Convert.ToInt32(obj.PropertyRef), Convert.ToDouble(pieces[counter++]));
+      var (offset, offsetRec) = GSA.GetGSATotal2DElementOffset(Convert.ToInt32(obj.PropertyRef), Convert.ToDouble(pieces[counter++]));
+      this.SubGWACommand.Add(offsetRec);
 
-      obj.Offset = Enumerable.Repeat(offsetRet, numFaces).ToList();
+      obj.Offset = Enumerable.Repeat(offset, numFaces).ToList();
 
       this.Value = obj;
     }
@@ -279,7 +264,7 @@ namespace SpeckleElementsGSA
         foreach (int c in conn)
         {
           coor.AddRange(mesh.Vertices.Skip(c * 3).Take(3));
-          topo += GSA.NodeAt(mesh.Vertices[c * 3], mesh.Vertices[c * 3 + 1], mesh.Vertices[c * 3 + 2]).ToString() + " ";
+          topo += GSA.NodeAt(mesh.Vertices[c * 3], mesh.Vertices[c * 3 + 1], mesh.Vertices[c * 3 + 2], Conversions.GSACoincidentNodeAllowance).ToString() + " ";
         }
       ls.Add(topo);
       ls.Add("0"); // Orientation node
@@ -303,34 +288,8 @@ namespace SpeckleElementsGSA
 
       GSA.RunGWACommand(string.Join("\t", ls));
     }
-
-    private double GetGSATotalElementOffset(GSAInterfacer GSA, int propIndex, double insertionPointOffset)
-    {
-      double materialInsertionPointOffset = 0;
-      double zMaterialOffset = 0;
-
-      string res = GSA.GetGWARecords("GET,PROP_2D," + propIndex.ToString()).FirstOrDefault();
-
-      if (res == null || res == "")
-        return insertionPointOffset;
-
-      this.SubGWACommand.Add(res);
-
-      string[] pieces = res.ListSplit(",");
-
-      zMaterialOffset = -Convert.ToDouble(pieces[12]);
-      return insertionPointOffset + zMaterialOffset + materialInsertionPointOffset;
-    }
   }
-
-  [GSAObject("", new string[] { }, "elements", true, false, new Type[] { typeof(GSA2DElement) }, new Type[] { })]
-  public class GSA2DElementResult : IGSASpeckleContainer
-  {
-    public string GWACommand { get; set; }
-    public List<string> SubGWACommand { get; set; } = new List<string>();
-    public dynamic Value { get; set; } = new Structural2DElementResult();
-  }
-
+  
   public static partial class Conversions
   {
     public static bool ToNative(this Structural2DElement mesh)
@@ -352,7 +311,6 @@ namespace SpeckleElementsGSA
         GSASenderObjects[typeof(GSA2DElementMesh)] = new List<object>();
 
       List<GSA2DElement> elements = new List<GSA2DElement>();
-      List<GSA2DElementMesh> meshes = new List<GSA2DElementMesh>();
       List<GSANode> nodes = GSASenderObjects[typeof(GSANode)].Cast<GSANode>().ToList();
       List<GSA2DProperty> props = GSASenderObjects[typeof(GSA2DProperty)].Cast<GSA2DProperty>().ToList();
 
@@ -390,20 +348,6 @@ namespace SpeckleElementsGSA
       GSASenderObjects[typeof(GSA2DElement)].AddRange(elements);
 
       if (elements.Count() == 0 && deletedLines.Count() == 0) return new SpeckleNull();
-
-      // Perform mesh merging
-      var uniqueMembers = elements.Select(x => x.Member).Distinct();
-      foreach (string member in uniqueMembers)
-      {
-        var elementList = GSASenderObjects[typeof(GSA2DElement)].Where(x => (x as GSA2DElement).Member == member).Cast<GSA2DElement>().ToList();
-        GSA2DElementMesh mesh = new GSA2DElementMesh();
-        mesh.ParseGWACommand(GSA, elementList);
-        meshes.Add(mesh);
-
-        GSASenderObjects[typeof(GSA2DElement)].RemoveAll(x => elementList.Contains(x));
-      }
-
-      GSASenderObjects[typeof(GSA2DElementMesh)].AddRange(meshes);
 
       return new SpeckleObject();
     }
@@ -454,270 +398,6 @@ namespace SpeckleElementsGSA
       if (members.Count() > 0 || deletedLines.Count() > 0) return new SpeckleObject();
 
       return new SpeckleNull();
-    }
-
-    public static SpeckleObject ToSpeckle(this GSA2DElementResult dummyObject)
-    {
-      if (!GSASendResults)
-        return new SpeckleNull();
-
-      if (!GSASenderObjects.ContainsKey(typeof(GSA2DElement)))
-        return new SpeckleNull();
-
-      List<GSA2DElement> elements = GSASenderObjects[typeof(GSA2DElement)].Cast<GSA2DElement>().ToList();
-      List<GSA2DElementMesh> meshes = GSASenderObjects[typeof(GSA2DElementMesh)].Cast<GSA2DElementMesh>().ToList();
-
-      // Note: A lot faster to extract by type of result
-
-      // Extract displacements
-      foreach (string loadCase in GSAResultCases)
-      {
-        if (!GSA.CaseExist(loadCase))
-          continue;
-
-        foreach (GSA2DElement element in elements)
-        {
-          int id = Convert.ToInt32(element.Value.StructuralId);
-
-          if (element.Value.Result == null)
-            element.Value.Result = new Dictionary<string, object>();
-
-          var resultExport = GSA.Get2DElementDisplacements(id, loadCase, GSAResultInLocalAxis ? "local" : "global");
-
-          if (resultExport == null)
-            continue;
-
-          if (!element.Value.Result.ContainsKey(loadCase))
-            element.Value.Result[loadCase] = new Structural2DElementResult();
-
-          (element.Value.Result[loadCase] as Structural2DElementResult).Displacement = resultExport;
-        }
-
-        foreach (GSA2DElementMesh mesh in meshes)
-        {
-          foreach (int id in (mesh.Value.ElementStructuralID as List<string>).Select(x => Convert.ToInt32(x)))
-          {
-            if (mesh.Value.Result == null)
-              mesh.Value.Result = new Dictionary<string, object>();
-
-            if (!mesh.Value.Result.ContainsKey(loadCase))
-              mesh.Value.Result[loadCase] = new Structural2DElementResult();
-
-            var resultExport = GSA.Get2DElementDisplacements(id, loadCase, GSAResultInLocalAxis ? "local" : "global");
-
-            if (resultExport != null)
-            {
-              if ((mesh.Value.Result[loadCase] as Structural2DElementResult).Displacement == null)
-                (mesh.Value.Result[loadCase] as Structural2DElementResult).Displacement = resultExport;
-
-              else
-              {
-                foreach (string key in (mesh.Value.Result[loadCase] as Structural2DElementResult).Displacement.Keys)
-                {
-                  (mesh.Value.Result[loadCase] as Structural2DElementResult).Displacement[key].AddRange(resultExport[key]);
-                }
-              }
-            }
-            else
-            {
-              if ((mesh.Value.Result[loadCase] as Structural2DElementResult).Displacement == null)
-                (mesh.Value.Result[loadCase] as Structural2DElementResult).Displacement = new Dictionary<string, List<double>>()
-                  {
-                      {"x", new List<double>() { 0 } },
-                      {"y", new List<double>() { 0 } },
-                      {"z", new List<double>() { 0 } },
-                  };
-              else
-              {
-                foreach (string key in (mesh.Value.Result[loadCase] as Structural2DElementResult).Displacement.Keys)
-                {
-                  (mesh.Value.Result[loadCase] as Structural2DElementResult).Displacement[key].Add(0);
-                }
-              }
-            }
-          }
-        }
-      }
-
-      // Extract forces
-      foreach (string loadCase in GSAResultCases)
-      {
-        if (!GSA.CaseExist(loadCase))
-          continue;
-
-        foreach (GSA2DElement element in elements)
-        {
-          int id = Convert.ToInt32(element.Value.StructuralId);
-
-          if (element.Value.Result == null)
-            element.Value.Result = new Dictionary<string, object>();
-
-          var resultExport = GSA.Get2DElementForces(id, loadCase, GSAResultInLocalAxis ? "local" : "global");
-
-          if (resultExport == null)
-            continue;
-
-          if (!element.Value.Result.ContainsKey(loadCase))
-            element.Value.Result[loadCase] = new Structural2DElementResult();
-
-          (element.Value.Result[loadCase] as Structural2DElementResult).Force = resultExport;
-        }
-
-        foreach (GSA2DElementMesh mesh in meshes)
-        {
-          foreach (int id in (mesh.Value.ElementStructuralID as List<string>).Select(x => Convert.ToInt32(x)))
-          {
-            if (mesh.Value.Result == null)
-              mesh.Value.Result = new Dictionary<string, object>();
-
-            if (!mesh.Value.Result.ContainsKey(loadCase))
-              mesh.Value.Result[loadCase] = new Structural2DElementResult();
-
-            var resultExport = GSA.Get2DElementForces(id, loadCase, GSAResultInLocalAxis ? "local" : "global");
-
-            if (resultExport != null)
-            {
-              if ((mesh.Value.Result[loadCase] as Structural2DElementResult).Force == null)
-                (mesh.Value.Result[loadCase] as Structural2DElementResult).Force = resultExport;
-
-              else
-              {
-                foreach (string key in (mesh.Value.Result[loadCase] as Structural2DElementResult).Force.Keys)
-                {
-                  (mesh.Value.Result[loadCase] as Structural2DElementResult).Force[key].AddRange(resultExport[key]);
-                }
-              }
-            }
-            else
-            {
-              if ((mesh.Value.Result[loadCase] as Structural2DElementResult).Force == null)
-                (mesh.Value.Result[loadCase] as Structural2DElementResult).Force = new Dictionary<string, List<double>> ()
-                  {
-                      {"nx", new List<double>() { 0 } },
-                      {"ny", new List<double>() { 0 } },
-                      {"nxy", new List<double>() { 0 } },
-                      {"mx", new List<double>() { 0 } },
-                      {"my", new List<double>() { 0 } },
-                      {"mxy", new List<double>() { 0 } },
-                      {"vx", new List<double>() { 0 } },
-                      {"vy", new List<double>() { 0 } },
-                  };
-              else
-              {
-                foreach (string key in (mesh.Value.Result[loadCase] as Structural2DElementResult).Force.Keys)
-                {
-                  (mesh.Value.Result[loadCase] as Structural2DElementResult).Force[key].Add(0);
-                }
-              }
-            }
-          }
-        }
-      }
-
-      // Extract stresses
-      foreach (string loadCase in GSAResultCases)
-      {
-        if (!GSA.CaseExist(loadCase))
-          continue;
-
-        foreach (GSA2DElement element in elements)
-        {
-          int id = Convert.ToInt32(element.Value.StructuralId);
-
-          if (element.Value.Result == null)
-            element.Value.Result = new Dictionary<string, object>();
-
-          var resultExport = new Dictionary<string, Dictionary<string, List<double>>>() {
-            { "bottom", GSA.Get2DElementStresses(id, loadCase, GSAResultInLocalAxis ? "local" : "global", GSA2DElementLayer.Bottom) },
-            { "middle", GSA.Get2DElementStresses(id, loadCase, GSAResultInLocalAxis ? "local" : "global", GSA2DElementLayer.Middle) },
-            { "top", GSA.Get2DElementStresses(id, loadCase, GSAResultInLocalAxis ? "local" : "global", GSA2DElementLayer.Top) },
-          };
-
-          if (!resultExport.Values.Any(x => x != null))
-            continue;
-
-          if (!element.Value.Result.ContainsKey(loadCase))
-            element.Value.Result[loadCase] = new Structural2DElementResult();
-
-          (element.Value.Result[loadCase] as Structural2DElementResult).Stress = resultExport;
-        }
-
-        foreach (GSA2DElementMesh mesh in meshes)
-        {
-          foreach (int id in (mesh.Value.ElementStructuralID as List<string>).Select(x => Convert.ToInt32(x)))
-          {
-            if (mesh.Value.Result == null)
-              mesh.Value.Result = new Dictionary<string, object>();
-
-            if (!mesh.Value.Result.ContainsKey(loadCase))
-              mesh.Value.Result[loadCase] = new Structural2DElementResult();
-
-            var resultExport = new Dictionary<string, Dictionary<string, List<double>>>() {
-              { "bottom", GSA.Get2DElementStresses(id, loadCase, GSAResultInLocalAxis ? "local" : "global", GSA2DElementLayer.Bottom) },
-              { "middle", GSA.Get2DElementStresses(id, loadCase, GSAResultInLocalAxis ? "local" : "global", GSA2DElementLayer.Middle) },
-              { "top", GSA.Get2DElementStresses(id, loadCase, GSAResultInLocalAxis ? "local" : "global", GSA2DElementLayer.Top) },
-            };
-
-            if (!(resultExport.Values.Any(x => x==null)))
-            {
-              if ((mesh.Value.Result[loadCase] as Structural2DElementResult).Stress == null)
-                (mesh.Value.Result[loadCase] as Structural2DElementResult).Stress = resultExport;
-
-              else
-              {
-                foreach (string layer in (mesh.Value.Result[loadCase] as Structural2DElementResult).Stress.Keys)
-                {
-                  foreach (string key in (mesh.Value.Result[loadCase] as Structural2DElementResult).Stress[layer].Keys)
-                  {
-                    var arr = (mesh.Value.Result[loadCase] as Structural2DElementResult).Stress[layer][key];
-                    (mesh.Value.Result[loadCase] as Structural2DElementResult).Stress[layer][key].AddRange(resultExport[layer][key]);
-                  }
-                }
-              }
-            }
-            else
-            {
-              if ((mesh.Value.Result[loadCase] as Structural2DElementResult).Stress == null)
-                (mesh.Value.Result[loadCase] as Structural2DElementResult).Stress = new Dictionary<string, Dictionary<string, List<double>>>()
-                  {
-                    { "bottom", new Dictionary<string, List<double>>() {
-                      { "sxx", new List<double>() { 0 } },
-                      {"syy", new List<double>() { 0 } },
-                      {"tzx", new List<double>() { 0 } },
-                      {"tzy", new List<double>() { 0 } },
-                      {"txy", new List<double>() { 0 } },
-                    } },
-                    { "middle", new Dictionary<string, List<double>>() {
-                      { "sxx", new List<double>() { 0 } },
-                      {"syy", new List<double>() { 0 } },
-                      {"tzx", new List<double>() { 0 } },
-                      {"tzy", new List<double>() { 0 } },
-                      {"txy", new List<double>() { 0 } },
-                    } },
-                    { "top", new Dictionary<string, List<double>>() {
-                      { "sxx", new List<double>() { 0 } },
-                      {"syy", new List<double>() { 0 } },
-                      {"tzx", new List<double>() { 0 } },
-                      {"tzy", new List<double>() { 0 } },
-                      {"txy", new List<double>() { 0 } },
-                    } },
-                  };
-              else
-              {
-                foreach (string layer in (mesh.Value.Result[loadCase] as Structural2DElementResult).Stress.Keys)
-                {
-                  foreach (string key in (mesh.Value.Result[loadCase] as Structural2DElementResult).Stress[layer].Keys)
-                  {
-                    (mesh.Value.Result[loadCase] as Structural2DElementResult).Stress[layer][key].Add(0);
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-
-      return new SpeckleObject();
     }
   }
 }
