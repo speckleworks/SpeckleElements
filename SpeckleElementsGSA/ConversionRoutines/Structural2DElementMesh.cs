@@ -70,13 +70,24 @@ namespace SpeckleElementsGSA
               foreach (string key in (obj.Result[loadCase] as Structural2DElementResult).Force.Keys)
                 ((obj.Result[loadCase] as Structural2DElementResult).Force[key] as List<double>).AddRange(resultExport.Force[key] as List<double>);
 
-            if ((obj.Result[loadCase] as Structural2DElementResult).Stress == null)
-              (obj.Result[loadCase] as Structural2DElementResult).Stress = resultExport.Stress;
+            if ((obj.Result[loadCase] as Structural2DElementResult).TopStress == null)
+              (obj.Result[loadCase] as Structural2DElementResult).TopStress = resultExport.TopStress;
             else
-              foreach (string layer in (obj.Result[loadCase] as Structural2DElementResult).Stress.Keys)
-                foreach (string key in ((obj.Result[loadCase] as Structural2DElementResult).Stress[layer] as Dictionary<string, object>).Keys)
-                  (((obj.Result[loadCase] as Structural2DElementResult).Stress[layer] as Dictionary<string, object>)[key] as List<double>)
-                    .AddRange((resultExport.Stress[layer] as Dictionary<string, object>)[key] as List<double>);
+              foreach (string key in (obj.Result[loadCase] as Structural2DElementResult).TopStress.Keys)
+                ((obj.Result[loadCase] as Structural2DElementResult).TopStress[key] as List<double>).AddRange(resultExport.TopStress[key] as List<double>);
+
+            if ((obj.Result[loadCase] as Structural2DElementResult).MidStress == null)
+              (obj.Result[loadCase] as Structural2DElementResult).MidStress = resultExport.MidStress;
+            else
+              foreach (string key in (obj.Result[loadCase] as Structural2DElementResult).MidStress.Keys)
+                ((obj.Result[loadCase] as Structural2DElementResult).MidStress[key] as List<double>).AddRange(resultExport.MidStress[key] as List<double>);
+
+            if ((obj.Result[loadCase] as Structural2DElementResult).BotStress == null)
+              (obj.Result[loadCase] as Structural2DElementResult).BotStress = resultExport.BotStress;
+            else
+              foreach (string key in (obj.Result[loadCase] as Structural2DElementResult).BotStress.Keys)
+                ((obj.Result[loadCase] as Structural2DElementResult).BotStress[key] as List<double>).AddRange(resultExport.BotStress[key] as List<double>);
+
           }
           else
           {
@@ -107,35 +118,41 @@ namespace SpeckleElementsGSA
               foreach (string key in (obj.Result[loadCase] as Structural2DElementResult).Force.Keys)
                 ((obj.Result[loadCase] as Structural2DElementResult).Force[key] as List<double>).Add(0);
 
-            if ((obj.Result[loadCase] as Structural2DElementResult).Stress == null)
-              (obj.Result[loadCase] as Structural2DElementResult).Stress = new Dictionary<string, object>()
-                  {
-                    { "bottom", new Dictionary<string, List<double>>() {
-                      { "sxx", new List<double>() { 0 } },
-                      {"syy", new List<double>() { 0 } },
-                      {"tzx", new List<double>() { 0 } },
-                      {"tzy", new List<double>() { 0 } },
-                      {"txy", new List<double>() { 0 } },
-                    } },
-                    { "middle", new Dictionary<string, List<double>>() {
-                      { "sxx", new List<double>() { 0 } },
-                      {"syy", new List<double>() { 0 } },
-                      {"tzx", new List<double>() { 0 } },
-                      {"tzy", new List<double>() { 0 } },
-                      {"txy", new List<double>() { 0 } },
-                    } },
-                    { "top", new Dictionary<string, List<double>>() {
-                      { "sxx", new List<double>() { 0 } },
-                      {"syy", new List<double>() { 0 } },
-                      {"tzx", new List<double>() { 0 } },
-                      {"tzy", new List<double>() { 0 } },
-                      {"txy", new List<double>() { 0 } },
-                    } },
-                  };
+            if ((obj.Result[loadCase] as Structural2DElementResult).TopStress == null)
+              (obj.Result[loadCase] as Structural2DElementResult).TopStress = new Dictionary<string, object>() {
+                {"sxx", new List<double>() { 0 } },
+                {"syy", new List<double>() { 0 } },
+                {"tzx", new List<double>() { 0 } },
+                {"tzy", new List<double>() { 0 } },
+                {"txy", new List<double>() { 0 } },
+              };
             else
-              foreach (string layer in (obj.Result[loadCase] as Structural2DElementResult).Stress.Keys)
-                foreach (string key in ((obj.Result[loadCase] as Structural2DElementResult).Stress[layer] as Dictionary<string, object>).Keys)
-                  (((obj.Result[loadCase] as Structural2DElementResult).Stress[layer] as Dictionary<string, object>)[key] as List<double>).Add(0);
+              foreach (string key in (obj.Result[loadCase] as Structural2DElementResult).TopStress.Keys)
+                ((obj.Result[loadCase] as Structural2DElementResult).TopStress[key] as List<double>).Add(0);
+
+            if ((obj.Result[loadCase] as Structural2DElementResult).MidStress == null)
+              (obj.Result[loadCase] as Structural2DElementResult).MidStress = new Dictionary<string, object>() {
+                {"sxx", new List<double>() { 0 } },
+                {"syy", new List<double>() { 0 } },
+                {"tzx", new List<double>() { 0 } },
+                {"tzy", new List<double>() { 0 } },
+                {"txy", new List<double>() { 0 } },
+              };
+            else
+              foreach (string key in (obj.Result[loadCase] as Structural2DElementResult).MidStress.Keys)
+                ((obj.Result[loadCase] as Structural2DElementResult).MidStress[key] as List<double>).Add(0);
+
+            if ((obj.Result[loadCase] as Structural2DElementResult).BotStress == null)
+              (obj.Result[loadCase] as Structural2DElementResult).BotStress = new Dictionary<string, object>() {
+                {"sxx", new List<double>() { 0 } },
+                {"syy", new List<double>() { 0 } },
+                {"tzx", new List<double>() { 0 } },
+                {"tzy", new List<double>() { 0 } },
+                {"txy", new List<double>() { 0 } },
+              };
+            else
+              foreach (string key in (obj.Result[loadCase] as Structural2DElementResult).BotStress.Keys)
+                ((obj.Result[loadCase] as Structural2DElementResult).BotStress[key] as List<double>).Add(0);
           }
         }
 

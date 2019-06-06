@@ -1356,9 +1356,17 @@ namespace SpeckleElements
     [SNJ.JsonProperty("force", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
     public Dictionary<string, object> Force { get; set; }
 
-    /// <summary>Element stress.</summary>
-    [SNJ.JsonProperty("stress", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
-    public Dictionary<string, object> Stress { get; set; }
+    /// <summary>Element top layer stress.</summary>
+    [SNJ.JsonProperty("topStress", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
+    public Dictionary<string, object> TopStress { get; set; }
+
+    /// <summary>Element middle layer stress.</summary>
+    [SNJ.JsonProperty("midStress", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
+    public Dictionary<string, object> MidStress { get; set; }
+
+    /// <summary>Element bottom layer stress.</summary>
+    [SNJ.JsonProperty("botStress", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
+    public Dictionary<string, object> BotStress { get; set; }
   }
   #endregion
 }

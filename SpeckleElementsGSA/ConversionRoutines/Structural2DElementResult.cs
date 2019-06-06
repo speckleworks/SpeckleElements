@@ -98,7 +98,7 @@ namespace SpeckleElementsGSA
         }
       }
 
-      // Extract stresses
+      // Extract top stresses
       foreach (string loadCase in GSAResultCases)
       {
         if (!GSA.CaseExist(loadCase))
@@ -111,42 +111,86 @@ namespace SpeckleElementsGSA
           if (element.Value.Result == null)
             element.Value.Result = new Dictionary<string, object>();
 
-          var resultExport = new Dictionary<string, object>() {
-            { "bottom", GSA.Get2DElementStresses(id, loadCase, GSAResultInLocalAxis ? "local" : "global", GSA2DElementLayer.Bottom) },
-            { "middle", GSA.Get2DElementStresses(id, loadCase, GSAResultInLocalAxis ? "local" : "global", GSA2DElementLayer.Middle) },
-            { "top", GSA.Get2DElementStresses(id, loadCase, GSAResultInLocalAxis ? "local" : "global", GSA2DElementLayer.Top) },
-          };
+          var resultExport = GSA.Get2DElementStresses(id, loadCase, GSAResultInLocalAxis ? "local" : "global", GSA2DElementLayer.Top);
 
-          if (!resultExport.Values.Any(x => x != null))
+          if (resultExport == null)
             resultExport = new Dictionary<string, object>()
-            {
-              { "bottom", new Dictionary<string, List<double>>() {
-                { "sxx", new List<double>() { 0 } },
+              {
+                {"sxx", new List<double>() { 0 } },
                 {"syy", new List<double>() { 0 } },
                 {"tzx", new List<double>() { 0 } },
                 {"tzy", new List<double>() { 0 } },
                 {"txy", new List<double>() { 0 } },
-              } },
-              { "middle", new Dictionary<string, List<double>>() {
-                { "sxx", new List<double>() { 0 } },
-                {"syy", new List<double>() { 0 } },
-                {"tzx", new List<double>() { 0 } },
-                {"tzy", new List<double>() { 0 } },
-                {"txy", new List<double>() { 0 } },
-              } },
-              { "top", new Dictionary<string, List<double>>() {
-                { "sxx", new List<double>() { 0 } },
-                {"syy", new List<double>() { 0 } },
-                {"tzx", new List<double>() { 0 } },
-                {"tzy", new List<double>() { 0 } },
-                {"txy", new List<double>() { 0 } },
-              } },
-            };
+              };
 
           if (!element.Value.Result.ContainsKey(loadCase))
             element.Value.Result[loadCase] = new Structural2DElementResult();
 
-          (element.Value.Result[loadCase] as Structural2DElementResult).Stress = resultExport;
+          (element.Value.Result[loadCase] as Structural2DElementResult).TopStress = resultExport;
+        }
+      }
+
+      // Extract middle stresses
+      foreach (string loadCase in GSAResultCases)
+      {
+        if (!GSA.CaseExist(loadCase))
+          continue;
+
+        foreach (GSA2DElement element in elements)
+        {
+          int id = Convert.ToInt32(element.Value.StructuralId);
+
+          if (element.Value.Result == null)
+            element.Value.Result = new Dictionary<string, object>();
+
+          var resultExport = GSA.Get2DElementStresses(id, loadCase, GSAResultInLocalAxis ? "local" : "global", GSA2DElementLayer.Middle);
+
+          if (resultExport == null)
+            resultExport = new Dictionary<string, object>()
+              {
+                {"sxx", new List<double>() { 0 } },
+                {"syy", new List<double>() { 0 } },
+                {"tzx", new List<double>() { 0 } },
+                {"tzy", new List<double>() { 0 } },
+                {"txy", new List<double>() { 0 } },
+              };
+
+          if (!element.Value.Result.ContainsKey(loadCase))
+            element.Value.Result[loadCase] = new Structural2DElementResult();
+
+          (element.Value.Result[loadCase] as Structural2DElementResult).MidStress = resultExport;
+        }
+      }
+
+      // Extract bottom stresses
+      foreach (string loadCase in GSAResultCases)
+      {
+        if (!GSA.CaseExist(loadCase))
+          continue;
+
+        foreach (GSA2DElement element in elements)
+        {
+          int id = Convert.ToInt32(element.Value.StructuralId);
+
+          if (element.Value.Result == null)
+            element.Value.Result = new Dictionary<string, object>();
+
+          var resultExport = GSA.Get2DElementStresses(id, loadCase, GSAResultInLocalAxis ? "local" : "global", GSA2DElementLayer.Bottom);
+
+          if (resultExport == null)
+            resultExport = new Dictionary<string, object>()
+              {
+                {"sxx", new List<double>() { 0 } },
+                {"syy", new List<double>() { 0 } },
+                {"tzx", new List<double>() { 0 } },
+                {"tzy", new List<double>() { 0 } },
+                {"txy", new List<double>() { 0 } },
+              };
+
+          if (!element.Value.Result.ContainsKey(loadCase))
+            element.Value.Result[loadCase] = new Structural2DElementResult();
+
+          (element.Value.Result[loadCase] as Structural2DElementResult).BotStress = resultExport;
         }
       }
 
