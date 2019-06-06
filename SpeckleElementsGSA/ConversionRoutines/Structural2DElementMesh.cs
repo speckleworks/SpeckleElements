@@ -62,25 +62,26 @@ namespace SpeckleElementsGSA
               (obj.Result[loadCase] as Structural2DElementResult).Displacement = resultExport.Displacement;
             else
               foreach (string key in (obj.Result[loadCase] as Structural2DElementResult).Displacement.Keys)
-                (obj.Result[loadCase] as Structural2DElementResult).Displacement[key].AddRange(resultExport.Displacement[key]);
+                ((obj.Result[loadCase] as Structural2DElementResult).Displacement[key] as List<double>).AddRange(resultExport.Displacement[key] as List<double>);
 
             if ((obj.Result[loadCase] as Structural2DElementResult).Force == null)
               (obj.Result[loadCase] as Structural2DElementResult).Force = resultExport.Force;
             else
               foreach (string key in (obj.Result[loadCase] as Structural2DElementResult).Force.Keys)
-                (obj.Result[loadCase] as Structural2DElementResult).Force[key].AddRange(resultExport.Force[key]);
+                ((obj.Result[loadCase] as Structural2DElementResult).Force[key] as List<double>).AddRange(resultExport.Force[key] as List<double>);
 
             if ((obj.Result[loadCase] as Structural2DElementResult).Stress == null)
               (obj.Result[loadCase] as Structural2DElementResult).Stress = resultExport.Stress;
             else
               foreach (string layer in (obj.Result[loadCase] as Structural2DElementResult).Stress.Keys)
-                foreach (string key in (obj.Result[loadCase] as Structural2DElementResult).Stress[layer].Keys)
-                  (obj.Result[loadCase] as Structural2DElementResult).Stress[layer][key].AddRange(resultExport.Stress[layer][key]);
+                foreach (string key in ((obj.Result[loadCase] as Structural2DElementResult).Stress[layer] as Dictionary<string, object>).Keys)
+                  (((obj.Result[loadCase] as Structural2DElementResult).Stress[layer] as Dictionary<string, object>)[key] as List<double>)
+                    .AddRange((resultExport.Stress[layer] as Dictionary<string, object>)[key] as List<double>);
           }
           else
           {
             if ((obj.Result[loadCase] as Structural2DElementResult).Displacement == null)
-              (obj.Result[loadCase] as Structural2DElementResult).Displacement = new Dictionary<string, List<double>>()
+              (obj.Result[loadCase] as Structural2DElementResult).Displacement = new Dictionary<string, object>()
               {
                   {"x", new List<double>() { 0 } },
                   {"y", new List<double>() { 0 } },
@@ -88,10 +89,10 @@ namespace SpeckleElementsGSA
               };
             else
               foreach (string key in (obj.Result[loadCase] as Structural2DElementResult).Displacement.Keys)
-                (obj.Result[loadCase] as Structural2DElementResult).Displacement[key].Add(0);
+                ((obj.Result[loadCase] as Structural2DElementResult).Displacement[key] as List<double>).Add(0);
 
             if ((obj.Result[loadCase] as Structural2DElementResult).Force == null)
-              (obj.Result[loadCase] as Structural2DElementResult).Force = new Dictionary<string, List<double>>()
+              (obj.Result[loadCase] as Structural2DElementResult).Force = new Dictionary<string, object>()
                   {
                       {"nx", new List<double>() { 0 } },
                       {"ny", new List<double>() { 0 } },
@@ -104,10 +105,10 @@ namespace SpeckleElementsGSA
                   };
             else
               foreach (string key in (obj.Result[loadCase] as Structural2DElementResult).Force.Keys)
-                (obj.Result[loadCase] as Structural2DElementResult).Force[key].Add(0);
+                ((obj.Result[loadCase] as Structural2DElementResult).Force[key] as List<double>).Add(0);
 
             if ((obj.Result[loadCase] as Structural2DElementResult).Stress == null)
-              (obj.Result[loadCase] as Structural2DElementResult).Stress = new Dictionary<string, Dictionary<string, List<double>>>()
+              (obj.Result[loadCase] as Structural2DElementResult).Stress = new Dictionary<string, object>()
                   {
                     { "bottom", new Dictionary<string, List<double>>() {
                       { "sxx", new List<double>() { 0 } },
@@ -133,8 +134,8 @@ namespace SpeckleElementsGSA
                   };
             else
               foreach (string layer in (obj.Result[loadCase] as Structural2DElementResult).Stress.Keys)
-                foreach (string key in (obj.Result[loadCase] as Structural2DElementResult).Stress[layer].Keys)
-                  (obj.Result[loadCase] as Structural2DElementResult).Stress[layer][key].Add(0);
+                foreach (string key in ((obj.Result[loadCase] as Structural2DElementResult).Stress[layer] as Dictionary<string, object>).Keys)
+                  (((obj.Result[loadCase] as Structural2DElementResult).Stress[layer] as Dictionary<string, object>)[key] as List<double>).Add(0);
           }
         }
 

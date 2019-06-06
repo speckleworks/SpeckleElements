@@ -935,6 +935,14 @@ namespace SpeckleElements
       get => StructuralProperties.ContainsKey("gsaDummy") ? ((bool)StructuralProperties["gsaDummy"]) : false;
       set => StructuralProperties["gsaDummy"] = value;
     }
+
+    /// <summary>Analysis results.</summary>
+    [SNJ.JsonIgnore]
+    public Dictionary<string, object> Result
+    {
+      get => StructuralProperties.ContainsKey("result") ? (StructuralProperties["result"] as Dictionary<string, object>) : null;
+      set => StructuralProperties["result"] = value;
+    }
   }
 
   [Serializable]
@@ -1286,19 +1294,19 @@ namespace SpeckleElements
 
     /// <summary>Node reaction.</summary>
     [SNJ.JsonProperty("reaction", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
-    public Dictionary<string, double> Reaction { get; set; }
+    public Dictionary<string, object> Reaction { get; set; }
 
     /// <summary>Node displacement.</summary>
     [SNJ.JsonProperty("displacement", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
-    public Dictionary<string, double> Displacement { get; set; }
+    public Dictionary<string, object> Displacement { get; set; }
 
     /// <summary>Node velocity.</summary>
     [SNJ.JsonProperty("velocity", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
-    public Dictionary<string, double> Velocity { get; set; }
+    public Dictionary<string, object> Velocity { get; set; }
 
     /// <summary>Node acceleration.</summary>
     [SNJ.JsonProperty("acceleration", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
-    public Dictionary<string, double> Acceleration { get; set; }
+    public Dictionary<string, object> Acceleration { get; set; }
   }
 
   [Serializable]
@@ -1316,15 +1324,15 @@ namespace SpeckleElements
 
     /// <summary>Element displacement.</summary>
     [SNJ.JsonProperty("displacement", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
-    public Dictionary<string, List<double>> Displacement { get; set; }
+    public Dictionary<string, object> Displacement { get; set; }
 
     /// <summary>Element force.</summary>
     [SNJ.JsonProperty("force", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
-    public Dictionary<string, List<double>> Force { get; set; }
+    public Dictionary<string, object> Force { get; set; }
 
     /// <summary>Element stress.</summary>
     [SNJ.JsonProperty("stress", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
-    public Dictionary<string, List<double>> Stress { get; set; }
+    public Dictionary<string, object> Stress { get; set; }
   }
 
   [Serializable]
@@ -1342,15 +1350,15 @@ namespace SpeckleElements
 
     /// <summary>Element displacement.</summary>
     [SNJ.JsonProperty("displacement", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
-    public Dictionary<string, List<double>> Displacement { get; set; }
+    public Dictionary<string, object> Displacement { get; set; }
 
     /// <summary>Element force.</summary>
     [SNJ.JsonProperty("force", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
-    public Dictionary<string, List<double>> Force { get; set; }
+    public Dictionary<string, object> Force { get; set; }
 
     /// <summary>Element stress.</summary>
     [SNJ.JsonProperty("stress", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
-    public Dictionary<string, Dictionary<string, List<double>>> Stress { get; set; }
+    public Dictionary<string, object> Stress { get; set; }
   }
   #endregion
 }

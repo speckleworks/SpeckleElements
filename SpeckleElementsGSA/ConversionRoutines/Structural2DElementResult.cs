@@ -49,7 +49,7 @@ namespace SpeckleElementsGSA
           var resultExport = GSA.Get2DElementDisplacements(id, loadCase, GSAResultInLocalAxis ? "local" : "global");
 
           if (resultExport == null)
-            resultExport = new Dictionary<string, List<double>>()
+            resultExport = new Dictionary<string, object>()
               {
                   {"x", new List<double>() { 0 } },
                   {"y", new List<double>() { 0 } },
@@ -79,7 +79,7 @@ namespace SpeckleElementsGSA
           var resultExport = GSA.Get2DElementForces(id, loadCase, GSAResultInLocalAxis ? "local" : "global");
 
           if (resultExport == null)
-            resultExport = new Dictionary<string, List<double>>()
+            resultExport = new Dictionary<string, object>()
               {
                 {"nx", new List<double>() { 0 } },
                 {"ny", new List<double>() { 0 } },
@@ -111,14 +111,14 @@ namespace SpeckleElementsGSA
           if (element.Value.Result == null)
             element.Value.Result = new Dictionary<string, object>();
 
-          var resultExport = new Dictionary<string, Dictionary<string, List<double>>>() {
+          var resultExport = new Dictionary<string, object>() {
             { "bottom", GSA.Get2DElementStresses(id, loadCase, GSAResultInLocalAxis ? "local" : "global", GSA2DElementLayer.Bottom) },
             { "middle", GSA.Get2DElementStresses(id, loadCase, GSAResultInLocalAxis ? "local" : "global", GSA2DElementLayer.Middle) },
             { "top", GSA.Get2DElementStresses(id, loadCase, GSAResultInLocalAxis ? "local" : "global", GSA2DElementLayer.Top) },
           };
 
           if (!resultExport.Values.Any(x => x != null))
-            resultExport = new Dictionary<string, Dictionary<string, List<double>>>()
+            resultExport = new Dictionary<string, object>()
             {
               { "bottom", new Dictionary<string, List<double>>() {
                 { "sxx", new List<double>() { 0 } },

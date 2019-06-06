@@ -25,7 +25,7 @@ namespace SpeckleElementsGSA
 
       Structural2DLoadPanel obj = new Structural2DLoadPanel();
 
-      string[] pieces = this.GWACommand.ListSplit(",");
+      string[] pieces = this.GWACommand.ListSplit(",(?![^()]*[)])");
 
       int counter = 1; // Skip identifier
       obj.Name = pieces[counter++].Trim(new char[] { '"' });
@@ -75,7 +75,7 @@ namespace SpeckleElementsGSA
         loadAxis = axis;
       else
       {
-        loadAxisId = loadAxisData == "GLOBAL" ? 0 : Convert.ToInt32(axis);
+        loadAxisId = loadAxisData == "GLOBAL" ? 0 : Convert.ToInt32(loadAxisData);
         loadAxis = GSA.Parse0DAxis(loadAxisId, out gwaRec);
         if (gwaRec != null)
           this.SubGWACommand.Add(gwaRec);
