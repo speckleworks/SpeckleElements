@@ -64,7 +64,7 @@ namespace SpeckleElementsGSA
             List<int> nodeIndices = new List<int>();
             for (int i = 0; i < assembly.Value.Count(); i += 3)
             {
-                nodeIndices.Add(GSA.NodeAt(assembly.Value[i], assembly.Value[i + 1], assembly.Value[i + 2]));
+                nodeIndices.Add(GSA.NodeAt(assembly.Value[i], assembly.Value[i + 1], assembly.Value[i + 2], Conversions.GSACoincidentNodeAllowance));
             }
 
             List<string> ls = new List<string>
