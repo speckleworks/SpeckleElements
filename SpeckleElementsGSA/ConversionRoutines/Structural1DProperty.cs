@@ -112,7 +112,7 @@ namespace SpeckleElementsGSA
       GSA.RunGWACommand(string.Join("\t", ls));
     }
 
-    public Structural1DProperty SetDesc(Structural1DProperty prop, string desc, string gsaUnit)
+    private Structural1DProperty SetDesc(Structural1DProperty prop, string desc, string gsaUnit)
     {
       string[] pieces = desc.ListSplit("%");
 
@@ -132,7 +132,7 @@ namespace SpeckleElementsGSA
       }
     }
 
-    public Structural1DProperty SetStandardDesc(Structural1DProperty prop, string desc, string gsaUnit)
+    private Structural1DProperty SetStandardDesc(Structural1DProperty prop, string desc, string gsaUnit)
     {
       string[] pieces = desc.ListSplit("%");
 
@@ -160,7 +160,12 @@ namespace SpeckleElementsGSA
         double height = Convert.ToDouble(pieces[2]).ConvertUnit(unit, gsaUnit);
         double width = Convert.ToDouble(pieces[3]).ConvertUnit(unit, gsaUnit);
         double t1 = Convert.ToDouble(pieces[4]).ConvertUnit(unit, gsaUnit);
-        double t2 = Convert.ToDouble(pieces[5]).ConvertUnit(unit, gsaUnit);
+        double t2 = 0;
+        try
+        { 
+          t2 = Convert.ToDouble(pieces[5]).ConvertUnit(unit, gsaUnit);
+        }
+        catch { t2 = t1; }
         prop.Profile = new SpecklePolyline(new double[] {
                     width /2, height/2 , 0,
                     -width/2, height/2 , 0,
@@ -351,7 +356,7 @@ namespace SpeckleElementsGSA
       return prop;
     }
 
-    public Structural1DProperty SetGeometryDesc(Structural1DProperty prop, string desc, string gsaUnit)
+    private Structural1DProperty SetGeometryDesc(Structural1DProperty prop, string desc, string gsaUnit)
     {
       string[] pieces = desc.ListSplit("%");
 
@@ -368,11 +373,15 @@ namespace SpeckleElementsGSA
         MatchCollection points = Regex.Matches(desc, @"(?<=\()(.*?)(?=\))");
         foreach (Match point in points)
         {
-          string[] n = point.Value.Split(new char[] { '|' });
+          try
+          {
+            string[] n = point.Value.Split(new char[] { '|' });
 
-          coor.Add(Convert.ToDouble(n[0]).ConvertUnit(unit, gsaUnit));
-          coor.Add(Convert.ToDouble(n[1]).ConvertUnit(unit, gsaUnit));
-          coor.Add(0);
+            coor.Add(Convert.ToDouble(n[0]).ConvertUnit(unit, gsaUnit));
+            coor.Add(Convert.ToDouble(n[1]).ConvertUnit(unit, gsaUnit));
+            coor.Add(0);
+          }
+          catch { }
         }
 
         prop.Profile = new SpecklePolyline(coor.ToArray());
@@ -387,7 +396,7 @@ namespace SpeckleElementsGSA
       }
     }
 
-    public string GetGSADesc(Structural1DProperty prop, string gsaUnit)
+    private string GetGSADesc(Structural1DProperty prop, string gsaUnit)
     {
       if (prop.Profile == null)
         return "";
@@ -416,7 +425,7 @@ namespace SpeckleElementsGSA
         else if (prop.Shape == Structural1DPropertyShape.Rectangular)
         {
           if (prop.Hollow)
-            return "STD%RHS(" + gsaUnit + ")%" + (Y.Max() - Y.Min()).ToString() + "%" + (X.Max() - X.Min()).ToString() + "%" + prop.Thickness.ToString();
+            return "STD%RHS(" + gsaUnit + ")%" + (Y.Max() - Y.Min()).ToString() + "%" + (X.Max() - X.Min()).ToString() + "%" + prop.Thickness.ToString() + "%" + prop.Thickness.ToString();
           else
             return "STD%R(" + gsaUnit + ")%" + (Y.Max() - Y.Min()).ToString() + "%" + (X.Max() - X.Min()).ToString();
         }

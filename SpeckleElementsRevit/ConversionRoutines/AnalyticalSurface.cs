@@ -21,6 +21,8 @@ namespace SpeckleElementsRevit
 
     public static List<SpeckleObject> ToSpeckle(this Autodesk.Revit.DB.Structure.AnalyticalModelSurface mySurface)
     {
+      List<SpeckleObject> returnObjects = new List<SpeckleObject>();
+
       if (!mySurface.IsEnabled())
         return new List<SpeckleObject>();
 
@@ -49,101 +51,139 @@ namespace SpeckleElementsRevit
       }
 
       var coordinateSystem = mySurface.GetLocalCoordinateSystem();
-      var axis = new StructuralAxis(
+      var axis = coordinateSystem == null ? null : new StructuralAxis(
         new StructuralVectorThree(new double[] { coordinateSystem.BasisX.X, coordinateSystem.BasisX.Y, coordinateSystem.BasisX.Z }),
         new StructuralVectorThree(new double[] { coordinateSystem.BasisY.X, coordinateSystem.BasisY.Y, coordinateSystem.BasisY.Z }),
         new StructuralVectorThree(new double[] { coordinateSystem.BasisZ.X, coordinateSystem.BasisZ.Y, coordinateSystem.BasisZ.Z })
       );
 
-      
       // Property
-      var mySection = new Structural2DProperty();
-
-      mySection.Name = Doc.GetElement(mySurface.GetElementId()).Name;
-      mySection.StructuralId = mySection.Name;
-
-      if (myRevitElement is Autodesk.Revit.DB.Floor)
+      string sectionID = null;
+      try
       {
-        var myFloor = myRevitElement as Autodesk.Revit.DB.Floor;
-        mySection.Thickness = myFloor.GetParameters("Thickness")[0].AsDouble() / Scale;
+        var mySection = new Structural2DProperty();
+
+        mySection.Name = Doc.GetElement(mySurface.GetElementId()).Name;
+        mySection.StructuralId = mySection.Name;
+
+        if (myRevitElement is Autodesk.Revit.DB.Floor)
+        {
+          var myFloor = myRevitElement as Autodesk.Revit.DB.Floor;
+          mySection.Thickness = myFloor.GetParameters("Thickness")[0].AsDouble() / Scale;
+        }
+        else if (myRevitElement is Autodesk.Revit.DB.Wall)
+        {
+          var myWall = myRevitElement as Autodesk.Revit.DB.Wall;
+          mySection.Thickness = myWall.WallType.Width / Scale;
+        }
+
+        try
+        {
+          // Material
+          Material myMat = null;
+          StructuralAsset matAsset = null;
+
+          if (myRevitElement is Autodesk.Revit.DB.Floor)
+          {
+            var myFloor = myRevitElement as Autodesk.Revit.DB.Floor;
+            myMat = Doc.GetElement(myFloor.FloorType.StructuralMaterialId) as Material;
+          }
+          else if (myRevitElement is Autodesk.Revit.DB.Wall)
+          {
+            var myWall = myRevitElement as Autodesk.Revit.DB.Wall;
+            myMat = Doc.GetElement(myWall.WallType.GetParameters("Structural Material")[0].AsElementId()) as Material;
+          }
+
+          SpeckleObject myMaterial = null;
+
+          matAsset = ((Autodesk.Revit.DB.PropertySetElement)Doc.GetElement(myMat.StructuralAssetId)).GetStructuralAsset();
+
+          string matType = myMat.MaterialClass;
+
+          switch (matType)
+          {
+            case "Concrete":
+              var concMat = new StructuralMaterialConcrete();
+              concMat.StructuralId = Doc.GetElement(myMat.StructuralAssetId).Name;
+              concMat.Name = concMat.StructuralId;
+              concMat.YoungsModulus = matAsset.YoungModulus.X;
+              concMat.ShearModulus = matAsset.ShearModulus.X;
+              concMat.PoissonsRatio = matAsset.PoissonRatio.X;
+              concMat.Density = matAsset.Density;
+              concMat.CoeffThermalExpansion = matAsset.ThermalExpansionCoefficient.X;
+              concMat.CompressiveStrength = matAsset.ConcreteCompression;
+              concMat.MaxStrain = 0;
+              concMat.AggragateSize = 0;
+              myMaterial = concMat;
+              break;
+            case "Steel":
+              var steelMat = new StructuralMaterialSteel();
+              steelMat.StructuralId = Doc.GetElement(myMat.StructuralAssetId).Name;
+              steelMat.Name = steelMat.StructuralId;
+              steelMat.YoungsModulus = matAsset.YoungModulus.X;
+              steelMat.ShearModulus = matAsset.ShearModulus.X;
+              steelMat.PoissonsRatio = matAsset.PoissonRatio.X;
+              steelMat.Density = matAsset.Density;
+              steelMat.CoeffThermalExpansion = matAsset.ThermalExpansionCoefficient.X;
+              steelMat.YieldStrength = matAsset.MinimumYieldStress;
+              steelMat.UltimateStrength = matAsset.MinimumTensileStrength;
+              steelMat.MaxStrain = 0;
+              myMaterial = steelMat;
+              break;
+            default:
+              var defMat = new StructuralMaterialSteel();
+              defMat.StructuralId = Doc.GetElement(myMat.StructuralAssetId).Name;
+              defMat.Name = defMat.StructuralId;
+              myMaterial = defMat;
+              break;
+          }
+
+          myMaterial.GenerateHash();
+          myMaterial.ApplicationId = mySurface.UniqueId + "_material";
+          mySection.MaterialRef = (myMaterial as IStructural).StructuralId;
+
+          returnObjects.Add(myMaterial);
+        }
+        catch { }
+
+        mySection.GenerateHash();
+        mySection.ApplicationId = mySurface.UniqueId + "_section";
+
+        sectionID = mySection.StructuralId;
+
+        returnObjects.Add(mySection);
       }
-      else if (myRevitElement is Autodesk.Revit.DB.Wall)
-      {
-        var myWall = myRevitElement as Autodesk.Revit.DB.Wall;
-        mySection.Thickness = myWall.WallType.Width / Scale;
-      }
+      catch { }
       
-      // Material
-      string matType = "";
-      string matID = "";
-      if (myRevitElement is Autodesk.Revit.DB.Floor)
-      {
-        var myFloor = myRevitElement as Autodesk.Revit.DB.Floor;
-        var myMat = Doc.GetElement(myFloor.FloorType.StructuralMaterialId) as Material;
-        matType = myMat.MaterialClass;
-        matID = Doc.GetElement(myMat.StructuralAssetId).Name;
-      }
-      else if (myRevitElement is Autodesk.Revit.DB.Wall)
-      {
-        var myWall = myRevitElement as Autodesk.Revit.DB.Wall;
-        var myMat = Doc.GetElement(myWall.WallType.GetParameters("Structural Material")[0].AsElementId()) as Material;
-        matType = myMat.MaterialClass;
-        matID = Doc.GetElement(myMat.StructuralAssetId).Name;
-      }
-
-      SpeckleObject myMaterial = null;
-
-      switch(matType)
-      {
-        case "Concrete":
-          var concMat = new StructuralMaterialConcrete();
-          concMat.StructuralId = matID;
-          concMat.Name = matID;
-          myMaterial = concMat;
-          break;
-        case "Steel":
-          var steelMat = new StructuralMaterialSteel();
-          steelMat.StructuralId = matID;
-          steelMat.Name = matID;
-          myMaterial = steelMat;
-          break;
-        default:
-          var defMat = new StructuralMaterialSteel();
-          defMat.StructuralId = matID;
-          defMat.Name = matID;
-          myMaterial = defMat;
-          break;
-      }
-
-      mySection.MaterialRef = (myMaterial as IStructural).StructuralId;
-      
-      myMaterial.GenerateHash();
-      mySection.GenerateHash();
-
-      mySection.ApplicationId = mySurface.UniqueId + "_material";
-      mySection.ApplicationId = mySurface.UniqueId + "_section";
-
-      List<SpeckleObject> meshes = new List<SpeckleObject>();
-
       foreach(double[] coor in polylines)
       {
-        var dummyMesh = new Structural2DElementMesh(coor, null, type, mySection.StructuralId, axis, 0, null);
+        var dummyMesh = new Structural2DElementMesh(coor, null, type, null, null, null);
+        
+        int numFaces = 0;
+        for (int i = 0; i < dummyMesh.Faces.Count(); i++)
+        {
+          numFaces++;
+          i += dummyMesh.Faces[i] + 3;
+        }
+
         var mesh = new Structural2DElementMesh();
         mesh.Vertices = dummyMesh.Vertices;
         mesh.Faces = dummyMesh.Faces;
         mesh.Colors = dummyMesh.Colors;
         mesh.ElementType = type;
-        mesh.PropertyRef = mySection.StructuralId;
-        mesh.Axis = axis;
-        mesh.Offset = 0; //TODO
+        if (sectionID != null)
+          mesh.PropertyRef = sectionID;
+        if (axis != null)
+          mesh.Axis = Enumerable.Repeat(axis, numFaces).ToList();
+        mesh.Offset = Enumerable.Repeat(0, numFaces).Cast<double>().ToList(); //TODO
 
         mesh.GenerateHash();
         mesh.ApplicationId = mySurface.UniqueId; // THIS IS NOT UNIQUE ANYMORE
 
-        meshes.Add(mesh);
+        returnObjects.Add(mesh);
       }
 
-      return meshes.Concat(new List<SpeckleObject>() { mySection, myMaterial }).ToList();
+      return returnObjects;
     }
   }
 }

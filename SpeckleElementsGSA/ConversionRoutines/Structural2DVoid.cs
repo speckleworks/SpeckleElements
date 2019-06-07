@@ -83,7 +83,7 @@ namespace SpeckleElementsGSA
         foreach (int c in conn)
         {
           coor.AddRange(v.Vertices.Skip(c * 3).Take(3));
-          topo += GSA.NodeAt(v.Vertices[c * 3], v.Vertices[c * 3 + 1], v.Vertices[c * 3 + 2]).ToString() + " ";
+          topo += GSA.NodeAt(v.Vertices[c * 3], v.Vertices[c * 3 + 1], v.Vertices[c * 3 + 2], Conversions.GSACoincidentNodeAllowance).ToString() + " ";
         }
       ls.Add(topo);
       ls.Add("0"); // Orientation node

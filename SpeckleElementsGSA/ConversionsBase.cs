@@ -20,6 +20,8 @@ namespace SpeckleElementsGSA
 
     public static string GSAUnits { get; set; }
 
+    public static double GSACoincidentNodeAllowance { get; set; }
+
     public static GSATargetLayer GSATargetLayer { get; set; }
 
     public static bool GSATargetDesignLayer { set => GSATargetLayer = value ? GSATargetLayer.Design : GSATargetLayer.Analysis; }
@@ -40,6 +42,8 @@ namespace SpeckleElementsGSA
     public static GSAInterfacer GSA { get => Initialiser.GSA; }
 
     public static string GSAUnits { get => Initialiser.GSAUnits; }
+
+    public static double GSACoincidentNodeAllowance { get => Initialiser.GSACoincidentNodeAllowance; }
 
     public static GSATargetLayer GSATargetLayer { get => Initialiser.GSATargetLayer; }
 

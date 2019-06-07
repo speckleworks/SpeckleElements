@@ -49,6 +49,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ConversionRoutines\AreaLoad.cs" />
+    <Compile Include="ConversionRoutines\LineLoad.cs" />
     <Compile Include="ConversionRoutines\AnalyticalNode.cs" />
     <Compile Include="ConversionRoutines\AnalyticalSurface.cs" />
     <Compile Include="ConversionRoutines\AnalyticalStick.cs" />

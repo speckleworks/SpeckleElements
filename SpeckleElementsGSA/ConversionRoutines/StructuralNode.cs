@@ -96,7 +96,7 @@ namespace SpeckleElementsGSA
 
       string keyword = typeof(GSANode).GetGSAKeyword();
 
-      int index = GSA.NodeAt(node.Value[0], node.Value[1], node.Value[2], node.StructuralId);
+      int index = GSA.NodeAt(node.Value[0], node.Value[1], node.Value[2], Conversions.GSACoincidentNodeAllowance, node.StructuralId);
 
       List<string> ls = new List<string>();
 
