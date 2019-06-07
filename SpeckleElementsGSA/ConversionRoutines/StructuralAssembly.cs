@@ -1,15 +1,12 @@
 ﻿using SpeckleCore;
-using SpeckleCoreGeometryClasses;
 using SpeckleElements;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SpeckleElementsGSA
 {
-    [GSAObject("ASSEMBLY.2", new string[] { }, "loads", false, true, new Type[] { }, new Type[] { typeof(GSANode), typeof(GSA2DMember) })]
+  [GSAObject("ASSEMBLY.2", new string[] { }, "loads", true, true, new Type[] { typeof(GSANode), typeof(GSA2DMember) }, new Type[] { typeof(GSANode), typeof(GSA2DMember) })]
     public class GSAAssembly : IGSASpeckleContainer
     {
         public string GWACommand { get; set; }

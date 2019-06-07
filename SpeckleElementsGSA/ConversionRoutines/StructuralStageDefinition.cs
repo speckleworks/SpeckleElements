@@ -1,16 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using SpeckleCore;
-using SpeckleCoreGeometryClasses;
 using SpeckleElements;
 
 namespace SpeckleElementsGSA
 {
-    [GSAObject("ANAL_STAGE.3", new string[] { "LIST.1" }, "elements", false, true, new Type[] { }, new Type[] { typeof(GSA1DMember), typeof(GSA2DMember) })]
+  [GSAObject("ANAL_STAGE.3", new string[] { "LIST.1" }, "elements", true, true, new Type[] { typeof(GSA1DMember), typeof(GSA2DMember) }, new Type[] { typeof(GSA1DMember), typeof(GSA2DMember) })]
     public class GSAStageDefinition : IGSASpeckleContainer
     {
         public string GWACommand { get; set; }

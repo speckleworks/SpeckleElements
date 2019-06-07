@@ -1,16 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using SpeckleCore;
-using SpeckleCoreGeometryClasses;
 using SpeckleElements;
 
 namespace SpeckleElementsGSA
 {
-    [GSAObject("ANAL.1", new string[] { "TASK.1" }, "loads", true, true, new Type[] { typeof(GSALoadCase), typeof(GSAStageDefinition), typeof(GSALoadCombo) }, new Type[] { typeof(GSALoadCase), typeof(GSAStageDefinition), typeof(GSALoadCombo) })]
+  [GSAObject("ANAL.1", new string[] { "TASK.1" }, "loads", true, true, new Type[] { typeof(GSALoadCase), typeof(GSAStageDefinition), typeof(GSALoadCombo) }, new Type[] { typeof(GSALoadCase), typeof(GSAStageDefinition), typeof(GSALoadCombo) })]
     public class GSALoadTaskBuckling : IGSASpeckleContainer
     {
         public string GWACommand { get; set; }
