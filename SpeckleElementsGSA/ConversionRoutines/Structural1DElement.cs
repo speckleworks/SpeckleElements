@@ -13,6 +13,8 @@ namespace SpeckleElementsGSA
   [GSAObject("EL.4", new string[] { "NODE.2" }, "elements", true, false, new Type[] { typeof(GSANode) }, new Type[] { typeof(GSA1DProperty) })]
   public class GSA1DElement : IGSASpeckleContainer
   {
+    public string Member;
+
     public string GWACommand { get; set; }
     public List<string> SubGWACommand { get; set; } = new List<string>();
     public dynamic Value { get; set; } = new Structural1DElement();
@@ -80,6 +82,12 @@ namespace SpeckleElementsGSA
         obj.EndRelease[1].Value[4] = ParseEndRelease(start[4], pieces, ref counter);
         obj.EndRelease[1].Value[5] = ParseEndRelease(start[5], pieces, ref counter);
       }
+      else
+      {
+        obj.EndRelease = new List<StructuralVectorBoolSix>();
+        obj.EndRelease.Add(new StructuralVectorBoolSix(new bool[] { true, true, true, true, true, true }));
+        obj.EndRelease.Add(new StructuralVectorBoolSix(new bool[] { true, true, true, true, true, true }));
+      }
 
       obj.Offset = new List<StructuralVectorThree>();
       obj.Offset.Add(new StructuralVectorThree(new double[3]));
@@ -96,6 +104,8 @@ namespace SpeckleElementsGSA
 
       //counter++; // Action // TODO: EL.4 SUPPORT
       counter++; // Dummy
+      
+      Member = pieces[counter++];
 
       this.Value = obj;
     }

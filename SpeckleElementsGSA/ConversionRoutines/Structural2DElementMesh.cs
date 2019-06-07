@@ -59,31 +59,31 @@ namespace SpeckleElementsGSA
           if (resultExport != null)
           {
             if ((obj.Result[loadCase] as Structural2DElementResult).Displacement == null)
-              (obj.Result[loadCase] as Structural2DElementResult).Displacement = resultExport.Displacement;
+              (obj.Result[loadCase] as Structural2DElementResult).Displacement = new Dictionary<string, object>(resultExport.Displacement);
             else
               foreach (string key in (obj.Result[loadCase] as Structural2DElementResult).Displacement.Keys)
                 ((obj.Result[loadCase] as Structural2DElementResult).Displacement[key] as List<double>).AddRange(resultExport.Displacement[key] as List<double>);
 
             if ((obj.Result[loadCase] as Structural2DElementResult).Force == null)
-              (obj.Result[loadCase] as Structural2DElementResult).Force = resultExport.Force;
+              (obj.Result[loadCase] as Structural2DElementResult).Force = new Dictionary<string, object>(resultExport.Force);
             else
               foreach (string key in (obj.Result[loadCase] as Structural2DElementResult).Force.Keys)
                 ((obj.Result[loadCase] as Structural2DElementResult).Force[key] as List<double>).AddRange(resultExport.Force[key] as List<double>);
 
             if ((obj.Result[loadCase] as Structural2DElementResult).TopStress == null)
-              (obj.Result[loadCase] as Structural2DElementResult).TopStress = resultExport.TopStress;
+              (obj.Result[loadCase] as Structural2DElementResult).TopStress = new Dictionary<string, object>(resultExport.TopStress);
             else
               foreach (string key in (obj.Result[loadCase] as Structural2DElementResult).TopStress.Keys)
                 ((obj.Result[loadCase] as Structural2DElementResult).TopStress[key] as List<double>).AddRange(resultExport.TopStress[key] as List<double>);
 
             if ((obj.Result[loadCase] as Structural2DElementResult).MidStress == null)
-              (obj.Result[loadCase] as Structural2DElementResult).MidStress = resultExport.MidStress;
+              (obj.Result[loadCase] as Structural2DElementResult).MidStress = new Dictionary<string, object>(resultExport.MidStress);
             else
               foreach (string key in (obj.Result[loadCase] as Structural2DElementResult).MidStress.Keys)
                 ((obj.Result[loadCase] as Structural2DElementResult).MidStress[key] as List<double>).AddRange(resultExport.MidStress[key] as List<double>);
 
             if ((obj.Result[loadCase] as Structural2DElementResult).BotStress == null)
-              (obj.Result[loadCase] as Structural2DElementResult).BotStress = resultExport.BotStress;
+              (obj.Result[loadCase] as Structural2DElementResult).BotStress = new Dictionary<string, object>(resultExport.BotStress);
             else
               foreach (string key in (obj.Result[loadCase] as Structural2DElementResult).BotStress.Keys)
                 ((obj.Result[loadCase] as Structural2DElementResult).BotStress[key] as List<double>).AddRange(resultExport.BotStress[key] as List<double>);
