@@ -16,7 +16,7 @@ namespace SpeckleElementsGSA
 
     public static GSAInterfacer GSA { get; set; } = new GSAInterfacer();
 
-    public static Dictionary<Type, List<object>> GSASenderObjects { get; set; }
+    public static Dictionary<Type, List<object>> GSASenderObjects { get; set; } = new Dictionary<Type, List<object>>();
 
     public static string GSAUnits { get; set; }
 
@@ -28,9 +28,13 @@ namespace SpeckleElementsGSA
 
     public static bool GSATargetAnalysisLayer { set => GSATargetLayer = value ? GSATargetLayer.Analysis : GSATargetLayer.Design; }
 
-    public static bool GSASendResults { get; set; }
+    public static Dictionary<string, Tuple<int, int, List<string>>> GSANodalResults { get; set; } = new Dictionary<string, Tuple<int, int, List<string>>>();
+  
+    public static Dictionary<string, Tuple<int, int, List<string>>> GSAElement1DResults { get; set; } = new Dictionary<string, Tuple<int, int, List<string>>>();
 
-    public static List<string> GSAResultCases { get; set; }
+    public static Dictionary<string, Tuple<int, int, List<string>>> GSAElement2DResults { get; set; } = new Dictionary<string, Tuple<int, int, List<string>>>();
+
+    public static List<string> GSAResultCases { get; set; } = new List<string>();
 
     public static bool GSAResultInLocalAxis { get; set; }
   }
@@ -46,8 +50,12 @@ namespace SpeckleElementsGSA
     public static double GSACoincidentNodeAllowance { get => Initialiser.GSACoincidentNodeAllowance; }
 
     public static GSATargetLayer GSATargetLayer { get => Initialiser.GSATargetLayer; }
+    
+    public static Dictionary<string, Tuple<int, int, List<string>>> GSANodalResults { get => Initialiser.GSANodalResults; }
 
-    public static bool GSASendResults { get => Initialiser.GSASendResults; }
+    public static Dictionary<string, Tuple<int, int, List<string>>> GSAElement1DResults { get => Initialiser.GSAElement1DResults; }
+
+    public static Dictionary<string, Tuple<int, int, List<string>>> GSAElement2DResults { get => Initialiser.GSAElement2DResults; }
 
     public static List<string> GSAResultCases { get => Initialiser.GSAResultCases; }
 

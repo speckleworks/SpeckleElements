@@ -72,18 +72,6 @@ namespace SpeckleElementsGSA
     Top = 0x4,
   }
 
-  public enum GSAResultMode
-  {
-    NodeReactions,
-    NodeDisplacements,
-    Element1DForces,
-    Element1DDisplacements,
-    Element1DStresses,
-    Element2DDisplacements,
-    Element2DForces,
-    Element2DStresses,
-  }
-
   public enum GSAEntity
   {
     NODE = 1,

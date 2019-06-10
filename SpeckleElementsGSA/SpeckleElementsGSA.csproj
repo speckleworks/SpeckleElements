@@ -94,6 +94,7 @@
     <Compile Include="ConversionRoutines\StructuralMaterialConcrete.cs" />
     <Compile Include="ConversionRoutines\Structural1DProperty.cs" />
     <Compile Include="ConversionRoutines\StructuralNode.cs" />
+    <Compile Include="ConversionRoutines\StructuralNodeResult.cs" />
     <Compile Include="ConversionsBase.cs" />
     <Compile Include="Enum.cs" />
     <Compile Include="GSAInterfacer.cs" />

@@ -1405,6 +1405,10 @@ namespace SpeckleElements
     [SNJ.JsonProperty("isGlobal", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
     public bool IsGlobal { get; set; }
 
+    /// <summary>Results.</summary>
+    [SNJ.JsonProperty("value", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
+    public Dictionary<string, object> Value { get; set; }
+
     /// <summary>Node reaction.</summary>
     [SNJ.JsonProperty("reaction", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
     public Dictionary<string, object> Reaction { get; set; }
@@ -1435,6 +1439,10 @@ namespace SpeckleElements
     [SNJ.JsonProperty("isGlobal", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
     public bool IsGlobal { get; set; }
 
+    /// <summary>Results.</summary>
+    [SNJ.JsonProperty("value", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
+    public Dictionary<string, object> Value { get; set; }
+
     /// <summary>Element displacement.</summary>
     [SNJ.JsonProperty("displacement", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
     public Dictionary<string, object> Displacement { get; set; }
@@ -1460,6 +1468,10 @@ namespace SpeckleElements
     /// <summary>Indicates whether the results are in the global or local axis.</summary>
     [SNJ.JsonProperty("isGlobal", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
     public bool IsGlobal { get; set; }
+
+    /// <summary>Results.</summary>
+    [SNJ.JsonProperty("value", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
+    public Dictionary<string, object> Value { get; set; }
 
     /// <summary>Element displacement.</summary>
     [SNJ.JsonProperty("displacement", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
