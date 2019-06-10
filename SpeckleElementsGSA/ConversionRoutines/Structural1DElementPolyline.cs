@@ -10,7 +10,7 @@ using SpeckleElements;
 
 namespace SpeckleElementsGSA
 {
-  [GSAObject("MEMB.7", new string[] { }, "elements", true, true, new Type[] { typeof(GSA1DElement), typeof(GSA1DLoad), typeof(GSA1DElementResult)}, new Type[] { typeof(GSA1DProperty) })]
+  [GSAObject("MEMB.7", new string[] { }, "elements", true, false, new Type[] { typeof(GSA1DElement), typeof(GSA1DLoad), typeof(GSA1DElementResult)}, new Type[] { typeof(GSA1DProperty) })]
   public class GSA1DElementPolyline : IGSASpeckleContainer
   {
     public string GWACommand { get; set; }
