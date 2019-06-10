@@ -46,113 +46,49 @@ namespace SpeckleElementsGSA
         obj.ElementStructuralId.Add(e.Value.StructuralId);
 
         // Result merging
-        if (obj.Result == null)
-          obj.Result = new Dictionary<string, object>();
-
-        foreach (string loadCase in e.Value.Result.Keys)
+        if (Conversions.GSAElement2DResults.Count > 0)
         {
-          if (!obj.Result.ContainsKey(loadCase))
-            obj.Result[loadCase] = new Structural2DElementResult();
+          if (obj.Result == null)
+            obj.Result = new Dictionary<string, object>();
 
-          var resultExport = e.Value.Result[loadCase] as Structural2DElementResult;
-
-          if (resultExport != null)
+          try
           {
-            if ((obj.Result[loadCase] as Structural2DElementResult).Displacement == null)
-              (obj.Result[loadCase] as Structural2DElementResult).Displacement = new Dictionary<string, object>(resultExport.Displacement);
-            else
-              foreach (string key in (obj.Result[loadCase] as Structural2DElementResult).Displacement.Keys)
-                ((obj.Result[loadCase] as Structural2DElementResult).Displacement[key] as List<double>).AddRange(resultExport.Displacement[key] as List<double>);
+            foreach (string loadCase in e.Value.Result.Keys)
+            {
+              if (!obj.Result.ContainsKey(loadCase))
+                obj.Result[loadCase] = new Structural2DElementResult()
+                {
+                  Value = new Dictionary<string, object>(),
+                  IsGlobal = !Conversions.GSAResultInLocalAxis,
+                };
 
-            if ((obj.Result[loadCase] as Structural2DElementResult).Force == null)
-              (obj.Result[loadCase] as Structural2DElementResult).Force = new Dictionary<string, object>(resultExport.Force);
-            else
-              foreach (string key in (obj.Result[loadCase] as Structural2DElementResult).Force.Keys)
-                ((obj.Result[loadCase] as Structural2DElementResult).Force[key] as List<double>).AddRange(resultExport.Force[key] as List<double>);
+              var resultExport = e.Value.Result[loadCase] as Structural2DElementResult;
 
-            if ((obj.Result[loadCase] as Structural2DElementResult).TopStress == null)
-              (obj.Result[loadCase] as Structural2DElementResult).TopStress = new Dictionary<string, object>(resultExport.TopStress);
-            else
-              foreach (string key in (obj.Result[loadCase] as Structural2DElementResult).TopStress.Keys)
-                ((obj.Result[loadCase] as Structural2DElementResult).TopStress[key] as List<double>).AddRange(resultExport.TopStress[key] as List<double>);
-
-            if ((obj.Result[loadCase] as Structural2DElementResult).MidStress == null)
-              (obj.Result[loadCase] as Structural2DElementResult).MidStress = new Dictionary<string, object>(resultExport.MidStress);
-            else
-              foreach (string key in (obj.Result[loadCase] as Structural2DElementResult).MidStress.Keys)
-                ((obj.Result[loadCase] as Structural2DElementResult).MidStress[key] as List<double>).AddRange(resultExport.MidStress[key] as List<double>);
-
-            if ((obj.Result[loadCase] as Structural2DElementResult).BotStress == null)
-              (obj.Result[loadCase] as Structural2DElementResult).BotStress = new Dictionary<string, object>(resultExport.BotStress);
-            else
-              foreach (string key in (obj.Result[loadCase] as Structural2DElementResult).BotStress.Keys)
-                ((obj.Result[loadCase] as Structural2DElementResult).BotStress[key] as List<double>).AddRange(resultExport.BotStress[key] as List<double>);
-
-          }
-          else
-          {
-            if ((obj.Result[loadCase] as Structural2DElementResult).Displacement == null)
-              (obj.Result[loadCase] as Structural2DElementResult).Displacement = new Dictionary<string, object>()
+              if (resultExport != null)
               {
-                  {"x", new List<double>() { 0 } },
-                  {"y", new List<double>() { 0 } },
-                  {"z", new List<double>() { 0 } },
-              };
-            else
-              foreach (string key in (obj.Result[loadCase] as Structural2DElementResult).Displacement.Keys)
-                ((obj.Result[loadCase] as Structural2DElementResult).Displacement[key] as List<double>).Add(0);
-
-            if ((obj.Result[loadCase] as Structural2DElementResult).Force == null)
-              (obj.Result[loadCase] as Structural2DElementResult).Force = new Dictionary<string, object>()
-                  {
-                      {"nx", new List<double>() { 0 } },
-                      {"ny", new List<double>() { 0 } },
-                      {"nxy", new List<double>() { 0 } },
-                      {"mx", new List<double>() { 0 } },
-                      {"my", new List<double>() { 0 } },
-                      {"mxy", new List<double>() { 0 } },
-                      {"vx", new List<double>() { 0 } },
-                      {"vy", new List<double>() { 0 } },
-                  };
-            else
-              foreach (string key in (obj.Result[loadCase] as Structural2DElementResult).Force.Keys)
-                ((obj.Result[loadCase] as Structural2DElementResult).Force[key] as List<double>).Add(0);
-
-            if ((obj.Result[loadCase] as Structural2DElementResult).TopStress == null)
-              (obj.Result[loadCase] as Structural2DElementResult).TopStress = new Dictionary<string, object>() {
-                {"sxx", new List<double>() { 0 } },
-                {"syy", new List<double>() { 0 } },
-                {"tzx", new List<double>() { 0 } },
-                {"tzy", new List<double>() { 0 } },
-                {"txy", new List<double>() { 0 } },
-              };
-            else
-              foreach (string key in (obj.Result[loadCase] as Structural2DElementResult).TopStress.Keys)
-                ((obj.Result[loadCase] as Structural2DElementResult).TopStress[key] as List<double>).Add(0);
-
-            if ((obj.Result[loadCase] as Structural2DElementResult).MidStress == null)
-              (obj.Result[loadCase] as Structural2DElementResult).MidStress = new Dictionary<string, object>() {
-                {"sxx", new List<double>() { 0 } },
-                {"syy", new List<double>() { 0 } },
-                {"tzx", new List<double>() { 0 } },
-                {"tzy", new List<double>() { 0 } },
-                {"txy", new List<double>() { 0 } },
-              };
-            else
-              foreach (string key in (obj.Result[loadCase] as Structural2DElementResult).MidStress.Keys)
-                ((obj.Result[loadCase] as Structural2DElementResult).MidStress[key] as List<double>).Add(0);
-
-            if ((obj.Result[loadCase] as Structural2DElementResult).BotStress == null)
-              (obj.Result[loadCase] as Structural2DElementResult).BotStress = new Dictionary<string, object>() {
-                {"sxx", new List<double>() { 0 } },
-                {"syy", new List<double>() { 0 } },
-                {"tzx", new List<double>() { 0 } },
-                {"tzy", new List<double>() { 0 } },
-                {"txy", new List<double>() { 0 } },
-              };
-            else
-              foreach (string key in (obj.Result[loadCase] as Structural2DElementResult).BotStress.Keys)
-                ((obj.Result[loadCase] as Structural2DElementResult).BotStress[key] as List<double>).Add(0);
+                foreach (string key in resultExport.Value.Keys)
+                {
+                  if (!(obj.Result[loadCase] as Structural2DElementResult).Value.ContainsKey(key))
+                    (obj.Result[loadCase] as Structural2DElementResult).Value[key] = new Dictionary<string, object>(resultExport.Value[key] as Dictionary<string, object>);
+                  else
+                    foreach (string resultKey in ((obj.Result[loadCase] as Structural2DElementResult).Value[key] as Dictionary<string, object>).Keys)
+                      (((obj.Result[loadCase] as Structural2DElementResult).Value[key] as Dictionary<string, object>)[resultKey] as List<double>)
+                        .AddRange((resultExport.Value[key] as Dictionary<string, object>)[resultKey] as List<double>);
+                }
+              }
+              else
+              {
+                // UNABLE TO MERGE RESULTS
+                obj.Result = null;
+                break;
+              }
+            }
+          }
+          catch
+          {
+            // UNABLE TO MERGE RESULTS
+            obj.Result = null;
+            break;
           }
         }
 

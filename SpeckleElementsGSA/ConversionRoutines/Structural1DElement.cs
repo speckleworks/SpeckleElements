@@ -484,6 +484,9 @@ namespace SpeckleElementsGSA
       if (!GSASenderObjects.ContainsKey(typeof(GSA1DElement)))
         GSASenderObjects[typeof(GSA1DElement)] = new List<object>();
 
+      if (!GSASenderObjects.ContainsKey(typeof(GSA1DElementPolyline)))
+        GSASenderObjects[typeof(GSA1DElementPolyline)] = new List<object>();
+
       List<GSA1DElement> elements = new List<GSA1DElement>();
       List<GSANode> nodes = GSASenderObjects[typeof(GSANode)].Cast<GSANode>().ToList();
 
@@ -501,7 +504,10 @@ namespace SpeckleElementsGSA
         kvp.Value.RemoveAll(l => (l as IGSASpeckleContainer).SubGWACommand.Any(x => deletedLines.Contains(x)));
 
       // Filter only new lines
-      string[] prevLines = GSASenderObjects[typeof(GSA1DElement)].Select(l => (l as IGSASpeckleContainer).GWACommand).ToArray();
+      string[] prevLines = GSASenderObjects[typeof(GSA1DElement)]
+        .Select(l => (l as IGSASpeckleContainer).GWACommand)
+        .Concat(GSASenderObjects[typeof(GSA1DElementPolyline)].SelectMany(l => (l as IGSASpeckleContainer).SubGWACommand))
+        .ToArray();
       string[] newLines = lines.Where(l => !prevLines.Contains(l)).ToArray();
 
       foreach (string p in newLines)

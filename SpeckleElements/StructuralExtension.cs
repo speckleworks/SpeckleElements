@@ -751,8 +751,7 @@ namespace SpeckleElements
     {
       for (int i = 0; i < this.Vertices.Count(); i++)
         this.Vertices[i] *= factor;
-
-      this.Offset *= factor;
+      
       this.Properties = ScaleProperties(this.Properties, factor);
       this.GenerateHash();
     }
@@ -951,11 +950,7 @@ namespace SpeckleElements
     {
       for (int i = 0; i < this.Vertices.Count(); i++)
         this.Vertices[i] *= factor;
-
-      if (Offset != null)
-        for (int i = 0; i < this.Offset.Count(); i++)
-          this.Offset[i] *= factor;
-
+      
       this.Properties = ScaleProperties(this.Properties, factor);
       this.GenerateHash();
     }

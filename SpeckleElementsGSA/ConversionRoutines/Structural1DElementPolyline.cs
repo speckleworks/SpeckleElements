@@ -91,81 +91,49 @@ namespace SpeckleElementsGSA
         }
 
         // Result merging
-        if (obj.Result == null)
-          obj.Result = new Dictionary<string, object>();
-
-        foreach (string loadCase in element.Value.Result.Keys)
-        {
-          if (!obj.Result.ContainsKey(loadCase))
-            obj.Result[loadCase] = new Structural1DElementResult();
-
-          var resultExport = element.Value.Result[loadCase] as Structural1DElementResult;
-
-          if (resultExport != null)
-          {
-            if ((obj.Result[loadCase] as Structural1DElementResult).Displacement == null)
-              (obj.Result[loadCase] as Structural1DElementResult).Displacement = new Dictionary<string, object>(resultExport.Displacement);
-            else
-              foreach (string key in (obj.Result[loadCase] as Structural1DElementResult).Displacement.Keys)
-                ((obj.Result[loadCase] as Structural1DElementResult).Displacement[key] as List<double>).AddRange(resultExport.Displacement[key] as List<double>);
-
-            if ((obj.Result[loadCase] as Structural1DElementResult).Force == null)
-              (obj.Result[loadCase] as Structural1DElementResult).Force = new Dictionary<string, object>(resultExport.Force);
-            else
-              foreach (string key in (obj.Result[loadCase] as Structural1DElementResult).Force.Keys)
-                ((obj.Result[loadCase] as Structural1DElementResult).Force[key] as List<double>).AddRange(resultExport.Force[key] as List<double>);
-
-            if ((obj.Result[loadCase] as Structural1DElementResult).Stress == null)
-              (obj.Result[loadCase] as Structural1DElementResult).Stress = new Dictionary<string, object>(resultExport.Stress);
-            else
-              foreach (string key in (obj.Result[loadCase] as Structural1DElementResult).Stress.Keys)
-                ((obj.Result[loadCase] as Structural1DElementResult).Stress[key] as List<double>).AddRange(resultExport.Stress[key] as List<double>);
-          }
-          else
-          {
-            if ((obj.Result[loadCase] as Structural1DElementResult).Displacement == null)
-              (obj.Result[loadCase] as Structural1DElementResult).Displacement = new Dictionary<string, object>()
-              {
-                  {"x", new List<double>() { 0 } },
-                  {"y", new List<double>() { 0 } },
-                  {"z", new List<double>() { 0 } },
-                  {"xx", new List<double>() { 0 } },
-                  {"yy", new List<double>() { 0 } },
-                  {"zz", new List<double>() { 0 } },
-              };
-            else
-              foreach (string key in (obj.Result[loadCase] as Structural1DElementResult).Displacement.Keys)
-                ((obj.Result[loadCase] as Structural1DElementResult).Displacement[key] as List<double>).Add(0);
-
-            if ((obj.Result[loadCase] as Structural1DElementResult).Force == null)
-              (obj.Result[loadCase] as Structural1DElementResult).Force = new Dictionary<string, object>()
+        if (Conversions.GSAElement1DResults.Count > 0)
+        { 
+          if (obj.Result == null)
+            obj.Result = new Dictionary<string, object>();
+          
+          try
+          { 
+            foreach (string loadCase in element.Value.Result.Keys)
+            {
+              if (!obj.Result.ContainsKey(loadCase))
+                obj.Result[loadCase] = new Structural1DElementResult()
                 {
-                  {"fx", new List<double>() { 0 } },
-                  {"fy", new List<double>() { 0 } },
-                  {"fz", new List<double>() { 0 } },
-                  {"mx", new List<double>() { 0 } },
-                  {"my", new List<double>() { 0 } },
-                  {"mz", new List<double>() { 0 } },
+                  Value = new Dictionary<string, object>(),
+                  IsGlobal = !Conversions.GSAResultInLocalAxis,
                 };
-            else
-              foreach (string key in (obj.Result[loadCase] as Structural1DElementResult).Force.Keys)
-                ((obj.Result[loadCase] as Structural1DElementResult).Force[key] as List<double>).Add(0);
 
-            if ((obj.Result[loadCase] as Structural1DElementResult).Stress == null)
-              (obj.Result[loadCase] as Structural1DElementResult).Stress = new Dictionary<string, object>() {
-                {"a", new List<double>() { 0 } },
-                {"sy", new List<double>() { 0 } },
-                {"sz", new List<double>() { 0 } },
-                {"by+", new List<double>() { 0 } },
-                {"by-", new List<double>() { 0 } },
-                {"bz+", new List<double>() { 0 } },
-                {"bz-", new List<double>() { 0 } },
-                {"comb+", new List<double>() { 0 } },
-                {"comb-", new List<double>() { 0 } },
-              };
-            else
-              foreach (string key in (obj.Result[loadCase] as Structural1DElementResult).Stress.Keys)
-                ((obj.Result[loadCase] as Structural1DElementResult).Stress[key] as List<double>).Add(0);
+              var resultExport = element.Value.Result[loadCase] as Structural1DElementResult;
+
+              if (resultExport != null)
+              {
+                foreach (string key in resultExport.Value.Keys)
+                {
+                  if (!(obj.Result[loadCase] as Structural1DElementResult).Value.ContainsKey(key))
+                    (obj.Result[loadCase] as Structural1DElementResult).Value[key] = new Dictionary<string, object>(resultExport.Value[key] as Dictionary<string, object>);
+                  else
+                    foreach (string resultKey in ((obj.Result[loadCase] as Structural1DElementResult).Value[key] as Dictionary<string, object>).Keys)
+                      (((obj.Result[loadCase] as Structural1DElementResult).Value[key] as Dictionary<string, object>)[resultKey] as List<double>)
+                        .AddRange((resultExport.Value[key] as Dictionary<string, object>)[resultKey] as List<double>);
+                }
+              }
+              else
+              {
+                // UNABLE TO MERGE RESULTS
+                obj.Result = null;
+                break;
+              }
+            }
+          }
+          catch
+          {
+            // UNABLE TO MERGE RESULTS
+            obj.Result = null;
+            break;
           }
         }
 

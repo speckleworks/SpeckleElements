@@ -18,8 +18,6 @@ namespace SpeckleElementsGSA
   {
     public ComAuto GSAObject;
 
-    public GSAResultMode ResultMode;
-
     public Indexer Indexer = new Indexer();
 
     private Dictionary<string, object> PreviousGSAGetCache = new Dictionary<string, object>();
@@ -1031,287 +1029,41 @@ namespace SpeckleElementsGSA
     }
 
     /// <summary>
-    /// Extracts the reactions for the given node.
+    /// General extraction
     /// </summary>
-    /// <param name="id">GSA node ID</param>
+    /// <param name="id">GSA entity ID</param>
     /// <param name="loadCase">Load case</param>
     /// <param name="axis">Result axis</param>
     /// <returns>Dictionary of reactions with keys {x,y,z,xx,yy,zz}.</returns>
-    public Dictionary<string, object> GetNodeReactions(int id, string loadCase, string axis = "local")
+    public Dictionary<string, object> GetGSAResult(int id, int resHeader, int flags, List<string> keys, string loadCase, string axis = "local", int num1DPoints = 2)
     {
       try
       {
-        if (ResultMode != GSAResultMode.NodeReactions)
-        {
-          GSAObject.Output_Init_Arr(0x0, axis, loadCase, ResHeader.REF_REAC, 1);
-          ResultMode = GSAResultMode.NodeReactions;
-        }
+        GSAObject.Output_Init_Arr(flags, axis, loadCase, (ResHeader)resHeader, num1DPoints);
 
         GsaResults[] res;
         int num;
         GSAObject.Output_Extract_Arr(id, out res, out num);
 
-        Dictionary<string, object> ret = new Dictionary<string, object>()
-                {
-                    {"x", res.Last().dynaResults[0]},
-                    {"y", res.Last().dynaResults[1]},
-                    {"z", res.Last().dynaResults[2]},
-                    {"xx", res.Last().dynaResults[4]},
-                    {"yy", res.Last().dynaResults[5]},
-                    {"zz", res.Last().dynaResults[6]},
-                };
+        int counter = 0;
+        Dictionary<string, object> ret = new Dictionary<string, object>();
 
-        return ret;
-      }
-      catch { return null; }
-    }
-
-    /// <summary>
-    /// Extracts the displacements for the given node.
-    /// </summary>
-    /// <param name="id">GSA node ID</param>
-    /// <param name="loadCase">Load case</param>
-    /// <param name="axis">Result axis</param>
-    /// <returns>Dictionary of displacements with keys {x,y,z,xx,yy,zz}.</returns>
-    public Dictionary<string, object> GetNodeDisplacements(int id, string loadCase, string axis = "local")
-    {
-      try
-      {
-        if (ResultMode != GSAResultMode.NodeDisplacements)
-        {
-          GSAObject.Output_Init_Arr(0x0, axis, loadCase, ResHeader.REF_DISP, 1);
-          ResultMode = GSAResultMode.NodeDisplacements;
+        foreach (string key in keys)
+        { 
+          ret[key] = res.Select(x => x.dynaResults[counter]).ToList();
+          counter++;
         }
 
-        GsaResults[] res;
-        int num;
-        GSAObject.Output_Extract_Arr(id, out res, out num);
+        return ret;
+      }
+      catch {
+        Dictionary<string, object> ret = new Dictionary<string, object>();
 
-        Dictionary<string, object> ret = new Dictionary<string, object>()
-          {
-            {"x", res.Last().dynaResults[0]},
-            {"y", res.Last().dynaResults[1]},
-            {"z", res.Last().dynaResults[2]},
-            {"xx", res.Last().dynaResults[4]},
-            {"yy", res.Last().dynaResults[5]},
-            {"zz", res.Last().dynaResults[6]},
-          };
+        foreach (string key in keys)
+          ret[key] = new List<double>() { 0 };
 
         return ret;
       }
-      catch { return null; }
-    }
-
-    /// <summary>
-    /// Extracts the displacements for the given element.
-    /// </summary>
-    /// <param name="id">GSA element ID</param>
-    /// <param name="loadCase">Load case</param>
-    /// <param name="axis">Result axis</param>
-    /// <returns>Dictionary of displacements with keys {x,y,z,xx,yy,zz}.</returns>
-    public Dictionary<string, object> Get1DElementDisplacements(int id, string loadCase, string axis = "local")
-    {
-      try
-      {
-        if (ResultMode != GSAResultMode.Element1DDisplacements)
-        {
-          GSAObject.Output_Init_Arr(0x20, axis, loadCase, ResHeader.REF_DISP_EL1D, 0);
-          ResultMode = GSAResultMode.Element1DDisplacements;
-        }
-
-        GsaResults[] res;
-        int num;
-        GSAObject.Output_Extract_Arr(id, out res, out num);
-
-        Dictionary<string, object> ret = new Dictionary<string, object>() {
-          {"x", res.Select(x => x.dynaResults[1]).ToList() },
-          {"y", res.Select(x => x.dynaResults[2]).ToList()},
-          {"z", res.Select(x => x.dynaResults[3]).ToList()},
-          {"xx", res.Select(x => x.dynaResults[5]).ToList()},
-          {"yy", res.Select(x => x.dynaResults[6]).ToList()},
-          {"zz", res.Select(x => x.dynaResults[7]).ToList()},
-        };
-        return ret;
-      }
-      catch { return null; }
-    }
-
-    /// <summary>
-    /// Extracts the reactions for the given element.
-    /// </summary>
-    /// <param name="id">GSA element ID</param>
-    /// <param name="loadCase">Load case</param>
-    /// <param name="axis">Result axis</param>
-    /// <returns>Dictionary of forces with keys {fx,fy,fz,mx,my,mz}.</returns>
-    public Dictionary<string, object> Get1DElementForces(int id, string loadCase, string axis = "local")
-    {
-      try
-      {
-        if (ResultMode != GSAResultMode.Element1DForces)
-        {
-          GSAObject.Output_Init_Arr(0x20, axis, loadCase, ResHeader.REF_FORCE_EL1D, 0);
-          ResultMode = GSAResultMode.Element1DForces;
-        }
-
-        GsaResults[] res;
-        int num;
-        GSAObject.Output_Extract_Arr(id, out res, out num);
-
-        Dictionary<string, object> ret = new Dictionary<string, object>() {
-          {"fx", res.Select(x => x.dynaResults[1]).ToList() },
-          {"fy", res.Select(x => x.dynaResults[2]).ToList()},
-          {"fz", res.Select(x => x.dynaResults[3]).ToList()},
-          {"mx", res.Select(x => x.dynaResults[5]).ToList()},
-          {"my", res.Select(x => x.dynaResults[6]).ToList()},
-          {"mz", res.Select(x => x.dynaResults[7]).ToList()},
-        };
-        return ret;
-      }
-      catch { return null; }
-    }
-
-    /// <summary>
-    /// Extracts the stresses for the given element.
-    /// </summary>
-    /// <param name="id">GSA element ID</param>
-    /// <param name="loadCase">Load case</param>
-    /// <param name="axis">Result axis</param>
-    /// <returns>Dictionary of stresses with keys {a,sy,sz,by+,by-,bz+,bz-,comb+,comb-}.</returns>
-    public Dictionary<string, object> Get1DElementStresses(int id, string loadCase, string axis = "local")
-    {
-      try
-      {
-        if (ResultMode != GSAResultMode.Element1DStresses)
-        {
-          GSAObject.Output_Init_Arr(0x20, axis, loadCase, ResHeader.REF_STRESS_EL1D, 0);
-          ResultMode = GSAResultMode.Element1DStresses;
-        }
-
-        GsaResults[] res;
-        int num;
-        GSAObject.Output_Extract_Arr(id, out res, out num);
-
-        Dictionary<string, object> ret = new Dictionary<string, object>() {
-          {"a", res.Select(x => x.dynaResults[1]).ToList() },
-          {"sy", res.Select(x => x.dynaResults[2]).ToList()},
-          {"sz", res.Select(x => x.dynaResults[3]).ToList()},
-          {"by+", res.Select(x => x.dynaResults[4]).ToList()},
-          {"by-", res.Select(x => x.dynaResults[5]).ToList()},
-          {"bz+", res.Select(x => x.dynaResults[6]).ToList()},
-          {"bz-", res.Select(x => x.dynaResults[7]).ToList()},
-          {"comb+", res.Select(x => x.dynaResults[8]).ToList()},
-          {"comb-", res.Select(x => x.dynaResults[9]).ToList()},
-        };
-        return ret;
-      }
-      catch { return null; }
-    }
-
-    /// <summary>
-    /// Extracts the displacements for the given 2D element.
-    /// </summary>
-    /// <param name="id">GSA element ID</param>
-    /// <param name="loadCase">Load case</param>
-    /// <param name="axis">Result axis</param>
-    /// <returns>Dictionary of displacements with keys {x,y,z}.</returns>
-    public Dictionary<string, object> Get2DElementDisplacements(int id, string loadCase, string axis = "local")
-    {
-      try
-      {
-        if (ResultMode != GSAResultMode.Element2DDisplacements)
-        {
-          GSAObject.Output_Init_Arr(0x10, axis, loadCase, ResHeader.REF_DISP_EL2D, 1);
-          ResultMode = GSAResultMode.Element2DDisplacements;
-        }
-
-        GsaResults[] res;
-        int num;
-        GSAObject.Output_Extract_Arr(id, out res, out num);
-
-        Dictionary<string, object> ret = new Dictionary<string, object>() {
-          {"x", new List<double>() {res.Last().dynaResults[0]} },
-          {"y", new List<double>() {res.Last().dynaResults[1]} },
-          {"z", new List<double>() {res.Last().dynaResults[2]} },
-        };
-
-        return ret;
-      }
-      catch { return null; }
-    }
-
-    /// <summary>
-    /// Extracts the forces for the given 2D element.
-    /// </summary>
-    /// <param name="id">GSA element ID</param>
-    /// <param name="loadCase">Load case</param>
-    /// <param name="axis">Result axis</param>
-    /// <returns>Dictionary of forces with keys {nx,ny,nxy,mx,my,mxy,vx,vy}.</returns>
-    public Dictionary<string, object> Get2DElementForces(int id, string loadCase, string axis = "local")
-    {
-      try
-      {
-        GSAObject.Output_Init_Arr(0x10, axis, loadCase, ResHeader.REF_FORCE_EL2D_PRJ, 1);
-        ResultMode = GSAResultMode.Element2DForces;
-
-        GsaResults[] forceRes;
-        int forceNum;
-        GSAObject.Output_Extract_Arr(id, out forceRes, out forceNum);
-
-        GSAObject.Output_Init_Arr(0x10, axis, loadCase, ResHeader.REF_MOMENT_EL2D_PRJ, 1);
-
-        GsaResults[] momentRes;
-        int momentNum;
-        GSAObject.Output_Extract_Arr(id, out momentRes, out momentNum);
-
-        Dictionary<string, object> ret = new Dictionary<string, object>() {
-          {"nx", new List<double>() { forceRes.Last().dynaResults[2] } },
-          {"ny", new List<double>() { forceRes.Last().dynaResults[3] } },
-          {"nxy", new List<double>() { forceRes.Last().dynaResults[4] } },
-          {"mx", new List<double>() { momentRes.Last().dynaResults[1] } },
-          {"my", new List<double>() { momentRes.Last().dynaResults[2] } },
-          {"mxy", new List<double>() { momentRes.Last().dynaResults[3] } },
-          {"vx", new List<double>() { forceRes.Last().dynaResults[5] } },
-          {"vy", new List<double>() { forceRes.Last().dynaResults[6] } },
-        };
-
-        return ret;
-      }
-      catch { return null; }
-    }
-
-    /// <summary>
-    /// Extracts the stresses for the given 2D element.
-    /// </summary>
-    /// <param name="id">GSA element ID</param>
-    /// <param name="loadCase">Load case</param>
-    /// <param name="axis">Result axis</param>
-    /// <param name="layer">Layer of element to extract results from</param>
-    /// <returns>Dictionary of stresses with keys {sxx,syy,tzx,tzy,txy}.</returns>
-    public Dictionary<string, object> Get2DElementStresses(int id, string loadCase, string axis = "local", GSA2DElementLayer layer = GSA2DElementLayer.Middle)
-    {
-      try
-      {
-        if (ResultMode != GSAResultMode.Element2DStresses)
-        {
-          GSAObject.Output_Init_Arr(0x10 | (int)layer, axis, loadCase, ResHeader.REF_STRESS_EL2D_PRJ, 1);
-          ResultMode = GSAResultMode.Element2DStresses;
-        }
-
-        GsaResults[] res;
-        int num;
-        GSAObject.Output_Extract_Arr(id, out res, out num);
-
-        Dictionary<string, object> ret = new Dictionary<string, object>() {
-          {"sxx", new List<double>() { res.Last().dynaResults[0] } },
-          {"syy", new List<double>() { res.Last().dynaResults[1] } },
-          {"tzx", new List<double>() { res.Last().dynaResults[5] } },
-          {"tzy", new List<double>() { res.Last().dynaResults[4] } },
-          {"txy", new List<double>() { res.Last().dynaResults[3] } },
-        };
-
-        return ret;
-      }
-      catch { return null; }
     }
     #endregion
   }

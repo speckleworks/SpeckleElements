@@ -272,16 +272,7 @@ namespace SpeckleElementsGSA
       return Convert.ToDouble(pieces[5]);
     }
   }
-
-  [GSAObject("", new string[] { }, "elements", true, false, new Type[] { typeof(GSANode) }, new Type[] { })]
-  public class GSANodeResult : IGSASpeckleContainer
-  {
-    public string GWACommand { get; set; }
-    public List<string> SubGWACommand { get; set; } = new List<string>();
-    public dynamic Value { get; set; } = new StructuralNodeResult();
-  }
-
-
+  
   public static partial class Conversions
   {
     public static bool ToNative(this SpecklePoint inputObject)
@@ -403,75 +394,6 @@ namespace SpeckleElementsGSA
 
       if (changed) return new SpeckleObject();
       return new SpeckleNull();
-    }
-
-    public static SpeckleObject ToSpeckle(this GSANodeResult dummyObject)
-    {
-      if (!GSASendResults)
-        return new SpeckleNull();
-
-      if (!GSASenderObjects.ContainsKey(typeof(GSANode)))
-        return new SpeckleNull();
-
-      List<GSANode> nodes = GSASenderObjects[typeof(GSANode)].Cast<GSANode>().ToList();
-
-      // Note: A lot faster to extract by type of result
-
-      // Extract reactions
-      foreach (string loadCase in GSAResultCases)
-      {
-        if (!GSA.CaseExist(loadCase))
-          continue;
-
-        foreach (GSANode node in nodes)
-        {
-          int id = Convert.ToInt32(node.Value.StructuralId);
-
-          if (node.Value.Result == null)
-            node.Value.Result = new Dictionary<string, object>();
-
-          var resultExport = GSA.GetNodeReactions(id, loadCase, GSAResultInLocalAxis ? "local" : "global");
-
-          if (resultExport == null)
-            continue;
-
-          if (!node.Value.Result.ContainsKey(loadCase))
-            node.Value.Result[loadCase] = new StructuralNodeResult();
-
-          (node.Value.Result[loadCase] as StructuralNodeResult).Reaction = resultExport;
-
-          node.ForceSend = true;
-        }
-      }
-
-      // Extract displacements
-      foreach (string loadCase in GSAResultCases)
-      {
-        if (!GSA.CaseExist(loadCase))
-          continue;
-
-        foreach (GSANode node in nodes)
-        {
-          int id = Convert.ToInt32(node.Value.StructuralId);
-
-          if (node.Value.Result == null)
-            node.Value.Result = new Dictionary<string, object>();
-
-          var resultExport = GSA.GetNodeDisplacements(id, loadCase, GSAResultInLocalAxis ? "local" : "global");
-
-          if (resultExport == null)
-            continue;
-
-          if (!node.Value.Result.ContainsKey(loadCase))
-            node.Value.Result[loadCase] = new StructuralNodeResult();
-
-          (node.Value.Result[loadCase] as StructuralNodeResult).Displacement = resultExport;
-
-          node.ForceSend = true;
-        }
-      }
-
-      return new SpeckleObject();
     }
   }
 }
