@@ -34,6 +34,8 @@ namespace SpeckleElementsGSA
 
     public static Dictionary<string, Tuple<int, int, List<string>>> GSAElement2DResults { get; set; } = new Dictionary<string, Tuple<int, int, List<string>>>();
 
+    public static Dictionary<string, Tuple<string, int, int, List<string>>> GSAMiscResults { get; set; } = new Dictionary<string, Tuple<string, int, int, List<string>>>();
+
     public static List<string> GSAResultCases { get; set; } = new List<string>();
 
     public static bool GSAResultInLocalAxis { get; set; }
@@ -56,6 +58,8 @@ namespace SpeckleElementsGSA
     public static Dictionary<string, Tuple<int, int, List<string>>> GSAElement1DResults { get => Initialiser.GSAElement1DResults; }
 
     public static Dictionary<string, Tuple<int, int, List<string>>> GSAElement2DResults { get => Initialiser.GSAElement2DResults; }
+
+    public static Dictionary<string, Tuple<string, int, int, List<string>>> GSAMiscResults { get => Initialiser.GSAMiscResults; }
 
     public static List<string> GSAResultCases { get => Initialiser.GSAResultCases; }
 

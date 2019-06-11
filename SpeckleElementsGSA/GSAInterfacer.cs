@@ -1039,11 +1039,30 @@ namespace SpeckleElementsGSA
     {
       try
       {
-        GSAObject.Output_Init_Arr(flags, axis, loadCase, (ResHeader)resHeader, num1DPoints);
-
         GsaResults[] res;
         int num;
-        GSAObject.Output_Extract_Arr(id, out res, out num);
+
+        // Special case for assemblies
+        if (resHeader == 18002000)
+          GSAObject.Output_Extract_CutAssembly(id, false, loadCase, axis, out res);
+        else
+        {
+          if (Enum.IsDefined(typeof(ResHeader), resHeader))
+          { 
+            GSAObject.Output_Init_Arr(flags, axis, loadCase, (ResHeader)resHeader, num1DPoints);
+            GSAObject.Output_Extract_Arr(id, out res, out num);
+          }
+          else
+          {
+            GSAObject.Output_Init(flags, axis, loadCase, resHeader, num1DPoints);
+            int numPos = GSAObject.Output_NumElemPos(id);
+
+            res = new GsaResults[numPos];
+
+            for (int i = 0; i < numPos; i++)
+              res[i] = new GsaResults() { dynaResults = new double[] { (double)GSAObject.Output_Extract(id, i) } };
+          }
+        }
 
         int counter = 0;
         Dictionary<string, object> ret = new Dictionary<string, object>();
