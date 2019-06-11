@@ -55,7 +55,16 @@ namespace SpeckleElementsGSA
                 Value = new Dictionary<string, object>()
               };
 
-            (element.Value.Result[loadCase] as Structural2DElementResult).Value[kvp.Key] = resultExport;
+            // Let's split the dictionary into xxx_face and xxx_vertex
+            var faceDictionary = resultExport.ToDictionary(
+              x => x.Key,
+              x => new List<double>() { (x.Value as List<double>).Last() } as object);
+            var vertexDictionary = resultExport.ToDictionary(
+              x => x.Key,
+              x => (x.Value as List<double>).Take((x.Value as List<double>).Count - 1).ToList() as object);
+
+            (element.Value.Result[loadCase] as Structural2DElementResult).Value[kvp.Key + "_face"] = faceDictionary;
+            (element.Value.Result[loadCase] as Structural2DElementResult).Value[kvp.Key + "_vertex"] = vertexDictionary;
           }
         }
       }
