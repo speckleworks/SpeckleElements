@@ -33,6 +33,7 @@ namespace SpeckleElementsGSA
       obj.ZAxis = new List<StructuralVectorThree>();
       obj.EndRelease = new List<StructuralVectorBoolSix>();
       obj.Offset = new List<StructuralVectorThree>();
+      obj.ResultVertices = new List<double>();
 
       // Match up coordinates
       List<Tuple<string, string>> coordinates = new List<Tuple<string, string>>();
@@ -84,6 +85,8 @@ namespace SpeckleElementsGSA
           obj.Value.AddRange((element.Value.Value as List<double>).Skip(3).Take(3));
           obj.EndRelease.AddRange(element.Value.EndRelease);
           obj.Offset.AddRange(element.Value.Offset);
+
+          obj.ResultVertices.AddRange(element.Value.ResultVertices);
         }
         else
         {
@@ -93,6 +96,9 @@ namespace SpeckleElementsGSA
           obj.EndRelease.Add((element.Value.EndRelease as List<StructuralVectorBoolSix>).First());
           obj.Offset.Add((element.Value.Offset as List<StructuralVectorThree>).Last());
           obj.Offset.Add((element.Value.Offset as List<StructuralVectorThree>).First());
+
+          for (int i = element.Value.ResultVertices.Count - 3; i >= 0; i -= 3)
+            obj.ResultVertices.AddRange((element.Value.ResultVertices as List<double>).Skip(i).Take(3));
         }
 
         // Result merging
