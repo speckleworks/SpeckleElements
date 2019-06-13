@@ -57,18 +57,44 @@ namespace SpeckleElementsRevit
         new StructuralVectorThree(new double[] { coordinateSystem.BasisZ.X, coordinateSystem.BasisZ.Y, coordinateSystem.BasisZ.Z })
       );
 
-      var state = myRestraint.GetParameters("State")[0].AsValueString();
-      var restraint = new StructuralVectorBoolSix();
-      if (state == "Fixed")
-      {
-        restraint.Value = new List<bool>() { true, true, true, true, true, true };
-        restraint.GenerateHash();
+      var restraint = new StructuralVectorBoolSix(new bool[6]);
+      var stiffness = new StructuralVectorSix(new double[6]);
+
+      var listOfParams = new BuiltInParameter[] {
+        BuiltInParameter.BOUNDARY_DIRECTION_X,
+        BuiltInParameter.BOUNDARY_DIRECTION_Y,
+        BuiltInParameter.BOUNDARY_DIRECTION_Z,
+        BuiltInParameter.BOUNDARY_DIRECTION_ROT_X,
+        BuiltInParameter.BOUNDARY_DIRECTION_ROT_Y,
+        BuiltInParameter.BOUNDARY_DIRECTION_ROT_Z
+      };
+
+      var listOfSpringParams = new BuiltInParameter[] {
+        BuiltInParameter.BOUNDARY_RESTRAINT_X,
+        BuiltInParameter.BOUNDARY_RESTRAINT_Y,
+        BuiltInParameter.BOUNDARY_RESTRAINT_Z,
+        BuiltInParameter.BOUNDARY_RESTRAINT_ROT_X,
+        BuiltInParameter.BOUNDARY_RESTRAINT_ROT_Y,
+        BuiltInParameter.BOUNDARY_RESTRAINT_ROT_Z,
+      };
+
+      for (int i = 0; i < 6; i++)
+      { 
+        switch (myRestraint.get_Parameter(listOfParams[i]).AsInteger())
+        {
+          case 0:
+            restraint.Value[i] = false;
+            break;
+          case 1:
+            restraint.Value[i] = true;
+            break;
+          case 2:
+            stiffness.Value[i] = myRestraint.get_Parameter(listOfSpringParams[i]).AsDouble();
+            break;
+        }
       }
-      else if (state == "Pinned")
-      {
-        restraint.Value = new List<bool>() { true, true, true, false, false, false };
-        restraint.GenerateHash();
-      }
+      restraint.GenerateHash();
+      stiffness.GenerateHash();
 
       List<SpeckleObject> myNodes = new List<SpeckleObject>();
 
@@ -79,6 +105,7 @@ namespace SpeckleElementsRevit
         myNode.basePoint = myPoint;
         myNode.Axis = axis;
         myNode.Restraint = restraint;
+        myNode.Stiffness = stiffness;
         myNodes.Add(myNode);
       }
       

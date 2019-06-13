@@ -30,17 +30,128 @@ namespace SpeckleElementsRevit
       var myFamily = (Autodesk.Revit.DB.FamilyInstance)Doc.GetElement(myStick.GetElementId());
 
       var myElement = new Structural1DElement();
+
+      // TODO:
+      if (!myStick.IsSingleCurve())
+        return returnObjects;
+
       var curve = SpeckleCore.Converter.Serialise(myStick.GetCurve());
       if (curve is SpeckleLine)
         myElement.baseLine = curve as SpeckleCoreGeometryClasses.SpeckleLine;
       else if (curve is SpeckleArc)
+        // SHOULD TURN TO POLYLINE
         myElement.Value = (curve as SpeckleCoreGeometryClasses.SpeckleArc).StartPoint.Value.Concat((curve as SpeckleCoreGeometryClasses.SpeckleArc).EndPoint.Value).ToList();
       else
         return returnObjects;
-      
+
       var coordinateSystem = myStick.GetLocalCoordinateSystem();
       if (coordinateSystem != null)
         myElement.ZAxis = new StructuralVectorThree(new double[] { coordinateSystem.BasisZ.X, coordinateSystem.BasisZ.Y, coordinateSystem.BasisZ.Z });
+
+      if (myStick is AnalyticalModelColumn)
+      {
+        StructuralVectorBoolSix endRelease1 = null, endRelease2 = null;
+
+        switch (myStick.get_Parameter(BuiltInParameter.STRUCTURAL_BOTTOM_RELEASE_TYPE).AsInteger())
+        {
+          case 0:
+            endRelease1 = new StructuralVectorBoolSix(new bool[] { false, false, false, false, false, false });
+            break;
+          case 1:
+            endRelease1 = new StructuralVectorBoolSix(new bool[] { false, false, false, true, true, true });
+            break;
+          case 2:
+            endRelease1 = new StructuralVectorBoolSix(new bool[] { false, false, false, false, true, true });
+            break;
+          case 3:
+            endRelease1 = new StructuralVectorBoolSix(new bool[] {
+              myStick.get_Parameter(BuiltInParameter.STRUCTURAL_BOTTOM_RELEASE_FX).AsInteger() == 1,
+              myStick.get_Parameter(BuiltInParameter.STRUCTURAL_BOTTOM_RELEASE_FY).AsInteger() == 1,
+              myStick.get_Parameter(BuiltInParameter.STRUCTURAL_BOTTOM_RELEASE_FZ).AsInteger() == 1,
+              myStick.get_Parameter(BuiltInParameter.STRUCTURAL_BOTTOM_RELEASE_MX).AsInteger() == 1,
+              myStick.get_Parameter(BuiltInParameter.STRUCTURAL_BOTTOM_RELEASE_MY).AsInteger() == 1,
+              myStick.get_Parameter(BuiltInParameter.STRUCTURAL_BOTTOM_RELEASE_MZ).AsInteger() == 1,
+            });
+            break;
+        }
+
+        switch (myStick.get_Parameter(BuiltInParameter.STRUCTURAL_TOP_RELEASE_TYPE).AsInteger())
+        {
+          case 0:
+            endRelease2 = new StructuralVectorBoolSix(new bool[] { false, false, false, false, false, false });
+            break;
+          case 1:
+            endRelease2 = new StructuralVectorBoolSix(new bool[] { false, false, false, true, true, true });
+            break;
+          case 2:
+            endRelease2 = new StructuralVectorBoolSix(new bool[] { false, false, false, false, true, true });
+            break;
+          case 3:
+            endRelease2 = new StructuralVectorBoolSix(new bool[] {
+              myStick.get_Parameter(BuiltInParameter.STRUCTURAL_TOP_RELEASE_FX).AsInteger() == 1,
+              myStick.get_Parameter(BuiltInParameter.STRUCTURAL_TOP_RELEASE_FY).AsInteger() == 1,
+              myStick.get_Parameter(BuiltInParameter.STRUCTURAL_TOP_RELEASE_FZ).AsInteger() == 1,
+              myStick.get_Parameter(BuiltInParameter.STRUCTURAL_TOP_RELEASE_MX).AsInteger() == 1,
+              myStick.get_Parameter(BuiltInParameter.STRUCTURAL_TOP_RELEASE_MY).AsInteger() == 1,
+              myStick.get_Parameter(BuiltInParameter.STRUCTURAL_TOP_RELEASE_MZ).AsInteger() == 1,
+            });
+            break;
+        }
+        
+        myElement.EndRelease = new List<StructuralVectorBoolSix>() { endRelease1, endRelease2 };
+      }
+      else
+      {
+        StructuralVectorBoolSix endRelease1 = null, endRelease2 = null;
+
+        switch (myStick.get_Parameter(BuiltInParameter.STRUCTURAL_START_RELEASE_TYPE).AsInteger())
+        {
+          case 0:
+            endRelease1 = new StructuralVectorBoolSix(new bool[] { false, false, false, false, false, false });
+            break;
+          case 1:
+            endRelease1 = new StructuralVectorBoolSix(new bool[] { false, false, false, true, true, true });
+            break;
+          case 2:
+            endRelease1 = new StructuralVectorBoolSix(new bool[] { false, false, false, false, true, true });
+            break;
+          case 3:
+            endRelease1 = new StructuralVectorBoolSix(new bool[] {
+              myStick.get_Parameter(BuiltInParameter.STRUCTURAL_START_RELEASE_FX).AsInteger() == 1,
+              myStick.get_Parameter(BuiltInParameter.STRUCTURAL_START_RELEASE_FY).AsInteger() == 1,
+              myStick.get_Parameter(BuiltInParameter.STRUCTURAL_START_RELEASE_FZ).AsInteger() == 1,
+              myStick.get_Parameter(BuiltInParameter.STRUCTURAL_START_RELEASE_MX).AsInteger() == 1,
+              myStick.get_Parameter(BuiltInParameter.STRUCTURAL_START_RELEASE_MY).AsInteger() == 1,
+              myStick.get_Parameter(BuiltInParameter.STRUCTURAL_START_RELEASE_MZ).AsInteger() == 1,
+            });
+            break;
+        }
+
+        switch (myStick.get_Parameter(BuiltInParameter.STRUCTURAL_END_RELEASE_TYPE).AsInteger())
+        {
+          case 0:
+            endRelease2 = new StructuralVectorBoolSix(new bool[] { false, false, false, false, false, false });
+            break;
+          case 1:
+            endRelease2 = new StructuralVectorBoolSix(new bool[] { false, false, false, true, true, true });
+            break;
+          case 2:
+            endRelease2 = new StructuralVectorBoolSix(new bool[] { false, false, false, false, true, true });
+            break;
+          case 3:
+            endRelease2 = new StructuralVectorBoolSix(new bool[] {
+              myStick.get_Parameter(BuiltInParameter.STRUCTURAL_END_RELEASE_FX).AsInteger() == 1,
+              myStick.get_Parameter(BuiltInParameter.STRUCTURAL_END_RELEASE_FY).AsInteger() == 1,
+              myStick.get_Parameter(BuiltInParameter.STRUCTURAL_END_RELEASE_FZ).AsInteger() == 1,
+              myStick.get_Parameter(BuiltInParameter.STRUCTURAL_END_RELEASE_MX).AsInteger() == 1,
+              myStick.get_Parameter(BuiltInParameter.STRUCTURAL_END_RELEASE_MY).AsInteger() == 1,
+              myStick.get_Parameter(BuiltInParameter.STRUCTURAL_END_RELEASE_MZ).AsInteger() == 1,
+            });
+            break;
+        }
+
+        myElement.EndRelease = new List<StructuralVectorBoolSix>() { endRelease1, endRelease2 };
+      }
 
       // Property
       try
@@ -222,7 +333,7 @@ namespace SpeckleElementsRevit
         returnObjects.Add(mySection);
       }
       catch { }
-      
+
       myElement.GenerateHash();
       myElement.ApplicationId = myStick.UniqueId;
       returnObjects.Add(myElement);

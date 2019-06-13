@@ -35,6 +35,29 @@ namespace SpeckleElementsRevit
       else if (myRevitElement is Autodesk.Revit.DB.Wall)
         type = Structural2DElementType.Wall;
 
+      // Voids first
+
+      var voidLoops = mySurface.GetLoops(AnalyticalLoopType.Void);
+      foreach (CurveLoop loop in voidLoops)
+      {
+        List<double> coor = new List<double>();
+        foreach (Curve curve in loop)
+        {
+          var convCurve = SpeckleCore.Converter.Serialise(curve);
+          if (convCurve is SpeckleLine)
+            coor.AddRange((convCurve as SpeckleLine).Value.Take(3));
+          else if (convCurve is SpeckleArc)
+          {
+            coor.AddRange((convCurve as SpeckleArc).StartPoint.Value);
+            coor.AddRange((convCurve as SpeckleArc).MidPoint.Value);
+          }
+          else
+            return returnObjects;
+        }
+        
+        returnObjects.Add(new Structural2DVoid(coor.ToArray(), null));
+      }
+
       List<double[]> polylines = new List<double[]>();
 
       var loops = mySurface.GetLoops(AnalyticalLoopType.External);
@@ -43,8 +66,16 @@ namespace SpeckleElementsRevit
         List<double> coor = new List<double>();
         foreach (Curve curve in loop)
         {
-          var point = (SpeckleCoreGeometryClasses.SpecklePoint)SpeckleCore.Converter.Serialise(curve.GetEndPoint(0));
-          coor.AddRange(point.Value);
+          var convCurve = SpeckleCore.Converter.Serialise(curve);
+          if (convCurve is SpeckleLine)
+            coor.AddRange((convCurve as SpeckleLine).Value.Take(3));
+          else if (convCurve is SpeckleArc)
+          {
+            coor.AddRange((convCurve as SpeckleArc).StartPoint.Value);
+            coor.AddRange((convCurve as SpeckleArc).MidPoint.Value);
+          }
+          else
+            return returnObjects;
         }
 
         polylines.Add(coor.ToArray());
@@ -69,7 +100,7 @@ namespace SpeckleElementsRevit
         if (myRevitElement is Autodesk.Revit.DB.Floor)
         {
           var myFloor = myRevitElement as Autodesk.Revit.DB.Floor;
-          mySection.Thickness = myFloor.GetParameters("Thickness")[0].AsDouble() / Scale;
+          mySection.Thickness = myFloor.get_Parameter(BuiltInParameter.FLOOR_ATTR_THICKNESS_PARAM).AsDouble() / Scale;
         }
         else if (myRevitElement is Autodesk.Revit.DB.Wall)
         {
@@ -91,7 +122,7 @@ namespace SpeckleElementsRevit
           else if (myRevitElement is Autodesk.Revit.DB.Wall)
           {
             var myWall = myRevitElement as Autodesk.Revit.DB.Wall;
-            myMat = Doc.GetElement(myWall.WallType.GetParameters("Structural Material")[0].AsElementId()) as Material;
+            myMat = Doc.GetElement(myWall.WallType.get_Parameter(BuiltInParameter.STRUCTURAL_MATERIAL_PARAM).AsElementId()) as Material;
           }
 
           SpeckleObject myMaterial = null;
@@ -175,7 +206,7 @@ namespace SpeckleElementsRevit
           mesh.PropertyRef = sectionID;
         if (axis != null)
           mesh.Axis = Enumerable.Repeat(axis, numFaces).ToList();
-        mesh.Offset = Enumerable.Repeat(0, numFaces).Cast<double>().ToList(); //TODO
+        mesh.Offset = Enumerable.Repeat(0.0, numFaces).Cast<double>().ToList(); //TODO
 
         mesh.GenerateHash();
         mesh.ApplicationId = mySurface.UniqueId; // THIS IS NOT UNIQUE ANYMORE
