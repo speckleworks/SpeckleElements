@@ -75,12 +75,12 @@ namespace SpeckleElementsGSA
         obj.EndRelease[0].Value[4] = ParseEndRelease(start[4], pieces, ref counter);
         obj.EndRelease[0].Value[5] = ParseEndRelease(start[5], pieces, ref counter);
 
-        obj.EndRelease[1].Value[0] = ParseEndRelease(start[0], pieces, ref counter);
-        obj.EndRelease[1].Value[1] = ParseEndRelease(start[1], pieces, ref counter);
-        obj.EndRelease[1].Value[2] = ParseEndRelease(start[2], pieces, ref counter);
-        obj.EndRelease[1].Value[3] = ParseEndRelease(start[3], pieces, ref counter);
-        obj.EndRelease[1].Value[4] = ParseEndRelease(start[4], pieces, ref counter);
-        obj.EndRelease[1].Value[5] = ParseEndRelease(start[5], pieces, ref counter);
+        obj.EndRelease[1].Value[0] = ParseEndRelease(end[0], pieces, ref counter);
+        obj.EndRelease[1].Value[1] = ParseEndRelease(end[1], pieces, ref counter);
+        obj.EndRelease[1].Value[2] = ParseEndRelease(end[2], pieces, ref counter);
+        obj.EndRelease[1].Value[3] = ParseEndRelease(end[3], pieces, ref counter);
+        obj.EndRelease[1].Value[4] = ParseEndRelease(end[4], pieces, ref counter);
+        obj.EndRelease[1].Value[5] = ParseEndRelease(end[5], pieces, ref counter);
       }
       else
       {
@@ -165,12 +165,12 @@ namespace SpeckleElementsGSA
 
           string end2 = "";
 
-          end1 += element.EndRelease[1].Value[0] ? "R" : "F";
-          end1 += element.EndRelease[1].Value[1] ? "R" : "F";
-          end1 += element.EndRelease[1].Value[2] ? "R" : "F";
-          end1 += element.EndRelease[1].Value[3] ? "R" : "F";
-          end1 += element.EndRelease[1].Value[4] ? "R" : "F";
-          end1 += element.EndRelease[1].Value[5] ? "R" : "F";
+          end2 += element.EndRelease[1].Value[0] ? "R" : "F";
+          end2 += element.EndRelease[1].Value[1] ? "R" : "F";
+          end2 += element.EndRelease[1].Value[2] ? "R" : "F";
+          end2 += element.EndRelease[1].Value[3] ? "R" : "F";
+          end2 += element.EndRelease[1].Value[4] ? "R" : "F";
+          end2 += element.EndRelease[1].Value[5] ? "R" : "F";
 
           subLs.Add(end2);
 
@@ -360,11 +360,11 @@ namespace SpeckleElementsGSA
 
       try
       {
-        if (member.EndRelease[0].Equals(ParseEndReleases(1)))
+        if (member.EndRelease[0].Value.SequenceEqual(ParseEndReleases(1).Value))
           ls.Add("1");
-        else if (member.EndRelease[0].Equals(ParseEndReleases(2)))
+        else if (member.EndRelease[0].Value.SequenceEqual(ParseEndReleases(2).Value))
           ls.Add("2");
-        else if (member.EndRelease[0].Equals(ParseEndReleases(3)))
+        else if (member.EndRelease[0].Value.SequenceEqual(ParseEndReleases(3).Value))
           ls.Add("3");
         else
           ls.Add("2");
@@ -373,11 +373,11 @@ namespace SpeckleElementsGSA
 
       try
       {
-        if (member.EndRelease[1].Equals(ParseEndReleases(1)))
+        if (member.EndRelease[1].Value.SequenceEqual(ParseEndReleases(1).Value))
           ls.Add("1");
-        else if (member.EndRelease[1].Equals(ParseEndReleases(2)))
+        else if (member.EndRelease[1].Value.SequenceEqual(ParseEndReleases(2).Value))
           ls.Add("2");
-        else if (member.EndRelease[1].Equals(ParseEndReleases(3)))
+        else if (member.EndRelease[1].Value.SequenceEqual(ParseEndReleases(3).Value))
           ls.Add("3");
         else
           ls.Add("2");
