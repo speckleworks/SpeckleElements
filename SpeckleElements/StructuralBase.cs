@@ -1413,22 +1413,6 @@ namespace SpeckleElements
     /// <summary>Results.</summary>
     [SNJ.JsonProperty("value", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
     public Dictionary<string, object> Value { get; set; }
-
-    /// <summary>Node reaction.</summary>
-    [SNJ.JsonProperty("reaction", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
-    public Dictionary<string, object> Reaction { get; set; }
-
-    /// <summary>Node displacement.</summary>
-    [SNJ.JsonProperty("displacement", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
-    public Dictionary<string, object> Displacement { get; set; }
-
-    /// <summary>Node velocity.</summary>
-    [SNJ.JsonProperty("velocity", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
-    public Dictionary<string, object> Velocity { get; set; }
-
-    /// <summary>Node acceleration.</summary>
-    [SNJ.JsonProperty("acceleration", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
-    public Dictionary<string, object> Acceleration { get; set; }
   }
 
   [Serializable]
@@ -1447,18 +1431,6 @@ namespace SpeckleElements
     /// <summary>Results.</summary>
     [SNJ.JsonProperty("value", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
     public Dictionary<string, object> Value { get; set; }
-
-    /// <summary>Element displacement.</summary>
-    [SNJ.JsonProperty("displacement", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
-    public Dictionary<string, object> Displacement { get; set; }
-
-    /// <summary>Element force.</summary>
-    [SNJ.JsonProperty("force", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
-    public Dictionary<string, object> Force { get; set; }
-
-    /// <summary>Element stress.</summary>
-    [SNJ.JsonProperty("stress", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
-    public Dictionary<string, object> Stress { get; set; }
   }
 
   [Serializable]
@@ -1477,26 +1449,32 @@ namespace SpeckleElements
     /// <summary>Results.</summary>
     [SNJ.JsonProperty("value", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
     public Dictionary<string, object> Value { get; set; }
+  }
 
-    /// <summary>Element displacement.</summary>
-    [SNJ.JsonProperty("displacement", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
-    public Dictionary<string, object> Displacement { get; set; }
+  [Serializable]
+  public partial class StructuralMiscResult : SpeckleObject, IStructural
+  {
+    public override string Type { get => "StructuralMiscResult"; }
 
-    /// <summary>Element force.</summary>
-    [SNJ.JsonProperty("force", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
-    public Dictionary<string, object> Force { get; set; }
+    /// <summary>Structural ID to reference from other objects.</summary>
+    [SNJ.JsonProperty("structuralId", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
+    public string StructuralId { get; set; }
 
-    /// <summary>Element top layer stress.</summary>
-    [SNJ.JsonProperty("topStress", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
-    public Dictionary<string, object> TopStress { get; set; }
+    /// <summary>Description of result.</summary>
+    [SNJ.JsonProperty("description", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
+    public string Description { get; set; }
 
-    /// <summary>Element middle layer stress.</summary>
-    [SNJ.JsonProperty("midStress", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
-    public Dictionary<string, object> MidStress { get; set; }
+    /// <summary>StructuralID of object referred to.</summary>
+    [SNJ.JsonProperty("targetRef", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
+    public string TargetRef { get; set; }
 
-    /// <summary>Element bottom layer stress.</summary>
-    [SNJ.JsonProperty("botStress", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
-    public Dictionary<string, object> BotStress { get; set; }
+    /// <summary>Indicates whether the results are in the global or local axis.</summary>
+    [SNJ.JsonProperty("isGlobal", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
+    public bool IsGlobal { get; set; }
+
+    /// <summary>Results.</summary>
+    [SNJ.JsonProperty("value", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
+    public Dictionary<string, object> Value { get; set; }
   }
   #endregion
 }

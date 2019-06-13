@@ -22,12 +22,14 @@ namespace SpeckleElementsGSA
       if (elements.Count() < 1)
         return;
 
+      var elementsListCopy = new List<GSA1DElement>(elements);
+
       Structural1DElementPolyline obj = new Structural1DElementPolyline();
       obj.Value = new List<double>();
       obj.ElementStructuralId = new List<string>();
 
-      obj.ElementType = elements.First().Value.ElementType;
-      obj.PropertyRef = elements.First().Value.PropertyRef;
+      obj.ElementType = elementsListCopy.First().Value.ElementType;
+      obj.PropertyRef = elementsListCopy.First().Value.PropertyRef;
       obj.ZAxis = new List<StructuralVectorThree>();
       obj.EndRelease = new List<StructuralVectorBoolSix>();
       obj.Offset = new List<StructuralVectorThree>();
@@ -35,7 +37,7 @@ namespace SpeckleElementsGSA
       // Match up coordinates
       List<Tuple<string, string>> coordinates = new List<Tuple<string, string>>();
 
-      foreach (GSA1DElement e in elements)
+      foreach (GSA1DElement e in elementsListCopy)
         coordinates.Add( new Tuple<string, string>(
           string.Join(",", (e.Value.Value as List<double>).Take(3).Select(x => Math.Round(x, 4).ToString())),
           string.Join(",", (e.Value.Value as List<double>).Skip(3).Take(3).Select(x => Math.Round(x, 4).ToString()))
@@ -50,19 +52,16 @@ namespace SpeckleElementsGSA
       {
         var matchIndex = 0;
         var reverseCoordinates = false;
-
-        try
-        {
-          matchIndex = coordinates.FindIndex(x => x.Item1 == current);
-          reverseCoordinates = false;
-        }
-        catch
-        {
+        
+        matchIndex = coordinates.FindIndex(x => x.Item1 == current);
+        reverseCoordinates = false;
+        if (matchIndex == -1)
+        { 
           matchIndex = coordinates.FindIndex(x => x.Item2 == current);
           reverseCoordinates = true;
         }
 
-        var element = elements[matchIndex];
+        var element = elementsListCopy[matchIndex];
 
         obj.ElementStructuralId.Add(element.Value.StructuralId);
         obj.ZAxis.Add(element.Value.ZAxis);
@@ -70,19 +69,25 @@ namespace SpeckleElementsGSA
         if (obj.Value.Count == 0)
         {
           if (!reverseCoordinates)
+          { 
             obj.Value.AddRange((element.Value.Value as List<double>).Take(3));
+          }
           else
+          { 
             obj.Value.AddRange((element.Value.Value as List<double>).Skip(3).Take(3));
+          }
         }
 
         if (!reverseCoordinates)
-        { 
+        {
+          current = string.Join(",", (element.Value.Value as List<double>).Skip(3).Take(3).Select(x => Math.Round(x, 4).ToString()));
           obj.Value.AddRange((element.Value.Value as List<double>).Skip(3).Take(3));
           obj.EndRelease.AddRange(element.Value.EndRelease);
           obj.Offset.AddRange(element.Value.Offset);
         }
         else
         {
+          current = string.Join(",", (element.Value.Value as List<double>).Take(3).Select(x => Math.Round(x, 4).ToString()));
           obj.Value.AddRange((element.Value.Value as List<double>).Take(3));
           obj.EndRelease.Add((element.Value.EndRelease as List<StructuralVectorBoolSix>).Last());
           obj.EndRelease.Add((element.Value.EndRelease as List<StructuralVectorBoolSix>).First());
@@ -117,8 +122,13 @@ namespace SpeckleElementsGSA
                     (obj.Result[loadCase] as Structural1DElementResult).Value[key] = new Dictionary<string, object>(resultExport.Value[key] as Dictionary<string, object>);
                   else
                     foreach (string resultKey in ((obj.Result[loadCase] as Structural1DElementResult).Value[key] as Dictionary<string, object>).Keys)
+                    {
+                      var res = (resultExport.Value[key] as Dictionary<string, object>)[resultKey] as List<double>;
+                      if (reverseCoordinates)
+                        res.Reverse();
                       (((obj.Result[loadCase] as Structural1DElementResult).Value[key] as Dictionary<string, object>)[resultKey] as List<double>)
-                        .AddRange((resultExport.Value[key] as Dictionary<string, object>)[resultKey] as List<double>);
+                        .AddRange(res);
+                    }
                 }
               }
               else
@@ -138,6 +148,7 @@ namespace SpeckleElementsGSA
         }
 
         coordinates.RemoveAt(matchIndex);
+        elementsListCopy.RemoveAt(matchIndex);
 
         this.SubGWACommand.Add(element.GWACommand);
         this.SubGWACommand.AddRange(element.SubGWACommand);
