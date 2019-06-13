@@ -83,10 +83,10 @@ namespace SpeckleElementsRevit
         switch (myRestraint.get_Parameter(listOfParams[i]).AsInteger())
         {
           case 0:
-            restraint.Value[i] = false;
+            restraint.Value[i] = true;
             break;
           case 1:
-            restraint.Value[i] = true;
+            restraint.Value[i] = false;
             break;
           case 2:
             stiffness.Value[i] = myRestraint.get_Parameter(listOfSpringParams[i]).AsDouble();
