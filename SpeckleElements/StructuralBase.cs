@@ -141,30 +141,35 @@ namespace SpeckleElements
   }
 
   [Serializable]
-    public partial class StructuralLoadTaskBuckling : SpeckleObject, IStructural
-    {
-        public override string Type { get => "StructuralLoadTaskBuckling"; }
+  public partial class StructuralLoadTaskBuckling : SpeckleObject, IStructural
+  {
+    public override string Type { get => "StructuralLoadTaskBuckling"; }
 
-        /// <summary>Structural ID to reference from other objects.</summary>
-        [SNJ.JsonProperty("structuralId", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
-        public string StructuralId { get; set; }
+    /// <summary>Structural ID to reference from other objects.</summary>
+    [SNJ.JsonProperty("structuralId", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
+    public string StructuralId { get; set; }
 
-        /// <summary>Number of modes.</summary>
-        [SNJ.JsonProperty("NumModes", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
-        public int NumModes { get; set; }
+    /// <summary>Type of analysis to perform.</summary>
+    [SNJ.JsonConverter(typeof(SNJ.Converters.StringEnumConverter))]
+    [SNJ.JsonProperty("taskType", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
+    public StructuralLoadTaskType TaskType { get => StructuralLoadTaskType.Buckling; }
 
-        /// <summary>Maximum number of iterations.</summary>
-        [SNJ.JsonProperty("MaxNumIterations", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
-        public int MaxNumIterations { get; set; }
+    /// <summary>Number of modes.</summary>
+    [SNJ.JsonProperty("NumModes", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
+    public int NumModes { get; set; }
 
-        /// <summary>Name of the combination case.</summary>
-        [SNJ.JsonProperty("ResultCaseRef", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
-        public string ResultCaseRef { get; set; }
+    /// <summary>Maximum number of iterations.</summary>
+    [SNJ.JsonProperty("MaxNumIterations", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
+    public int MaxNumIterations { get; set; }
 
-        /// <summary>Stage definition for the task</summary>
-        [SNJ.JsonProperty("stageDefinitionRef", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
-        public string StageDefinitionRef { get; set; }
-    }
+    /// <summary>Name of the combination case.</summary>
+    [SNJ.JsonProperty("ResultCaseRef", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
+    public string ResultCaseRef { get; set; }
+
+    /// <summary>Stage definition for the task</summary>
+    [SNJ.JsonProperty("stageDefinitionRef", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
+    public string StageDefinitionRef { get; set; }
+  }
 
     [Serializable]
   public partial class StructuralLoadCombo : SpeckleObject, IStructural
@@ -448,7 +453,7 @@ namespace SpeckleElements
         {
             get
             {
-                var list = new List<String>();
+                var list = new List<string>();
                 if (StructuralProperties.ContainsKey("memberRefs"))
                 {
                     var memberRefs = (List<object>)StructuralProperties["memberRefs"];

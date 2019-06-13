@@ -22,7 +22,8 @@ namespace SpeckleElements
     {
         LinearStatic,
         NonlinearStatic,
-        Modal
+        Modal,
+        Buckling
     }
 
     public enum StructuralLoadComboType
