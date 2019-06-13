@@ -959,7 +959,7 @@ namespace SpeckleElements
     #region Mesh Generation Helper Functions
     private static List<List<int>> SplitMesh(double[] coordinates, int[] mesh)
     {
-      if (mesh.Length <= 4) return new List<List<int>>() { mesh.ToList() };
+      if (mesh.Length <= 3) return new List<List<int>>() { mesh.ToList() };
 
       // Need to ensure same area!
       double currArea = IntegrateHasher(coordinates, mesh);
@@ -1057,7 +1057,7 @@ namespace SpeckleElements
       //Integrate
       double area2 = 0;
       for (int i = 0; i < x.Count() - 1; i++)
-        area2 += x[i] * z[i + 1] - z[i] * y[i + 1];
+        area2 += x[i] * z[i + 1] - z[i] * x[i + 1];
 
       if (Math.Abs(area2) > 1e-16) return area2;
 
@@ -1236,7 +1236,7 @@ namespace SpeckleElements
     #region Mesh Generation Helper Functions
     private static List<List<int>> SplitMesh(double[] coordinates, int[] mesh)
     {
-      if (mesh.Length <= 4) return new List<List<int>>() { mesh.ToList() };
+      if (mesh.Length <= 3) return new List<List<int>>() { mesh.ToList() };
 
       // Need to ensure same area!
       double currArea = IntegrateHasher(coordinates, mesh);

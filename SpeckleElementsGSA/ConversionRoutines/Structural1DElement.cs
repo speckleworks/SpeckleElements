@@ -367,7 +367,12 @@ namespace SpeckleElementsGSA
         else if (member.EndRelease[0].Value.SequenceEqual(ParseEndReleases(3).Value))
           ls.Add("3");
         else
-          ls.Add("2");
+        {
+          if (member.EndRelease[0].Value.Skip(3).Take(3).SequenceEqual(new bool[] { false, false, false }))
+            ls.Add("2");
+          else
+            ls.Add("1");
+        }
       }
       catch { ls.Add("2"); }
 
@@ -380,7 +385,12 @@ namespace SpeckleElementsGSA
         else if (member.EndRelease[1].Value.SequenceEqual(ParseEndReleases(3).Value))
           ls.Add("3");
         else
-          ls.Add("2");
+        {
+          if (member.EndRelease[1].Value.Skip(3).Take(3).SequenceEqual(new bool[] { false, false, false }))
+            ls.Add("2");
+          else
+            ls.Add("1");
+        }
       }
       catch { ls.Add("2"); }
 
