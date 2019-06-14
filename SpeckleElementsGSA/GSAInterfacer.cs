@@ -16,6 +16,8 @@ namespace SpeckleElementsGSA
 {
   public class GSAInterfacer
   {
+    public const int DefaultAssemblyPoints = 10;
+
     public ComAuto GSAObject;
 
     public Indexer Indexer = new Indexer();

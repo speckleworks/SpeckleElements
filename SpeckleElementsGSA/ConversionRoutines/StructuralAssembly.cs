@@ -70,6 +70,8 @@ namespace SpeckleElementsGSA
         nodeIndices.Add(GSA.NodeAt(assembly.Value[i], assembly.Value[i + 1], assembly.Value[i + 2], Conversions.GSACoincidentNodeAllowance));
       }
 
+      var numPoints = (assembly.NumPoints == 0) ? GSAInterfacer.DefaultAssemblyPoints : assembly.NumPoints;
+
       List<string> ls = new List<string>
         {
           "SET",
@@ -80,12 +82,12 @@ namespace SpeckleElementsGSA
           "TOPO",
           nodeIndices[0].ToString(),
           nodeIndices[1].ToString(),
-          nodeIndices[0].ToString(), //Orientation node
+          GSA.NodeAt(assembly.OrientationPoint.Value[0], assembly.OrientationPoint.Value[1], assembly.OrientationPoint.Value[2], Conversions.GSACoincidentNodeAllowance).ToString(),
           "", //Empty list for int_topo as it assumed that the line is never curved
           "LAGRANGE",
           "0", //Curve order - reserved for future use according to the documentation
           "POINTS",
-          "20" //Number of points
+          numPoints.ToString() //Number of points
         };
 
       GSA.RunGWACommand(string.Join("\t", ls));

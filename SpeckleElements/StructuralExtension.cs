@@ -491,25 +491,32 @@ namespace SpeckleElements
         }
     }
 
-    public partial class StructuralAssembly
+  public partial class StructuralAssembly
+  {
+    public StructuralAssembly() { }
+
+    public StructuralAssembly(double[] value, IEnumerable<string> memberRefs, SpeckleLine baseLine, SpecklePoint orientationPoint, int numPoints = 0, string structuralId = null, Dictionary<string, object> properties = null)
     {
-        public StructuralAssembly() { }
+      this.Properties = properties;
+      this.StructuralId = structuralId;
+      this.MemberRefs = memberRefs.ToList();
+      this.Value = value.ToList();
+      this.OrientationPoint = orientationPoint;
+      this.NumPoints = numPoints;
+      this.BaseLine = baseLine;
+      GenerateHash();
+    }
 
-        public StructuralAssembly(double[] value, string[] memberRefs, string structuralId = null, Dictionary<string, object> properties = null)
-        {
-            this.Properties = properties;
-            this.StructuralId = structuralId;
-            this.MemberRefs = memberRefs.ToList();
-            this.Value = value.ToList();
-            GenerateHash();
-        }
-
-        public override void Scale(double factor)
-        {
-            for (int i = 0; i < this.Value.Count(); i++)
-            {
-                this.Value[i] *= factor;
-            }
+    public override void Scale(double factor)
+    {
+      for (int i = 0; i < this.Value.Count(); i++)
+      {
+        this.Value[i] *= factor;
+      }
+      for (int i = 0; i < this.OrientationPoint.Value.Count(); i++)
+      {
+        this.OrientationPoint.Value[i] *= factor;
+      }
 
       this.Properties = ScaleProperties(this.Properties, factor);
       this.GenerateHash();

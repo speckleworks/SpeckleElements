@@ -435,9 +435,23 @@ namespace SpeckleElements
       set => StructuralProperties["structuralId"] = value;
     }
 
+    [SNJ.JsonIgnore]
+    public int NumPoints
+    {
+      get
+      {
+        if (StructuralProperties.ContainsKey("numPoints") && int.TryParse(StructuralProperties["numPoints"].ToString(), out int numPoints))
+        {
+          return numPoints;
+        }
+        return 0;
+      }
+      set => StructuralProperties["numPoints"] = value;
+    }
+
     /// <summary>Base SpecklePolyline.</summary>
     [SNJ.JsonIgnore]
-    public SpeckleLine baseLine
+    public SpeckleLine BaseLine
     {
       get => this as SpeckleLine;
       set
@@ -445,6 +459,13 @@ namespace SpeckleElements
         this.Value = value.Value;
         this.Domain = value.Domain;
       }
+    }
+
+    [SNJ.JsonIgnore]
+    public SpecklePoint OrientationPoint
+    {
+      get => StructuralProperties.ContainsKey("orientationPoint") ? (StructuralProperties["orientationPoint"] as SpecklePoint) : null;
+      set => StructuralProperties["orientationPoint"] = value;
     }
 
     /// <summary>Structural ID of StructuralLoadCase.</summary>

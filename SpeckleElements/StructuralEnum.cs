@@ -15,7 +15,8 @@ namespace SpeckleElements
         Rain,
         Snow,
         Wind,
-        Earthquake
+        Earthquake,
+        Thermal
     }
 
     public enum StructuralLoadTaskType

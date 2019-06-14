@@ -52,6 +52,9 @@ namespace SpeckleElementsGSA
         case "LC_PERM_SOIL":
           obj.CaseType = StructuralLoadCaseType.Soil;
           break;
+        case "LC_VAR_TEMP":
+          obj.CaseType = StructuralLoadCaseType.Thermal;
+          break;
         default:
           obj.CaseType = StructuralLoadCaseType.Generic;
           break;
@@ -98,6 +101,9 @@ namespace SpeckleElementsGSA
           break;
         case StructuralLoadCaseType.Soil:
           ls.Add("LC_PERM_SOIL");
+          break;
+        case StructuralLoadCaseType.Thermal:
+          ls.Add("LC_VAR_TEMP");
           break;
         default:
           ls.Add("UNDEF");
