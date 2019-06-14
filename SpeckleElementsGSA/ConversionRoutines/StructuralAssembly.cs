@@ -13,36 +13,39 @@ namespace SpeckleElementsGSA
     public List<string> SubGWACommand { get; set; } = new List<string>();
     public dynamic Value { get; set; } = new StructuralAssembly();
 
-    public void ParseGWACommand(GSAInterfacer GSA, List<GSANode> nodes, List<GSA2DMember> members)
-    {
-      if (this.GWACommand == null)
-        return;
+		public void ParseGWACommand(GSAInterfacer GSA, List<GSANode> nodes, List<GSA2DMember> members)
+		{
+			if (this.GWACommand == null)
+				return;
 
-      var obj = new StructuralAssembly();
+			var obj = new StructuralAssembly();
 
-      var pieces = this.GWACommand.ListSplit(",");
+			var pieces = this.GWACommand.ListSplit(",");
 
-      var counter = 1; // Skip identifier
-      obj.StructuralId = pieces[counter++];
-      obj.Name = pieces[counter++].Trim(new char[] { '"' });
+			var counter = 1; // Skip identifier
+			obj.StructuralId = pieces[counter++];
+			obj.Name = pieces[counter++].Trim(new char[] { '"' });
 
-      var groups = pieces[counter++].Trim().ListSplit(" ");
-      var groupIds = new List<int>();
-      for (var i = 0; i < groups.Length; i++)
-      {
-        if (int.TryParse(groups[i].Replace("G", ""), out int groupId))
-        {
-          groupIds.Add(groupId);
-        }
-      }
-      var memberRefs = new List<string>();
-      for (var i = 0; i < groupIds.Count(); i++)
-      {
-        var member = members.Where(n => n.Group == groupIds[i]).FirstOrDefault();
-        memberRefs.Add(member.Value.StructuralId);
-      }
-      obj.MemberRefs = memberRefs;
+			var groups = pieces[counter++].Trim().ListSplit(" ");
+			var groupIds = new List<int>();
+			for (var i = 0; i < groups.Length; i++)
+			{
+				if (int.TryParse(groups[i].Replace("G", ""), out int groupId))
+				{
+					groupIds.Add(groupId);
+				}
+			}
 
+			if (members != null && members.Count() > 0)
+			{
+				var memberRefs = new List<string>();
+				for (var i = 0; i < groupIds.Count(); i++)
+				{
+					var member = members.Where(n => n.Group == groupIds[i]).FirstOrDefault();
+					memberRefs.Add(member.Value.StructuralId);
+				}
+				obj.MemberRefs = memberRefs;
+			}
       counter++; //TOPO
       var node1 = pieces[counter++];
       var node2 = pieces[counter++];
@@ -116,7 +119,11 @@ namespace SpeckleElementsGSA
       //Get all relevant GSA entities in this entire model
       var assemblies = new List<GSAAssembly>();
       var nodes = GSASenderObjects[typeof(GSANode)].Cast<GSANode>().ToList();
-      var members = GSASenderObjects[typeof(GSA2DMember)].Cast<GSA2DMember>().ToList();
+      var members = new List<GSA2DMember>();
+      if (GSASenderObjects.ContainsKey(typeof(GSA2DMember)))
+      {
+        members = GSASenderObjects[typeof(GSA2DMember)].Cast<GSA2DMember>().ToList();
+      }
 
       string keyword = objType.GetGSAKeyword();
       string[] subKeywords = objType.GetSubGSAKeyword();
