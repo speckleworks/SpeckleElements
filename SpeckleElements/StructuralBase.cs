@@ -141,6 +141,37 @@ namespace SpeckleElements
   }
 
   [Serializable]
+  public partial class StructuralLoadTaskBuckling : SpeckleObject, IStructural
+  {
+    public override string Type { get => "StructuralLoadTaskBuckling"; }
+
+    /// <summary>Structural ID to reference from other objects.</summary>
+    [SNJ.JsonProperty("structuralId", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
+    public string StructuralId { get; set; }
+
+    /// <summary>Type of analysis to perform.</summary>
+    [SNJ.JsonConverter(typeof(SNJ.Converters.StringEnumConverter))]
+    [SNJ.JsonProperty("taskType", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
+    public StructuralLoadTaskType TaskType { get => StructuralLoadTaskType.Buckling; }
+
+    /// <summary>Number of modes.</summary>
+    [SNJ.JsonProperty("NumModes", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
+    public int NumModes { get; set; }
+
+    /// <summary>Maximum number of iterations.</summary>
+    [SNJ.JsonProperty("MaxNumIterations", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
+    public int MaxNumIterations { get; set; }
+
+    /// <summary>Name of the combination case.</summary>
+    [SNJ.JsonProperty("ResultCaseRef", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
+    public string ResultCaseRef { get; set; }
+
+    /// <summary>Stage definition for the task</summary>
+    [SNJ.JsonProperty("stageDefinitionRef", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
+    public string StageDefinitionRef { get; set; }
+  }
+
+  [Serializable]
   public partial class StructuralLoadCombo : SpeckleObject, IStructural
   {
     public override string Type { get => "StructuralLoadCombo"; }
@@ -366,6 +397,117 @@ namespace SpeckleElements
       get => StructuralProperties.ContainsKey("loadCaseRef") ? (StructuralProperties["loadCaseRef"] as string) : null;
       set => StructuralProperties["loadCaseRef"] = value;
     }
+  }
+
+  [Serializable]
+  public partial class StructuralAssembly : SpeckleLine, IStructural
+  {
+    public override string Type { get => base.Type + "/StructuralAssembly"; }
+
+    [SNJ.JsonIgnore]
+    private Dictionary<string, object> StructuralProperties
+    {
+      get
+      {
+        if (base.Properties == null)
+          base.Properties = new Dictionary<string, object>();
+
+        if (!base.Properties.ContainsKey("structural"))
+          base.Properties["structural"] = new Dictionary<string, object>();
+
+        return base.Properties["structural"] as Dictionary<string, object>;
+
+      }
+      set
+      {
+        if (base.Properties == null)
+          base.Properties = new Dictionary<string, object>();
+
+        base.Properties["structural"] = value;
+      }
+    }
+
+    /// <summary>Structural ID to reference from other objects.</summary>
+    [SNJ.JsonIgnore]
+    public string StructuralId
+    {
+      get => StructuralProperties.ContainsKey("structuralId") ? (StructuralProperties["structuralId"] as string) : null;
+      set => StructuralProperties["structuralId"] = value;
+    }
+
+    [SNJ.JsonIgnore]
+    public int NumPoints
+    {
+      get
+      {
+        if (StructuralProperties.ContainsKey("numPoints") && int.TryParse(StructuralProperties["numPoints"].ToString(), out int numPoints))
+        {
+          return numPoints;
+        }
+        return 0;
+      }
+      set => StructuralProperties["numPoints"] = value;
+    }
+
+    /// <summary>Base SpecklePolyline.</summary>
+    [SNJ.JsonIgnore]
+    public SpeckleLine BaseLine
+    {
+      get => this as SpeckleLine;
+      set
+      {
+        this.Value = value.Value;
+        this.Domain = value.Domain;
+      }
+    }
+
+    [SNJ.JsonIgnore]
+    public SpecklePoint OrientationPoint
+    {
+      get => StructuralProperties.ContainsKey("orientationPoint") ? (StructuralProperties["orientationPoint"] as SpecklePoint) : null;
+      set => StructuralProperties["orientationPoint"] = value;
+    }
+
+    /// <summary>Structural ID of StructuralLoadCase.</summary>
+    [SNJ.JsonIgnore]
+    public List<string> MemberRefs
+    {
+      get
+      {
+        var list = new List<string>();
+        if (StructuralProperties.ContainsKey("memberRefs"))
+        {
+          var memberRefs = (List<object>)StructuralProperties["memberRefs"];
+          foreach (var memberRef in memberRefs)
+          {
+            list.Add((string)memberRef);
+          }
+        }
+        return list;
+      }
+      set
+      {
+        StructuralProperties["memberRefs"] = value.Select(v => (object)v).ToList();
+      }
+    }
+  }
+
+  [Serializable]
+  public partial class StructuralStageDefinition : SpeckleObject, IStructural
+  {
+    public override string Type { get => "StructuralStageDefinition"; }
+
+    /// <summary>Structural ID to reference from other objects.</summary>
+    [SNJ.JsonProperty("structuralId", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
+    public string StructuralId { get; set; }
+
+    /// <summary>Structural ID of members to include in the stage of the construction sequence.</summary>
+    [SNJ.JsonProperty("memberRefs", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
+    public List<string> MemberRefs { get; set; }
+
+    /// <summary>Number of days in the stage</summary>
+    [SNJ.JsonProperty("stageDays", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
+    public int StageDays { get; set; }
   }
   #endregion
 
@@ -1241,11 +1383,12 @@ namespace SpeckleElements
     [SNJ.JsonIgnore]
     public List<double> Offset
     {
-      get {
+      get
+      {
         if (StructuralProperties.ContainsKey("offset"))
         {
           try
-          { 
+          {
             try
             {
               return (List<double>)StructuralProperties["offset"];

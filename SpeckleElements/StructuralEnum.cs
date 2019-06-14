@@ -15,14 +15,16 @@ namespace SpeckleElements
         Rain,
         Snow,
         Wind,
-        Earthquake
+        Earthquake,
+        Thermal
     }
 
     public enum StructuralLoadTaskType
     {
         LinearStatic,
         NonlinearStatic,
-        Modal
+        Modal,
+        Buckling
     }
 
     public enum StructuralLoadComboType

@@ -16,6 +16,8 @@ namespace SpeckleElementsGSA
 {
   public class GSAInterfacer
   {
+    public const int DefaultAssemblyPoints = 10;
+
     public ComAuto GSAObject;
 
     public Indexer Indexer = new Indexer();
@@ -164,7 +166,7 @@ namespace SpeckleElementsGSA
 
               GSAGetCache[command] = string.Join("\n", result);
             }
-            else if (command.StartsWith("GET_ALL,ANAL"))
+                        else if (command.StartsWith("GET_ALL,ANAL.") || (command.StartsWith("GET_ALL,ANAL,")))
             {
               // TODO: Anal GET_ALL work around
               int highestRef = (int)RunGWACommand("HIGHEST,ANAL.1");

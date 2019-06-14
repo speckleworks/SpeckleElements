@@ -354,6 +354,28 @@ namespace SpeckleElements
     }
   }
 
+    public partial class StructuralLoadTaskBuckling
+    {
+        public StructuralLoadTaskBuckling() { }
+
+        public StructuralLoadTaskBuckling(int numModes, int maxNumIterations, string resultCaseRef, string structuralId = null, Dictionary<string, object> properties = null, string stageDefinitionRef = null)
+        {
+            this.StructuralId = structuralId;
+            this.Properties = properties;
+            this.NumModes = numModes;
+            this.MaxNumIterations = maxNumIterations;
+            this.ResultCaseRef = resultCaseRef;
+            this.StageDefinitionRef = stageDefinitionRef;
+            GenerateHash();
+        }
+
+        public override void Scale(double factor)
+        {
+            this.Properties = ScaleProperties(this.Properties, factor);
+            this.GenerateHash();
+        }
+    }
+
   public partial class StructuralLoadCombo
   {
     public StructuralLoadCombo() { }
@@ -463,6 +485,38 @@ namespace SpeckleElements
     {
       for (int i = 0; i < this.Value.Count(); i++)
         this.Value[i] *= factor;
+
+            this.Properties = ScaleProperties(this.Properties, factor);
+            this.GenerateHash();
+        }
+    }
+
+  public partial class StructuralAssembly
+  {
+    public StructuralAssembly() { }
+
+    public StructuralAssembly(double[] value, IEnumerable<string> memberRefs, SpeckleLine baseLine, SpecklePoint orientationPoint, int numPoints = 0, string structuralId = null, Dictionary<string, object> properties = null)
+    {
+      this.Properties = properties;
+      this.StructuralId = structuralId;
+      this.MemberRefs = memberRefs.ToList();
+      this.Value = value.ToList();
+      this.OrientationPoint = orientationPoint;
+      this.NumPoints = numPoints;
+      this.BaseLine = baseLine;
+      GenerateHash();
+    }
+
+    public override void Scale(double factor)
+    {
+      for (int i = 0; i < this.Value.Count(); i++)
+      {
+        this.Value[i] *= factor;
+      }
+      for (int i = 0; i < this.OrientationPoint.Value.Count(); i++)
+      {
+        this.OrientationPoint.Value[i] *= factor;
+      }
 
       this.Properties = ScaleProperties(this.Properties, factor);
       this.GenerateHash();
