@@ -509,6 +509,98 @@ namespace SpeckleElements
     [SNJ.JsonProperty("stageDays", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
     public int StageDays { get; set; }
   }
+
+  public partial class StructuralLinearSpringProperty : SpeckleObject, IStructural
+  {
+    public override string Type { get => base.Type + "/StructuralLinearSpringProperty"; }
+
+    [SNJ.JsonIgnore]
+    private Dictionary<string, object> StructuralProperties
+    {
+      get
+      {
+        if (base.Properties == null)
+          base.Properties = new Dictionary<string, object>();
+
+        if (!base.Properties.ContainsKey("structural"))
+          base.Properties["structural"] = new Dictionary<string, object>();
+
+        return base.Properties["structural"] as Dictionary<string, object>;
+
+      }
+      set
+      {
+        if (base.Properties == null)
+          base.Properties = new Dictionary<string, object>();
+
+        base.Properties["structural"] = value;
+      }
+    }
+
+    /// <summary>Structural ID to reference from other objects.</summary>
+    [SNJ.JsonIgnore]
+    public string StructuralId
+    {
+      get => StructuralProperties.ContainsKey("structuralId") ? (StructuralProperties["structuralId"] as string) : null;
+      set => StructuralProperties["structuralId"] = value;
+    }
+
+    /// <summary>Structural ID to reference from other objects.</summary>
+    [SNJ.JsonIgnore]
+    public string Axis
+    {
+      get => StructuralProperties.ContainsKey("structuralId") ? (StructuralProperties["structuralId"] as string) : null;
+      set => StructuralProperties["structuralId"] = value;
+    }
+
+    /// <summary>Structural ID to reference from other objects.</summary>
+    [SNJ.JsonIgnore]
+    public double StiffnessX
+    {
+      get => (StructuralProperties.ContainsKey("stiffnessX") && double.TryParse(StructuralProperties["stiffnessX"].ToString(), out double stiffness)) ? stiffness : 0;
+      set => StructuralProperties["stiffnessX"] = value;
+    }
+
+    /// <summary>Structural ID to reference from other objects.</summary>
+    [SNJ.JsonIgnore]
+    public double StiffnessY
+    {
+      get => (StructuralProperties.ContainsKey("stiffnessY") && double.TryParse(StructuralProperties["stiffnessY"].ToString(), out double stiffness)) ? stiffness : 0;
+      set => StructuralProperties["stiffnessY"] = value;
+    }
+
+    /// <summary>Structural ID to reference from other objects.</summary>
+    [SNJ.JsonIgnore]
+    public double StiffnessZ
+    {
+      get => (StructuralProperties.ContainsKey("stiffnessZ") && double.TryParse(StructuralProperties["stiffnessZ"].ToString(), out double stiffness)) ? stiffness : 0;
+      set => StructuralProperties["stiffnessZ"] = value;
+    }
+
+    /// <summary>Structural ID to reference from other objects.</summary>
+    [SNJ.JsonIgnore]
+    public double StiffnessXx
+    {
+      get => (StructuralProperties.ContainsKey("stiffnessXx") && double.TryParse(StructuralProperties["stiffnessXx"].ToString(), out double stiffness)) ? stiffness : 0;
+      set => StructuralProperties["stiffnessXx"] = value;
+    }
+
+    /// <summary>Structural ID to reference from other objects.</summary>
+    [SNJ.JsonIgnore]
+    public double StiffnessYy
+    {
+      get => (StructuralProperties.ContainsKey("stiffnessYy") && double.TryParse(StructuralProperties["stiffnessYy"].ToString(), out double stiffness)) ? stiffness : 0;
+      set => StructuralProperties["stiffnessYy"] = value;
+    }
+
+    /// <summary>Structural ID to reference from other objects.</summary>
+    [SNJ.JsonIgnore]
+    public double StiffnessZz
+    {
+      get => (StructuralProperties.ContainsKey("stiffnessZz") && double.TryParse(StructuralProperties["stiffnessZz"].ToString(), out double stiffness)) ? stiffness : 0;
+      set => StructuralProperties["stiffnessZz"] = value;
+    }
+  }
   #endregion
 
   #region Properties
