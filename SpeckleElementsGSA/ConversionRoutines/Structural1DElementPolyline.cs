@@ -86,7 +86,10 @@ namespace SpeckleElementsGSA
           obj.EndRelease.AddRange(element.Value.EndRelease);
           obj.Offset.AddRange(element.Value.Offset);
 
-          obj.ResultVertices.AddRange(element.Value.ResultVertices);
+          if (Conversions.GSAElement1DResults.Count > 0 && Conversions.GSAEmbedResults)
+            obj.ResultVertices.AddRange(element.Value.ResultVertices);
+          else
+            obj.ResultVertices.AddRange((element.Value.Value as List<double>));
         }
         else
         {
@@ -97,8 +100,14 @@ namespace SpeckleElementsGSA
           obj.Offset.Add((element.Value.Offset as List<StructuralVectorThree>).Last());
           obj.Offset.Add((element.Value.Offset as List<StructuralVectorThree>).First());
 
-          for (int i = element.Value.ResultVertices.Count - 3; i >= 0; i -= 3)
-            obj.ResultVertices.AddRange((element.Value.ResultVertices as List<double>).Skip(i).Take(3));
+          if (Conversions.GSAElement1DResults.Count > 0 && Conversions.GSAEmbedResults)
+            for (int i = element.Value.ResultVertices.Count - 3; i >= 0; i -= 3)
+              obj.ResultVertices.AddRange((element.Value.ResultVertices as List<double>).Skip(i).Take(3));
+          else
+          {
+            obj.ResultVertices.AddRange((element.Value.Value as List<double>).Skip(3).Take(3));
+            obj.ResultVertices.AddRange((element.Value.Value as List<double>).Take(3));
+          }
         }
 
         // Result merging

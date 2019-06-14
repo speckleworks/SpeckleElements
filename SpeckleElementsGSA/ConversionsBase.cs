@@ -41,6 +41,8 @@ namespace SpeckleElementsGSA
     public static bool GSAResultInLocalAxis { get; set; }
 
     public static int GSAResult1DNumPosition { get; set; }
+
+    public static bool GSAEmbedResults { get; set; }
   }
 
   public static partial class Conversions
@@ -68,5 +70,7 @@ namespace SpeckleElementsGSA
     public static bool GSAResultInLocalAxis { get => Initialiser.GSAResultInLocalAxis; }
 
     public static int GSAResult1DNumPosition { get => Initialiser.GSAResult1DNumPosition; }
+
+    public static bool GSAEmbedResults { get => Initialiser.GSAEmbedResults; }
   }
 }

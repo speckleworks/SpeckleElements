@@ -10,7 +10,7 @@ using SpeckleElements;
 
 namespace SpeckleElementsGSA
 {
-  [GSAObject("", new string[] { }, "elements", true, false, new Type[] { typeof(GSANode) }, new Type[] { })]
+  [GSAObject("", new string[] { }, "results", true, false, new Type[] { typeof(GSANode) }, new Type[] { })]
   public class GSANodeResult : IGSASpeckleContainer
   {
     public string GWACommand { get; set; }
@@ -26,42 +26,102 @@ namespace SpeckleElementsGSA
       if (Conversions.GSANodalResults.Count() == 0)
         return new SpeckleNull();
 
-      if (!GSASenderObjects.ContainsKey(typeof(GSANode)))
+      if (Conversions.GSAEmbedResults && !GSASenderObjects.ContainsKey(typeof(GSANode)))
         return new SpeckleNull();
 
-      List<GSANode> nodes = GSASenderObjects[typeof(GSANode)].Cast<GSANode>().ToList();
-
-      foreach(KeyValuePair<string, Tuple<int, int, List<string>>> kvp in Conversions.GSANodalResults)
+      if (GSAEmbedResults)
       {
-        foreach (string loadCase in GSAResultCases)
+        List<GSANode> nodes = GSASenderObjects[typeof(GSANode)].Cast<GSANode>().ToList();
+
+        foreach (KeyValuePair<string, Tuple<int, int, List<string>>> kvp in Conversions.GSANodalResults)
         {
-          if (!GSA.CaseExist(loadCase))
-            continue;
-
-          foreach (GSANode node in nodes)
+          foreach (string loadCase in GSAResultCases)
           {
-            int id = Convert.ToInt32(node.Value.StructuralId);
-
-            if (node.Value.Result == null)
-              node.Value.Result = new Dictionary<string, object>();
-
-            var resultExport = GSA.GetGSAResult(id, kvp.Value.Item1, kvp.Value.Item2, kvp.Value.Item3, loadCase, GSAResultInLocalAxis ? "local" : "global");
-
-            if (resultExport == null)
+            if (!GSA.CaseExist(loadCase))
               continue;
 
-            if (!node.Value.Result.ContainsKey(loadCase))
-              node.Value.Result[loadCase] = new StructuralNodeResult()
-              {
-                Value = new Dictionary<string, object>()
-              };
-            (node.Value.Result[loadCase] as StructuralNodeResult).Value[kvp.Key] = resultExport;
+            foreach (GSANode node in nodes)
+            {
+              int id = Convert.ToInt32(node.Value.StructuralId);
 
-            node.ForceSend = true;
+              if (node.Value.Result == null)
+                node.Value.Result = new Dictionary<string, object>();
+
+              var resultExport = GSA.GetGSAResult(id, kvp.Value.Item1, kvp.Value.Item2, kvp.Value.Item3, loadCase, GSAResultInLocalAxis ? "local" : "global");
+
+              if (resultExport == null)
+                continue;
+
+              if (!node.Value.Result.ContainsKey(loadCase))
+                node.Value.Result[loadCase] = new StructuralNodeResult()
+                {
+                  Value = new Dictionary<string, object>()
+                };
+              (node.Value.Result[loadCase] as StructuralNodeResult).Value[kvp.Key] = resultExport;
+
+              node.ForceSend = true;
+            }
           }
         }
       }
-    
+      else
+      {
+        GSASenderObjects[typeof(GSANodeResult)] = new List<object>();
+
+        List<GSANodeResult> results = new List<GSANodeResult>();
+
+        string keyword = HelperClass.GetGSAKeyword(typeof(GSANode));
+
+        foreach (KeyValuePair<string, Tuple<int, int, List<string>>> kvp in Conversions.GSANodalResults)
+        {
+          foreach (string loadCase in GSAResultCases)
+          {
+            if (!GSA.CaseExist(loadCase))
+              continue;
+
+            int id = 1;
+            int highestIndex = (int)GSA.RunGWACommand("HIGHEST\t" + keyword);
+
+            while (id <= highestIndex)
+            {
+              if ((int)GSA.RunGWACommand("EXIST\t" + keyword + "\t" + id.ToString()) == 1)
+              {
+                var resultExport = GSA.GetGSAResult(id, kvp.Value.Item1, kvp.Value.Item2, kvp.Value.Item3, loadCase, GSAResultInLocalAxis ? "local" : "global");
+
+                if (resultExport == null)
+                {
+                  id++;
+                  continue;
+                }
+                
+                var existingRes = results.FirstOrDefault(x => x.Value.TargetRef == id.ToString());
+                if (existingRes == null)
+                {
+                  StructuralNodeResult newRes = new StructuralNodeResult()
+                  {
+                    Value = new Dictionary<string, object>(),
+                    TargetRef = id.ToString(),
+                    IsGlobal = !GSAResultInLocalAxis,
+                  };
+                  newRes.Value[kvp.Key] = resultExport;
+
+                  newRes.GenerateHash();
+
+                  results.Add(new GSANodeResult() { Value = newRes });
+                }
+                else
+                {
+                  existingRes.Value.Value[kvp.Key] = resultExport;
+                }
+              }
+              id++;
+            }
+          }
+        }
+
+        GSASenderObjects[typeof(GSANodeResult)].AddRange(results);
+      }
+
       return new SpeckleObject();
     }
   }

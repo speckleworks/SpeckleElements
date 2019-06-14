@@ -1352,6 +1352,10 @@ namespace SpeckleElements
     [SNJ.JsonProperty("structuralId", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
     public string StructuralId { get; set; }
 
+    /// <summary>StructuralID of object referred to.</summary>
+    [SNJ.JsonProperty("targetRef", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
+    public string TargetRef { get; set; }
+
     /// <summary>Indicates whether the results are in the global or local axis.</summary>
     [SNJ.JsonProperty("isGlobal", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
     public bool IsGlobal { get; set; }
@@ -1370,6 +1374,10 @@ namespace SpeckleElements
     [SNJ.JsonProperty("structuralId", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
     public string StructuralId { get; set; }
 
+    /// <summary>StructuralID of object referred to.</summary>
+    [SNJ.JsonProperty("targetRef", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
+    public string TargetRef { get; set; }
+
     /// <summary>Indicates whether the results are in the global or local axis.</summary>
     [SNJ.JsonProperty("isGlobal", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
     public bool IsGlobal { get; set; }
@@ -1387,6 +1395,10 @@ namespace SpeckleElements
     /// <summary>Structural ID to reference from other objects.</summary>
     [SNJ.JsonProperty("structuralId", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
     public string StructuralId { get; set; }
+
+    /// <summary>StructuralID of object referred to.</summary>
+    [SNJ.JsonProperty("targetRef", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
+    public string TargetRef { get; set; }
 
     /// <summary>Indicates whether the results are in the global or local axis.</summary>
     [SNJ.JsonProperty("isGlobal", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
