@@ -13,39 +13,40 @@ namespace SpeckleElementsGSA
     public List<string> SubGWACommand { get; set; } = new List<string>();
     public dynamic Value { get; set; } = new StructuralAssembly();
 
-		public void ParseGWACommand(GSAInterfacer GSA, List<GSANode> nodes, List<GSA2DMember> members)
-		{
-			if (this.GWACommand == null)
-				return;
+    public void ParseGWACommand(GSAInterfacer GSA, List<GSANode> nodes, List<GSA2DMember> members)
+    {
+      if (this.GWACommand == null)
+        return;
 
-			var obj = new StructuralAssembly();
+      var obj = new StructuralAssembly();
 
-			var pieces = this.GWACommand.ListSplit(",");
+      var pieces = this.GWACommand.ListSplit(",");
 
-			var counter = 1; // Skip identifier
-			obj.StructuralId = pieces[counter++];
-			obj.Name = pieces[counter++].Trim(new char[] { '"' });
+      var counter = 1; // Skip identifier
+      obj.StructuralId = pieces[counter++];
+      obj.Name = pieces[counter++].Trim(new char[] { '"' });
 
-			var groups = pieces[counter++].Trim().ListSplit(" ");
-			var groupIds = new List<int>();
-			for (var i = 0; i < groups.Length; i++)
-			{
-				if (int.TryParse(groups[i].Replace("G", ""), out int groupId))
-				{
-					groupIds.Add(groupId);
-				}
-			}
+      var groupIds = GSA.GetGroupsFromGSAList(pieces[counter++]).ToList();
+      //var groups = pieces[counter++].Trim().ListSplit(" ");
+      //var groupIds = new List<int>();
+      //for (var i = 0; i < groups.Length; i++)
+      //{
+      //	if (int.TryParse(groups[i].Replace("G", ""), out int groupId))
+      //	{
+      //		groupIds.Add(groupId);
+      //	}
+      //}
 
-			if (members != null && members.Count() > 0)
-			{
-				var memberRefs = new List<string>();
-				for (var i = 0; i < groupIds.Count(); i++)
-				{
-					var member = members.Where(n => n.Group == groupIds[i]).FirstOrDefault();
-					memberRefs.Add(member.Value.StructuralId);
-				}
-				obj.MemberRefs = memberRefs;
-			}
+      if (members != null && members.Count() > 0)
+      {
+        var memberRefs = new List<string>();
+        for (var i = 0; i < groupIds.Count(); i++)
+        {
+          var member = members.Where(n => n.Group == groupIds[i]).FirstOrDefault();
+          memberRefs.Add(member.Value.StructuralId);
+        }
+        obj.MemberRefs = memberRefs;
+      }
       counter++; //TOPO
       var node1 = pieces[counter++];
       var node2 = pieces[counter++];
@@ -73,7 +74,7 @@ namespace SpeckleElementsGSA
         nodeIndices.Add(GSA.NodeAt(assembly.Value[i], assembly.Value[i + 1], assembly.Value[i + 2], Conversions.GSACoincidentNodeAllowance));
       }
 
-      var numPoints = (assembly.NumPoints == 0) ? GSAInterfacer.DefaultAssemblyPoints : assembly.NumPoints;
+      var numPoints = (assembly.NumPoints == 0) ? 10 : assembly.NumPoints;
 
       List<string> ls = new List<string>
         {
@@ -101,10 +102,7 @@ namespace SpeckleElementsGSA
   {
     public static bool ToNative(this StructuralAssembly assembly)
     {
-      if (Conversions.GSATargetLayer == GSATargetLayer.Analysis)
-        new GSAAssembly() { Value = assembly }.SetGWACommand(GSA);
-      else if (Conversions.GSATargetLayer == GSATargetLayer.Design)
-        new GSAAssembly() { Value = assembly }.SetGWACommand(GSA);
+      new GSAAssembly() { Value = assembly }.SetGWACommand(GSA);
 
       return true;
     }

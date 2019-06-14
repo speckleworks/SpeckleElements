@@ -449,7 +449,7 @@ namespace SpeckleElements
       set => StructuralProperties["numPoints"] = value;
     }
 
-    /// <summary>Base SpecklePolyline.</summary>
+    /// <summary>Base SpeckleLine.</summary>
     [SNJ.JsonIgnore]
     public SpeckleLine BaseLine
     {
@@ -474,21 +474,27 @@ namespace SpeckleElements
     {
       get
       {
-        var list = new List<string>();
         if (StructuralProperties.ContainsKey("memberRefs"))
         {
-          var memberRefs = (List<object>)StructuralProperties["memberRefs"];
-          foreach (var memberRef in memberRefs)
+          try
           {
-            list.Add((string)memberRef);
+            try
+            {
+              return (List<string>)StructuralProperties["memberRefs"];
+            }
+            catch
+            {
+              this.MemberRefs = ((List<object>)StructuralProperties["memberRefs"]).Select(x => Convert.ToString(x)).ToList();
+              return this.MemberRefs;
+            }
           }
+          catch
+          { return null; }
         }
-        return list;
+        else
+          return null;
       }
-      set
-      {
-        StructuralProperties["memberRefs"] = value.Select(v => (object)v).ToList();
-      }
+      set => StructuralProperties["memberRefs"] = value;
     }
   }
 

@@ -7,159 +7,160 @@ using SpeckleElements;
 namespace SpeckleElementsGSA
 {
   [GSAObject("ANAL_STAGE.3", new string[] { "LIST.1" }, "elements", true, true, new Type[] { typeof(GSA1DMember), typeof(GSA2DMember) }, new Type[] { typeof(GSA1DMember), typeof(GSA2DMember) })]
-    public class GSAStageDefinition : IGSASpeckleContainer
+  public class GSAStageDefinition : IGSASpeckleContainer
+  {
+    public string GWACommand { get; set; }
+    public List<string> SubGWACommand { get; set; } = new List<string>();
+    public dynamic Value { get; set; } = new StructuralStageDefinition();
+
+    public void ParseGWACommand(GSAInterfacer GSA)
     {
-        public string GWACommand { get; set; }
-        public List<string> SubGWACommand { get; set; } = new List<string>();
-        public dynamic Value { get; set; } = new StructuralStageDefinition();
+      if (this.GWACommand == null)
+        return;
 
-        public void ParseGWACommand(GSAInterfacer GSA)
+      StructuralStageDefinition obj = new StructuralStageDefinition();
+
+      string[] pieces = this.GWACommand.ListSplit(",");
+
+      int counter = 1; // Skip identifier
+
+      obj.StructuralId = pieces[counter++];
+      obj.Name = pieces[counter++];
+
+      counter++; //Skip colour
+
+      //Member list
+      obj.MemberRefs = GSA.GetGroupsFromGSAList(pieces[counter++]).Select(x => x.ToString()).ToList();
+      //obj.MemberRefs = pieces[counter++].Trim().Split(' ').Select(g => g.Replace("G", "")).ToList();
+      counter++; //Skip creep coefficient
+      var intString = pieces[counter++];
+      try
+      {
+        var converted = int.TryParse(intString, out int stageDays);
+        if (converted)
         {
-            if (this.GWACommand == null)
-                return;
-
-            StructuralStageDefinition obj = new StructuralStageDefinition();
-
-            string[] pieces = this.GWACommand.ListSplit(",");
-
-            int counter = 1; // Skip identifier
-
-            obj.StructuralId = pieces[counter++];
-            obj.Name = pieces[counter++];
-
-            counter++; //Skip colour
-
-            //Member list
-            obj.MemberRefs = pieces[counter++].Trim().Split(' ').Select(g => g.Replace("G", "")).ToList();
-            counter++; //Skip creep coefficient
-            var intString = pieces[counter++];
-            try
-            {
-                var converted = int.TryParse(intString, out int stageDays);
-                if (converted)
-                {
-                    obj.StageDays = stageDays;
-                }
-            }
-            catch { }
-
-            this.Value = obj;
+          obj.StageDays = stageDays;
         }
+      }
+      catch { }
 
-        public void SetGWACommand(GSAInterfacer GSA)
-        {
-            if (this.Value == null)
-                return;
-
-            StructuralStageDefinition stageDef = this.Value as StructuralStageDefinition;
-            
-            string keyword = typeof(GSAStageDefinition).GetGSAKeyword();
-            var subkeywords = typeof(GSAStageDefinition).GetSubGSAKeyword();
-
-            int index = GSA.Indexer.ResolveIndex(typeof(GSAStageDefinition), stageDef);
-            int elemListIndex = GSA.Indexer.ResolveIndex(subkeywords[0]);
-
-            //The object mentions members by their structural Ids.  The corresponding members need to be queried, and their group IDs collated
-            var groupIds = new List<int>();
-            foreach (var memberRef in stageDef.MemberRefs)
-            {
-                var index1d = GSA.Indexer.LookupIndex(typeof(GSA1DMember), memberRef);
-                if (index1d == null)
-                {
-                    var index2d = GSA.Indexer.LookupIndex(typeof(GSA2DMember), memberRef);
-                    if (index2d != null)
-                    {
-                        groupIds.Add((int)index2d);
-                    }
-                }
-                else
-                {
-                    groupIds.Add((int)index1d);
-                }
-
-            }
-
-            var stageName = string.IsNullOrEmpty(stageDef.Name) ? " " : stageDef.Name;
-            var groupsStr = (groupIds.Count() > 0) ? string.Join(" ", groupIds.Select(i => ("G" + i.ToString()))) : "";
-
-            //Create the list of elements first
-            List<string> ls = new List<string>
-            {
-                // Set ANAL_STAGE
-                "SET",
-                subkeywords[0],
-                elemListIndex.ToString(),
-                stageName, // Name
-                "ELEMENT", // Type
-                groupsStr //Elements by group name
-            };
-
-            GSA.RunGWACommand(string.Join("\t", ls));
-
-            ls = new List<string>
-            {
-                // Set ANAL_STAGE
-                "SET",
-                keyword,
-                index.ToString(),
-                stageName, // Name
-                "NO_RGB", // Colour
-                groupsStr, //Elements by group name
-                "0", //Creep factor
-                stageDef.StageDays.ToString() // Stage
-            };
-
-            GSA.RunGWACommand(string.Join("\t", ls));
-        }
+      this.Value = obj;
     }
 
-    public static partial class Conversions
+    public void SetGWACommand(GSAInterfacer GSA)
     {
-        public static bool ToNative(this StructuralStageDefinition stageDefinition)
+      if (this.Value == null)
+        return;
+
+      StructuralStageDefinition stageDef = this.Value as StructuralStageDefinition;
+
+      string keyword = typeof(GSAStageDefinition).GetGSAKeyword();
+      var subkeywords = typeof(GSAStageDefinition).GetSubGSAKeyword();
+
+      int index = GSA.Indexer.ResolveIndex(typeof(GSAStageDefinition), stageDef);
+      int elemListIndex = GSA.Indexer.ResolveIndex(subkeywords[0]);
+
+      //The object mentions members by their structural Ids.  The corresponding members need to be queried, and their group IDs collated
+      var groupIds = new List<int>();
+      foreach (var memberRef in stageDef.MemberRefs)
+      {
+        var index1d = GSA.Indexer.LookupIndex(typeof(GSA1DMember), memberRef);
+        if (index1d == null)
         {
-            var gsaStageDefinition = new GSAStageDefinition() { Value = stageDefinition };
-
-            gsaStageDefinition.SetGWACommand(GSA);
-
-            return true;
+          var index2d = GSA.Indexer.LookupIndex(typeof(GSA2DMember), memberRef);
+          if (index2d != null)
+          {
+            groupIds.Add((int)index2d);
+          }
+        }
+        else
+        {
+          groupIds.Add((int)index1d);
         }
 
-        public static SpeckleObject ToSpeckle(this GSAStageDefinition dummyObject)
+      }
+
+      var stageName = string.IsNullOrEmpty(stageDef.Name) ? " " : stageDef.Name;
+      var groupsStr = (groupIds.Count() > 0) ? string.Join(" ", groupIds.Select(i => ("G" + i.ToString()))) : "";
+
+      //Create the list of elements first
+      List<string> ls = new List<string>
         {
-            if (!GSASenderObjects.ContainsKey(typeof(GSAStageDefinition)))
-                GSASenderObjects[typeof(GSAStageDefinition)] = new List<object>();
+          // Set ANAL_STAGE
+          "SET",
+          subkeywords[0],
+          elemListIndex.ToString(),
+          stageName, // Name
+          "ELEMENT", // Type
+          groupsStr //Elements by group name
+        };
 
-            List<GSAStageDefinition> stageDefs = new List<GSAStageDefinition>();
+      GSA.RunGWACommand(string.Join("\t", ls));
 
-            string keyword = typeof(GSAStageDefinition).GetGSAKeyword();
-            string[] subKeywords = typeof(GSAStageDefinition).GetSubGSAKeyword();
+      ls = new List<string>
+        {
+          // Set ANAL_STAGE
+          "SET",
+          keyword,
+          index.ToString(),
+          stageName, // Name
+          "NO_RGB", // Colour
+          groupsStr, //Elements by group name
+          "0", //Creep factor
+          stageDef.StageDays.ToString() // Stage
+        };
 
-            string[] lines = GSA.GetGWARecords("GET_ALL," + keyword);
-            List<string> deletedLines = GSA.GetDeletedGWARecords("GET_ALL," + keyword).ToList();
-            foreach (string k in subKeywords)
-                deletedLines.AddRange(GSA.GetDeletedGWARecords("GET_ALL," + k));
-
-            // Remove deleted lines
-            GSASenderObjects[typeof(GSAStageDefinition)].RemoveAll(l => deletedLines.Contains((l as IGSASpeckleContainer).GWACommand));
-            foreach (KeyValuePair<Type, List<object>> kvp in GSASenderObjects)
-                kvp.Value.RemoveAll(l => (l as IGSASpeckleContainer).SubGWACommand.Any(x => deletedLines.Contains(x)));
-       
-            // Filter only new lines
-            string[] prevLines = GSASenderObjects[typeof(GSAStageDefinition)].Select(l => (l as IGSASpeckleContainer).GWACommand).ToArray();
-            string[] newLines = lines.Where(l => !prevLines.Contains(l)).ToArray();
-
-            foreach (string p in newLines)
-            {
-                GSAStageDefinition combo = new GSAStageDefinition() { GWACommand = p };
-                combo.ParseGWACommand(GSA);
-                stageDefs.Add(combo);
-            }
-
-            GSASenderObjects[typeof(GSAStageDefinition)].AddRange(stageDefs);
-
-            if (stageDefs.Count() > 0 || deletedLines.Count() > 0) return new SpeckleObject();
-
-            return new SpeckleNull();
-        }
+      GSA.RunGWACommand(string.Join("\t", ls));
     }
+  }
+
+  public static partial class Conversions
+  {
+    public static bool ToNative(this StructuralStageDefinition stageDefinition)
+    {
+      var gsaStageDefinition = new GSAStageDefinition() { Value = stageDefinition };
+
+      gsaStageDefinition.SetGWACommand(GSA);
+
+      return true;
+    }
+
+    public static SpeckleObject ToSpeckle(this GSAStageDefinition dummyObject)
+    {
+      if (!GSASenderObjects.ContainsKey(typeof(GSAStageDefinition)))
+        GSASenderObjects[typeof(GSAStageDefinition)] = new List<object>();
+
+      List<GSAStageDefinition> stageDefs = new List<GSAStageDefinition>();
+
+      string keyword = typeof(GSAStageDefinition).GetGSAKeyword();
+      string[] subKeywords = typeof(GSAStageDefinition).GetSubGSAKeyword();
+
+      string[] lines = GSA.GetGWARecords("GET_ALL," + keyword);
+      List<string> deletedLines = GSA.GetDeletedGWARecords("GET_ALL," + keyword).ToList();
+      foreach (string k in subKeywords)
+        deletedLines.AddRange(GSA.GetDeletedGWARecords("GET_ALL," + k));
+
+      // Remove deleted lines
+      GSASenderObjects[typeof(GSAStageDefinition)].RemoveAll(l => deletedLines.Contains((l as IGSASpeckleContainer).GWACommand));
+      foreach (KeyValuePair<Type, List<object>> kvp in GSASenderObjects)
+        kvp.Value.RemoveAll(l => (l as IGSASpeckleContainer).SubGWACommand.Any(x => deletedLines.Contains(x)));
+
+      // Filter only new lines
+      string[] prevLines = GSASenderObjects[typeof(GSAStageDefinition)].Select(l => (l as IGSASpeckleContainer).GWACommand).ToArray();
+      string[] newLines = lines.Where(l => !prevLines.Contains(l)).ToArray();
+
+      foreach (string p in newLines)
+      {
+        GSAStageDefinition combo = new GSAStageDefinition() { GWACommand = p };
+        combo.ParseGWACommand(GSA);
+        stageDefs.Add(combo);
+      }
+
+      GSASenderObjects[typeof(GSAStageDefinition)].AddRange(stageDefs);
+
+      if (stageDefs.Count() > 0 || deletedLines.Count() > 0) return new SpeckleObject();
+
+      return new SpeckleNull();
+    }
+  }
 }

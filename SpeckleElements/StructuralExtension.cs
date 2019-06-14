@@ -486,10 +486,10 @@ namespace SpeckleElements
       for (int i = 0; i < this.Value.Count(); i++)
         this.Value[i] *= factor;
 
-            this.Properties = ScaleProperties(this.Properties, factor);
-            this.GenerateHash();
-        }
+      this.Properties = ScaleProperties(this.Properties, factor);
+      this.GenerateHash();
     }
+  }
 
   public partial class StructuralAssembly
   {
