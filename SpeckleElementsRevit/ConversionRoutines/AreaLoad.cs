@@ -36,6 +36,9 @@ namespace SpeckleElementsRevit
         }
 
         polylines.Add(coor.ToArray());
+
+        // Only get outer loop
+        break;
       }
 
       var forces = new StructuralVectorThree(new double[3]);

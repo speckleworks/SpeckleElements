@@ -44,7 +44,7 @@ namespace SpeckleElementsGSA
             if (element.Value.Result == null)
               element.Value.Result = new Dictionary<string, object>();
 
-            var resultExport = GSA.GetGSAResult(id, kvp.Value.Item1, kvp.Value.Item2, kvp.Value.Item3, loadCase, GSAResultInLocalAxis ? "local" : "global");
+            var resultExport = GSA.GetGSAResult(id, kvp.Value.Item1, kvp.Value.Item2, kvp.Value.Item3, loadCase, GSAResultInLocalAxis ? "local" : "global", Conversions.GSAResult1DNumPosition);
             
             if (resultExport == null)
               continue;
@@ -58,6 +58,28 @@ namespace SpeckleElementsGSA
             (element.Value.Result[loadCase] as Structural1DElementResult).Value[kvp.Key] = resultExport;
           }
         }
+      }
+
+      // Linear interpolate the line values
+      foreach (GSA1DElement element in elements)
+      {
+        var dX = (element.Value.Value[3] - element.Value.Value[0]) / (Conversions.GSAResult1DNumPosition + 1);
+        var dY = (element.Value.Value[4] - element.Value.Value[1]) / (Conversions.GSAResult1DNumPosition + 1);
+        var dZ = (element.Value.Value[5] - element.Value.Value[2]) / (Conversions.GSAResult1DNumPosition + 1);
+
+        var interpolatedVertices = new List<double>();
+        interpolatedVertices.AddRange((element.Value.Value as List<double>).Take(3));
+        
+        for (int i = 1; i <= Conversions.GSAResult1DNumPosition; i++)
+        {
+          interpolatedVertices.Add(interpolatedVertices[0] + dX * i);
+          interpolatedVertices.Add(interpolatedVertices[1] + dY * i);
+          interpolatedVertices.Add(interpolatedVertices[2] + dZ * i);
+        }
+
+        interpolatedVertices.AddRange((element.Value.Value as List<double>).Skip(3).Take(3));
+
+        element.Value.ResultVertices = interpolatedVertices;
       }
 
       return new SpeckleObject();

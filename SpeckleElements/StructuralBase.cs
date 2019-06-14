@@ -968,6 +968,34 @@ namespace SpeckleElements
       set => StructuralProperties["gsaDummy"] = value;
     }
 
+    /// <summary>Vertex location of results.</summary>
+    [SNJ.JsonIgnore]
+    public List<double> ResultVertices
+    {
+      get
+      {
+        if (StructuralProperties.ContainsKey("resultVertices"))
+        {
+          try
+          {
+            try
+            {
+              return (List<double>)StructuralProperties["resultVertices"];
+            }
+            catch
+            {
+              return ((List<double>)StructuralProperties["resultVertices"]).Select(x => (double)x).ToList();
+            }
+          }
+          catch
+          { return null; }
+        }
+        else
+          return null;
+      }
+      set => StructuralProperties["resultVertices"] = value;
+    }
+
     /// <summary>Analysis results.</summary>
     [SNJ.JsonIgnore]
     public Dictionary<string, object> Result
@@ -1168,6 +1196,34 @@ namespace SpeckleElements
     {
       get => StructuralProperties.ContainsKey("gsaDummy") ? ((bool)StructuralProperties["gsaDummy"]) : false;
       set => StructuralProperties["gsaDummy"] = value;
+    }
+
+    /// <summary>Vertex location of results.</summary>
+    [SNJ.JsonIgnore]
+    public List<double> ResultVertices
+    {
+      get
+      {
+        if (StructuralProperties.ContainsKey("resultVertices"))
+        {
+          try
+          {
+            try
+            {
+              return (List<double>)StructuralProperties["resultVertices"];
+            }
+            catch
+            {
+              return ((List<double>)StructuralProperties["resultVertices"]).Select(x => (double)x).ToList();
+            }
+          }
+          catch
+          { return null; }
+        }
+        else
+          return null;
+      }
+      set => StructuralProperties["resultVertices"] = value;
     }
 
     /// <summary>Analysis results.</summary>
