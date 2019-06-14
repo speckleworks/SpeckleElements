@@ -750,7 +750,8 @@ namespace SpeckleElements
             }
             catch
             {
-              return ((List<double>)StructuralProperties["resultVertices"]).Select(x => (double)x).ToList();
+              this.ResultVertices = ((List<object>)StructuralProperties["resultVertices"]).Select(x => Convert.ToDouble(x)).ToList();
+              return this.ResultVertices;
             }
           }
           catch
@@ -823,7 +824,8 @@ namespace SpeckleElements
             }
             catch
             {
-              return ((List<object>)StructuralProperties["elementStructuralId"]).Select(x => Convert.ToString(x)).ToList();
+              this.ElementStructuralId = ((List<object>)StructuralProperties["elementStructuralId"]).Select(x => Convert.ToString(x)).ToList();
+              return this.ElementStructuralId;
             }
           }
           catch
@@ -880,7 +882,8 @@ namespace SpeckleElements
             }
             catch
             {
-              return ((List<object>)StructuralProperties["zAxis"]).Select(x => x as StructuralVectorThree).ToList();
+              this.ZAxis = ((List<object>)StructuralProperties["zAxis"]).Select(x => x as StructuralVectorThree).ToList();
+              return this.ZAxis;
             }
           }
           catch
@@ -908,7 +911,8 @@ namespace SpeckleElements
             }
             catch
             {
-              return ((List<object>)StructuralProperties["endRelease"]).Select(x => x as StructuralVectorBoolSix).ToList();
+              this.EndRelease = ((List<object>)StructuralProperties["endRelease"]).Select(x => x as StructuralVectorBoolSix).ToList();
+              return this.EndRelease;
             }
           }
           catch
@@ -936,7 +940,8 @@ namespace SpeckleElements
             }
             catch
             {
-              return ((List<object>)StructuralProperties["offset"]).Select(x => x as StructuralVectorThree).ToList();
+              this.Offset = ((List<object>)StructuralProperties["offset"]).Select(x => x as StructuralVectorThree).ToList();
+              return this.Offset;
             }
           }
           catch
@@ -980,7 +985,8 @@ namespace SpeckleElements
             }
             catch
             {
-              return ((List<double>)StructuralProperties["resultVertices"]).Select(x => (double)x).ToList();
+              this.ResultVertices = ((List<object>)StructuralProperties["resultVertices"]).Select(x => Convert.ToDouble(x)).ToList();
+              return this.ResultVertices;
             }
           }
           catch
@@ -1160,7 +1166,8 @@ namespace SpeckleElements
             }
             catch
             {
-              return ((List<object>)StructuralProperties["elementStructuralId"]).Select(x => Convert.ToString(x)).ToList();
+              this.ElementStructuralId = ((List<object>)StructuralProperties["elementStructuralId"]).Select(x => Convert.ToString(x)).ToList();
+              return this.ElementStructuralId;
             }
           }
           catch
@@ -1245,7 +1252,8 @@ namespace SpeckleElements
             }
             catch
             {
-              return ((List<object>)StructuralProperties["offset"]).Select(x => Convert.ToDouble(x)).ToList();
+              this.Offset = ((List<object>)StructuralProperties["offset"]).Select(x => Convert.ToDouble(x)).ToList();
+              return this.Offset;
             }
           }
           catch
