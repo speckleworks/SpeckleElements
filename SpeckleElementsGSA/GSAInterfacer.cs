@@ -26,6 +26,8 @@ namespace SpeckleElementsGSA
     private Dictionary<string, object> PreviousGSASetCache = new Dictionary<string, object>();
     private Dictionary<string, object> GSASetCache = new Dictionary<string, object>();
 
+    private const string sidTag = "speckle_app_id";
+
     #region Communication
     public void InitializeReceiver(ComAuto GSAObject)
     {
@@ -1000,9 +1002,21 @@ namespace SpeckleElementsGSA
       string sid = "";
 
       if (!string.IsNullOrEmpty(obj.ApplicationId))
-        sid += "{speckle_app_id:" + obj.ApplicationId + "}";
+        sid += "{" + sidTag + ":" + obj.ApplicationId + "}";
 
       return sid;
+    }
+
+    public string GetSID(string keyword, int id)
+    {
+      try
+      {
+        return GSAObject.GetSidTagValue(keyword, id, sidTag);
+      }
+      catch
+      {
+        return "";
+      }
     }
     #endregion
 

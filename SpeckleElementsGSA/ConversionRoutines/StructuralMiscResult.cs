@@ -58,12 +58,16 @@ namespace SpeckleElementsGSA
                 continue;
               }
 
+              //Obtain assembly to attach the SID onto this object
+              var sid = GSA.GetSID(kvp.Value.Item1, id);
+
               StructuralMiscResult newRes = new StructuralMiscResult();
               newRes.Description = kvp.Key;
               if (id != 0)
                 newRes.TargetRef = id.ToString();
               newRes.IsGlobal = !GSAResultInLocalAxis;
               newRes.Value = resultExport;
+              newRes.TargetApplicationId = sid;
 
               newRes.GenerateHash();
 
