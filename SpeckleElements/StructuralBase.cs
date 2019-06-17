@@ -1511,6 +1511,7 @@ namespace SpeckleElements
 
     /// <summary>Results.</summary>
     [SNJ.JsonProperty("value", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
+    [SpeckleNewtonsoft.Newtonsoft.Json.JsonConverter(typeof(SpecklePropertiesConverter))]
     public Dictionary<string, object> Value { get; set; }
   }
 
@@ -1533,6 +1534,7 @@ namespace SpeckleElements
 
     /// <summary>Results.</summary>
     [SNJ.JsonProperty("value", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
+    [SpeckleNewtonsoft.Newtonsoft.Json.JsonConverter(typeof(SpecklePropertiesConverter))]
     public Dictionary<string, object> Value { get; set; }
   }
 
@@ -1555,6 +1557,7 @@ namespace SpeckleElements
 
     /// <summary>Results.</summary>
     [SNJ.JsonProperty("value", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
+    [SpeckleNewtonsoft.Newtonsoft.Json.JsonConverter(typeof(SpecklePropertiesConverter))]
     public Dictionary<string, object> Value { get; set; }
   }
 
@@ -1583,36 +1586,6 @@ namespace SpeckleElements
     [SNJ.JsonProperty("value", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
     [SpeckleNewtonsoft.Newtonsoft.Json.JsonConverter(typeof(SpecklePropertiesConverter))]
     public Dictionary<string, object> Value { get; set; }
-
-    [SNJ.JsonIgnore]
-    public string TargetApplicationId
-    {
-      get => StructuralProperties.ContainsKey("targetApplicationId") ? (StructuralProperties["targetApplicationId"] as string) : null;
-      set => StructuralProperties["targetApplicationId"] = value;
-    }
-
-    [SNJ.JsonIgnore]
-    private Dictionary<string, object> StructuralProperties
-    {
-      get
-      {
-        if (base.Properties == null)
-          base.Properties = new Dictionary<string, object>();
-
-        if (!base.Properties.ContainsKey("structural"))
-          base.Properties["structural"] = new Dictionary<string, object>();
-
-        return base.Properties["structural"] as Dictionary<string, object>;
-
-      }
-      set
-      {
-        if (base.Properties == null)
-          base.Properties = new Dictionary<string, object>();
-
-        base.Properties["structural"] = value;
-      }
-    }
   }
   #endregion
 }
