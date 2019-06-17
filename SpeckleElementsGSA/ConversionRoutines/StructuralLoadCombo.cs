@@ -79,7 +79,7 @@ namespace SpeckleElementsGSA
 
       StructuralLoadCombo loadCombo = this.Value as StructuralLoadCombo;
 
-      string keyword = typeof(GSALoadCase).GetGSAKeyword();
+      string keyword = typeof(GSALoadCombo).GetGSAKeyword();
 
       int index = GSA.Indexer.ResolveIndex(typeof(GSALoadCombo), loadCombo);
 
