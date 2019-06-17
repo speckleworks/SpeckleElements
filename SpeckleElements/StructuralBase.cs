@@ -1581,6 +1581,7 @@ namespace SpeckleElements
 
     /// <summary>Results.</summary>
     [SNJ.JsonProperty("value", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
+    [SpeckleNewtonsoft.Newtonsoft.Json.JsonConverter(typeof(SpecklePropertiesConverter))]
     public Dictionary<string, object> Value { get; set; }
 
     [SNJ.JsonIgnore]
