@@ -78,7 +78,7 @@ namespace SpeckleElementsRevit
       
       var myLoadCase = new StructuralLoadCase();
       myLoadCase.Name = myAreaLoad.LoadCaseName;
-      myLoadCase.StructuralId = myLoadCase.Name;
+      myLoadCase.ApplicationId = myAreaLoad.LoadCase.UniqueId;
       switch (myAreaLoad.LoadCategoryName)
       {
         case "Dead Loads":
@@ -103,13 +103,16 @@ namespace SpeckleElementsRevit
 
       List<SpeckleObject> myLoads = new List<SpeckleObject>();
 
+      int counter = 0;
       foreach (double[] vals in polylines)
       {
         var myLoad = new Structural2DLoadPanel();
         myLoad.Name = myAreaLoad.Name;
         myLoad.Value = vals.ToList();
         myLoad.Loading = forces;
-        myLoad.LoadCaseRef = myLoadCase.StructuralId;
+        myLoad.LoadCaseRef = myLoadCase.ApplicationId;
+
+        myLoad.ApplicationId = myAreaLoad.UniqueId + "_" + (counter++).ToString();
 
         myLoads.Add(myLoad);
       }

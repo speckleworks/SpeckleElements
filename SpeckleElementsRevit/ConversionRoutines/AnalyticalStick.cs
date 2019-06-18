@@ -159,7 +159,7 @@ namespace SpeckleElementsRevit
         var mySection = new Structural1DProperty();
 
         mySection.Name = Doc.GetElement(myStick.GetElementId()).Name;
-        mySection.StructuralId = mySection.Name;
+        mySection.ApplicationId = myStick.UniqueId + "_section";
 
         switch (myFamily.Symbol.GetStructuralSection().StructuralSectionGeneralShape)
         {
@@ -284,8 +284,8 @@ namespace SpeckleElementsRevit
           {
             case Autodesk.Revit.DB.Structure.StructuralMaterialType.Concrete:
               var concMat = new StructuralMaterialConcrete();
-              concMat.StructuralId = Doc.GetElement(myFamily.StructuralMaterialId).Name;
-              concMat.Name = concMat.StructuralId;
+              concMat.ApplicationId = Doc.GetElement(myFamily.StructuralMaterialId).UniqueId;
+              concMat.Name = Doc.GetElement(myFamily.StructuralMaterialId).Name;
               concMat.YoungsModulus = matAsset.YoungModulus.X;
               concMat.ShearModulus = matAsset.ShearModulus.X;
               concMat.PoissonsRatio = matAsset.PoissonRatio.X;
@@ -298,8 +298,8 @@ namespace SpeckleElementsRevit
               break;
             case Autodesk.Revit.DB.Structure.StructuralMaterialType.Steel:
               var steelMat = new StructuralMaterialSteel();
-              steelMat.StructuralId = Doc.GetElement(myFamily.StructuralMaterialId).Name;
-              steelMat.Name = steelMat.StructuralId;
+              steelMat.ApplicationId = Doc.GetElement(myFamily.StructuralMaterialId).UniqueId;
+              steelMat.Name = Doc.GetElement(myFamily.StructuralMaterialId).Name;
               steelMat.YoungsModulus = matAsset.YoungModulus.X;
               steelMat.ShearModulus = matAsset.ShearModulus.X;
               steelMat.PoissonsRatio = matAsset.PoissonRatio.X;
@@ -312,23 +312,22 @@ namespace SpeckleElementsRevit
               break;
             default:
               var defMat = new StructuralMaterialSteel();
-              defMat.StructuralId = Doc.GetElement(myFamily.StructuralMaterialId).Name;
-              defMat.Name = defMat.StructuralId;
+              defMat.ApplicationId = Doc.GetElement(myFamily.StructuralMaterialId).UniqueId;
+              defMat.Name = Doc.GetElement(myFamily.StructuralMaterialId).Name;
               myMaterial = defMat;
               break;
           }
 
           myMaterial.GenerateHash();
           mySection.ApplicationId = myStick.UniqueId + "_section";
-          mySection.MaterialRef = (myMaterial as IStructural).StructuralId;
+          mySection.MaterialRef = (myMaterial as SpeckleObject).ApplicationId;
 
           returnObjects.Add(myMaterial);
         }
         catch { }
 
         mySection.GenerateHash();
-        mySection.ApplicationId = myStick.UniqueId + "_material";
-        myElement.PropertyRef = mySection.StructuralId;
+        myElement.PropertyRef = mySection.ApplicationId;
 
         returnObjects.Add(mySection);
       }

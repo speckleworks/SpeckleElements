@@ -13,6 +13,7 @@ namespace SpeckleElementsGSA
   [GSAObject("ANAL.1", new string[] { "TASK.1" }, "loads", true, true, new Type[] { typeof(GSALoadCase) }, new Type[] { typeof(GSALoadCase) })]
   public class GSALoadTask : IGSASpeckleContainer
   {
+    public int GSAId { get; set; }
     public string GWACommand { get; set; }
     public List<string> SubGWACommand { get; set; } = new List<string>();
     public dynamic Value { get; set; } = new StructuralLoadTask();
@@ -24,11 +25,12 @@ namespace SpeckleElementsGSA
 
       StructuralLoadTask obj = new StructuralLoadTask();
 
-      string[] pieces = this.GWACommand.ListSplit(",");
+      string[] pieces = this.GWACommand.ListSplit("\t");
 
       int counter = 1; // Skip identifier
 
-      obj.StructuralId = pieces[counter++];
+      this.GSAId = Convert.ToInt32(pieces[counter++]);
+      obj.ApplicationId = GSA.GetSID(this.GetGSAKeyword(), this.GSAId);
       obj.Name = pieces[counter++];
 
       //Find task type
@@ -52,7 +54,7 @@ namespace SpeckleElementsGSA
           switch (t.Item1[0])
           {
             case 'L':
-              obj.LoadCaseRefs.Add(t.Item1.Substring(1));
+              obj.LoadCaseRefs.Add(GSA.GetSID(typeof(GSALoadCase).GetGSAKeyword(), Convert.ToInt32(t.Item1.Substring(1))));
               obj.LoadFactors.Add(t.Item2);
               break;
           }
@@ -253,10 +255,10 @@ namespace SpeckleElementsGSA
       string keyword = typeof(GSALoadTask).GetGSAKeyword();
       string[] subKeywords = typeof(GSALoadTask).GetSubGSAKeyword();
 
-      string[] lines = GSA.GetGWARecords("GET_ALL," + keyword);
-      List<string> deletedLines = GSA.GetDeletedGWARecords("GET_ALL," + keyword).ToList();
+      string[] lines = GSA.GetGWARecords("GET_ALL\t" + keyword);
+      List<string> deletedLines = GSA.GetDeletedGWARecords("GET_ALL\t" + keyword).ToList();
       foreach (string k in subKeywords)
-        deletedLines.AddRange(GSA.GetDeletedGWARecords("GET_ALL," + k));
+        deletedLines.AddRange(GSA.GetDeletedGWARecords("GET_ALL\t" + k));
 
       // Remove deleted lines
       GSASenderObjects[typeof(GSALoadTask)].RemoveAll(l => deletedLines.Contains((l as IGSASpeckleContainer).GWACommand));

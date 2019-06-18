@@ -10,9 +10,10 @@ using SpeckleElements;
 
 namespace SpeckleElementsGSA
 {
-  [GSAObject("MEMB.7", new string[] { }, "elements", true, false, new Type[] { typeof(GSA1DElement), typeof(GSA1DLoad), typeof(GSA1DElementResult)}, new Type[] { typeof(GSA1DProperty) })]
+  [GSAObject("MEMB.7", new string[] { }, "elements", true, false, new Type[] { typeof(GSA1DElement), typeof(GSA1DLoad), typeof(GSA1DElementResult), typeof(GSAAssembly), typeof(GSAStageDefinition) }, new Type[] { typeof(GSA1DProperty) })]
   public class GSA1DElementPolyline : IGSASpeckleContainer
   {
+    public int GSAId { get; set; }
     public string GWACommand { get; set; }
     public List<string> SubGWACommand { get; set; } = new List<string>();
     public dynamic Value { get; set; } = new Structural1DElementPolyline();
@@ -26,7 +27,7 @@ namespace SpeckleElementsGSA
 
       Structural1DElementPolyline obj = new Structural1DElementPolyline();
       obj.Value = new List<double>();
-      obj.ElementStructuralId = new List<string>();
+      obj.ElementApplicationId = new List<string>();
 
       obj.ElementType = elementsListCopy.First().Value.ElementType;
       obj.PropertyRef = elementsListCopy.First().Value.PropertyRef;
@@ -64,7 +65,7 @@ namespace SpeckleElementsGSA
 
         var element = elementsListCopy[matchIndex];
 
-        obj.ElementStructuralId.Add(element.Value.StructuralId);
+        obj.ElementApplicationId.Add(element.Value.ApplicationId);
         obj.ZAxis.Add(element.Value.ZAxis);
 
         if (obj.Value.Count == 0)

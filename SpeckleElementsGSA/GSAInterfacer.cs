@@ -26,7 +26,9 @@ namespace SpeckleElementsGSA
     private Dictionary<string, object> PreviousGSASetCache = new Dictionary<string, object>();
     private Dictionary<string, object> GSASetCache = new Dictionary<string, object>();
 
-    private const string sidTag = "speckle_app_id";
+    private Dictionary<string, string> SidCache = new Dictionary<string, string>();
+
+    private const string SID_TAG = "speckle_app_id";
 
     #region Communication
     public void InitializeReceiver(ComAuto GSAObject)
@@ -150,7 +152,7 @@ namespace SpeckleElementsGSA
         {
           if (!GSAGetCache.ContainsKey(command))
           {
-            if (command.StartsWith("GET_ALL,MEMB"))
+            if (command.StartsWith("GET_ALL\tMEMB"))
             {
               // TODO: Member GET_ALL work around
               int[] memberRefs = new int[0];
@@ -162,20 +164,20 @@ namespace SpeckleElementsGSA
               List<string> result = new List<string>();
 
               foreach (int r in memberRefs)
-                (result as List<string>).Add((string)RunGWACommand("GET,MEMB," + r.ToString()));
+                (result as List<string>).Add((string)RunGWACommand("GET\tMEMB\t" + r.ToString()));
 
               GSAGetCache[command] = string.Join("\n", result);
             }
-            else if (command.StartsWith("GET_ALL,ANAL.") || (command.StartsWith("GET_ALL,ANAL,")))
+            else if (command.StartsWith("GET_ALL\tANAL.") || (command.StartsWith("GET_ALL\tANAL\t")))
             {
               // TODO: Anal GET_ALL work around
-              int highestRef = (int)RunGWACommand("HIGHEST,ANAL.1");
+              int highestRef = (int)RunGWACommand("HIGHEST\tANAL.1");
 
               List<string> result = new List<string>();
 
               for (int i = 1; i <= highestRef; i++)
               {
-                string res = (string)RunGWACommand("GET,ANAL," + i.ToString());
+                string res = (string)RunGWACommand("GET\tANAL\t" + i.ToString());
                 if (res != null && res != "")
                   (result as List<string>).Add(res);
               }
@@ -215,11 +217,11 @@ namespace SpeckleElementsGSA
 
       for (int i = 0; i < prevSets.Count(); i++)
       {
-        string[] split = Regex.Replace(prevSets[i], ":{speckle_app_id:.*}", "").ListSplit("\t");
+        string[] split = Regex.Replace(prevSets[i], ":{" + SID_TAG + ":.*}", "").ListSplit("\t");
         prevSets[i] = split[1] + "\t" + split[2] + "\t";
       }
 
-      prevSets = prevSets.Where(l => !GSASetCache.Keys.Any(x => Regex.Replace(x, ":{speckle_app_id:.*}", "").Contains(l))).ToList();
+      prevSets = prevSets.Where(l => !GSASetCache.Keys.Any(x => Regex.Replace(x, ":{" + SID_TAG + ":.*}", "").Contains(l))).ToList();
 
       for (int i = 0; i < prevSets.Count(); i++)
       {
@@ -286,14 +288,14 @@ namespace SpeckleElementsGSA
     /// <param name="x">X coordinate of the node</param>
     /// <param name="y">Y coordinate of the node</param>
     /// <param name="z">Z coordinate of the node</param>
-    /// <param name="structuralID">Structural ID of the node</param>
+    /// <param name="applicationId">Application ID of the node</param>
     /// <returns>Node index</returns>
-    public int NodeAt(double x, double y, double z, double coincidentNodeAllowance, string structuralID = null)
+    public int NodeAt(double x, double y, double z, double coincidentNodeAllowance, string applicationId = null)
     {
       int idx = GSAObject.Gen_NodeAt(x, y, z, coincidentNodeAllowance);
 
-      if (structuralID != null)
-        Indexer.ReserveIndicesAndMap(typeof(GSANode), new List<int>() { idx }, new List<string>() { structuralID });
+      if (applicationId != null)
+        Indexer.ReserveIndicesAndMap(typeof(GSANode), new List<int>() { idx }, new List<string>() { applicationId });
       else
         Indexer.ReserveIndices(typeof(GSANode), new List<int>() { idx });
 
@@ -426,10 +428,10 @@ namespace SpeckleElementsGSA
               new StructuralVectorThree(new double[] { z.X, z.Y, z.Z })
           );
         default:
-          string res = GetGWARecords("GET,AXIS," + axis.ToString()).FirstOrDefault();
+          string res = GetGWARecords("GET\tAXIS\t" + axis.ToString()).FirstOrDefault();
           gwaRecord = res;
 
-          string[] pieces = res.Split(new char[] { ',' });
+          string[] pieces = res.Split(new char[] { '\t' });
           if (pieces.Length < 13)
           {
             return new StructuralAxis(
@@ -812,25 +814,24 @@ namespace SpeckleElementsGSA
     #region Polyline and Grids
     public (string, string) GetPolylineDesc(int polylineRef)
     {
-      string res = GetGWARecords("GET,POLYLINE.1," + polylineRef.ToString()).FirstOrDefault();
-      string[] pieces = res.ListSplit(",");
-
-      // TODO: commas are used to seperate both data and polyline coordinate values...
-      return (string.Join(",", pieces.Skip(6)), res);
+      string res = GetGWARecords("GET\tPOLYLINE.1\t" + polylineRef.ToString()).FirstOrDefault();
+      string[] pieces = res.ListSplit("\t");
+      
+      return (pieces[6], res);
     }
 
     public (int, string) GetGridPlaneRef(int gridSurfaceRef)
     {
-      string res = GetGWARecords("GET,GRID_SURFACE.1," + gridSurfaceRef.ToString()).FirstOrDefault();
-      string[] pieces = res.ListSplit(",");
+      string res = GetGWARecords("GET\tGRID_SURFACE.1\t" + gridSurfaceRef.ToString()).FirstOrDefault();
+      string[] pieces = res.ListSplit("\t");
 
       return (Convert.ToInt32(pieces[3]), res);
     }
 
     public (int, double, string) GetGridPlaneData(int gridPlaneRef)
     {
-      string res = GetGWARecords("GET,GRID_PLANE.4," + gridPlaneRef.ToString()).FirstOrDefault();
-      string[] pieces = res.ListSplit(",");
+      string res = GetGWARecords("GET\tGRID_PLANE.4\t" + gridPlaneRef.ToString()).FirstOrDefault();
+      string[] pieces = res.ListSplit("\t");
 
       return (Convert.ToInt32(pieces[4]), Convert.ToDouble(pieces[5]), res);
     }
@@ -842,12 +843,12 @@ namespace SpeckleElementsGSA
       double materialInsertionPointOffset = 0;
       double zMaterialOffset = 0;
 
-      string res = GetGWARecords("GET,PROP_2D," + propIndex.ToString()).FirstOrDefault();
+      string res = GetGWARecords("GET\tPROP_2D\t" + propIndex.ToString()).FirstOrDefault();
 
       if (res == null || res == "")
         return (insertionPointOffset, null);
 
-      string[] pieces = res.ListSplit(",");
+      string[] pieces = res.ListSplit("\t");
 
       zMaterialOffset = -Convert.ToDouble(pieces[12]);
       return (insertionPointOffset + zMaterialOffset + materialInsertionPointOffset, res);
@@ -857,9 +858,9 @@ namespace SpeckleElementsGSA
     #region Loads
     public (StructuralLoadTaskType, string) GetLoadTaskType(string taskRef)
     {
-      string[] commands = GetGWARecords("GET,TASK.1," + taskRef);
+      string[] commands = GetGWARecords("GET\tTASK.1\t" + taskRef);
 
-      string[] taskPieces = commands[0].ListSplit(",");
+      string[] taskPieces = commands[0].ListSplit("\t");
       StructuralLoadTaskType taskType = StructuralLoadTaskType.LinearStatic;
 
       if (taskPieces[4] == "GSS")
@@ -936,9 +937,9 @@ namespace SpeckleElementsGSA
     {
       list = list.Trim(new char[] { '"' });
 
-      string res = GetGWARecords("GET,LIST," + list).FirstOrDefault();
+      string res = GetGWARecords("GET\tLIST\t" + list).FirstOrDefault();
 
-      string[] pieces = res.Split(new char[] { ',' });
+      string[] pieces = res.Split(new char[] { '\t' });
 
       return ConvertGSAList(pieces[pieces.Length - 1], type);
     }
@@ -972,6 +973,7 @@ namespace SpeckleElementsGSA
       GSAGetCache.Clear();
       PreviousGSASetCache = new Dictionary<string, object>(GSASetCache);
       GSASetCache.Clear();
+      SidCache.Clear();
     }
 
     /// <summary>
@@ -983,6 +985,7 @@ namespace SpeckleElementsGSA
       GSAGetCache.Clear();
       PreviousGSASetCache.Clear();
       GSASetCache.Clear();
+      SidCache.Clear();
     }
 
     /// <summary>
@@ -1002,21 +1005,28 @@ namespace SpeckleElementsGSA
       string sid = "";
 
       if (!string.IsNullOrEmpty(obj.ApplicationId))
-        sid += "{" + sidTag + ":" + obj.ApplicationId + "}";
+        sid += "{" + SID_TAG + ":" + obj.ApplicationId + "}";
 
       return sid;
     }
 
     public string GetSID(string keyword, int id)
     {
-      try
-      {
-        return GSAObject.GetSidTagValue(keyword, id, sidTag);
+      if (!SidCache.ContainsKey(keyword + "\t" + id.ToString()))
+      { 
+        try
+        {
+          SidCache[keyword + "\t" + id.ToString()] = GSAObject.GetSidTagValue(keyword, id, SID_TAG);
+          if (string.IsNullOrEmpty(SidCache[keyword + "\t" + id.ToString()]))
+            SidCache[keyword + "\t" + id.ToString()] = "gsa/" + keyword + "_" + id.ToString();
+        }
+        catch
+        {
+          SidCache[keyword + "\t" + id.ToString()] = "gsa/" + keyword + "_" + id.ToString();
+        }
       }
-      catch
-      {
-        return "";
-      }
+
+      return SidCache[keyword + "\t" + id.ToString()];
     }
     #endregion
 

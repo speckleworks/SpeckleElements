@@ -98,6 +98,11 @@ namespace SpeckleElementsGSA
   public interface IGSASpeckleContainer
   {
     /// <summary>
+    /// Record index of GSA record
+    /// </summary>
+    int GSAId { get; set; }
+
+    /// <summary>
     /// Associated GWA command.
     /// </summary>
     string GWACommand { get; set; }

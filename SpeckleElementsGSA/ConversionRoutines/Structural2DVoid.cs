@@ -13,6 +13,7 @@ namespace SpeckleElementsGSA
   [GSAObject("MEMB.7", new string[] { "NODE.2" }, "elements", false, true, new Type[] { typeof(GSANode) }, new Type[] { })]
   public class GSA2DVoid : IGSASpeckleContainer
   {
+    public int GSAId { get; set; }
     public string GWACommand { get; set; }
     public List<string> SubGWACommand { get; set; } = new List<string>();
     public dynamic Value { get; set; } = new Structural2DVoid();
@@ -24,10 +25,11 @@ namespace SpeckleElementsGSA
 
       Structural2DVoid obj = new Structural2DVoid();
 
-      string[] pieces = this.GWACommand.ListSplit(",");
+      string[] pieces = this.GWACommand.ListSplit("\t");
 
       int counter = 1; // Skip identifier
-      obj.StructuralId = pieces[counter++];
+      this.GSAId = Convert.ToInt32(pieces[counter++]);
+      obj.ApplicationId = GSA.GetSID(this.GetGSAKeyword(), this.GSAId);
       obj.Name = pieces[counter++].Trim(new char[] { '"' });
       var color = pieces[counter++].ParseGSAColor();
 
@@ -39,7 +41,7 @@ namespace SpeckleElementsGSA
       string[] nodeRefs = pieces[counter++].ListSplit(" ");
       for (int i = 0; i < nodeRefs.Length; i++)
       {
-        GSANode node = nodes.Where(n => n.Value.StructuralId == nodeRefs[i]).FirstOrDefault();
+        GSANode node = nodes.Where(n => n.GSAId.ToString() == nodeRefs[i]).FirstOrDefault();
         coordinates.AddRange(node.Value);
         this.SubGWACommand.Add(node.GWACommand);
       }
@@ -125,10 +127,10 @@ namespace SpeckleElementsGSA
       string keyword = typeof(GSA2DVoid).GetGSAKeyword();
       string[] subKeywords = typeof(GSA2DVoid).GetSubGSAKeyword();
 
-      string[] lines = GSA.GetGWARecords("GET_ALL," + keyword);
-      List<string> deletedLines = GSA.GetDeletedGWARecords("GET_ALL," + keyword).ToList();
+      string[] lines = GSA.GetGWARecords("GET_ALL\t" + keyword);
+      List<string> deletedLines = GSA.GetDeletedGWARecords("GET_ALL\t" + keyword).ToList();
       foreach (string k in subKeywords)
-        deletedLines.AddRange(GSA.GetDeletedGWARecords("GET_ALL," + k));
+        deletedLines.AddRange(GSA.GetDeletedGWARecords("GET_ALL\t" + k));
 
       // Remove deleted lines
       GSASenderObjects[typeof(GSA2DVoid)].RemoveAll(l => deletedLines.Contains((l as IGSASpeckleContainer).GWACommand));
@@ -141,7 +143,7 @@ namespace SpeckleElementsGSA
 
       foreach (string p in newLines)
       {
-        string[] pPieces = p.ListSplit(",");
+        string[] pPieces = p.ListSplit("\t");
         if (pPieces[4].MemberIs2D())
         {
           // Check if void

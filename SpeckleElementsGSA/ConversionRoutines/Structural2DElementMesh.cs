@@ -11,9 +11,10 @@ using SpeckleElements;
 namespace SpeckleElementsGSA
 {
   // Keyword set as MEMB to not clash with grouping of members
-  [GSAObject("MEMB.7", new string[] { }, "elements", true, false, new Type[] { typeof(GSA2DElement), typeof(GSA2DLoad), typeof(GSA2DElementResult) }, new Type[] { typeof(GSA2DProperty) })]
+  [GSAObject("MEMB.7", new string[] { }, "elements", true, false, new Type[] { typeof(GSA2DElement), typeof(GSA2DLoad), typeof(GSA2DElementResult), typeof(GSAAssembly), typeof(GSAStageDefinition) }, new Type[] { typeof(GSA2DProperty) })]
   public class GSA2DElementMesh : IGSASpeckleContainer
   {
+    public int GSAId { get; set; }
     public string GWACommand { get; set; }
     public List<string> SubGWACommand { get; set; } = new List<string>();
     public dynamic Value { get; set; } = new Structural2DElementMesh();
@@ -26,7 +27,7 @@ namespace SpeckleElementsGSA
       Structural2DElementMesh obj = new Structural2DElementMesh();
       obj.Vertices = new List<double>();
       obj.Faces = new List<int>();
-      obj.ElementStructuralId = new List<string>();
+      obj.ElementApplicationId = new List<string>();
 
       obj.ElementType = elements.First().Value.ElementType;
       obj.PropertyRef = elements.First().Value.PropertyRef;
@@ -43,7 +44,7 @@ namespace SpeckleElementsGSA
         obj.Axis.Add(e.Value.Axis);
         obj.Offset.Add(e.Value.Offset);
 
-        obj.ElementStructuralId.Add(e.Value.StructuralId);
+        obj.ElementApplicationId.Add(e.Value.ApplicationId);
 
         // Result merging
         if (Conversions.GSAElement2DResults.Count > 0)

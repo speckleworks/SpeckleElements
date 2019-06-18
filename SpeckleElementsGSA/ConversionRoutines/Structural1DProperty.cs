@@ -15,6 +15,7 @@ namespace SpeckleElementsGSA
   [GSAObject("PROP_SEC.3", new string[] { "MAT_STEEL.3", "MAT_CONCRETE.16" }, "properties", true, true, new Type[] { typeof(GSAMaterialSteel), typeof(GSAMaterialConcrete) }, new Type[] { typeof(GSAMaterialSteel), typeof(GSAMaterialConcrete) })]
   public class GSA1DProperty : IGSASpeckleContainer
   {
+    public int GSAId { get; set; }
     public string GWACommand { get; set; }
     public List<string> SubGWACommand { get; set; } = new List<string>();
     public dynamic Value { get; set; } = new Structural1DProperty();
@@ -26,10 +27,11 @@ namespace SpeckleElementsGSA
 
       Structural1DProperty obj = new Structural1DProperty();
 
-      string[] pieces = this.GWACommand.ListSplit(",");
+      string[] pieces = this.GWACommand.ListSplit("\t");
 
       int counter = 1; // Skip identifier
-      obj.StructuralId = pieces[counter++];
+      this.GSAId = Convert.ToInt32(pieces[counter++]);
+      obj.ApplicationId = GSA.GetSID(this.GetGSAKeyword(), this.GSAId);
       obj.Name = pieces[counter++].Trim(new char[] { '"' });
       counter++; // Color
       string materialType = pieces[counter++];
@@ -38,8 +40,8 @@ namespace SpeckleElementsGSA
       {
         if (steels != null)
         {
-          GSAMaterialSteel matchingMaterial = steels.Where(m => m.Value.StructuralId == materialGrade).FirstOrDefault();
-          obj.MaterialRef = matchingMaterial == null ? null : matchingMaterial.Value.StructuralId;
+          GSAMaterialSteel matchingMaterial = steels.Where(m => m.GSAId.ToString() == materialGrade).FirstOrDefault();
+          obj.MaterialRef = matchingMaterial == null ? null : matchingMaterial.Value.ApplicationId;
           if (matchingMaterial != null)
             this.SubGWACommand.Add(matchingMaterial.GWACommand);
         }
@@ -48,8 +50,8 @@ namespace SpeckleElementsGSA
       {
         if (concretes != null)
         {
-          GSAMaterialConcrete matchingMaterial = concretes.Where(m => m.Value.StructuralId == materialGrade).FirstOrDefault();
-          obj.MaterialRef = matchingMaterial == null ? null : matchingMaterial.Value.StructuralId;
+          GSAMaterialConcrete matchingMaterial = concretes.Where(m => m.GSAId.ToString() == materialGrade).FirstOrDefault();
+          obj.MaterialRef = matchingMaterial == null ? null : matchingMaterial.Value.ApplicationId;
           if (matchingMaterial != null)
             this.SubGWACommand.Add(matchingMaterial.GWACommand);
         }
@@ -603,10 +605,10 @@ namespace SpeckleElementsGSA
       string keyword = typeof(GSA1DProperty).GetGSAKeyword();
       string[] subKeywords = typeof(GSA1DProperty).GetSubGSAKeyword();
 
-      string[] lines = GSA.GetGWARecords("GET_ALL," + keyword);
-      List<string> deletedLines = GSA.GetDeletedGWARecords("GET_ALL," + keyword).ToList();
+      string[] lines = GSA.GetGWARecords("GET_ALL\t" + keyword);
+      List<string> deletedLines = GSA.GetDeletedGWARecords("GET_ALL\t" + keyword).ToList();
       foreach (string k in subKeywords)
-        deletedLines.AddRange(GSA.GetDeletedGWARecords("GET_ALL," + k));
+        deletedLines.AddRange(GSA.GetDeletedGWARecords("GET_ALL\t" + k));
 
       // Remove deleted lines
       GSASenderObjects[typeof(GSA1DProperty)].RemoveAll(l => deletedLines.Contains((l as IGSASpeckleContainer).GWACommand));

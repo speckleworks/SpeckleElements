@@ -76,7 +76,7 @@ namespace SpeckleElementsRevit
 
       var myLoadCase = new StructuralLoadCase();
       myLoadCase.Name = myLineLoad.LoadCaseName;
-      myLoadCase.StructuralId = myLoadCase.Name;
+      myLoadCase.ApplicationId = myLineLoad.LoadCase.UniqueId;
       switch (myLineLoad.LoadCategoryName)
       {
         case "Dead Loads":
@@ -99,7 +99,8 @@ namespace SpeckleElementsRevit
           break;
       }
 
-      myLoad.LoadCaseRef = myLoadCase.StructuralId;
+      myLoad.LoadCaseRef = myLoadCase.ApplicationId;
+      myLoad.ApplicationId = myLineLoad.UniqueId;
 
       return new List<SpeckleObject>() { myLoad, myLoadCase };
     }
