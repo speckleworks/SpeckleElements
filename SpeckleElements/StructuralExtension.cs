@@ -656,15 +656,10 @@ namespace SpeckleElements
   {
     public StructuralLinearSpringProperty() { }
 
-    public StructuralLinearSpringProperty(string axis, double stiffnessX, double stiffnessY, double stiffnessZ, double stiffnessXx, double stiffnessYy, double stiffnessZz, string structuralId = null, Dictionary<string, object> properties = null)
+    public StructuralLinearSpringProperty(StructuralSpringAxis axis, StructuralVectorSix stiffness, string structuralId = null, Dictionary<string, object> properties = null)
     {
       this.Axis = axis;
-      this.StiffnessX = stiffnessX;
-      this.StiffnessY = stiffnessY;
-      this.StiffnessZ = stiffnessZ;
-      this.StiffnessXx = stiffnessXx;
-      this.StiffnessYy = stiffnessYy;
-      this.StiffnessZz = stiffnessZz;
+      this.Stiffness = stiffness;
       this.StructuralId = structuralId;
       this.Properties = properties;
       GenerateHash();

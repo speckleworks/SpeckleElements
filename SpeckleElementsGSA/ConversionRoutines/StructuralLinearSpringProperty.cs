@@ -30,7 +30,7 @@ namespace SpeckleElementsGSA
       obj.StructuralId = pieces[counter++];
       obj.Name = pieces[counter++].Trim(new char[] { '"' });
       counter++; //Skip colour
-      obj.Axis = pieces[counter++];
+      obj.Axis = (StructuralSpringAxis)Enum.Parse(typeof(StructuralSpringAxis), (pieces[counter++] as string), true);
       var springPropertyType = pieces[counter++];
       if (springPropertyType.ToLower() != "general")
       {
@@ -43,13 +43,7 @@ namespace SpeckleElementsGSA
       {
         double.TryParse(pieces[counter += 2], out stiffnesses[i]);
       }
-
-      obj.StiffnessX = stiffnesses[0];
-      obj.StiffnessY = stiffnesses[1];
-      obj.StiffnessZ = stiffnesses[2];
-      obj.StiffnessXx = stiffnesses[3];
-      obj.StiffnessYy = stiffnesses[4];
-      obj.StiffnessZz = stiffnesses[5];
+      obj.Stiffness = new StructuralVectorSix(stiffnesses);
       this.Value = obj;
     }
 
@@ -73,22 +67,16 @@ namespace SpeckleElementsGSA
           index.ToString(),
           string.IsNullOrEmpty(lsp.Name) ? "" : lsp.Name,
           "NO_RGB",
-          lsp.Axis,
-          "GENERAL",
-          "0", //Curve x
-          lsp.StiffnessX.ToString(),
-          "0", //Curve y
-          lsp.StiffnessY.ToString(),
-          "0", //Curve z
-          lsp.StiffnessZ.ToString(),
-          "0", //Curve xx
-          lsp.StiffnessXx.ToString(),
-          "0", //Curve yy
-          lsp.StiffnessYy.ToString(),
-          "0", //Curve zz
-          lsp.StiffnessZz.ToString(),
-          "0"  //Damping ratio
-        };
+          lsp.Axis.ToString(),
+          "GENERAL"
+      };
+
+      for (var i = 0; i < 6; i++)
+      {
+        ls.Add("0"); //Curve
+        ls.Add(lsp.Stiffness.Value[i].ToString());
+      }
+      ls.Add("0");  //Damping ratio
 
       GSA.RunGWACommand(string.Join("\t", ls));
     }

@@ -582,58 +582,20 @@ namespace SpeckleElements
 
     /// <summary>Structural ID to reference from other objects.</summary>
     [SNJ.JsonIgnore]
-    public string Axis
+    public StructuralSpringAxis Axis
     {
-      get => StructuralProperties.ContainsKey("structuralId") ? (StructuralProperties["structuralId"] as string) : null;
-      set => StructuralProperties["structuralId"] = value;
+      get => StructuralProperties.ContainsKey("axis")
+        ? (StructuralSpringAxis)Enum.Parse(typeof(StructuralSpringAxis), (StructuralProperties["axis"] as string), true) 
+        : StructuralSpringAxis.Global;
+      set => StructuralProperties["axis"] = value.ToString();
     }
 
-    /// <summary>Structural ID to reference from other objects.</summary>
+    /// <summary>X, Y, Z, XX, YY, ZZ stiffnesses.</summary>
     [SNJ.JsonIgnore]
-    public double StiffnessX
+    public StructuralVectorSix Stiffness
     {
-      get => (StructuralProperties.ContainsKey("stiffnessX") && double.TryParse(StructuralProperties["stiffnessX"].ToString(), out double stiffness)) ? stiffness : 0;
-      set => StructuralProperties["stiffnessX"] = value;
-    }
-
-    /// <summary>Structural ID to reference from other objects.</summary>
-    [SNJ.JsonIgnore]
-    public double StiffnessY
-    {
-      get => (StructuralProperties.ContainsKey("stiffnessY") && double.TryParse(StructuralProperties["stiffnessY"].ToString(), out double stiffness)) ? stiffness : 0;
-      set => StructuralProperties["stiffnessY"] = value;
-    }
-
-    /// <summary>Structural ID to reference from other objects.</summary>
-    [SNJ.JsonIgnore]
-    public double StiffnessZ
-    {
-      get => (StructuralProperties.ContainsKey("stiffnessZ") && double.TryParse(StructuralProperties["stiffnessZ"].ToString(), out double stiffness)) ? stiffness : 0;
-      set => StructuralProperties["stiffnessZ"] = value;
-    }
-
-    /// <summary>Structural ID to reference from other objects.</summary>
-    [SNJ.JsonIgnore]
-    public double StiffnessXx
-    {
-      get => (StructuralProperties.ContainsKey("stiffnessXx") && double.TryParse(StructuralProperties["stiffnessXx"].ToString(), out double stiffness)) ? stiffness : 0;
-      set => StructuralProperties["stiffnessXx"] = value;
-    }
-
-    /// <summary>Structural ID to reference from other objects.</summary>
-    [SNJ.JsonIgnore]
-    public double StiffnessYy
-    {
-      get => (StructuralProperties.ContainsKey("stiffnessYy") && double.TryParse(StructuralProperties["stiffnessYy"].ToString(), out double stiffness)) ? stiffness : 0;
-      set => StructuralProperties["stiffnessYy"] = value;
-    }
-
-    /// <summary>Structural ID to reference from other objects.</summary>
-    [SNJ.JsonIgnore]
-    public double StiffnessZz
-    {
-      get => (StructuralProperties.ContainsKey("stiffnessZz") && double.TryParse(StructuralProperties["stiffnessZz"].ToString(), out double stiffness)) ? stiffness : 0;
-      set => StructuralProperties["stiffnessZz"] = value;
+      get => StructuralProperties.ContainsKey("stiffness") ? (StructuralProperties["stiffness"] as StructuralVectorSix) : null;
+      set => StructuralProperties["stiffness"] = value;
     }
 
     /// <summary>A list of x, y, z, xx, yy, and yz stiffnesses</summary>
