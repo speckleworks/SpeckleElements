@@ -95,7 +95,7 @@ namespace SpeckleElementsRevit
         var mySection = new Structural2DProperty();
 
         mySection.Name = Doc.GetElement(mySurface.GetElementId()).Name;
-        mySection.StructuralId = mySection.Name;
+        mySection.ApplicationId = mySurface.UniqueId + "_section";
 
         if (myRevitElement is Autodesk.Revit.DB.Floor)
         {
@@ -135,8 +135,8 @@ namespace SpeckleElementsRevit
           {
             case "Concrete":
               var concMat = new StructuralMaterialConcrete();
-              concMat.StructuralId = Doc.GetElement(myMat.StructuralAssetId).Name;
-              concMat.Name = concMat.StructuralId;
+              concMat.ApplicationId = myMat.UniqueId;
+              concMat.Name = Doc.GetElement(myMat.StructuralAssetId).Name;
               concMat.YoungsModulus = matAsset.YoungModulus.X;
               concMat.ShearModulus = matAsset.ShearModulus.X;
               concMat.PoissonsRatio = matAsset.PoissonRatio.X;
@@ -149,8 +149,8 @@ namespace SpeckleElementsRevit
               break;
             case "Steel":
               var steelMat = new StructuralMaterialSteel();
-              steelMat.StructuralId = Doc.GetElement(myMat.StructuralAssetId).Name;
-              steelMat.Name = steelMat.StructuralId;
+              steelMat.ApplicationId = myMat.UniqueId;
+              steelMat.Name = Doc.GetElement(myMat.StructuralAssetId).Name;
               steelMat.YoungsModulus = matAsset.YoungModulus.X;
               steelMat.ShearModulus = matAsset.ShearModulus.X;
               steelMat.PoissonsRatio = matAsset.PoissonRatio.X;
@@ -163,29 +163,28 @@ namespace SpeckleElementsRevit
               break;
             default:
               var defMat = new StructuralMaterialSteel();
-              defMat.StructuralId = Doc.GetElement(myMat.StructuralAssetId).Name;
-              defMat.Name = defMat.StructuralId;
+              defMat.ApplicationId = myMat.UniqueId;
+              defMat.Name = Doc.GetElement(myMat.StructuralAssetId).Name;
               myMaterial = defMat;
               break;
           }
 
           myMaterial.GenerateHash();
-          myMaterial.ApplicationId = mySurface.UniqueId + "_material";
-          mySection.MaterialRef = (myMaterial as IStructural).StructuralId;
+          mySection.MaterialRef = (myMaterial as SpeckleObject).ApplicationId;
 
           returnObjects.Add(myMaterial);
         }
         catch { }
 
         mySection.GenerateHash();
-        mySection.ApplicationId = mySurface.UniqueId + "_section";
 
-        sectionID = mySection.StructuralId;
+        sectionID = mySection.ApplicationId;
 
         returnObjects.Add(mySection);
       }
       catch { }
-      
+
+      int counter = 0;
       foreach(double[] coor in polylines)
       {
         var dummyMesh = new Structural2DElementMesh(coor, null, type, null, null, null);
@@ -209,7 +208,7 @@ namespace SpeckleElementsRevit
         mesh.Offset = Enumerable.Repeat(0.0, numFaces).Cast<double>().ToList(); //TODO
 
         mesh.GenerateHash();
-        mesh.ApplicationId = mySurface.UniqueId; // THIS IS NOT UNIQUE ANYMORE
+        mesh.ApplicationId = mySurface.UniqueId + "_" + (counter++).ToString();
 
         returnObjects.Add(mesh);
       }

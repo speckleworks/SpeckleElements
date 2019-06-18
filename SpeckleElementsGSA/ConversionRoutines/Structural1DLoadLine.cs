@@ -14,6 +14,7 @@ namespace SpeckleElementsGSA
   [GSAObject("LOAD_GRID_LINE.2", new string[] { "POLYLINE.1", "GRID_SURFACE.1", "GRID_PLANE.4", "AXIS" }, "elements", true, true, new Type[] { }, new Type[] { typeof(GSALoadCase) })]
   public class GSAGridLineLoad : IGSASpeckleContainer
   {
+    public int GSAId { get; set; }
     public string GWACommand { get; set; }
     public List<string> SubGWACommand { get; set; } = new List<string>();
     public dynamic Value { get; set; } = new Structural1DLoadLine();
@@ -25,7 +26,7 @@ namespace SpeckleElementsGSA
 
       Structural1DLoadLine obj = new Structural1DLoadLine();
 
-      string[] pieces = this.GWACommand.ListSplit(",(?![^()]*[)])");
+      string[] pieces = this.GWACommand.ListSplit("\t");
 
       int counter = 1; // Skip identifier
       obj.Name = pieces[counter++].Trim(new char[] { '"' });
@@ -65,7 +66,7 @@ namespace SpeckleElementsGSA
 
       obj.Value = GSA.MapPointsLocal2Global(polyVals, axis).ToList();
 
-      obj.LoadCaseRef = pieces[counter++];
+      obj.LoadCaseRef = GSA.GetSID(typeof(GSALoadCase).GetGSAKeyword(), Convert.ToInt32(pieces[counter++]));
 
       int loadAxisId = 0;
       string loadAxisData = pieces[counter++];
@@ -233,10 +234,10 @@ namespace SpeckleElementsGSA
       string keyword = typeof(GSAGridLineLoad).GetGSAKeyword();
       string[] subKeywords = typeof(GSAGridLineLoad).GetSubGSAKeyword();
 
-      string[] lines = GSA.GetGWARecords("GET_ALL," + keyword);
-      List<string> deletedLines = GSA.GetDeletedGWARecords("GET_ALL," + keyword).ToList();
+      string[] lines = GSA.GetGWARecords("GET_ALL\t" + keyword);
+      List<string> deletedLines = GSA.GetDeletedGWARecords("GET_ALL\t" + keyword).ToList();
       foreach (string k in subKeywords)
-        deletedLines.AddRange(GSA.GetDeletedGWARecords("GET_ALL," + k));
+        deletedLines.AddRange(GSA.GetDeletedGWARecords("GET_ALL\t" + k));
 
       // Remove deleted lines
       GSASenderObjects[typeof(GSAGridLineLoad)].RemoveAll(l => deletedLines.Contains((l as IGSASpeckleContainer).GWACommand));

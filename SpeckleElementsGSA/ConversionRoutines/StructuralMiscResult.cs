@@ -13,6 +13,7 @@ namespace SpeckleElementsGSA
   [GSAObject("", new string[] { }, "results", true, false, new Type[] { }, new Type[] { })]
   public class GSAMiscResult : IGSASpeckleContainer
   {
+    public int GSAId { get; set; }
     public string GWACommand { get; set; }
     public List<string> SubGWACommand { get; set; } = new List<string>();
     public dynamic Value { get; set; } = new StructuralMiscResult();
@@ -57,17 +58,13 @@ namespace SpeckleElementsGSA
                 id++;
                 continue;
               }
-
-              //Obtain assembly to attach the SID onto this object
-              var sid = GSA.GetSID(kvp.Value.Item1, id);
-
+              
               StructuralMiscResult newRes = new StructuralMiscResult();
               newRes.Description = kvp.Key;
               if (id != 0)
-                newRes.TargetRef = id.ToString();
+                newRes.TargetRef = GSA.GetSID(kvp.Value.Item1, id);
               newRes.IsGlobal = !GSAResultInLocalAxis;
               newRes.Value = resultExport;
-              newRes.TargetApplicationId = sid;
 
               newRes.GenerateHash();
 

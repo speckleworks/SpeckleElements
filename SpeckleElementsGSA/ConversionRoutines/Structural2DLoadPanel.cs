@@ -14,6 +14,7 @@ namespace SpeckleElementsGSA
   [GSAObject("LOAD_GRID_AREA.2", new string[] { "POLYLINE.1", "GRID_SURFACE.1", "GRID_PLANE.4", "AXIS" }, "elements", true, true, new Type[] { }, new Type[] { typeof(GSALoadCase) })]
   public class GSAGridAreaLoad : IGSASpeckleContainer
   {
+    public int GSAId { get; set; }
     public string GWACommand { get; set; }
     public List<string> SubGWACommand { get; set; } = new List<string>();
     public dynamic Value { get; set; } = new Structural2DLoadPanel();
@@ -25,7 +26,7 @@ namespace SpeckleElementsGSA
 
       Structural2DLoadPanel obj = new Structural2DLoadPanel();
 
-      string[] pieces = this.GWACommand.ListSplit(",(?![^()]*[)])");
+      string[] pieces = this.GWACommand.ListSplit("\t");
 
       int counter = 1; // Skip identifier
       obj.Name = pieces[counter++].Trim(new char[] { '"' });
@@ -66,7 +67,7 @@ namespace SpeckleElementsGSA
       obj.Value = GSA.MapPointsLocal2Global(polyVals, axis).ToList();
       obj.Closed = true;
 
-      obj.LoadCaseRef = pieces[counter++];
+      obj.LoadCaseRef = GSA.GetSID(typeof(GSALoadCase).GetGSAKeyword(), Convert.ToInt32(pieces[counter++]));
 
       int loadAxisId = 0;
       string loadAxisData = pieces[counter++];
@@ -231,10 +232,10 @@ namespace SpeckleElementsGSA
       string keyword = typeof(GSAGridAreaLoad).GetGSAKeyword();
       string[] subKeywords = typeof(GSAGridAreaLoad).GetSubGSAKeyword();
 
-      string[] lines = GSA.GetGWARecords("GET_ALL," + keyword);
-      List<string> deletedLines = GSA.GetDeletedGWARecords("GET_ALL," + keyword).ToList();
+      string[] lines = GSA.GetGWARecords("GET_ALL\t" + keyword);
+      List<string> deletedLines = GSA.GetDeletedGWARecords("GET_ALL\t" + keyword).ToList();
       foreach (string k in subKeywords)
-        deletedLines.AddRange(GSA.GetDeletedGWARecords("GET_ALL," + k));
+        deletedLines.AddRange(GSA.GetDeletedGWARecords("GET_ALL\t" + k));
 
       // Remove deleted lines
       GSASenderObjects[typeof(GSAGridAreaLoad)].RemoveAll(l => deletedLines.Contains((l as IGSASpeckleContainer).GWACommand));

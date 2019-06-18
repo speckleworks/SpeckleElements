@@ -62,20 +62,20 @@ namespace SpeckleElementsGSA
     /// <param name="type">GSAObject type</param>
     /// <param name="obj">IStructural object</param>
     /// <returns>Index</returns>
-    public int ResolveIndex(Type type, IStructural obj)
+    public int ResolveIndex(Type type, dynamic obj)
     {
-      return ResolveIndex(type.GetGSAKeyword(), obj.StructuralId, type.Name);
+      return ResolveIndex(type.GetGSAKeyword(), obj.ApplicationId, type.Name);
     }
 
     /// <summary>
-    /// Resolve the index for the given structural ID.
+    /// Resolve the index for the given application ID.
     /// </summary>
     /// <param name="type">GSAObject type</param>
-    /// <param name="structuralID">structural ID</param>
+    /// <param name="applicationId">application ID</param>
     /// <returns>Index</returns>
-    public int ResolveIndex(Type type, string structuralID)
+    public int ResolveIndex(Type type, string applicationId)
     {
-      return ResolveIndex(type.GetGSAKeyword(), structuralID, type.Name);
+      return ResolveIndex(type.GetGSAKeyword(), applicationId, type.Name);
     }
 
     /// <summary>
@@ -94,36 +94,36 @@ namespace SpeckleElementsGSA
     /// <param name="keyword">GSA keyword</param>
     /// <param name="obj">IStructural object</param>
     /// <returns>Index</returns>
-    public int ResolveIndex(string keyword, IStructural obj)
+    public int ResolveIndex(string keyword, dynamic obj)
     {
-      return ResolveIndex(keyword, obj.StructuralId, string.Empty);
+      return ResolveIndex(keyword, obj.ApplicationId, string.Empty);
     }
 
     /// <summary>
-    /// Resolve the index for the given structural ID.
+    /// Resolve the index for the given application ID.
     /// </summary>
     /// <param name="keyword">GSA keyword</param>
-    /// <param name="structuralID">structural ID</param>
+    /// <param name="applicationId">application ID</param>
     /// <returns>Index</returns>
-    public int ResolveIndex(string keyword, string structuralID)
+    public int ResolveIndex(string keyword, string applicationId)
     {
-      return ResolveIndex(keyword, structuralID, string.Empty);
+      return ResolveIndex(keyword, applicationId, string.Empty);
     }
 
     /// <summary>
-    /// Resolve the index for the given GSA keyword, structural ID, and type.
+    /// Resolve the index for the given GSA keyword, application ID, and type.
     /// </summary>
     /// <param name="keywordGSA">GSA keyword</param>
-    /// <param name="structuralID">Structural ID</param>
+    /// <param name="applicationId">application ID</param>
     /// <param name="type">Type name</param>
     /// <returns>Index</returns>
-    private int ResolveIndex(string keywordGSA, string structuralID, string type = "")
+    private int ResolveIndex(string keywordGSA, string applicationId, string type = "")
     {
       // If no ID set, return next one but do not store.
-      if (structuralID == null || structuralID == string.Empty)
+      if (applicationId == null || applicationId == string.Empty)
         return NextIndex(keywordGSA);
 
-      string key = keywordGSA + ":" + type + ":" + structuralID;
+      string key = keywordGSA + ":" + type + ":" + applicationId;
 
       if (!indexMap.ContainsKey(key))
         indexMap[key] = NextIndex(keywordGSA);
@@ -143,14 +143,14 @@ namespace SpeckleElementsGSA
     }
 
     /// <summary>
-    /// Resolve the index for the given list of structural IDs.
+    /// Resolve the index for the given list of application IDs.
     /// </summary>
     /// <param name="type">GSAObject type</param>
-    /// <param name="structuralID">List of structural ID</param>
+    /// <param name="applicationId">List of application ID</param>
     /// <returns>List of indices</returns>
-    public List<int> ResolveIndices(Type type, List<string> structuralID)
+    public List<int> ResolveIndices(Type type, List<string> applicationId)
     {
-      return structuralID.Select(s => ResolveIndex(type, s)).ToList();
+      return applicationId.Select(s => ResolveIndex(type, s)).ToList();
     }
 
     /// <summary>
@@ -159,35 +159,35 @@ namespace SpeckleElementsGSA
     /// <param name="type">GSAObject type</param>
     /// <param name="obj">IStructural object</param>
     /// <returns>Index</returns>
-    public int? LookupIndex(Type type, IStructural obj)
+    public int? LookupIndex(Type type, dynamic obj)
     {
-      return LookupIndex(type.GetGSAKeyword(), obj.StructuralId, type.Name);
+      return LookupIndex(type.GetGSAKeyword(), obj.applicationId, type.Name);
     }
 
     /// <summary>
-    /// Find the index associated with the structural ID.
+    /// Find the index associated with the application ID.
     /// </summary>
     /// <param name="type">GSAObject type</param>
-    /// <param name="structuralID">Structural ID</param>
+    /// <param name="applicationId">application ID</param>
     /// <returns>Index</returns>
-    public int? LookupIndex(Type type, string structuralID)
+    public int? LookupIndex(Type type, string applicationId)
     {
-      return LookupIndex(type.GetGSAKeyword(), structuralID, type.Name);
+      return LookupIndex(type.GetGSAKeyword(), applicationId, type.Name);
     }
 
     /// <summary>
-    /// Find the index associated with the GSA keyword, structural ID, and type.
+    /// Find the index associated with the GSA keyword, application ID, and type.
     /// </summary>
     /// <param name="keywordGSA">GSA keyword</param>
-    /// <param name="structuralID">Structural ID</param>
+    /// <param name="applicationId">application ID</param>
     /// <param name="type">Type name</param>
     /// <returns>Index</returns>
-    private int? LookupIndex(string keywordGSA, string structuralID, string type = "")
+    private int? LookupIndex(string keywordGSA, string applicationId, string type = "")
     {
-      if (structuralID == null || structuralID == string.Empty)
+      if (applicationId == null || applicationId == string.Empty)
         return null;
 
-      string key = keywordGSA + ":" + type + ":" + structuralID;
+      string key = keywordGSA + ":" + type + ":" + applicationId;
 
       if (!indexMap.ContainsKey(key))
         return null;
@@ -207,14 +207,14 @@ namespace SpeckleElementsGSA
     }
 
     /// <summary>
-    /// Find the indices associated with the list of structural IDs.
+    /// Find the indices associated with the list of application IDs.
     /// </summary>
     /// <param name="type">GSAObject type</param>
-    /// <param name="structuralID">List of structural IDs</param>
+    /// <param name="applicationId">List of application IDs</param>
     /// <returns>List of indices</returns>
-    public List<int?> LookupIndices(Type type, List<string> structuralID)
+    public List<int?> LookupIndices(Type type, List<string> applicationId)
     {
-      return structuralID.Select(s => LookupIndex(type, s)).ToList();
+      return applicationId.Select(s => LookupIndex(type, s)).ToList();
     }
 
     /// <summary>
@@ -247,14 +247,14 @@ namespace SpeckleElementsGSA
     /// </summary>
     /// <param name="type">GSAObject type</param>
     /// <param name="refs">List of indices</param>
-    /// <param name="structuralIDs">List of structural IDs</param>
-    public void ReserveIndicesAndMap(Type type, List<int> refs, List<string> structuralIDs)
+    /// <param name="applicationId">List of application IDs</param>
+    public void ReserveIndicesAndMap(Type type, List<int> refs, List<string> applicationId)
     {
       string keywordGSA = type.GetGSAKeyword();
 
-      for (int i = 0; i < structuralIDs.Count(); i++)
+      for (int i = 0; i < applicationId.Count(); i++)
       {
-        string key = keywordGSA + ":" + type.Name + ":" + structuralIDs[i];
+        string key = keywordGSA + ":" + type.Name + ":" + applicationId[i];
         indexMap[key] = refs[i];
       }
 

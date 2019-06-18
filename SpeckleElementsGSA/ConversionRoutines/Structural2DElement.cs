@@ -15,6 +15,7 @@ namespace SpeckleElementsGSA
   {
     public string Member;
 
+    public int GSAId { get; set; }
     public string GWACommand { get; set; }
     public List<string> SubGWACommand { get; set; } = new List<string>();
     public dynamic Value { get; set; } = new Structural2DElement();
@@ -26,10 +27,11 @@ namespace SpeckleElementsGSA
 
       Structural2DElement obj = new Structural2DElement();
 
-      string[] pieces = this.GWACommand.ListSplit(",");
+      string[] pieces = this.GWACommand.ListSplit("\t");
 
       int counter = 1; // Skip identifier
-      obj.StructuralId = pieces[counter++];
+      this.GSAId = Convert.ToInt32(pieces[counter++]);
+      obj.ApplicationId = GSA.GetSID(this.GetGSAKeyword(), this.GSAId);
       obj.Name = pieces[counter++].Trim(new char[] { '"' });
       var color = pieces[counter++].ParseGSAColor();
 
@@ -40,7 +42,8 @@ namespace SpeckleElementsGSA
         obj.Colors = new List<int>();
 
       obj.ElementType = Structural2DElementType.Generic;
-      obj.PropertyRef = pieces[counter++];
+      var propertyGSAId = Convert.ToInt32(pieces[counter++]);
+      obj.PropertyRef = GSA.GetSID(typeof(GSA2DProperty).GetGSAKeyword(), propertyGSAId);
       counter++; // Group
 
       obj.Vertices = new List<double>();
@@ -49,7 +52,7 @@ namespace SpeckleElementsGSA
       for (int i = 0; i < type.ParseElementNumNodes(); i++)
       {
         string key = pieces[counter++];
-        GSANode node = nodes.Where(n => n.Value.StructuralId == key).FirstOrDefault();
+        GSANode node = nodes.Where(n => n.GSAId.ToString() == key).FirstOrDefault();
         obj.Vertices.AddRange(node.Value.Value);
         obj.Faces.Add(i);
         this.SubGWACommand.Add(node.GWACommand);
@@ -57,7 +60,7 @@ namespace SpeckleElementsGSA
 
       counter++; // Orientation node
 
-      GSA2DProperty prop = props.Where(p => p.Value.StructuralId == obj.PropertyRef).FirstOrDefault();
+      GSA2DProperty prop = props.Where(p => p.Value.ApplicationId == obj.PropertyRef).FirstOrDefault();
       obj.Axis = GSA.Parse2DAxis(obj.Vertices.ToArray(),
           Convert.ToDouble(pieces[counter++]),
           prop == null ? false : (prop as GSA2DProperty).IsAxisLocal);
@@ -76,7 +79,7 @@ namespace SpeckleElementsGSA
       counter++; //Ofsset x-end
       counter++; //Ofsset y
 
-      var (offset, offsetRec) = GSA.GetGSATotal2DElementOffset(Convert.ToInt32(obj.PropertyRef), Convert.ToDouble(pieces[counter++]));
+      var (offset, offsetRec) = GSA.GetGSATotal2DElementOffset(propertyGSAId, Convert.ToDouble(pieces[counter++]));
       this.SubGWACommand.Add(offsetRec);
 
       obj.Offset = offset;
@@ -148,6 +151,7 @@ namespace SpeckleElementsGSA
   {
     public int Group; // Keep for load targetting
 
+    public int GSAId { get; set; }
     public string GWACommand { get; set; }
     public List<string> SubGWACommand { get; set; } = new List<string>();
     public dynamic Value { get; set; } = new Structural2DElementMesh();
@@ -159,10 +163,11 @@ namespace SpeckleElementsGSA
 
       Structural2DElementMesh obj = new Structural2DElementMesh();
 
-      string[] pieces = this.GWACommand.ListSplit(",");
+      string[] pieces = this.GWACommand.ListSplit("\t");
 
       int counter = 1; // Skip identifier
-      obj.StructuralId = pieces[counter++];
+      this.GSAId = Convert.ToInt32(pieces[counter++]);
+      obj.ApplicationId = GSA.GetSID(this.GetGSAKeyword(), this.GSAId);
       obj.Name = pieces[counter++].Trim(new char[] { '"' });
       var color = pieces[counter++].ParseGSAColor();
 
@@ -174,14 +179,15 @@ namespace SpeckleElementsGSA
       else
         obj.ElementType = Structural2DElementType.Generic;
 
-      obj.PropertyRef = pieces[counter++];
+      var propertyGSAId = Convert.ToInt32(pieces[counter++]);
+      obj.PropertyRef = GSA.GetSID(typeof(GSA2DProperty).GetGSAKeyword(), propertyGSAId);
       this.Group = Convert.ToInt32(pieces[counter++]); // Keep group for load targetting
 
       List<double> coordinates = new List<double>();
       string[] nodeRefs = pieces[counter++].ListSplit(" ");
       for (int i = 0; i < nodeRefs.Length; i++)
       {
-        GSANode node = nodes.Where(n => n.Value.StructuralId == nodeRefs[i]).FirstOrDefault();
+        GSANode node = nodes.Where(n => n.GSAId.ToString() == nodeRefs[i]).FirstOrDefault();
         coordinates.AddRange(node.Value.Value);
         this.SubGWACommand.Add(node.GWACommand);
       }
@@ -206,7 +212,7 @@ namespace SpeckleElementsGSA
 
       counter++; // Orientation node
 
-      GSA2DProperty prop = props.Where(p => p.Value.StructuralId == obj.PropertyRef).FirstOrDefault();
+      GSA2DProperty prop = props.Where(p => p.Value.ApplicationId == obj.PropertyRef).FirstOrDefault();
       var axis = GSA.Parse2DAxis(coordinates.ToArray(),
           Convert.ToDouble(pieces[counter++]),
           prop == null ? false : (prop as GSA2DProperty).IsAxisLocal);
@@ -217,7 +223,7 @@ namespace SpeckleElementsGSA
       // Skip to offsets at second to last
       counter = pieces.Length - 2;
 
-      var (offset, offsetRec) = GSA.GetGSATotal2DElementOffset(Convert.ToInt32(obj.PropertyRef), Convert.ToDouble(pieces[counter++]));
+      var (offset, offsetRec) = GSA.GetGSATotal2DElementOffset(propertyGSAId, Convert.ToDouble(pieces[counter++]));
       this.SubGWACommand.Add(offsetRec);
 
       obj.Offset = Enumerable.Repeat(offset, numFaces).ToList();
@@ -317,10 +323,10 @@ namespace SpeckleElementsGSA
       string keyword = typeof(GSA2DElement).GetGSAKeyword();
       string[] subKeywords = typeof(GSA2DElement).GetSubGSAKeyword();
 
-      string[] lines = GSA.GetGWARecords("GET_ALL," + keyword);
-      List<string> deletedLines = GSA.GetDeletedGWARecords("GET_ALL," + keyword).ToList();
+      string[] lines = GSA.GetGWARecords("GET_ALL\t" + keyword);
+      List<string> deletedLines = GSA.GetDeletedGWARecords("GET_ALL\t" + keyword).ToList();
       foreach (string k in subKeywords)
-        deletedLines.AddRange(GSA.GetDeletedGWARecords("GET_ALL," + k));
+        deletedLines.AddRange(GSA.GetDeletedGWARecords("GET_ALL\t" + k));
 
       // Remove deleted lines
       GSASenderObjects[typeof(GSA2DElement)].RemoveAll(l => deletedLines.Contains((l as IGSASpeckleContainer).GWACommand));
@@ -336,7 +342,7 @@ namespace SpeckleElementsGSA
 
       foreach (string p in newLines)
       {
-        string[] pPieces = p.ListSplit(",");
+        string[] pPieces = p.ListSplit("\t");
         if (pPieces[4].ParseElementNumNodes() == 3 | pPieces[4].ParseElementNumNodes() == 4)
         {
           GSA2DElement element = new GSA2DElement() { GWACommand = p };
@@ -364,10 +370,10 @@ namespace SpeckleElementsGSA
       string keyword = typeof(GSA2DMember).GetGSAKeyword();
       string[] subKeywords = typeof(GSA2DMember).GetSubGSAKeyword();
 
-      string[] lines = GSA.GetGWARecords("GET_ALL," + keyword);
-      List<string> deletedLines = GSA.GetDeletedGWARecords("GET_ALL," + keyword).ToList();
+      string[] lines = GSA.GetGWARecords("GET_ALL\t" + keyword);
+      List<string> deletedLines = GSA.GetDeletedGWARecords("GET_ALL\t" + keyword).ToList();
       foreach (string k in subKeywords)
-        deletedLines.AddRange(GSA.GetDeletedGWARecords("GET_ALL," + k));
+        deletedLines.AddRange(GSA.GetDeletedGWARecords("GET_ALL\t" + k));
 
       // Remove deleted lines
       GSASenderObjects[typeof(GSA2DMember)].RemoveAll(l => deletedLines.Contains((l as IGSASpeckleContainer).GWACommand));
@@ -380,7 +386,7 @@ namespace SpeckleElementsGSA
 
       foreach (string p in newLines)
       {
-        string[] pPieces = p.ListSplit(",");
+        string[] pPieces = p.ListSplit("\t");
         if (pPieces[4].MemberIs2D())
         {
           // Check if dummy

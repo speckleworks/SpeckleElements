@@ -13,6 +13,7 @@ namespace SpeckleElementsGSA
   [GSAObject("", new string[] { }, "results", true, false, new Type[] { typeof(GSANode) }, new Type[] { })]
   public class GSANodeResult : IGSASpeckleContainer
   {
+    public int GSAId { get; set; }
     public string GWACommand { get; set; }
     public List<string> SubGWACommand { get; set; } = new List<string>();
     public dynamic Value { get; set; } = new StructuralNodeResult();
@@ -42,7 +43,7 @@ namespace SpeckleElementsGSA
 
             foreach (GSANode node in nodes)
             {
-              int id = Convert.ToInt32(node.Value.StructuralId);
+              int id = node.GSAId;
 
               if (node.Value.Result == null)
                 node.Value.Result = new Dictionary<string, object>();
@@ -100,7 +101,7 @@ namespace SpeckleElementsGSA
                   StructuralNodeResult newRes = new StructuralNodeResult()
                   {
                     Value = new Dictionary<string, object>(),
-                    TargetRef = id.ToString(),
+                    TargetRef = GSA.GetSID(typeof(GSANode).GetGSAKeyword(), id),
                     IsGlobal = !GSAResultInLocalAxis,
                   };
                   newRes.Value[kvp.Key] = resultExport;

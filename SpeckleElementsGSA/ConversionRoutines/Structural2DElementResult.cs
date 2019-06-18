@@ -13,6 +13,7 @@ namespace SpeckleElementsGSA
   [GSAObject("", new string[] { }, "results", true, false, new Type[] { typeof(GSA2DElement) }, new Type[] { })]
   public class GSA2DElementResult : IGSASpeckleContainer
   {
+    public int GSAId { get; set; }
     public string GWACommand { get; set; }
     public List<string> SubGWACommand { get; set; } = new List<string>();
     public dynamic Value { get; set; } = new Structural2DElementResult();
@@ -41,7 +42,7 @@ namespace SpeckleElementsGSA
 
             foreach (GSA2DElement element in elements)
             {
-              int id = Convert.ToInt32(element.Value.StructuralId);
+              int id = element.GSAId;
 
               if (element.Value.Result == null)
                 element.Value.Result = new Dictionary<string, object>();
@@ -93,9 +94,9 @@ namespace SpeckleElementsGSA
             {
               if ((int)GSA.RunGWACommand("EXIST\t" + keyword + "\t" + id.ToString()) == 1)
               {
-                string record = GSA.GetGWARecords("GET," + keyword + "," + id.ToString())[0];
+                string record = GSA.GetGWARecords("GET\t" + keyword + "\t" + id.ToString())[0];
 
-                string[] pPieces = record.ListSplit(",");
+                string[] pPieces = record.ListSplit("\t");
                 if (pPieces[4].ParseElementNumNodes() != 3 && pPieces[4].ParseElementNumNodes() != 4)
                 {
                   id++;
@@ -124,7 +125,7 @@ namespace SpeckleElementsGSA
                   Structural2DElementResult newRes = new Structural2DElementResult()
                   {
                     Value = new Dictionary<string, object>(),
-                    TargetRef = id.ToString(),
+                    TargetRef = GSA.GetSID(typeof(GSA2DElement).GetGSAKeyword(), id),
                     IsGlobal = !GSAResultInLocalAxis,
                   };
                   newRes.Value[kvp.Key + "_face"] = faceDictionary;

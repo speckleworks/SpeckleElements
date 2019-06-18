@@ -14,19 +14,19 @@ namespace SpeckleElements
   {
     public StructuralVectorThree() { }
 
-    public StructuralVectorThree(double[] value, string structuralId = null, Dictionary<string, object> properties = null)
+    public StructuralVectorThree(double[] value, string applicationId = null, Dictionary<string, object> properties = null)
     {
       this.Value = value.ToList();
-      this.StructuralId = structuralId;
+      this.ApplicationId = applicationId;
       this.Properties = properties;
 
       GenerateHash();
     }
 
-    public StructuralVectorThree(double x, double y, double z, string structuralId = null, Dictionary<string, object> properties = null)
+    public StructuralVectorThree(double x, double y, double z, string applicationId = null, Dictionary<string, object> properties = null)
     {
       this.Value = new List<double>(new double[] { x, y, z });
-      this.StructuralId = structuralId;
+      this.ApplicationId = applicationId;
       this.Properties = properties;
 
       GenerateHash();
@@ -66,19 +66,19 @@ namespace SpeckleElements
   {
     public StructuralVectorBoolThree() { }
 
-    public StructuralVectorBoolThree(bool[] value, string structuralId = null, Dictionary<string, object> properties = null)
+    public StructuralVectorBoolThree(bool[] value, string applicationId = null, Dictionary<string, object> properties = null)
     {
       this.Value = value.ToList();
-      this.StructuralId = structuralId;
+      this.ApplicationId = applicationId;
       this.Properties = properties;
 
       GenerateHash();
     }
 
-    public StructuralVectorBoolThree(bool x, bool y, bool z, string structuralId = null, Dictionary<string, object> properties = null)
+    public StructuralVectorBoolThree(bool x, bool y, bool z, string applicationId = null, Dictionary<string, object> properties = null)
     {
       this.Value = new List<bool>(new bool[] { x, y, z });
-      this.StructuralId = structuralId;
+      this.ApplicationId = applicationId;
       this.Properties = properties;
 
       GenerateHash();
@@ -94,19 +94,19 @@ namespace SpeckleElements
   {
     public StructuralVectorSix() { }
 
-    public StructuralVectorSix(double[] value, string structuralId = null, Dictionary<string, object> properties = null)
+    public StructuralVectorSix(double[] value, string applicationId = null, Dictionary<string, object> properties = null)
     {
       this.Value = value.ToList();
-      this.StructuralId = structuralId;
+      this.ApplicationId = applicationId;
       this.Properties = properties;
 
       GenerateHash();
     }
 
-    public StructuralVectorSix(double x, double y, double z, double xx, double yy, double zz, string structuralId = null, Dictionary<string, object> properties = null)
+    public StructuralVectorSix(double x, double y, double z, double xx, double yy, double zz, string applicationId = null, Dictionary<string, object> properties = null)
     {
       this.Value = new List<double>(new double[] { x, y, z, xx, yy, zz });
-      this.StructuralId = structuralId;
+      this.ApplicationId = applicationId;
       this.Properties = properties;
 
       GenerateHash();
@@ -155,19 +155,19 @@ namespace SpeckleElements
   {
     public StructuralVectorBoolSix() { }
 
-    public StructuralVectorBoolSix(bool[] value, string structuralId = null, Dictionary<string, object> properties = null)
+    public StructuralVectorBoolSix(bool[] value, string applicationId = null, Dictionary<string, object> properties = null)
     {
       this.Value = value.ToList();
-      this.StructuralId = structuralId;
+      this.ApplicationId = applicationId;
       this.Properties = properties;
 
       GenerateHash();
     }
 
-    public StructuralVectorBoolSix(bool x, bool y, bool z, bool xx, bool yy, bool zz, string structuralId = null, Dictionary<string, object> properties = null)
+    public StructuralVectorBoolSix(bool x, bool y, bool z, bool xx, bool yy, bool zz, string applicationId = null, Dictionary<string, object> properties = null)
     {
       this.Value = new List<bool>(new bool[] { x, y, z, xx, yy, zz });
-      this.StructuralId = structuralId;
+      this.ApplicationId = applicationId;
       this.Properties = properties;
 
       GenerateHash();
@@ -183,18 +183,18 @@ namespace SpeckleElements
   {
     public StructuralAxis() { }
 
-    public StructuralAxis(StructuralVectorThree xdir, StructuralVectorThree ydir, StructuralVectorThree normal, string structuralId = null, Dictionary<string, object> properties = null)
+    public StructuralAxis(StructuralVectorThree xdir, StructuralVectorThree ydir, StructuralVectorThree normal, string applicationId = null, Dictionary<string, object> properties = null)
     {
       this.Normal = normal;
       this.Xdir = xdir;
       this.Ydir = ydir;
-      this.StructuralId = structuralId;
+      this.ApplicationId = applicationId;
       this.Properties = properties;
 
       GenerateHash();
     }
 
-    public StructuralAxis(StructuralVectorThree xdir, StructuralVectorThree ydir, string structuralId = null, Dictionary<string, object> properties = null)
+    public StructuralAxis(StructuralVectorThree xdir, StructuralVectorThree ydir, string applicationId = null, Dictionary<string, object> properties = null)
     {
       this.Normal = new StructuralVectorThree(new double[]
       {
@@ -204,7 +204,7 @@ namespace SpeckleElements
       });
       this.Xdir = xdir;
       this.Ydir = ydir;
-      this.StructuralId = structuralId;
+      this.ApplicationId = applicationId;
       this.Properties = properties;
 
       GenerateHash();
@@ -316,10 +316,10 @@ namespace SpeckleElements
   {
     public StructuralLoadCase() { }
 
-    public StructuralLoadCase(StructuralLoadCaseType caseType, string structuralId = null, Dictionary<string, object> properties = null)
+    public StructuralLoadCase(StructuralLoadCaseType caseType, string applicationId = null, Dictionary<string, object> properties = null)
     {
       this.CaseType = caseType;
-      this.StructuralId = structuralId;
+      this.ApplicationId = applicationId;
       this.Properties = properties;
 
       GenerateHash();
@@ -336,12 +336,12 @@ namespace SpeckleElements
   {
     public StructuralLoadTask() { }
 
-    public StructuralLoadTask(StructuralLoadTaskType taskType, string[] loadCaseRefs, double[] loadFactors, string structuralId = null, Dictionary<string, object> properties = null)
+    public StructuralLoadTask(StructuralLoadTaskType taskType, string[] loadCaseRefs, double[] loadFactors, string applicationId = null, Dictionary<string, object> properties = null)
     {
       this.TaskType = taskType;
       this.LoadCaseRefs = loadCaseRefs.ToList();
       this.LoadFactors = loadFactors.ToList();
-      this.StructuralId = structuralId;
+      this.ApplicationId = applicationId;
       this.Properties = properties;
 
       GenerateHash();
@@ -358,9 +358,9 @@ namespace SpeckleElements
     {
         public StructuralLoadTaskBuckling() { }
 
-        public StructuralLoadTaskBuckling(int numModes, int maxNumIterations, string resultCaseRef, string structuralId = null, Dictionary<string, object> properties = null, string stageDefinitionRef = null)
+        public StructuralLoadTaskBuckling(int numModes, int maxNumIterations, string resultCaseRef, string applicationId = null, Dictionary<string, object> properties = null, string stageDefinitionRef = null)
         {
-            this.StructuralId = structuralId;
+            this.ApplicationId = applicationId;
             this.Properties = properties;
             this.NumModes = numModes;
             this.MaxNumIterations = maxNumIterations;
@@ -380,14 +380,14 @@ namespace SpeckleElements
   {
     public StructuralLoadCombo() { }
 
-    public StructuralLoadCombo(StructuralLoadComboType comboType, string[] loadTaskRefs, double[] loadTaskFactors, string[] loadComboRefs, double[] loadComboFactors, string structuralId = null, Dictionary<string, object> properties = null)
+    public StructuralLoadCombo(StructuralLoadComboType comboType, string[] loadTaskRefs, double[] loadTaskFactors, string[] loadComboRefs, double[] loadComboFactors, string applicationId = null, Dictionary<string, object> properties = null)
     {
       this.ComboType = comboType;
       this.LoadTaskRefs = loadTaskRefs.ToList();
       this.LoadTaskFactors = loadTaskFactors.ToList();
       this.LoadComboRefs = loadComboRefs.ToList();
       this.LoadComboFactors = loadComboFactors.ToList();
-      this.StructuralId = structuralId;
+      this.ApplicationId = applicationId;
       this.Properties = properties;
 
       GenerateHash();
@@ -404,12 +404,12 @@ namespace SpeckleElements
   {
     public Structural0DLoad() { }
 
-    public Structural0DLoad(StructuralVectorSix loading, string[] nodeRefs, string loadCaseRef, string structuralId = null, Dictionary<string, object> properties = null)
+    public Structural0DLoad(StructuralVectorSix loading, string[] nodeRefs, string loadCaseRef, string applicationId = null, Dictionary<string, object> properties = null)
     {
       this.Loading = loading;
       this.NodeRefs = nodeRefs == null ? null : nodeRefs.ToList();
       this.LoadCaseRef = loadCaseRef;
-      this.StructuralId = structuralId;
+      this.ApplicationId = applicationId;
       this.Properties = properties;
 
       GenerateHash();
@@ -426,12 +426,12 @@ namespace SpeckleElements
   {
     public Structural1DLoad() { }
 
-    public Structural1DLoad(StructuralVectorSix loading, string[] elementRefs, string loadCaseRef, string structuralId = null, Dictionary<string, object> properties = null)
+    public Structural1DLoad(StructuralVectorSix loading, string[] elementRefs, string loadCaseRef, string applicationId = null, Dictionary<string, object> properties = null)
     {
       this.Loading = loading;
       this.ElementRefs = elementRefs == null ? null : elementRefs.ToList();
       this.LoadCaseRef = loadCaseRef;
-      this.StructuralId = structuralId;
+      this.ApplicationId = applicationId;
       this.Properties = properties;
 
       GenerateHash();
@@ -448,12 +448,12 @@ namespace SpeckleElements
   {
     public Structural2DLoad() { }
 
-    public Structural2DLoad(StructuralVectorThree loading, string[] elementRefs, string loadCaseRef, string structuralId = null, Dictionary<string, object> properties = null)
+    public Structural2DLoad(StructuralVectorThree loading, string[] elementRefs, string loadCaseRef, string applicationId = null, Dictionary<string, object> properties = null)
     {
       this.Loading = loading;
       this.ElementRefs = elementRefs == null ? null : elementRefs.ToList();
       this.LoadCaseRef = loadCaseRef;
-      this.StructuralId = structuralId;
+      this.ApplicationId = applicationId;
       this.Properties = properties;
 
       GenerateHash();
@@ -470,13 +470,13 @@ namespace SpeckleElements
   {
     public Structural2DLoadPanel() { }
 
-    public Structural2DLoadPanel(double[] value, StructuralVectorThree loading, string loadCaseRef, string structuralId = null, Dictionary<string, object> properties = null)
+    public Structural2DLoadPanel(double[] value, StructuralVectorThree loading, string loadCaseRef, string applicationId = null, Dictionary<string, object> properties = null)
     {
       this.Properties = properties;
       this.Value = value.ToList();
       this.Loading = loading;
       this.LoadCaseRef = loadCaseRef;
-      this.StructuralId = structuralId;
+      this.ApplicationId = applicationId;
 
       GenerateHash();
     }
@@ -495,15 +495,15 @@ namespace SpeckleElements
   {
     public StructuralAssembly() { }
 
-    public StructuralAssembly(double[] value, IEnumerable<string> memberRefs, SpeckleLine baseLine, SpecklePoint orientationPoint, int numPoints = 0, string structuralId = null, double width = 0, Dictionary<string, object> properties = null)
+    public StructuralAssembly(double[] value, IEnumerable<string> memberRefs, SpeckleLine baseLine, SpecklePoint orientationPoint, int numPoints = 0, string applicationId = null, double width = 0, Dictionary<string, object> properties = null)
     {
       this.Properties = properties;
-      this.StructuralId = structuralId;
-      this.MemberRefs = memberRefs.ToList();
+      this.ApplicationId = applicationId;
+      this.ElementRefs = elementRefs.ToList();
       this.Value = value.ToList();
       this.OrientationPoint = orientationPoint;
       this.NumPoints = numPoints;
-      this.Width = (double) width;
+      this.Width = width;
       this.BaseLine = baseLine;
       GenerateHash();
     }
@@ -551,7 +551,7 @@ namespace SpeckleElements
   {
     public StructuralMaterialConcrete() { }
 
-    public StructuralMaterialConcrete(double youngsModulus, double shearModulus, double poissonsRatio, double density, double coeffThermalExpansion, double compressiveStrength, double maxStrain, double aggragateSize, string structuralId = null, Dictionary<string, object> properties = null)
+    public StructuralMaterialConcrete(double youngsModulus, double shearModulus, double poissonsRatio, double density, double coeffThermalExpansion, double compressiveStrength, double maxStrain, double aggragateSize, string applicationId = null, Dictionary<string, object> properties = null)
     {
       this.YoungsModulus = youngsModulus;
       this.ShearModulus = shearModulus;
@@ -561,7 +561,7 @@ namespace SpeckleElements
       this.CompressiveStrength = compressiveStrength;
       this.MaxStrain = maxStrain;
       this.AggragateSize = aggragateSize;
-      this.StructuralId = structuralId;
+      this.ApplicationId = applicationId;
       this.Properties = properties;
 
       GenerateHash();
@@ -578,7 +578,7 @@ namespace SpeckleElements
   {
     public StructuralMaterialSteel() { }
 
-    public StructuralMaterialSteel(double youngsModulus, double shearModulus, double poissonsRatio, double density, double coeffThermalExpansion, double yieldStrength, double ultimateStrength, double maxStrain, string structuralId = null, Dictionary<string, object> properties = null)
+    public StructuralMaterialSteel(double youngsModulus, double shearModulus, double poissonsRatio, double density, double coeffThermalExpansion, double yieldStrength, double ultimateStrength, double maxStrain, string applicationId = null, Dictionary<string, object> properties = null)
     {
       this.YoungsModulus = youngsModulus;
       this.ShearModulus = shearModulus;
@@ -588,7 +588,7 @@ namespace SpeckleElements
       this.YieldStrength = yieldStrength;
       this.UltimateStrength = ultimateStrength;
       this.MaxStrain = maxStrain;
-      this.StructuralId = structuralId;
+      this.ApplicationId = applicationId;
       this.Properties = properties;
 
       GenerateHash();
@@ -605,14 +605,14 @@ namespace SpeckleElements
   {
     public Structural1DProperty() { }
 
-    public Structural1DProperty(SpeckleObject profile, Structural1DPropertyShape shape, bool hollow, double thickness, string materialRef, string structuralId = null, Dictionary<string, object> properties = null)
+    public Structural1DProperty(SpeckleObject profile, Structural1DPropertyShape shape, bool hollow, double thickness, string materialRef, string applicationId = null, Dictionary<string, object> properties = null)
     {
       this.Profile = profile;
       this.Shape = shape;
       this.Hollow = hollow;
       this.Thickness = thickness;
       this.MaterialRef = materialRef;
-      this.StructuralId = structuralId;
+      this.ApplicationId = applicationId;
       this.Properties = properties;
 
       GenerateHash();
@@ -632,12 +632,12 @@ namespace SpeckleElements
   {
     public Structural2DProperty() { }
 
-    public Structural2DProperty(double thickness, string materialRef, Structural2DPropertyReferenceSurface referenceSurface, string structuralId = null, Dictionary<string, object> properties = null)
+    public Structural2DProperty(double thickness, string materialRef, Structural2DPropertyReferenceSurface referenceSurface, string applicationId = null, Dictionary<string, object> properties = null)
     {
       this.Thickness = thickness;
       this.MaterialRef = materialRef;
       this.ReferenceSurface = referenceSurface;
-      this.StructuralId = structuralId;
+      this.ApplicationId = applicationId;
       this.Properties = properties;
 
       GenerateHash();
@@ -678,7 +678,7 @@ namespace SpeckleElements
   {
     public StructuralNode() { }
 
-    public StructuralNode(double[] value, StructuralAxis axis, StructuralVectorBoolSix restraint, StructuralVectorSix stiffness, double mass, string structuralId = null, Dictionary<string, object> properties = null)
+    public StructuralNode(double[] value, StructuralAxis axis, StructuralVectorBoolSix restraint, StructuralVectorSix stiffness, double mass, string applicationId = null, Dictionary<string, object> properties = null)
     {
       this.Properties = properties;
       this.Value = value.ToList();
@@ -686,7 +686,7 @@ namespace SpeckleElements
       this.Restraint = restraint;
       this.Stiffness = stiffness;
       this.Mass = mass;
-      this.StructuralId = structuralId;
+      this.ApplicationId = applicationId;
 
       GenerateHash();
     }
@@ -705,7 +705,7 @@ namespace SpeckleElements
   {
     public Structural1DElement() { }
 
-    public Structural1DElement(double[] value, Structural1DElementType elementType, string propertyRef, StructuralVectorThree zAxis, StructuralVectorBoolSix[] endRelease, StructuralVectorThree[] offset, string structuralId = null, Dictionary<string, object> properties = null)
+    public Structural1DElement(double[] value, Structural1DElementType elementType, string propertyRef, StructuralVectorThree zAxis, StructuralVectorBoolSix[] endRelease, StructuralVectorThree[] offset, string applicationId = null, Dictionary<string, object> properties = null)
     {
       this.Properties = properties;
       this.Value = value.ToList();
@@ -714,7 +714,7 @@ namespace SpeckleElements
       this.ZAxis = zAxis;
       this.EndRelease = endRelease == null ? null : EndRelease.ToList();
       this.Offset = offset == null ? null : offset.ToList();
-      this.StructuralId = structuralId;
+      this.ApplicationId = applicationId;
 
       GenerateHash();
     }
@@ -737,7 +737,7 @@ namespace SpeckleElements
   {
     public Structural1DElementPolyline() { }
 
-    public Structural1DElementPolyline(double[] value, Structural1DElementType elementType, string propertyRef, StructuralVectorThree[] zAxis, StructuralVectorBoolSix[] endRelease, StructuralVectorThree[] offset, string structuralId = null, Dictionary<string, object> properties = null)
+    public Structural1DElementPolyline(double[] value, Structural1DElementType elementType, string propertyRef, StructuralVectorThree[] zAxis, StructuralVectorBoolSix[] endRelease, StructuralVectorThree[] offset, string applicationId = null, Dictionary<string, object> properties = null)
     {
       this.Properties = properties;
       this.Value = value.ToList();
@@ -746,12 +746,12 @@ namespace SpeckleElements
       this.ZAxis = zAxis == null ? null : zAxis.ToList();
       this.EndRelease = endRelease == null ? null : endRelease.ToList();
       this.Offset = offset == null ? null : offset.ToList();
-      this.StructuralId = structuralId;
+      this.ApplicationId = applicationId;
 
       GenerateHash();
     }
 
-    public Structural1DElementPolyline(Structural1DElement[] elements, string structuralId = null, Dictionary<string, object> properties = null)
+    public Structural1DElementPolyline(Structural1DElement[] elements, string applicationId = null, Dictionary<string, object> properties = null)
     {
       if (elements.Length == 0)
         throw new Exception("No elements specified.");
@@ -781,7 +781,7 @@ namespace SpeckleElements
         this.Offset.AddRange(element.Offset);
       }
 
-      this.StructuralId = structuralId;
+      this.ApplicationId = applicationId;
 
       GenerateHash();
     }
@@ -826,7 +826,7 @@ namespace SpeckleElements
   {
     public Structural2DElement() { }
 
-    public Structural2DElement(double[] vertices, int[] faces, int[] colors, Structural2DElementType elementType, string propertyRef, StructuralAxis axis, double offset, string structuralId = null, Dictionary<string, object> properties = null)
+    public Structural2DElement(double[] vertices, int[] faces, int[] colors, Structural2DElementType elementType, string propertyRef, StructuralAxis axis, double offset, string applicationId = null, Dictionary<string, object> properties = null)
     {
       this.Properties = properties;
       this.Vertices = vertices.ToList();
@@ -836,7 +836,7 @@ namespace SpeckleElements
       this.PropertyRef = propertyRef;
       this.Axis = axis;
       this.Offset = offset;
-      this.StructuralId = structuralId;
+      this.ApplicationId = applicationId;
 
       this.TextureCoordinates = null;
 
@@ -859,7 +859,7 @@ namespace SpeckleElements
   {
     public Structural2DElementMesh() { }
 
-    public Structural2DElementMesh(double[] vertices, int[] faces, int[] colors, Structural2DElementType elementType, string propertyRef, StructuralAxis[] axis, double[] offset, string structuralId = null, double meshSize = 0, Dictionary<string, object> properties = null)
+    public Structural2DElementMesh(double[] vertices, int[] faces, int[] colors, Structural2DElementType elementType, string propertyRef, StructuralAxis[] axis, double[] offset, string applicationId = null, double meshSize = 0, Dictionary<string, object> properties = null)
     {
       this.Properties = properties;
       this.Vertices = vertices.ToList();
@@ -870,13 +870,14 @@ namespace SpeckleElements
       this.Axis = axis.ToList();
       this.Offset = offset.ToList();
       this.StructuralId = structuralId;
-      this.MeshSize = MeshSize;
+      this.MeshSize = meshSize;
+      this.ApplicationId = applicationId;
       this.TextureCoordinates = null;
 
       GenerateHash();
     }
 
-    public Structural2DElementMesh(double[] edgeVertices, int? color, Structural2DElementType elementType, string propertyRef, StructuralAxis[] axis, double[] offset, string structuralId = null, Dictionary<string, object> properties = null)
+    public Structural2DElementMesh(double[] edgeVertices, int? color, Structural2DElementType elementType, string propertyRef, StructuralAxis[] axis, double[] offset, string applicationId = null, Dictionary<string, object> properties = null)
     {
       this.Properties = properties;
       this.Vertices = edgeVertices.ToList();
@@ -905,7 +906,7 @@ namespace SpeckleElements
         this.Axis = axis.ToList();
       if (offset != null)
         this.Offset = offset.ToList();
-      this.StructuralId = structuralId;
+      this.ApplicationId = applicationId;
 
       this.TextureCoordinates = null;
 
@@ -942,7 +943,7 @@ namespace SpeckleElements
             PropertyRef,
             Axis != null && Axis.Count() > faceCounter? Axis[faceCounter] : null,
             Offset != null && Offset.Count() > faceCounter ? Offset[faceCounter] : 0,
-            ElementStructuralId != null && ElementStructuralId.Count() > faceCounter ? ElementStructuralId[faceCounter] : null
+            ElementApplicationId != null && ElementApplicationId.Count() > faceCounter ? ElementApplicationId[faceCounter] : null
         );
         element.Dummy = Dummy;
         element.MeshSize = MeshSize;
@@ -1202,20 +1203,20 @@ namespace SpeckleElements
   {
     public Structural2DVoid() { }
 
-    public Structural2DVoid(double[] vertices, int[] faces, int[] colors, string structuralId = null, Dictionary<string, object> properties = null)
+    public Structural2DVoid(double[] vertices, int[] faces, int[] colors, string applicationId = null, Dictionary<string, object> properties = null)
     {
       this.Properties = properties;
       this.Vertices = vertices.ToList();
       this.Faces = faces.ToList();
       this.Colors = colors == null ? null : colors.ToList();
-      this.StructuralId = structuralId;
+      this.ApplicationId = applicationId;
 
       this.TextureCoordinates = null;
 
       GenerateHash();
     }
 
-    public Structural2DVoid(double[] edgeVertices, int? color, string structuralId = null, Dictionary<string, object> properties = null)
+    public Structural2DVoid(double[] edgeVertices, int? color, string applicationId = null, Dictionary<string, object> properties = null)
     {
       this.Properties = properties;
       this.Vertices = edgeVertices.ToList();
@@ -1238,7 +1239,7 @@ namespace SpeckleElements
       else
         this.Colors = new List<int>();
 
-      this.StructuralId = structuralId;
+      this.ApplicationId = applicationId;
 
       this.TextureCoordinates = null;
 

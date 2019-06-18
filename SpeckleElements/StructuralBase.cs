@@ -10,21 +10,14 @@ using SpeckleCoreGeometryClasses;
 
 namespace SpeckleElements
 {
-  public interface IStructural : ISpeckleInitializer
-  {
-    string StructuralId { get; set; }
-  }
+  public interface IStructural : ISpeckleInitializer { }
 
   #region Helper objects
   [Serializable]
   public partial class StructuralVectorThree : SpeckleVector, IStructural
   {
     public override string Type { get => base.Type + "/StructuralVectorThree"; }
-
-    /// <summary>Structural ID to reference from other objects.</summary>
-    [SNJ.JsonIgnore]
-    public string StructuralId { get; set; }
-
+    
     /// <summary>Base SpeckleVector.</summary>
     [SNJ.JsonIgnore]
     public SpeckleVector baseVector
@@ -38,11 +31,7 @@ namespace SpeckleElements
   public partial class StructuralVectorBoolThree : SpeckleObject, IStructural
   {
     public override string Type { get => "StructuralVectorBoolThree"; }
-
-    /// <summary>Structural ID to reference from other objects.</summary>
-    [SNJ.JsonIgnore]
-    public string StructuralId { get; set; }
-
+    
     /// <summary>An array containing the X, Y, and Z values of the vector.</summary>
     [SNJ.JsonProperty("value", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
     public List<bool> Value { get; set; }
@@ -52,11 +41,7 @@ namespace SpeckleElements
   public partial class StructuralVectorSix : SpeckleObject, IStructural
   {
     public override string Type { get => "StructuralVectorSix"; }
-
-    /// <summary>Structural ID to reference from other objects.</summary>
-    [SNJ.JsonIgnore]
-    public string StructuralId { get; set; }
-
+    
     /// <summary>An array containing the X, Y, Z, XX, YY, and ZZ values of the vector.</summary>
     [SNJ.JsonProperty("value", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
     public List<double> Value { get; set; }
@@ -66,11 +51,7 @@ namespace SpeckleElements
   public partial class StructuralVectorBoolSix : SpeckleObject, IStructural
   {
     public override string Type { get => "StructuralVectorBoolSix"; }
-
-    /// <summary>Structural ID to reference from other objects.</summary>
-    [SNJ.JsonIgnore]
-    public string StructuralId { get; set; }
-
+    
     /// <summary>An array containing the X, Y, Z, XX, YY, and ZZ values of the vector.</summary>
     [SNJ.JsonProperty("value", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
     public List<bool> Value { get; set; }
@@ -80,11 +61,7 @@ namespace SpeckleElements
   public partial class StructuralAxis : SpecklePlane, IStructural
   {
     public override string Type { get => base.Type + "/StructuralAxis"; }
-
-    /// <summary>Structural ID to reference from other objects.</summary>
-    [SNJ.JsonIgnore]
-    public string StructuralId { get; set; }
-
+    
     /// <summary>Base SpecklePlane.</summary>
     [SNJ.JsonIgnore]
     public SpecklePlane basePlane
@@ -106,11 +83,7 @@ namespace SpeckleElements
   public partial class StructuralLoadCase : SpeckleObject, IStructural
   {
     public override string Type { get => "StructuralLoadCase"; }
-
-    /// <summary>Structural ID to reference from other objects.</summary>
-    [SNJ.JsonProperty("structuralId", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
-    public string StructuralId { get; set; }
-
+    
     /// <summary>Type of load the case contains.</summary>
     [SNJ.JsonConverter(typeof(SNJ.Converters.StringEnumConverter))]
     [SNJ.JsonProperty("caseType", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
@@ -121,17 +94,13 @@ namespace SpeckleElements
   public partial class StructuralLoadTask : SpeckleObject, IStructural
   {
     public override string Type { get => "StructuralLoadTask"; }
-
-    /// <summary>Structural ID to reference from other objects.</summary>
-    [SNJ.JsonProperty("structuralId", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
-    public string StructuralId { get; set; }
-
+    
     /// <summary>Type of analysis to perform.</summary>
     [SNJ.JsonConverter(typeof(SNJ.Converters.StringEnumConverter))]
     [SNJ.JsonProperty("taskType", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
     public StructuralLoadTaskType TaskType { get; set; }
 
-    /// <summary>Structural IDs of StructuralLoadCase to include.</summary>
+    /// <summary>Application IDs of StructuralLoadCase to include.</summary>
     [SNJ.JsonProperty("loadCaseRefs", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
     public List<string> LoadCaseRefs { get; set; }
 
@@ -144,26 +113,22 @@ namespace SpeckleElements
   public partial class StructuralLoadTaskBuckling : SpeckleObject, IStructural
   {
     public override string Type { get => "StructuralLoadTaskBuckling"; }
-
-    /// <summary>Structural ID to reference from other objects.</summary>
-    [SNJ.JsonProperty("structuralId", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
-    public string StructuralId { get; set; }
-
+    
     /// <summary>Type of analysis to perform.</summary>
     [SNJ.JsonConverter(typeof(SNJ.Converters.StringEnumConverter))]
     [SNJ.JsonProperty("taskType", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
     public StructuralLoadTaskType TaskType { get => StructuralLoadTaskType.Buckling; }
 
     /// <summary>Number of modes.</summary>
-    [SNJ.JsonProperty("NumModes", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
+    [SNJ.JsonProperty("numModes", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
     public int NumModes { get; set; }
 
     /// <summary>Maximum number of iterations.</summary>
-    [SNJ.JsonProperty("MaxNumIterations", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
+    [SNJ.JsonProperty("maxNumIterations", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
     public int MaxNumIterations { get; set; }
 
     /// <summary>Name of the combination case.</summary>
-    [SNJ.JsonProperty("ResultCaseRef", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
+    [SNJ.JsonProperty("resultCaseRef", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
     public string ResultCaseRef { get; set; }
 
     /// <summary>Stage definition for the task</summary>
@@ -175,17 +140,13 @@ namespace SpeckleElements
   public partial class StructuralLoadCombo : SpeckleObject, IStructural
   {
     public override string Type { get => "StructuralLoadCombo"; }
-
-    /// <summary>Structural ID to reference from other objects.</summary>
-    [SNJ.JsonProperty("structuralId", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
-    public string StructuralId { get; set; }
-
+    
     /// <summary>Type of combination method.</summary>
     [SNJ.JsonConverter(typeof(SNJ.Converters.StringEnumConverter))]
     [SNJ.JsonProperty("comboType", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
     public StructuralLoadComboType ComboType { get; set; }
 
-    /// <summary>Structural IDs of StructuralLoadTask to include.</summary>
+    /// <summary>Application IDs of StructuralLoadTask to include.</summary>
     [SNJ.JsonProperty("loadTaskRefs", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
     public List<string> LoadTaskRefs { get; set; }
 
@@ -193,7 +154,7 @@ namespace SpeckleElements
     [SNJ.JsonProperty("loadTaskFactors", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
     public List<double> LoadTaskFactors { get; set; }
 
-    /// <summary>Structural IDs of StructuralLoadCombo to include.</summary>
+    /// <summary>Application IDs of StructuralLoadCombo to include.</summary>
     [SNJ.JsonProperty("loadComboRefs", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
     public List<string> LoadComboRefs { get; set; }
 
@@ -206,20 +167,16 @@ namespace SpeckleElements
   public partial class Structural0DLoad : SpeckleObject, IStructural
   {
     public override string Type { get => "Structural0DLoad"; }
-
-    /// <summary>Structural ID to reference from other objects.</summary>
-    [SNJ.JsonProperty("structuralId", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
-    public string StructuralId { get; set; }
-
+    
     /// <summary>A list of Fx, Fy, Fz, Mx, My, and Mz loads.</summary>
     [SNJ.JsonProperty("loading", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
     public StructuralVectorSix Loading { get; set; }
 
-    /// <summary>Structural IDs of StructuralNodes to apply load.</summary>
+    /// <summary>Application IDs of StructuralNodes to apply load.</summary>
     [SNJ.JsonProperty("nodeRefs", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
     public List<string> NodeRefs { get; set; }
 
-    /// <summary>Structural ID of StructuralLoadCase.</summary>
+    /// <summary>Application ID of StructuralLoadCase.</summary>
     [SNJ.JsonProperty("loadCaseRef", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
     public string LoadCaseRef { get; set; }
   }
@@ -228,20 +185,16 @@ namespace SpeckleElements
   public partial class Structural1DLoad : SpeckleObject, IStructural
   {
     public override string Type { get => "Structural1DLoad"; }
-
-    /// <summary>Structural ID to reference from other objects.</summary>
-    [SNJ.JsonProperty("structuralId", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
-    public string StructuralId { get; set; }
-
+    
     /// <summary>A list of Fx, Fy, Fz, Mx, My, and Mz loads.</summary>
     [SNJ.JsonProperty("loading", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
     public StructuralVectorSix Loading { get; set; }
 
-    /// <summary>Structural IDs of Structural1DElements to apply load.</summary>
+    /// <summary>Application IDs of Structural1DElements to apply load.</summary>
     [SNJ.JsonProperty("elementRefs", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
     public List<string> ElementRefs { get; set; }
 
-    /// <summary>Structural ID of StructuralLoadCase.</summary>
+    /// <summary>Application ID of StructuralLoadCase.</summary>
     [SNJ.JsonProperty("loadCaseRef", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
     public string LoadCaseRef { get; set; }
   }
@@ -250,20 +203,16 @@ namespace SpeckleElements
   public partial class Structural2DLoad : SpeckleObject, IStructural
   {
     public override string Type { get => "Structural2DLoad"; }
-
-    /// <summary>Structural ID to reference from other objects.</summary>
-    [SNJ.JsonProperty("structuralId", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
-    public string StructuralId { get; set; }
-
+    
     /// <summary>A list of Fx, Fy, and Fz loads.</summary>
     [SNJ.JsonProperty("loading", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
     public StructuralVectorThree Loading { get; set; }
 
-    /// <summary>Structural IDs of Structural2DElementMeshes to apply load.</summary>
+    /// <summary>Application IDs of Structural2DElementMeshes to apply load.</summary>
     [SNJ.JsonProperty("elementRefs", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
     public List<string> ElementRefs { get; set; }
 
-    /// <summary>Structural ID of StructuralLoadCase.</summary>
+    /// <summary>Application ID of StructuralLoadCase.</summary>
     [SNJ.JsonProperty("loadCaseRef", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
     public string LoadCaseRef { get; set; }
   }
@@ -295,15 +244,7 @@ namespace SpeckleElements
         base.Properties["structural"] = value;
       }
     }
-
-    /// <summary>Structural ID to reference from other objects.</summary>
-    [SNJ.JsonIgnore]
-    public string StructuralId
-    {
-      get => StructuralProperties.ContainsKey("structuralId") ? (StructuralProperties["structuralId"] as string) : null;
-      set => StructuralProperties["structuralId"] = value;
-    }
-
+    
     /// <summary>Base SpeckleLine.</summary>
     [SNJ.JsonIgnore]
     public SpeckleLine baseLine
@@ -324,7 +265,7 @@ namespace SpeckleElements
       set => StructuralProperties["loading"] = value;
     }
 
-    /// <summary>Structural ID of StructuralLoadCase.</summary>
+    /// <summary>Application ID of StructuralLoadCase.</summary>
     [SNJ.JsonIgnore]
     public string LoadCaseRef
     {
@@ -360,15 +301,7 @@ namespace SpeckleElements
         base.Properties["structural"] = value;
       }
     }
-
-    /// <summary>Structural ID to reference from other objects.</summary>
-    [SNJ.JsonIgnore]
-    public string StructuralId
-    {
-      get => StructuralProperties.ContainsKey("structuralId") ? (StructuralProperties["structuralId"] as string) : null;
-      set => StructuralProperties["structuralId"] = value;
-    }
-
+    
     /// <summary>Base SpecklePolyline.</summary>
     [SNJ.JsonIgnore]
     public SpecklePolyline basePolyline
@@ -390,7 +323,7 @@ namespace SpeckleElements
       set => StructuralProperties["loading"] = value;
     }
 
-    /// <summary>Structural ID of StructuralLoadCase.</summary>
+    /// <summary>Application ID of StructuralLoadCase.</summary>
     [SNJ.JsonIgnore]
     public string LoadCaseRef
     {
@@ -426,15 +359,7 @@ namespace SpeckleElements
         base.Properties["structural"] = value;
       }
     }
-
-    /// <summary>Structural ID to reference from other objects.</summary>
-    [SNJ.JsonIgnore]
-    public string StructuralId
-    {
-      get => StructuralProperties.ContainsKey("structuralId") ? (StructuralProperties["structuralId"] as string) : null;
-      set => StructuralProperties["structuralId"] = value;
-    }
-
+    
     [SNJ.JsonIgnore]
     public int NumPoints
     {
@@ -475,24 +400,24 @@ namespace SpeckleElements
       set => StructuralProperties["width"] = value;
     }
 
-    /// <summary>Structural ID of StructuralLoadCase.</summary>
+    /// <summary>Application ID of StructuralLoadCase.</summary>
     [SNJ.JsonIgnore]
-    public List<string> MemberRefs
+    public List<string> ElementRefs
     {
       get
       {
-        if (StructuralProperties.ContainsKey("memberRefs"))
+        if (StructuralProperties.ContainsKey("elementRefs"))
         {
           try
           {
             try
             {
-              return (List<string>)StructuralProperties["memberRefs"];
+              return (List<string>)StructuralProperties["elementRefs"];
             }
             catch
             {
-              this.MemberRefs = ((List<object>)StructuralProperties["memberRefs"]).Select(x => Convert.ToString(x)).ToList();
-              return this.MemberRefs;
+              this.ElementRefs = ((List<object>)StructuralProperties["elementRefs"]).Select(x => Convert.ToString(x)).ToList();
+              return this.ElementRefs;
             }
           }
           catch
@@ -501,7 +426,7 @@ namespace SpeckleElements
         else
           return null;
       }
-      set => StructuralProperties["memberRefs"] = value;
+      set => StructuralProperties["elementRefs"] = value;
     }
   }
 
@@ -509,14 +434,10 @@ namespace SpeckleElements
   public partial class StructuralStageDefinition : SpeckleObject, IStructural
   {
     public override string Type { get => "StructuralStageDefinition"; }
-
-    /// <summary>Structural ID to reference from other objects.</summary>
-    [SNJ.JsonProperty("structuralId", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
-    public string StructuralId { get; set; }
-
-    /// <summary>Structural ID of members to include in the stage of the construction sequence.</summary>
-    [SNJ.JsonProperty("memberRefs", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
-    public List<string> MemberRefs { get; set; }
+    
+    /// <summary>Application ID of members to include in the stage of the construction sequence.</summary>
+    [SNJ.JsonProperty("elementRefs", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
+    public List<string> ElementRefs { get; set; }
 
     /// <summary>Number of days in the stage</summary>
     [SNJ.JsonProperty("stageDays", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
@@ -605,11 +526,7 @@ namespace SpeckleElements
   public partial class StructuralMaterialConcrete : SpeckleObject, IStructural
   {
     public override string Type { get => "StructuralMaterialConcrete"; }
-
-    /// <summary>Structural ID to reference from other objects.</summary>
-    [SNJ.JsonProperty("structuralId", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
-    public string StructuralId { get; set; }
-
+    
     /// <summary>Young's modulus (E) of material.</summary>
     [SNJ.JsonProperty("youngsModulus", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
     public double YoungsModulus { get; set; }
@@ -647,11 +564,7 @@ namespace SpeckleElements
   public partial class StructuralMaterialSteel : SpeckleObject, IStructural
   {
     public override string Type { get => "StructuralMaterialSteel"; }
-
-    /// <summary>Structural ID to reference from other objects.</summary>
-    [SNJ.JsonProperty("structuralId", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
-    public string StructuralId { get; set; }
-
+    
     /// <summary>Young's modulus (E) of material.</summary>
     [SNJ.JsonProperty("youngsModulus", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
     public double YoungsModulus { get; set; }
@@ -689,11 +602,7 @@ namespace SpeckleElements
   public partial class Structural1DProperty : SpeckleObject, IStructural
   {
     public override string Type { get => "Structural1DProperty"; }
-
-    /// <summary>Structural ID to reference from other objects.</summary>
-    [SNJ.JsonProperty("structuralId", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
-    public string StructuralId { get; set; }
-
+    
     /// <summary>SpecklePolyline or SpeckleCircle of the cross-section.</summary>
     [SNJ.JsonProperty("profile", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
     public SpeckleObject Profile { get; set; }
@@ -711,7 +620,7 @@ namespace SpeckleElements
     [SNJ.JsonProperty("thickness", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
     public double Thickness { get; set; }
 
-    /// <summary>Structural ID of StructuralMaterial.</summary>
+    /// <summary>Application ID of StructuralMaterial.</summary>
     [SNJ.JsonProperty("materialRef", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
     public string MaterialRef { get; set; }
   }
@@ -720,16 +629,12 @@ namespace SpeckleElements
   public partial class Structural2DProperty : SpeckleObject, IStructural
   {
     public override string Type { get => "Structural2DProperty"; }
-
-    /// <summary>Structural ID to reference from other objects.</summary>
-    [SNJ.JsonProperty("structuralId", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
-    public string StructuralId { get; set; }
-
+    
     /// <summary>Thickness of the 2D element.</summary>
     [SNJ.JsonProperty("thickness", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
     public double Thickness { get; set; }
 
-    /// <summary>Structural ID of StructuralMaterial.</summary>
+    /// <summary>Application ID of StructuralMaterial.</summary>
     [SNJ.JsonProperty("materialRef", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
     public string MaterialRef { get; set; }
 
@@ -767,15 +672,7 @@ namespace SpeckleElements
         base.Properties["structural"] = value;
       }
     }
-
-    /// <summary>Structural ID to reference from other objects.</summary>
-    [SNJ.JsonIgnore]
-    public string StructuralId
-    {
-      get => StructuralProperties.ContainsKey("structuralId") ? (StructuralProperties["structuralId"] as string) : null;
-      set => StructuralProperties["structuralId"] = value;
-    }
-
+    
     /// <summary>Base SpecklePoint.</summary>
     [SNJ.JsonIgnore]
     public SpecklePoint basePoint
@@ -852,15 +749,7 @@ namespace SpeckleElements
         base.Properties["structural"] = value;
       }
     }
-
-    /// <summary>Structural ID to reference from other objects.</summary>
-    [SNJ.JsonIgnore]
-    public string StructuralId
-    {
-      get => StructuralProperties.ContainsKey("structuralId") ? (StructuralProperties["structuralId"] as string) : null;
-      set => StructuralProperties["structuralId"] = value;
-    }
-
+    
     /// <summary>Base SpeckleLine.</summary>
     [SNJ.JsonIgnore]
     public SpeckleLine baseLine
@@ -877,7 +766,7 @@ namespace SpeckleElements
       set => StructuralProperties["elementType"] = value.ToString();
     }
 
-    /// <summary>Structural ID of Structural1DProperty.</summary>
+    /// <summary>Application ID of Structural1DProperty.</summary>
     [SNJ.JsonIgnore]
     public string PropertyRef
     {
@@ -1030,33 +919,25 @@ namespace SpeckleElements
         base.Properties["structural"] = value;
       }
     }
-
-    /// <summary>Structural ID to reference from other objects.</summary>
+    
+    /// <summary>Application ID of elements to reference from other objects.</summary>
     [SNJ.JsonIgnore]
-    public string StructuralId
-    {
-      get => StructuralProperties.ContainsKey("structuralId") ? (StructuralProperties["structuralId"] as string) : null;
-      set => StructuralProperties["structuralId"] = value;
-    }
-
-    /// <summary>Structural ID of elements to reference from other objects.</summary>
-    [SNJ.JsonIgnore]
-    public List<string> ElementStructuralId
+    public List<string> ElementApplicationId
     {
       get
       {
-        if (StructuralProperties.ContainsKey("elementStructuralId"))
+        if (StructuralProperties.ContainsKey("elementApplicationId"))
         {
           try
           {
             try
             {
-              return (List<string>)StructuralProperties["elementStructuralId"];
+              return (List<string>)StructuralProperties["elementApplicationId"];
             }
             catch
             {
-              this.ElementStructuralId = ((List<object>)StructuralProperties["elementStructuralId"]).Select(x => Convert.ToString(x)).ToList();
-              return this.ElementStructuralId;
+              this.ElementApplicationId = ((List<object>)StructuralProperties["elementApplicationId"]).Select(x => Convert.ToString(x)).ToList();
+              return this.ElementApplicationId;
             }
           }
           catch
@@ -1065,7 +946,7 @@ namespace SpeckleElements
         else
           return null;
       }
-      set => StructuralProperties["elementStructuralId"] = value;
+      set => StructuralProperties["elementApplicationId"] = value;
     }
 
     /// <summary>Base SpecklePolyline.</summary>
@@ -1089,7 +970,7 @@ namespace SpeckleElements
       set => StructuralProperties["elementType"] = value.ToString();
     }
 
-    /// <summary>Structural ID of Structural1DProperty.</summary>
+    /// <summary>Application ID of Structural1DProperty.</summary>
     [SNJ.JsonIgnore]
     public string PropertyRef
     {
@@ -1265,15 +1146,7 @@ namespace SpeckleElements
         base.Properties["structural"] = value;
       }
     }
-
-    /// <summary>Structural ID to reference from other objects.</summary>
-    [SNJ.JsonIgnore]
-    public string StructuralId
-    {
-      get => StructuralProperties.ContainsKey("structuralId") ? (StructuralProperties["structuralId"] as string) : null;
-      set => StructuralProperties["structuralId"] = value;
-    }
-
+    
     /// <summary>Base SpeckleMesh.</summary>
     [SNJ.JsonIgnore]
     public SpeckleMesh baseMesh
@@ -1296,7 +1169,7 @@ namespace SpeckleElements
       set => StructuralProperties["elementType"] = value.ToString();
     }
 
-    /// <summary>Structural ID of Structural2DProperty.</summary>
+    /// <summary>Application ID of Structural2DProperty.</summary>
     [SNJ.JsonIgnore]
     public string PropertyRef
     {
@@ -1372,33 +1245,25 @@ namespace SpeckleElements
         base.Properties["structural"] = value;
       }
     }
-
-    /// <summary>Structural ID to reference from other objects.</summary>
+    
+    /// <summary>Application ID of elements to reference from other objects.</summary>
     [SNJ.JsonIgnore]
-    public string StructuralId
-    {
-      get => StructuralProperties.ContainsKey("structuralId") ? (StructuralProperties["structuralId"] as string) : null;
-      set => StructuralProperties["structuralId"] = value;
-    }
-
-    /// <summary>Structural ID of elements to reference from other objects.</summary>
-    [SNJ.JsonIgnore]
-    public List<string> ElementStructuralId
+    public List<string> ElementApplicationId
     {
       get
       {
-        if (StructuralProperties.ContainsKey("elementStructuralId"))
+        if (StructuralProperties.ContainsKey("elementApplicationId"))
         {
           try
           {
             try
             {
-              return (List<string>)StructuralProperties["elementStructuralId"];
+              return (List<string>)StructuralProperties["elementApplicationId"];
             }
             catch
             {
-              this.ElementStructuralId = ((List<object>)StructuralProperties["elementStructuralId"]).Select(x => Convert.ToString(x)).ToList();
-              return this.ElementStructuralId;
+              this.ElementApplicationId = ((List<object>)StructuralProperties["elementApplicationId"]).Select(x => Convert.ToString(x)).ToList();
+              return this.ElementApplicationId;
             }
           }
           catch
@@ -1407,7 +1272,7 @@ namespace SpeckleElements
         else
           return null;
       }
-      set => StructuralProperties["elementStructuralId"] = value;
+      set => StructuralProperties["elementApplicationId"] = value;
     }
 
     /// <summary>Base SpeckleMesh.</summary>
@@ -1432,7 +1297,7 @@ namespace SpeckleElements
       set => StructuralProperties["elementType"] = value.ToString();
     }
 
-    /// <summary>Structural ID of Structural2DProperty.</summary>
+    /// <summary>Application ID of Structural2DProperty.</summary>
     [SNJ.JsonIgnore]
     public string PropertyRef
     {
@@ -1549,15 +1414,7 @@ namespace SpeckleElements
         base.Properties["structural"] = value;
       }
     }
-
-    /// <summary>Structural ID to reference from other objects.</summary>
-    [SNJ.JsonIgnore]
-    public string StructuralId
-    {
-      get => StructuralProperties.ContainsKey("structuralId") ? (StructuralProperties["structuralId"] as string) : null;
-      set => StructuralProperties["structuralId"] = value;
-    }
-
+    
     /// <summary>Base SpeckleMesh.</summary>
     [SNJ.JsonIgnore]
     public SpeckleMesh baseMesh
@@ -1579,82 +1436,8 @@ namespace SpeckleElements
   public partial class StructuralNodeResult : SpeckleObject, IStructural
   {
     public override string Type { get => "StructuralNodeResult"; }
-
-    /// <summary>Structural ID to reference from other objects.</summary>
-    [SNJ.JsonProperty("structuralId", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
-    public string StructuralId { get; set; }
-
-    /// <summary>StructuralID of object referred to.</summary>
-    [SNJ.JsonProperty("targetRef", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
-    public string TargetRef { get; set; }
-
-    /// <summary>Indicates whether the results are in the global or local axis.</summary>
-    [SNJ.JsonProperty("isGlobal", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
-    public bool IsGlobal { get; set; }
-
-    /// <summary>Results.</summary>
-    [SNJ.JsonProperty("value", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
-    public Dictionary<string, object> Value { get; set; }
-  }
-
-  [Serializable]
-  public partial class Structural1DElementResult : SpeckleObject, IStructural
-  {
-    public override string Type { get => "Structural1DElementResult"; }
-
-    /// <summary>Structural ID to reference from other objects.</summary>
-    [SNJ.JsonProperty("structuralId", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
-    public string StructuralId { get; set; }
-
-    /// <summary>StructuralID of object referred to.</summary>
-    [SNJ.JsonProperty("targetRef", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
-    public string TargetRef { get; set; }
-
-    /// <summary>Indicates whether the results are in the global or local axis.</summary>
-    [SNJ.JsonProperty("isGlobal", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
-    public bool IsGlobal { get; set; }
-
-    /// <summary>Results.</summary>
-    [SNJ.JsonProperty("value", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
-    public Dictionary<string, object> Value { get; set; }
-  }
-
-  [Serializable]
-  public partial class Structural2DElementResult : SpeckleObject, IStructural
-  {
-    public override string Type { get => "Structural2DElementResult"; }
-
-    /// <summary>Structural ID to reference from other objects.</summary>
-    [SNJ.JsonProperty("structuralId", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
-    public string StructuralId { get; set; }
-
-    /// <summary>StructuralID of object referred to.</summary>
-    [SNJ.JsonProperty("targetRef", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
-    public string TargetRef { get; set; }
-
-    /// <summary>Indicates whether the results are in the global or local axis.</summary>
-    [SNJ.JsonProperty("isGlobal", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
-    public bool IsGlobal { get; set; }
-
-    /// <summary>Results.</summary>
-    [SNJ.JsonProperty("value", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
-    public Dictionary<string, object> Value { get; set; }
-  }
-
-  [Serializable]
-  public partial class StructuralMiscResult : SpeckleObject, IStructural
-  {
-    public override string Type { get => "StructuralMiscResult"; }
-
-    /// <summary>Structural ID to reference from other objects.</summary>
-    [SNJ.JsonProperty("structuralId", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
-    public string StructuralId { get; set; }
-
-    /// <summary>Description of result.</summary>
-    [SNJ.JsonProperty("description", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
-    public string Description { get; set; }
-
-    /// <summary>StructuralID of object referred to.</summary>
+    
+    /// <summary>ApplicationID of object referred to.</summary>
     [SNJ.JsonProperty("targetRef", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
     public string TargetRef { get; set; }
 
@@ -1666,36 +1449,67 @@ namespace SpeckleElements
     [SNJ.JsonProperty("value", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
     [SpeckleNewtonsoft.Newtonsoft.Json.JsonConverter(typeof(SpecklePropertiesConverter))]
     public Dictionary<string, object> Value { get; set; }
+  }
 
-    [SNJ.JsonIgnore]
-    public string TargetApplicationId
-    {
-      get => StructuralProperties.ContainsKey("targetApplicationId") ? (StructuralProperties["targetApplicationId"] as string) : null;
-      set => StructuralProperties["targetApplicationId"] = value;
-    }
+  [Serializable]
+  public partial class Structural1DElementResult : SpeckleObject, IStructural
+  {
+    public override string Type { get => "Structural1DElementResult"; }
 
-    [SNJ.JsonIgnore]
-    private Dictionary<string, object> StructuralProperties
-    {
-      get
-      {
-        if (base.Properties == null)
-          base.Properties = new Dictionary<string, object>();
+    /// <summary>ApplicationID of object referred to.</summary>
+    [SNJ.JsonProperty("targetRef", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
+    public string TargetRef { get; set; }
 
-        if (!base.Properties.ContainsKey("structural"))
-          base.Properties["structural"] = new Dictionary<string, object>();
+    /// <summary>Indicates whether the results are in the global or local axis.</summary>
+    [SNJ.JsonProperty("isGlobal", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
+    public bool IsGlobal { get; set; }
 
-        return base.Properties["structural"] as Dictionary<string, object>;
+    /// <summary>Results.</summary>
+    [SNJ.JsonProperty("value", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
+    [SpeckleNewtonsoft.Newtonsoft.Json.JsonConverter(typeof(SpecklePropertiesConverter))]
+    public Dictionary<string, object> Value { get; set; }
+  }
 
-      }
-      set
-      {
-        if (base.Properties == null)
-          base.Properties = new Dictionary<string, object>();
+  [Serializable]
+  public partial class Structural2DElementResult : SpeckleObject, IStructural
+  {
+    public override string Type { get => "Structural2DElementResult"; }
 
-        base.Properties["structural"] = value;
-      }
-    }
+    /// <summary>ApplicationID of object referred to.</summary>
+    [SNJ.JsonProperty("targetRef", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
+    public string TargetRef { get; set; }
+
+    /// <summary>Indicates whether the results are in the global or local axis.</summary>
+    [SNJ.JsonProperty("isGlobal", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
+    public bool IsGlobal { get; set; }
+
+    /// <summary>Results.</summary>
+    [SNJ.JsonProperty("value", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
+    [SpeckleNewtonsoft.Newtonsoft.Json.JsonConverter(typeof(SpecklePropertiesConverter))]
+    public Dictionary<string, object> Value { get; set; }
+  }
+
+  [Serializable]
+  public partial class StructuralMiscResult : SpeckleObject, IStructural
+  {
+    public override string Type { get => "StructuralMiscResult"; }
+    
+    /// <summary>Description of result.</summary>
+    [SNJ.JsonProperty("description", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
+    public string Description { get; set; }
+
+    /// <summary>ApplicationID of object referred to.</summary>
+    [SNJ.JsonProperty("targetRef", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
+    public string TargetRef { get; set; }
+
+    /// <summary>Indicates whether the results are in the global or local axis.</summary>
+    [SNJ.JsonProperty("isGlobal", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
+    public bool IsGlobal { get; set; }
+
+    /// <summary>Results.</summary>
+    [SNJ.JsonProperty("value", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
+    [SpeckleNewtonsoft.Newtonsoft.Json.JsonConverter(typeof(SpecklePropertiesConverter))]
+    public Dictionary<string, object> Value { get; set; }
   }
   #endregion
 }

@@ -13,6 +13,7 @@ namespace SpeckleElementsGSA
   [GSAObject("COMBINATION.1", new string[] { }, "loads", true, true, new Type[] { typeof(GSALoadCase), typeof(GSALoadTask) }, new Type[] { typeof(GSALoadCase), typeof(GSALoadTask) })]
   public class GSALoadCombo : IGSASpeckleContainer
   {
+    public int GSAId { get; set; }
     public string GWACommand { get; set; }
     public List<string> SubGWACommand { get; set; } = new List<string>();
     public dynamic Value { get; set; } = new StructuralLoadCombo();
@@ -24,11 +25,12 @@ namespace SpeckleElementsGSA
 
       StructuralLoadCombo obj = new StructuralLoadCombo();
 
-      string[] pieces = this.GWACommand.ListSplit(",");
+      string[] pieces = this.GWACommand.ListSplit("\t");
 
       int counter = 1; // Skip identifier
 
-      obj.StructuralId = pieces[counter++];
+      this.GSAId = Convert.ToInt32(pieces[counter++]);
+      obj.ApplicationId = GSA.GetSID(this.GetGSAKeyword(), this.GSAId);
       obj.Name = pieces[counter++];
 
       // Parse type
@@ -55,11 +57,11 @@ namespace SpeckleElementsGSA
           switch (t.Item1[0])
           {
             case 'A':
-              obj.LoadTaskRefs.Add(t.Item1.Substring(1));
+              obj.LoadTaskRefs.Add(GSA.GetSID(typeof(GSALoadTask).GetGSAKeyword(), Convert.ToInt32(t.Item1.Substring(1))));
               obj.LoadTaskFactors.Add(t.Item2);
               break;
             case 'C':
-              obj.LoadComboRefs.Add(t.Item1.Substring(1));
+              obj.LoadComboRefs.Add(GSA.GetSID(typeof(GSALoadCombo).GetGSAKeyword(), Convert.ToInt32(t.Item1.Substring(1))));
               obj.LoadComboFactors.Add(t.Item2);
               break;
           }
@@ -159,10 +161,10 @@ namespace SpeckleElementsGSA
       string keyword = typeof(GSALoadCombo).GetGSAKeyword();
       string[] subKeywords = typeof(GSALoadCombo).GetSubGSAKeyword();
 
-      string[] lines = GSA.GetGWARecords("GET_ALL," + keyword);
-      List<string> deletedLines = GSA.GetDeletedGWARecords("GET_ALL," + keyword).ToList();
+      string[] lines = GSA.GetGWARecords("GET_ALL\t" + keyword);
+      List<string> deletedLines = GSA.GetDeletedGWARecords("GET_ALL\t" + keyword).ToList();
       foreach (string k in subKeywords)
-        deletedLines.AddRange(GSA.GetDeletedGWARecords("GET_ALL," + k));
+        deletedLines.AddRange(GSA.GetDeletedGWARecords("GET_ALL\t" + k));
 
       // Remove deleted lines
       GSASenderObjects[typeof(GSALoadCombo)].RemoveAll(l => deletedLines.Contains((l as IGSASpeckleContainer).GWACommand));
