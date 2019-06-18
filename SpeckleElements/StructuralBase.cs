@@ -524,6 +524,27 @@ namespace SpeckleElements
   }
 
   [Serializable]
+  public partial class StructuralGravityLoading : SpeckleObject, IStructural
+  {
+    public override string Type { get => "StructuralGravityLoading"; }
+
+    /// <summary>Structural ID to reference from other objects.</summary>
+    [SNJ.JsonProperty("structuralId", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
+    public string StructuralId { get; set; }
+
+    /// <summary>A list of x, y, z factors</summary>
+    [SNJ.JsonProperty("gravityFactors", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
+    public StructuralVectorThree GravityFactors { get; set; }
+
+    /// <summary>Structural ID of StructuralLoadCase.</summary>
+    [SNJ.JsonProperty("loadCaseRef", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
+    public string LoadCaseRef { get; set; }
+  }
+
+  #endregion
+
+  #region Properties
+  [Serializable]
   public partial class StructuralLinearSpringProperty : SpeckleObject, IStructural
   {
     public override string Type { get => base.Type + "/StructuralLinearSpringProperty"; }
@@ -614,10 +635,10 @@ namespace SpeckleElements
       get => (StructuralProperties.ContainsKey("stiffnessZz") && double.TryParse(StructuralProperties["stiffnessZz"].ToString(), out double stiffness)) ? stiffness : 0;
       set => StructuralProperties["stiffnessZz"] = value;
     }
-  }
-  #endregion
 
-  #region Properties
+    /// <summary>A list of x, y, z, xx, yy, and yz stiffnesses</summary>
+  }
+
   [Serializable]
   public partial class StructuralMaterialConcrete : SpeckleObject, IStructural
   {

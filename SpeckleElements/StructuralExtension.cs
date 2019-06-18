@@ -523,6 +523,27 @@ namespace SpeckleElements
       this.GenerateHash();
     }
   }
+
+  public partial class StructuralGravityLoading
+  {
+    public StructuralGravityLoading() { }
+
+    public StructuralGravityLoading(StructuralVectorThree gravityFactors, string loadCaseRef, string structuralId = null, Dictionary<string, object> properties = null)
+    {
+      this.GravityFactors = gravityFactors;
+      this.LoadCaseRef = loadCaseRef;
+      this.StructuralId = structuralId;
+      this.Properties = properties;
+
+      GenerateHash();
+    }
+
+    public override void Scale(double factor)
+    {
+      this.Properties = ScaleProperties(this.Properties, factor);
+      this.GenerateHash();
+    }
+  }
   #endregion
 
   #region Properties
