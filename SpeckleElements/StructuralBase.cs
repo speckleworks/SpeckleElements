@@ -523,6 +523,7 @@ namespace SpeckleElements
     public int StageDays { get; set; }
   }
 
+  [Serializable]
   public partial class StructuralLinearSpringProperty : SpeckleObject, IStructural
   {
     public override string Type { get => base.Type + "/StructuralLinearSpringProperty"; }

@@ -8,7 +8,7 @@ using SpeckleElements;
 
 namespace SpeckleElementsGSA
 {
-  [GSAObject("ASSEMBLY.2", new string[] { }, "loads", true, true, new Type[] { }, new Type[] { })]
+  [GSAObject("PROP_SPR.3", new string[] { }, "properties", true, true, new Type[] { }, new Type[] { })]
   public class GSALinearSpringProperty : IGSASpeckleContainer
   {
     public string GWACommand { get; set; }
@@ -20,14 +20,36 @@ namespace SpeckleElementsGSA
       if (this.GWACommand == null)
         return;
 
-      var obj = new StructuralAssembly();
-
       var pieces = this.GWACommand.ListSplit(",");
+
+      const int numStiffnesses = 6; 
+
+      var obj = new StructuralLinearSpringProperty();
 
       var counter = 1; // Skip identifier
       obj.StructuralId = pieces[counter++];
       obj.Name = pieces[counter++].Trim(new char[] { '"' });
+      counter++; //Skip colour
+      obj.Axis = pieces[counter++];
+      var springPropertyType = pieces[counter++];
+      if (springPropertyType.ToLower() != "general")
+      {
+        //this type is not currently handled by this class
+        return;
+      }
+      obj.Type = springPropertyType;
+      var stiffnesses = new double[numStiffnesses];
+      for (var i = 0; i < numStiffnesses; i++)
+      {
+        double.TryParse(pieces[counter += 2], out stiffnesses[i]);
+      }
 
+      obj.StiffnessX = stiffnesses[0];
+      obj.StiffnessY = stiffnesses[1];
+      obj.StiffnessZ = stiffnesses[2];
+      obj.StiffnessXx = stiffnesses[3];
+      obj.StiffnessYy = stiffnesses[4];
+      obj.StiffnessZz = stiffnesses[5];
       this.Value = obj;
     }
 
@@ -38,37 +60,34 @@ namespace SpeckleElementsGSA
 
       Type destType = typeof(GSALinearSpringProperty);
 
-      StructuralAssembly assembly = this.Value as StructuralAssembly;
+      StructuralLinearSpringProperty lsp = this.Value as StructuralLinearSpringProperty;
 
       string keyword = destType.GetGSAKeyword();
 
-      int index = GSA.Indexer.ResolveIndex(destType, assembly);
-      var memberIndices = GSA.Indexer.LookupIndices(typeof(GSA2DMember), assembly.MemberRefs);
-
-      List<int> nodeIndices = new List<int>();
-      for (int i = 0; i < assembly.Value.Count(); i += 3)
-      {
-        nodeIndices.Add(GSA.NodeAt(assembly.Value[i], assembly.Value[i + 1], assembly.Value[i + 2], Conversions.GSACoincidentNodeAllowance));
-      }
-
-      var numPoints = (assembly.NumPoints == 0) ? GSAInterfacer.DefaultAssemblyPoints : assembly.NumPoints;
+      int index = GSA.Indexer.ResolveIndex(destType, lsp);
 
       List<string> ls = new List<string>
         {
           "SET",
-          keyword + ":" + GSA.GenerateSID(assembly),
+          keyword + ":" + GSA.GenerateSID(lsp),
           index.ToString(),
-          string.IsNullOrEmpty(assembly.Name) ? "" : assembly.Name,
-          string.Join(" ", memberIndices.Select(i => "G" + i)),
-          "TOPO",
-          nodeIndices[0].ToString(),
-          nodeIndices[1].ToString(),
-          GSA.NodeAt(assembly.OrientationPoint.Value[0], assembly.OrientationPoint.Value[1], assembly.OrientationPoint.Value[2], Conversions.GSACoincidentNodeAllowance).ToString(),
-          "", //Empty list for int_topo as it assumed that the line is never curved
-          "LAGRANGE",
-          "0", //Curve order - reserved for future use according to the documentation
-          "POINTS",
-          numPoints.ToString() //Number of points
+          string.IsNullOrEmpty(lsp.Name) ? "" : lsp.Name,
+          "NO_RGB",
+          lsp.Axis,
+          "GENERAL",
+          "0", //Curve x
+          lsp.StiffnessX.ToString(),
+          "0", //Curve y
+          lsp.StiffnessY.ToString(),
+          "0", //Curve z
+          lsp.StiffnessZ.ToString(),
+          "0", //Curve xx
+          lsp.StiffnessXx.ToString(),
+          "0", //Curve yy
+          lsp.StiffnessYy.ToString(),
+          "0", //Curve zz
+          lsp.StiffnessZz.ToString(),
+          "0"  //Damping ratio
         };
 
       GSA.RunGWACommand(string.Join("\t", ls));
