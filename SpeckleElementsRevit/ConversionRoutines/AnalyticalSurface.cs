@@ -43,16 +43,14 @@ namespace SpeckleElementsRevit
         List<double> coor = new List<double>();
         foreach (Curve curve in loop)
         {
-          var convCurve = SpeckleCore.Converter.Serialise(curve);
-          if (convCurve is SpeckleLine)
-            coor.AddRange((convCurve as SpeckleLine).Value.Take(3));
-          else if (convCurve is SpeckleArc)
+          var points = curve.Tessellate();
+          
+          foreach (XYZ p in points.Skip(1))
           {
-            coor.AddRange((convCurve as SpeckleArc).StartPoint.Value);
-            coor.AddRange((convCurve as SpeckleArc).MidPoint.Value);
+            coor.Add(p.X / Scale);
+            coor.Add(p.Y / Scale);
+            coor.Add(p.Z / Scale);
           }
-          else
-            return returnObjects;
         }
         
         returnObjects.Add(new Structural2DVoid(coor.ToArray(), null));
@@ -66,16 +64,14 @@ namespace SpeckleElementsRevit
         List<double> coor = new List<double>();
         foreach (Curve curve in loop)
         {
-          var convCurve = SpeckleCore.Converter.Serialise(curve);
-          if (convCurve is SpeckleLine)
-            coor.AddRange((convCurve as SpeckleLine).Value.Take(3));
-          else if (convCurve is SpeckleArc)
+          var points = curve.Tessellate();
+
+          foreach (XYZ p in points.Skip(1))
           {
-            coor.AddRange((convCurve as SpeckleArc).StartPoint.Value);
-            coor.AddRange((convCurve as SpeckleArc).MidPoint.Value);
+            coor.Add(p.X / Scale);
+            coor.Add(p.Y / Scale);
+            coor.Add(p.Z / Scale);
           }
-          else
-            return returnObjects;
         }
 
         polylines.Add(coor.ToArray());
@@ -94,8 +90,8 @@ namespace SpeckleElementsRevit
       {
         var mySection = new Structural2DProperty();
 
-        mySection.Name = Doc.GetElement(mySurface.GetElementId()).Name;
-        mySection.ApplicationId = mySurface.UniqueId + "_section";
+        mySection.Name = Doc.GetElement(myRevitElement.GetTypeId()).Name;
+        mySection.ApplicationId = Doc.GetElement(myRevitElement.GetTypeId()).UniqueId;
 
         if (myRevitElement is Autodesk.Revit.DB.Floor)
         {

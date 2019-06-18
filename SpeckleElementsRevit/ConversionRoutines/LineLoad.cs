@@ -21,12 +21,20 @@ namespace SpeckleElementsRevit
 
     public static List<SpeckleObject> ToSpeckle(this Autodesk.Revit.DB.Structure.LineLoad myLineLoad)
     {
-      List<XYZ> points = new List<XYZ>();
-
       var myLoad = new Structural1DLoadLine();
 
       myLoad.Name = myLineLoad.Name;
-      myLoad.Value = ((SpeckleLine)SpeckleCore.Converter.Serialise(myLineLoad.GetCurve())).Value;
+
+      var points = myLineLoad.GetCurve().Tessellate();
+
+      myLoad.Value = new List<double>();
+
+      foreach (XYZ p in points)
+      {
+        myLoad.Value.Add(p.X / Scale);
+        myLoad.Value.Add(p.Y / Scale);
+        myLoad.Value.Add(p.Z / Scale);
+      }
 
       var forces = new StructuralVectorSix(new double[6]);
 

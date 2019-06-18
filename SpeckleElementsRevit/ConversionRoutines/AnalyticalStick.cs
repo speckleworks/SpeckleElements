@@ -29,24 +29,68 @@ namespace SpeckleElementsRevit
       // Get the family
       var myFamily = (Autodesk.Revit.DB.FamilyInstance)Doc.GetElement(myStick.GetElementId());
 
-      var myElement = new Structural1DElement();
+      var myElement = new Structural1DElementPolyline();
 
-      // TODO:
-      if (!myStick.IsSingleCurve())
-        return returnObjects;
+      myElement.Value = new List<double>();
 
-      var curve = SpeckleCore.Converter.Serialise(myStick.GetCurve());
-      if (curve is SpeckleLine)
-        myElement.baseLine = curve as SpeckleCoreGeometryClasses.SpeckleLine;
-      else if (curve is SpeckleArc)
-        // SHOULD TURN TO POLYLINE
-        myElement.Value = (curve as SpeckleCoreGeometryClasses.SpeckleArc).StartPoint.Value.Concat((curve as SpeckleCoreGeometryClasses.SpeckleArc).EndPoint.Value).ToList();
-      else
-        return returnObjects;
+      var curves = myStick.GetCurves(AnalyticalCurveType.RigidLinkHead).ToList();
+      curves.AddRange(myStick.GetCurves(AnalyticalCurveType.ActiveCurves));
+      curves.AddRange(myStick.GetCurves(AnalyticalCurveType.RigidLinkTail));
+
+      foreach (Curve curve in curves)
+      {
+        var points = curve.Tessellate();
+
+        if (points.Count == 0)
+          continue;
+
+        if (myElement.Value.Count == 0)
+        {
+          myElement.Value.Add(points[0].X / Scale);
+          myElement.Value.Add(points[0].Y / Scale);
+          myElement.Value.Add(points[0].Z / Scale);   
+        }
+
+        foreach (XYZ p in points.Skip(1))
+        {
+          myElement.Value.Add(p.X / Scale);
+          myElement.Value.Add(p.Y / Scale);
+          myElement.Value.Add(p.Z / Scale);
+        }
+      }
+
+      myElement.ResultVertices = new List<double>(myElement.Value);
+
+      int vertexCount = myElement.Value.Count / 3;
 
       var coordinateSystem = myStick.GetLocalCoordinateSystem();
       if (coordinateSystem != null)
-        myElement.ZAxis = new StructuralVectorThree(new double[] { coordinateSystem.BasisZ.X, coordinateSystem.BasisZ.Y, coordinateSystem.BasisZ.Z });
+        myElement.ZAxis = Enumerable.Repeat(new StructuralVectorThree(new double[] { coordinateSystem.BasisZ.X, coordinateSystem.BasisZ.Y, coordinateSystem.BasisZ.Z }), (vertexCount - 1)).ToList();
+      
+      try
+      {
+        var offset1 = myStick.GetOffset(AnalyticalElementSelector.StartOrBase);
+        var offset2 = myStick.GetOffset(AnalyticalElementSelector.EndOrTop);
+
+        // TODO: This should be linear interpolation?
+        var fillerList = Enumerable.Repeat(new StructuralVectorThree(new double[] { 0, 0, 0 }), (vertexCount - 1) * 2 - 2).ToList();
+
+        myElement.Offset = new List<StructuralVectorThree>() { new StructuralVectorThree(new double[] { offset1.X / Scale, offset1.Y / Scale, offset1.Z / Scale }) }
+          .Concat(fillerList)
+          .Concat(new List<StructuralVectorThree>() { new StructuralVectorThree(new double[] { offset2.X / Scale, offset2.Y / Scale, offset2.Z / Scale }) }).ToList();
+      }
+      catch
+      {
+        try
+        {
+          var offset = myStick.GetOffset(AnalyticalElementSelector.Whole);
+          myElement.Offset = Enumerable.Repeat(new StructuralVectorThree(new double[] { offset.X / Scale, offset.Y / Scale, offset.Z / Scale }), (vertexCount - 1) * 2).ToList();
+        }
+        catch
+        {
+
+        }
+      }
 
       if (myStick is AnalyticalModelColumn)
       {
@@ -97,8 +141,10 @@ namespace SpeckleElementsRevit
             });
             break;
         }
-        
-        myElement.EndRelease = new List<StructuralVectorBoolSix>() { endRelease1, endRelease2 };
+
+        var fillerList = Enumerable.Repeat(new StructuralVectorBoolSix(new bool[] { false, false, false, false, false, false }), (vertexCount - 1) * 2 - 2).ToList();
+
+        myElement.EndRelease = new List<StructuralVectorBoolSix>() { endRelease1 }.Concat(fillerList).Concat(new List<StructuralVectorBoolSix>() { endRelease2 }).ToList() ;
       }
       else
       {
@@ -150,7 +196,9 @@ namespace SpeckleElementsRevit
             break;
         }
 
-        myElement.EndRelease = new List<StructuralVectorBoolSix>() { endRelease1, endRelease2 };
+        var fillerList = Enumerable.Repeat(new StructuralVectorBoolSix(new bool[] { false, false, false, false, false, false }), (vertexCount - 1) * 2 - 2).ToList();
+
+        myElement.EndRelease = new List<StructuralVectorBoolSix>() { endRelease1 }.Concat(fillerList).Concat(new List<StructuralVectorBoolSix>() { endRelease2 }).ToList();
       }
 
       // Property
@@ -159,7 +207,7 @@ namespace SpeckleElementsRevit
         var mySection = new Structural1DProperty();
 
         mySection.Name = Doc.GetElement(myStick.GetElementId()).Name;
-        mySection.ApplicationId = myStick.UniqueId + "_section";
+        mySection.ApplicationId = myFamily.Symbol.UniqueId;
 
         switch (myFamily.Symbol.GetStructuralSection().StructuralSectionGeneralShape)
         {
@@ -319,7 +367,6 @@ namespace SpeckleElementsRevit
           }
 
           myMaterial.GenerateHash();
-          mySection.ApplicationId = myStick.UniqueId + "_section";
           mySection.MaterialRef = (myMaterial as SpeckleObject).ApplicationId;
 
           returnObjects.Add(myMaterial);

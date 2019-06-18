@@ -21,8 +21,6 @@ namespace SpeckleElementsRevit
 
     public static List<SpeckleObject> ToSpeckle(this Autodesk.Revit.DB.Structure.AreaLoad myAreaLoad)
     {
-      List<XYZ> points = new List<XYZ>();
-      
       List<double[]> polylines = new List<double[]>();
       
       var loops = myAreaLoad.GetLoops();
@@ -31,8 +29,14 @@ namespace SpeckleElementsRevit
         List<double> coor = new List<double>();
         foreach (Curve curve in loop)
         {
-          var point = (SpeckleCoreGeometryClasses.SpecklePoint)SpeckleCore.Converter.Serialise(curve.GetEndPoint(0));
-          coor.AddRange(point.Value);
+          var points = curve.Tessellate();
+
+          foreach (XYZ p in points.Skip(1))
+          {
+            coor.Add(p.X / Scale);
+            coor.Add(p.Y / Scale);
+            coor.Add(p.Z / Scale);
+          }
         }
 
         polylines.Add(coor.ToArray());
@@ -111,6 +115,7 @@ namespace SpeckleElementsRevit
         myLoad.Value = vals.ToList();
         myLoad.Loading = forces;
         myLoad.LoadCaseRef = myLoadCase.ApplicationId;
+        myLoad.Closed = true;
 
         myLoad.ApplicationId = myAreaLoad.UniqueId + "_" + (counter++).ToString();
 
