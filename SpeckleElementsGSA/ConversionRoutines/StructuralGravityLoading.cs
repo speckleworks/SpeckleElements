@@ -11,6 +11,7 @@ namespace SpeckleElementsGSA
   {
     public int Axis; // Store this temporarily to generate other loads
 
+    public int GSAId { get; set; }
     public string GWACommand { get; set; }
     public List<string> SubGWACommand { get; set; } = new List<string>();
     public dynamic Value { get; set; } = new StructuralGravityLoading();
@@ -22,14 +23,14 @@ namespace SpeckleElementsGSA
 
       StructuralGravityLoading obj = new StructuralGravityLoading();
 
-      string[] pieces = this.GWACommand.ListSplit(",");
+      string[] pieces = this.GWACommand.ListSplit("\t");
 
       int counter = 1; // Skip identifier
       obj.Name = pieces[counter++].Trim(new char[] { '"' });
 
       counter++; // Skip elements - assumed to always be "all" at this point int time
 
-      obj.LoadCaseRef = pieces[counter++];
+      obj.LoadCaseRef = GSA.GetSID(typeof(GSALoadCase).GetGSAKeyword(), Convert.ToInt32(pieces[counter++]));
 
       var vector = new double[3];
       for (var i = 0; i < 3; i++)
@@ -63,7 +64,8 @@ namespace SpeckleElementsGSA
 
       var ls = new List<string>
         {
-          "SET",
+          "SET_AT",
+          index.ToString(),
           keyword + ":" + GSA.GenerateSID(load),
           string.IsNullOrEmpty(load.Name) ? "" : load.Name,
           "all",
@@ -99,10 +101,10 @@ namespace SpeckleElementsGSA
       string keyword = typeof(GSAGravityLoading).GetGSAKeyword();
       string[] subKeywords = typeof(GSAGravityLoading).GetSubGSAKeyword();
 
-      string[] lines = GSA.GetGWARecords("GET_ALL," + keyword);
-      List<string> deletedLines = GSA.GetDeletedGWARecords("GET_ALL," + keyword).ToList();
+      string[] lines = GSA.GetGWARecords("GET_ALL\t" + keyword);
+      List<string> deletedLines = GSA.GetDeletedGWARecords("GET_ALL\t" + keyword).ToList();
       foreach (string k in subKeywords)
-        deletedLines.AddRange(GSA.GetDeletedGWARecords("GET_ALL," + k));
+        deletedLines.AddRange(GSA.GetDeletedGWARecords("GET_ALL\t" + k));
 
       // Remove deleted lines
       GSASenderObjects[typeof(GSAGravityLoading)].RemoveAll(l => deletedLines.Contains((l as IGSASpeckleContainer).GWACommand));

@@ -495,7 +495,7 @@ namespace SpeckleElements
   {
     public StructuralAssembly() { }
 
-    public StructuralAssembly(double[] value, IEnumerable<string> memberRefs, SpeckleLine baseLine, SpecklePoint orientationPoint, int numPoints = 0, string applicationId = null, double width = 0, Dictionary<string, object> properties = null)
+    public StructuralAssembly(double[] value, string[] elementRefs, SpeckleLine baseLine, SpecklePoint orientationPoint, int numPoints = 0, string applicationId = null, double width = 0, Dictionary<string, object> properties = null)
     {
       this.Properties = properties;
       this.ApplicationId = applicationId;
@@ -528,11 +528,11 @@ namespace SpeckleElements
   {
     public StructuralGravityLoading() { }
 
-    public StructuralGravityLoading(StructuralVectorThree gravityFactors, string loadCaseRef, string structuralId = null, Dictionary<string, object> properties = null)
+    public StructuralGravityLoading(StructuralVectorThree gravityFactors, string loadCaseRef, string applicationId = null, Dictionary<string, object> properties = null)
     {
       this.GravityFactors = gravityFactors;
       this.LoadCaseRef = loadCaseRef;
-      this.StructuralId = structuralId;
+      this.ApplicationId = applicationId;
       this.Properties = properties;
 
       GenerateHash();
@@ -656,11 +656,11 @@ namespace SpeckleElements
   {
     public StructuralLinearSpringProperty() { }
 
-    public StructuralLinearSpringProperty(StructuralSpringAxis axis, StructuralVectorSix stiffness, string structuralId = null, Dictionary<string, object> properties = null)
+    public StructuralLinearSpringProperty(StructuralSpringAxis axis, StructuralVectorSix stiffness, string applicationId = null, Dictionary<string, object> properties = null)
     {
       this.Axis = axis;
       this.Stiffness = stiffness;
-      this.StructuralId = structuralId;
+      this.ApplicationId = applicationId;
       this.Properties = properties;
       GenerateHash();
     }
@@ -869,7 +869,6 @@ namespace SpeckleElements
       this.PropertyRef = propertyRef;
       this.Axis = axis.ToList();
       this.Offset = offset.ToList();
-      this.StructuralId = structuralId;
       this.MeshSize = meshSize;
       this.ApplicationId = applicationId;
       this.TextureCoordinates = null;

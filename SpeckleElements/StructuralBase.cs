@@ -448,16 +448,12 @@ namespace SpeckleElements
   public partial class StructuralGravityLoading : SpeckleObject, IStructural
   {
     public override string Type { get => "StructuralGravityLoading"; }
-
-    /// <summary>Structural ID to reference from other objects.</summary>
-    [SNJ.JsonProperty("structuralId", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
-    public string StructuralId { get; set; }
-
+    
     /// <summary>A list of x, y, z factors</summary>
     [SNJ.JsonProperty("gravityFactors", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
     public StructuralVectorThree GravityFactors { get; set; }
 
-    /// <summary>Structural ID of StructuralLoadCase.</summary>
+    /// <summary>Application ID of StructuralLoadCase.</summary>
     [SNJ.JsonProperty("loadCaseRef", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
     public string LoadCaseRef { get; set; }
   }
@@ -492,16 +488,8 @@ namespace SpeckleElements
         base.Properties["structural"] = value;
       }
     }
-
-    /// <summary>Structural ID to reference from other objects.</summary>
-    [SNJ.JsonIgnore]
-    public string StructuralId
-    {
-      get => StructuralProperties.ContainsKey("structuralId") ? (StructuralProperties["structuralId"] as string) : null;
-      set => StructuralProperties["structuralId"] = value;
-    }
-
-    /// <summary>Structural ID to reference from other objects.</summary>
+    
+    /// <summary>Axis of the spring.</summary>
     [SNJ.JsonIgnore]
     public StructuralSpringAxis Axis
     {
@@ -518,8 +506,6 @@ namespace SpeckleElements
       get => StructuralProperties.ContainsKey("stiffness") ? (StructuralProperties["stiffness"] as StructuralVectorSix) : null;
       set => StructuralProperties["stiffness"] = value;
     }
-
-    /// <summary>A list of x, y, z, xx, yy, and yz stiffnesses</summary>
   }
 
   [Serializable]
