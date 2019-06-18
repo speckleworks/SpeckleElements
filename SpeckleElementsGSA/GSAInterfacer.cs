@@ -229,7 +229,14 @@ namespace SpeckleElementsGSA
 
         string[] split = p.ListSplit("\t");
 
-        if (split[1].IsDigits())
+        if (split[0].ToLower().StartsWith("load_gravity"))
+			  {
+					//Gravity loading is unusual in that the GWA itself doesn't involve an index - although running "DELETE,LOAD_GRAVITY.2,<index>" 
+					//(using the actual index that GSA apparently creates for it) does seem to work but since index isn't part of the GWA command, 
+					//it can't be retrieved from the cache here. 
+					//TODO: handle this case
+				}
+				else if (split[1].IsDigits())
         {
           // Uses SET
           if (!Indexer.InBaseline(split[0], Convert.ToInt32(split[1])))

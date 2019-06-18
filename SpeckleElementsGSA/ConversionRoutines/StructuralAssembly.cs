@@ -126,6 +126,9 @@ namespace SpeckleElementsGSA
 
       var numPoints = (assembly.NumPoints == 0) ? 10 : assembly.NumPoints;
 
+      //The width parameter is intentionally not being used here as the meaning doesn't map to the y coordinate parameter of the ASSEMBLY keyword
+      //It is therefore to be ignored here for GSA purposes.
+
       List<string> ls = new List<string>
         {
           "SET",

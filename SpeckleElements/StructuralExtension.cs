@@ -495,7 +495,7 @@ namespace SpeckleElements
   {
     public StructuralAssembly() { }
 
-    public StructuralAssembly(double[] value, IEnumerable<string> elementRefs, SpeckleLine baseLine, SpecklePoint orientationPoint, int numPoints = 0, string applicationId = null, Dictionary<string, object> properties = null)
+    public StructuralAssembly(double[] value, IEnumerable<string> memberRefs, SpeckleLine baseLine, SpecklePoint orientationPoint, int numPoints = 0, string applicationId = null, double width = 0, Dictionary<string, object> properties = null)
     {
       this.Properties = properties;
       this.ApplicationId = applicationId;
@@ -503,6 +503,7 @@ namespace SpeckleElements
       this.Value = value.ToList();
       this.OrientationPoint = orientationPoint;
       this.NumPoints = numPoints;
+      this.Width = width;
       this.BaseLine = baseLine;
       GenerateHash();
     }
@@ -518,6 +519,27 @@ namespace SpeckleElements
         this.OrientationPoint.Value[i] *= factor;
       }
 
+      this.Properties = ScaleProperties(this.Properties, factor);
+      this.GenerateHash();
+    }
+  }
+
+  public partial class StructuralGravityLoading
+  {
+    public StructuralGravityLoading() { }
+
+    public StructuralGravityLoading(StructuralVectorThree gravityFactors, string loadCaseRef, string structuralId = null, Dictionary<string, object> properties = null)
+    {
+      this.GravityFactors = gravityFactors;
+      this.LoadCaseRef = loadCaseRef;
+      this.StructuralId = structuralId;
+      this.Properties = properties;
+
+      GenerateHash();
+    }
+
+    public override void Scale(double factor)
+    {
       this.Properties = ScaleProperties(this.Properties, factor);
       this.GenerateHash();
     }
@@ -625,6 +647,26 @@ namespace SpeckleElements
     {
       this.Thickness *= factor;
 
+      this.Properties = ScaleProperties(this.Properties, factor);
+      this.GenerateHash();
+    }
+  }
+
+  public partial class StructuralLinearSpringProperty
+  {
+    public StructuralLinearSpringProperty() { }
+
+    public StructuralLinearSpringProperty(StructuralSpringAxis axis, StructuralVectorSix stiffness, string structuralId = null, Dictionary<string, object> properties = null)
+    {
+      this.Axis = axis;
+      this.Stiffness = stiffness;
+      this.StructuralId = structuralId;
+      this.Properties = properties;
+      GenerateHash();
+    }
+
+    public override void Scale(double factor)
+    {
       this.Properties = ScaleProperties(this.Properties, factor);
       this.GenerateHash();
     }
@@ -817,7 +859,7 @@ namespace SpeckleElements
   {
     public Structural2DElementMesh() { }
 
-    public Structural2DElementMesh(double[] vertices, int[] faces, int[] colors, Structural2DElementType elementType, string propertyRef, StructuralAxis[] axis, double[] offset, string applicationId = null, Dictionary<string, object> properties = null)
+    public Structural2DElementMesh(double[] vertices, int[] faces, int[] colors, Structural2DElementType elementType, string propertyRef, StructuralAxis[] axis, double[] offset, string applicationId = null, double meshSize = 0, Dictionary<string, object> properties = null)
     {
       this.Properties = properties;
       this.Vertices = vertices.ToList();
@@ -827,8 +869,9 @@ namespace SpeckleElements
       this.PropertyRef = propertyRef;
       this.Axis = axis.ToList();
       this.Offset = offset.ToList();
+      this.StructuralId = structuralId;
+      this.MeshSize = meshSize;
       this.ApplicationId = applicationId;
-
       this.TextureCoordinates = null;
 
       GenerateHash();

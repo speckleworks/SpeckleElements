@@ -393,6 +393,13 @@ namespace SpeckleElements
       set => StructuralProperties["orientationPoint"] = value;
     }
 
+    [SNJ.JsonIgnore]
+    public double Width
+    {
+      get => (StructuralProperties.ContainsKey("width") && double.TryParse(StructuralProperties["width"].ToString(), out double width)) ? width : 0;
+      set => StructuralProperties["width"] = value;
+    }
+
     /// <summary>Application ID of StructuralLoadCase.</summary>
     [SNJ.JsonIgnore]
     public List<string> ElementRefs
@@ -436,9 +443,85 @@ namespace SpeckleElements
     [SNJ.JsonProperty("stageDays", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
     public int StageDays { get; set; }
   }
+
+  [Serializable]
+  public partial class StructuralGravityLoading : SpeckleObject, IStructural
+  {
+    public override string Type { get => "StructuralGravityLoading"; }
+
+    /// <summary>Structural ID to reference from other objects.</summary>
+    [SNJ.JsonProperty("structuralId", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
+    public string StructuralId { get; set; }
+
+    /// <summary>A list of x, y, z factors</summary>
+    [SNJ.JsonProperty("gravityFactors", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
+    public StructuralVectorThree GravityFactors { get; set; }
+
+    /// <summary>Structural ID of StructuralLoadCase.</summary>
+    [SNJ.JsonProperty("loadCaseRef", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
+    public string LoadCaseRef { get; set; }
+  }
+
   #endregion
 
   #region Properties
+  [Serializable]
+  public partial class StructuralLinearSpringProperty : SpeckleObject, IStructural
+  {
+    public override string Type { get => base.Type + "/StructuralLinearSpringProperty"; }
+
+    [SNJ.JsonIgnore]
+    private Dictionary<string, object> StructuralProperties
+    {
+      get
+      {
+        if (base.Properties == null)
+          base.Properties = new Dictionary<string, object>();
+
+        if (!base.Properties.ContainsKey("structural"))
+          base.Properties["structural"] = new Dictionary<string, object>();
+
+        return base.Properties["structural"] as Dictionary<string, object>;
+
+      }
+      set
+      {
+        if (base.Properties == null)
+          base.Properties = new Dictionary<string, object>();
+
+        base.Properties["structural"] = value;
+      }
+    }
+
+    /// <summary>Structural ID to reference from other objects.</summary>
+    [SNJ.JsonIgnore]
+    public string StructuralId
+    {
+      get => StructuralProperties.ContainsKey("structuralId") ? (StructuralProperties["structuralId"] as string) : null;
+      set => StructuralProperties["structuralId"] = value;
+    }
+
+    /// <summary>Structural ID to reference from other objects.</summary>
+    [SNJ.JsonIgnore]
+    public StructuralSpringAxis Axis
+    {
+      get => StructuralProperties.ContainsKey("axis")
+        ? (StructuralSpringAxis)Enum.Parse(typeof(StructuralSpringAxis), (StructuralProperties["axis"] as string), true) 
+        : StructuralSpringAxis.Global;
+      set => StructuralProperties["axis"] = value.ToString();
+    }
+
+    /// <summary>X, Y, Z, XX, YY, ZZ stiffnesses.</summary>
+    [SNJ.JsonIgnore]
+    public StructuralVectorSix Stiffness
+    {
+      get => StructuralProperties.ContainsKey("stiffness") ? (StructuralProperties["stiffness"] as StructuralVectorSix) : null;
+      set => StructuralProperties["stiffness"] = value;
+    }
+
+    /// <summary>A list of x, y, z, xx, yy, and yz stiffnesses</summary>
+  }
+
   [Serializable]
   public partial class StructuralMaterialConcrete : SpeckleObject, IStructural
   {
