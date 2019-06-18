@@ -630,6 +630,31 @@ namespace SpeckleElements
       this.GenerateHash();
     }
   }
+
+  public partial class StructuralLinearSpringProperty
+  {
+    public StructuralLinearSpringProperty() { }
+
+    public StructuralLinearSpringProperty(string axis, double stiffnessX, double stiffnessY, double stiffnessZ, double stiffnessXx, double stiffnessYy, double stiffnessZz, string structuralId = null, Dictionary<string, object> properties = null)
+    {
+      this.Axis = axis;
+      this.StiffnessX = stiffnessX;
+      this.StiffnessY = stiffnessY;
+      this.StiffnessZ = stiffnessZ;
+      this.StiffnessXx = stiffnessXx;
+      this.StiffnessYy = stiffnessYy;
+      this.StiffnessZz = stiffnessZz;
+      this.StructuralId = structuralId;
+      this.Properties = properties;
+      GenerateHash();
+    }
+
+    public override void Scale(double factor)
+    {
+      this.Properties = ScaleProperties(this.Properties, factor);
+      this.GenerateHash();
+    }
+  }
   #endregion
 
   #region Nodes and Elements
