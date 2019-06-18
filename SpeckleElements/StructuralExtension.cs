@@ -712,7 +712,7 @@ namespace SpeckleElements
       this.ElementType = elementType;
       this.PropertyRef = propertyRef;
       this.ZAxis = zAxis;
-      this.EndRelease = endRelease == null ? null : EndRelease.ToList();
+      this.EndRelease = endRelease == null ? null : endRelease.ToList();
       this.Offset = offset == null ? null : offset.ToList();
       this.ApplicationId = applicationId;
 
@@ -791,14 +791,14 @@ namespace SpeckleElements
       List<Structural1DElement> elements = new List<Structural1DElement>();
 
       for (int i = 0; i < Value.Count() / 3 - 1; i++)
-      {
+      { 
         Structural1DElement element = new Structural1DElement(
             Value.Skip(i * 3).Take(6).ToArray(),
             ElementType,
             PropertyRef,
             ZAxis == null || ZAxis.Count() <= i ? null : ZAxis[i],
-            EndRelease == null || EndRelease.Count() >= i * 2 + 2 ? null : EndRelease.Skip(i * 2).Take(2).ToArray(),
-            Offset == null || Offset.Count() >= i * 2 + 2 ? null : Offset.Skip(i * 2).Take(2).ToArray()
+            EndRelease == null || EndRelease.Count() < i * 2 + 2 ? null : EndRelease.Skip(i * 2).Take(2).ToArray(),
+            Offset == null || Offset.Count() < i * 2 + 2 ? null : Offset.Skip(i * 2).Take(2).ToArray()
         );
         element.Dummy = Dummy;
         element.MeshSize = MeshSize;
