@@ -495,7 +495,7 @@ namespace SpeckleElements
   {
     public StructuralAssembly() { }
 
-    public StructuralAssembly(double[] value, IEnumerable<string> memberRefs, SpeckleLine baseLine, SpecklePoint orientationPoint, int numPoints = 0, string structuralId = null, Dictionary<string, object> properties = null)
+    public StructuralAssembly(double[] value, IEnumerable<string> memberRefs, SpeckleLine baseLine, SpecklePoint orientationPoint, int numPoints = 0, string structuralId = null, double width = 0, Dictionary<string, object> properties = null)
     {
       this.Properties = properties;
       this.StructuralId = structuralId;
@@ -503,6 +503,7 @@ namespace SpeckleElements
       this.Value = value.ToList();
       this.OrientationPoint = orientationPoint;
       this.NumPoints = numPoints;
+      this.Width = (double) width;
       this.BaseLine = baseLine;
       GenerateHash();
     }
@@ -817,7 +818,7 @@ namespace SpeckleElements
   {
     public Structural2DElementMesh() { }
 
-    public Structural2DElementMesh(double[] vertices, int[] faces, int[] colors, Structural2DElementType elementType, string propertyRef, StructuralAxis[] axis, double[] offset, string structuralId = null, Dictionary<string, object> properties = null)
+    public Structural2DElementMesh(double[] vertices, int[] faces, int[] colors, Structural2DElementType elementType, string propertyRef, StructuralAxis[] axis, double[] offset, string structuralId = null, double meshSize = 0, Dictionary<string, object> properties = null)
     {
       this.Properties = properties;
       this.Vertices = vertices.ToList();
@@ -828,7 +829,7 @@ namespace SpeckleElements
       this.Axis = axis.ToList();
       this.Offset = offset.ToList();
       this.StructuralId = structuralId;
-
+      this.MeshSize = MeshSize;
       this.TextureCoordinates = null;
 
       GenerateHash();

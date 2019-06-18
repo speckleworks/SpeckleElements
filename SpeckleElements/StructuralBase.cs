@@ -468,6 +468,13 @@ namespace SpeckleElements
       set => StructuralProperties["orientationPoint"] = value;
     }
 
+    [SNJ.JsonIgnore]
+    public double Width
+    {
+      get => (StructuralProperties.ContainsKey("width") && double.TryParse(StructuralProperties["width"].ToString(), out double width)) ? width : 0;
+      set => StructuralProperties["width"] = value;
+    }
+
     /// <summary>Structural ID of StructuralLoadCase.</summary>
     [SNJ.JsonIgnore]
     public List<string> MemberRefs

@@ -27,15 +27,6 @@ namespace SpeckleElementsGSA
       obj.Name = pieces[counter++].Trim(new char[] { '"' });
 
       var groupIds = GSA.GetGroupsFromGSAList(pieces[counter++]).ToList();
-      //var groups = pieces[counter++].Trim().ListSplit(" ");
-      //var groupIds = new List<int>();
-      //for (var i = 0; i < groups.Length; i++)
-      //{
-      //	if (int.TryParse(groups[i].Replace("G", ""), out int groupId))
-      //	{
-      //		groupIds.Add(groupId);
-      //	}
-      //}
 
       if (members != null && members.Count() > 0)
       {
@@ -75,6 +66,9 @@ namespace SpeckleElementsGSA
       }
 
       var numPoints = (assembly.NumPoints == 0) ? 10 : assembly.NumPoints;
+
+      //The width parameter is intentionally not being used here as the meaning doesn't map to the y coordinate parameter of the ASSEMBLY keyword
+      //It is therefore to be ignored here for GSA purposes.
 
       List<string> ls = new List<string>
         {
