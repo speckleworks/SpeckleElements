@@ -671,6 +671,22 @@ namespace SpeckleElements
       this.GenerateHash();
     }
   }
+
+  public partial class StructuralTemperatureInterval
+  {
+    public StructuralTemperatureInterval() { }
+    public StructuralTemperatureInterval(double top, double bottom)
+    {
+      this.Top = top;
+      this.Bottom = bottom;
+    }
+
+    public override void Scale(double factor)
+    {
+      this.Properties = ScaleProperties(this.Properties, factor);
+      this.GenerateHash();
+    }
+  }
   #endregion
 
   #region Nodes and Elements
