@@ -148,8 +148,8 @@ namespace SpeckleElementsGSA
 
       List<string> ls = new List<string>
         {
-          // Set ANAL_STAGE
-          "SET",
+          "SET_AT",
+          index.ToString(),
           keyword + ":" + GSA.GenerateSID(loading),
           loadingName, // Name
           targetString, //Elements
