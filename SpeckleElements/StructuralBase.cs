@@ -520,6 +520,7 @@ namespace SpeckleElements
     [SNJ.JsonProperty("elementRefs", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
     public List<string> ElementRefs { get; set; }
 
+    /// <summary>Uniform,Gradient or General.</summary>
     [SNJ.JsonConverter(typeof(SNJ.Converters.StringEnumConverter))]
     [SNJ.JsonProperty("loadingType", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
     public StructuralThermalLoadingType LoadingType { get; set; }
@@ -797,6 +798,51 @@ namespace SpeckleElements
       set => StructuralProperties["result"] = value;
     }
   }
+
+  //----
+  /// <summary>Generalised node restraints</summary>
+  [Serializable]
+  public partial class StructuralNodeRestraints : SpeckleObject, IStructural
+  {
+    public override string Type { get => base.Type + "/StructuralNodeRestraints"; }
+
+    [SNJ.JsonIgnore]
+    private Dictionary<string, object> StructuralProperties
+    {
+      get
+      {
+        if (base.Properties == null)
+          base.Properties = new Dictionary<string, object>();
+
+        if (!base.Properties.ContainsKey("structural"))
+          base.Properties["structural"] = new Dictionary<string, object>();
+
+        return base.Properties["structural"] as Dictionary<string, object>;
+
+      }
+      set
+      {
+        if (base.Properties == null)
+          base.Properties = new Dictionary<string, object>();
+
+        base.Properties["structural"] = value;
+      }
+    }
+
+    /// <summary>A list of the X, Y, Z, Rx, Ry, and Rz restraints.</summary>
+    [SNJ.JsonProperty("restraint", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
+    public StructuralVectorBoolSix Restraint { get; set; }
+
+    /// <summary>Application IDs of Structural1DElements to apply load.</summary>
+    [SNJ.JsonProperty("elementRefs", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
+    public List<string> ElementRefs { get; set; }
+
+    /// <summary>Stage definition for the task</summary>
+    [SNJ.JsonProperty("stageDefinitionRefs", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
+    public List<string> StageDefinitionRefs { get; set; }
+
+  }
+  //--
 
   [Serializable]
   public partial class Structural1DElement : SpeckleLine, IStructural

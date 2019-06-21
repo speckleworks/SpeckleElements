@@ -76,6 +76,7 @@
     <Compile Include="ConversionRoutines\StructuralGravityLoading.cs" />
     <Compile Include="ConversionRoutines\StructuralLinearSpringProperty.cs" />
     <Compile Include="ConversionRoutines\StructuralLoadTaskBuckling.cs" />
+    <Compile Include="ConversionRoutines\StructuralNodeRestraints.cs" />
     <Compile Include="ConversionRoutines\StructuralStageDefinition.cs" />
     <Compile Include="ConversionRoutines\Structural1DElementResult.cs" />
     <Compile Include="ConversionRoutines\Structural1DLoadLine.cs" />
