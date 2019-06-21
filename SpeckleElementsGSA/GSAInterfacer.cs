@@ -80,6 +80,25 @@ namespace SpeckleElementsGSA
       return newPieces;
     }
 
+    public string[][] GetSplitGWARecordsByKeyword(string keyword)
+    {
+      var gwaResults = GetGWARecords("GET_ALL\t" + keyword);
+      var numRows = gwaResults.Count();
+      if (numRows == 0)
+        return null;
+
+      var splitRecords = new string[numRows][];
+
+      for (var i = 0; i < numRows; i++)
+      {
+        var pieces = ((string)gwaResults[i]).Split(new string[] { "\t" }, StringSplitOptions.None);  //Empty values should be preserved
+        if (pieces.Count() > 0)
+          splitRecords[i] = pieces;
+      }
+
+      return splitRecords;
+    }
+
     /// <summary>
     /// Returns a list of new GWA records with the index of the record prepended.
     /// </summary>
