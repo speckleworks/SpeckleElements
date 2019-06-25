@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using SpeckleCore;
 using SpeckleElements;
-using Interop.Gsa_10_0;
+using Gsa_10_0;
 using SQLite;
 
 namespace SpeckleElementsGSA

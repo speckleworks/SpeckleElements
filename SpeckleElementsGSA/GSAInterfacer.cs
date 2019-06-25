@@ -1,4 +1,4 @@
-﻿using Interop.Gsa_10_0;
+﻿using Gsa_10_0;
 using SpeckleCore;
 using SpeckleElements;
 using SQLite;
@@ -155,8 +155,7 @@ namespace SpeckleElementsGSA
             if (command.StartsWith("GET_ALL\tMEMB"))
             {
               // TODO: Member GET_ALL work around
-              int[] memberRefs = new int[0];
-              GSAObject.EntitiesInList("all", GsaEntity.MEMBER, out memberRefs);
+              GSAObject.EntitiesInList("all", GsaEntity.MEMBER, out Array memberRefs);
 
               if (memberRefs == null || memberRefs.Length == 0)
                 return "";
@@ -915,9 +914,8 @@ namespace SpeckleElementsGSA
         {
           try
           {
-            int[] itemTemp = new int[0];
-            GSAObject.EntitiesInList(pieces[i], (GsaEntity)type, out itemTemp);
-            items.AddRange(itemTemp);
+            GSAObject.EntitiesInList(pieces[i], (GsaEntity)type, out Array itemTemp);
+            items.AddRange((int[])itemTemp);
           }
           catch
           { }
@@ -1068,13 +1066,17 @@ namespace SpeckleElementsGSA
 
         // Special case for assemblies
         if (resHeader == 18002000)
-          GSAObject.Output_Extract_CutAssembly(id, false, loadCase, axis, out res);
+        {
+          GSAObject.Output_Extract_CutAssembly(id, false, false, loadCase, axis, out var outputExtractArray);
+          res = (GsaResults[]) outputExtractArray;
+        }
         else
         {
           if (Enum.IsDefined(typeof(ResHeader), resHeader))
-          { 
+          {
             GSAObject.Output_Init_Arr(flags, axis, loadCase, (ResHeader)resHeader, num1DPoints);
-            GSAObject.Output_Extract_Arr(id, out res, out num);
+            GSAObject.Output_Extract_Arr(id, out var outputExtractResults, out num);
+            res = (GsaResults[])outputExtractResults;
           }
           else
           {
@@ -1093,7 +1095,8 @@ namespace SpeckleElementsGSA
 
         foreach (string key in keys)
         { 
-          ret[key] = res.Select(x => x.dynaResults[counter]).ToList();
+          
+          ret[key] = res.Select(x => x.dynaResults.GetValue(counter)).ToList();
           counter++;
         }
 
