@@ -39,7 +39,7 @@ namespace SpeckleElementsGSA
       var combotasks = GSA.GetSplitGWARecordsByKeyword((typeof(GSALoadCombo)).GetGSAKeyword());
       if (combotasks != null && combotasks.Length > 0)
       {
-        for (var i = 0; i < loadtasks.Count(); i++)
+        for (var i = 0; i < combotasks.Count(); i++)
           loadCaseNames.Add("C" + combotasks[i][1], combotasks[i][2]);
       }
 
