@@ -1065,29 +1065,21 @@ namespace SpeckleElementsGSA
         int num;
 
         // Special case for assemblies
-        if (resHeader == 18002000)
+        if (Enum.IsDefined(typeof(ResHeader), resHeader))
         {
-          GSAObject.Output_Extract_CutAssembly(id, false, false, loadCase, axis, out var outputExtractArray);
-          res = (GsaResults[]) outputExtractArray;
+          GSAObject.Output_Init_Arr(flags, axis, loadCase, (ResHeader)resHeader, num1DPoints);
+          GSAObject.Output_Extract_Arr(id, out var outputExtractResults, out num);
+          res = (GsaResults[])outputExtractResults;
         }
         else
         {
-          if (Enum.IsDefined(typeof(ResHeader), resHeader))
-          {
-            GSAObject.Output_Init_Arr(flags, axis, loadCase, (ResHeader)resHeader, num1DPoints);
-            GSAObject.Output_Extract_Arr(id, out var outputExtractResults, out num);
-            res = (GsaResults[])outputExtractResults;
-          }
-          else
-          {
-            GSAObject.Output_Init(flags, axis, loadCase, resHeader, num1DPoints);
-            int numPos = GSAObject.Output_NumElemPos(id);
+          GSAObject.Output_Init(flags, axis, loadCase, resHeader, num1DPoints);
+          int numPos = GSAObject.Output_NumElemPos(id);
 
-            res = new GsaResults[numPos];
+          res = new GsaResults[numPos];
 
-            for (int i = 0; i < numPos; i++)
-              res[i] = new GsaResults() { dynaResults = new double[] { (double)GSAObject.Output_Extract(id, i) } };
-          }
+          for (int i = 0; i < numPos; i++)
+            res[i] = new GsaResults() { dynaResults = new double[] { (double)GSAObject.Output_Extract(id, i) } };
         }
 
         int counter = 0;
