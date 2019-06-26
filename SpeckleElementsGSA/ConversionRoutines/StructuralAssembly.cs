@@ -7,7 +7,7 @@ using SpeckleCoreGeometryClasses;
 
 namespace SpeckleElementsGSA
 {
-  [GSAObject("ASSEMBLY.2", new string[] { }, "loads", true, true, new Type[] { typeof(GSANode), typeof(GSA1DElement), typeof(GSA2DElement), typeof(GSA1DMember), typeof(GSA2DMember) }, new Type[] { typeof(GSANode), typeof(GSA1DElement), typeof(GSA2DElement), typeof(GSA1DMember), typeof(GSA2DMember) })]
+  [GSAObject("ASSEMBLY.3", new string[] { }, "loads", true, true, new Type[] { typeof(GSANode), typeof(GSA1DElement), typeof(GSA2DElement), typeof(GSA1DMember), typeof(GSA2DMember) }, new Type[] { typeof(GSANode), typeof(GSA1DElement), typeof(GSA2DElement), typeof(GSA1DMember), typeof(GSA2DMember) })]
   public class GSAAssembly : IGSASpeckleContainer
   {
     public int GSAId { get; set; }
@@ -30,43 +30,50 @@ namespace SpeckleElementsGSA
       obj.ApplicationId = GSA.GetSID(this.GetGSAKeyword(), this.GSAId);
       obj.Name = pieces[counter++].Trim(new char[] { '"' });
 
-      var elementList = pieces[counter++];
+      var targetEntity = pieces[counter++];
+
+      var targetList = pieces[counter++];
 
       obj.ElementRefs = new List<string>();
 
       if (Conversions.GSATargetLayer == GSATargetLayer.Analysis)
       {
-        var elementId = elementList.ListSplit(" ").Where(x => !x.StartsWith("G")).Select(x => Convert.ToInt32(x));
-        foreach (int id in elementId)
+        if (targetEntity == "MEMBER")
         {
-          object elem = e1Ds.Where(e => e.GSAId == id).FirstOrDefault();
-
-          if (elem == null)
-            elem = e2Ds.Where(e => e.GSAId == id).FirstOrDefault();
-
-          if (elem == null)
-            continue;
-
-          obj.ElementRefs.Add((elem as SpeckleObject).ApplicationId);
-          this.SubGWACommand.Add((elem as IGSASpeckleContainer).GWACommand);
+          var memberList = GSA.ConvertGSAList(targetList, GSAEntity.MEMBER);
+          var match1D = e1Ds.Where(e => memberList.Contains(Convert.ToInt32(e.Member)));
+          var match2D = e2Ds.Where(e => memberList.Contains(Convert.ToInt32(e.Member)));
+          obj.ElementRefs.AddRange(match1D.Select(e => (e.Value as SpeckleObject).ApplicationId.ToString()));
+          obj.ElementRefs.AddRange(match2D.Select(e => (e.Value as SpeckleObject).ApplicationId.ToString()));
+          this.SubGWACommand.AddRange(match1D.Select(e => (e as IGSASpeckleContainer).GWACommand));
+          this.SubGWACommand.AddRange(match2D.Select(e => (e as IGSASpeckleContainer).GWACommand));
+        }
+        else if (targetEntity == "ELEMENT")
+        {
+          var elementList = GSA.ConvertGSAList(targetList, GSAEntity.ELEMENT);
+          var match1D = e1Ds.Where(e => elementList.Contains(e.GSAId));
+          var match2D = e2Ds.Where(e => elementList.Contains(e.GSAId));
+          obj.ElementRefs.AddRange(match1D.Select(e => (e.Value as SpeckleObject).ApplicationId.ToString()));
+          obj.ElementRefs.AddRange(match2D.Select(e => (e.Value as SpeckleObject).ApplicationId.ToString()));
+          this.SubGWACommand.AddRange(match1D.Select(e => (e as IGSASpeckleContainer).GWACommand));
+          this.SubGWACommand.AddRange(match2D.Select(e => (e as IGSASpeckleContainer).GWACommand));
         }
       }
-      else
+      else if (Conversions.GSATargetLayer == GSATargetLayer.Design)
       {
-        var groupIds = GSA.GetGroupsFromGSAList(elementList).ToList();
-        foreach (int id in groupIds)
+        if (targetEntity == "MEMBER")
         {
-          var memb1Ds = m1Ds.Where(m => m.Group == id);
-          var memb2Ds = m2Ds.Where(m => m.Group == id);
-          
-          obj.ElementRefs.AddRange(memb1Ds.Select(m => (string)m.Value.ApplicationId));
-          obj.ElementRefs.AddRange(memb2Ds.Select(m => (string)m.Value.ApplicationId));
-          this.SubGWACommand.AddRange(memb1Ds.Select(m => m.GWACommand));
-          this.SubGWACommand.AddRange(memb2Ds.Select(m => m.GWACommand));
+          var memberList = GSA.ConvertGSAList(targetList, GSAEntity.MEMBER);
+          var match1D = m1Ds.Where(e => memberList.Contains(e.GSAId));
+          var match2D = m2Ds.Where(e => memberList.Contains(e.GSAId));
+          obj.ElementRefs.AddRange(match1D.Select(e => (e.Value as SpeckleObject).ApplicationId.ToString()));
+          obj.ElementRefs.AddRange(match2D.Select(e => (e.Value as SpeckleObject).ApplicationId.ToString()));
+          this.SubGWACommand.AddRange(match1D.Select(e => (e as IGSASpeckleContainer).GWACommand));
+          this.SubGWACommand.AddRange(match2D.Select(e => (e as IGSASpeckleContainer).GWACommand));
         }
+        else if (targetEntity == "ELEMENT")
+          return;
       }
-
-      counter++; //TOPO
 
       obj.Value = new List<double>();
       for (int i = 0; i < 2; i++)
@@ -80,6 +87,9 @@ namespace SpeckleElementsGSA
       GSANode orientationNode = nodes.Where(n => n.GSAId == orientationNodeId).FirstOrDefault();
       this.SubGWACommand.Add(orientationNode.GWACommand);
       obj.OrientationPoint = new SpecklePoint(orientationNode.Value.Value[0], orientationNode.Value.Value[1], orientationNode.Value.Value[2]);
+
+      counter++; // Internal topology
+      obj.Width = (Convert.ToDouble(pieces[counter++]) + Convert.ToDouble(pieces[counter++])) / 2;
 
       this.Value = obj;
     }
@@ -101,7 +111,7 @@ namespace SpeckleElementsGSA
       var targetString = " ";
 
       if (assembly.ElementRefs != null && assembly.ElementRefs.Count() > 0)
-      { 
+      {
         if (Conversions.GSATargetLayer == GSATargetLayer.Analysis)
         {
           var e1DIndices = GSA.Indexer.LookupIndices(typeof(GSA1DElement), assembly.ElementRefs).Where(x => x.HasValue).Select(x => x.Value).ToList();
@@ -116,7 +126,7 @@ namespace SpeckleElementsGSA
           var m2DIndices = GSA.Indexer.LookupIndices(typeof(GSA2DMember), assembly.ElementRefs).Where(x => x.HasValue).Select(x => x.Value).ToList();
           target.AddRange(m1DIndices);
           target.AddRange(m2DIndices);
-          targetString = string.Join(" ", target.Select( x => "G" + x));
+          targetString = string.Join(" ", target);
         }
       }
 
@@ -135,12 +145,14 @@ namespace SpeckleElementsGSA
           keyword + ":" + GSA.GenerateSID(assembly),
           index.ToString(),
           string.IsNullOrEmpty(assembly.Name) ? "" : assembly.Name,
+          Conversions.GSATargetLayer == GSATargetLayer.Analysis ? "ELEMENT" : "MEMBER",
           targetString,
-          "TOPO",
           nodeIndices[0].ToString(),
           nodeIndices[1].ToString(),
           GSA.NodeAt(assembly.OrientationPoint.Value[0], assembly.OrientationPoint.Value[1], assembly.OrientationPoint.Value[2], Conversions.GSACoincidentNodeAllowance).ToString(),
           "", //Empty list for int_topo as it assumed that the line is never curved
+          assembly.Width.ToString(),
+          assembly.Width.ToString(),
           "LAGRANGE",
           "0", //Curve order - reserved for future use according to the documentation
           "POINTS",
