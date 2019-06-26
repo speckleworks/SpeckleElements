@@ -26,6 +26,8 @@ namespace SpeckleElementsGSA
       var elementsListCopy = new List<GSA1DElement>(elements);
 
       Structural1DElementPolyline obj = new Structural1DElementPolyline();
+      obj.ApplicationId = GSA.GetSID(typeof(GSA1DElementPolyline).GetGSAKeyword(), GSAId);
+
       obj.Value = new List<double>();
       obj.ElementApplicationId = new List<string>();
 
@@ -229,7 +231,7 @@ namespace SpeckleElementsGSA
       foreach (string member in uniqueMembers)
       {
         var elementList = GSASenderObjects[typeof(GSA1DElement)].Where(x => (x as GSA1DElement).Member == member).Cast<GSA1DElement>().ToList();
-        GSA1DElementPolyline poly = new GSA1DElementPolyline();
+        GSA1DElementPolyline poly = new GSA1DElementPolyline() { GSAId = Convert.ToInt32(member) };
         poly.ParseGWACommand(GSA, elementList);
         polylines.Add(poly);
 
