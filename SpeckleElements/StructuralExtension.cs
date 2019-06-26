@@ -798,7 +798,8 @@ namespace SpeckleElements
             PropertyRef,
             ZAxis == null || ZAxis.Count() <= i ? null : ZAxis[i],
             EndRelease == null || EndRelease.Count() < i * 2 + 2 ? null : EndRelease.Skip(i * 2).Take(2).ToArray(),
-            Offset == null || Offset.Count() < i * 2 + 2 ? null : Offset.Skip(i * 2).Take(2).ToArray()
+            Offset == null || Offset.Count() < i * 2 + 2 ? null : Offset.Skip(i * 2).Take(2).ToArray(),
+            ElementApplicationId != null && ElementApplicationId.Count() > i ? ElementApplicationId[i] : null
         );
         element.Dummy = Dummy;
         element.MeshSize = MeshSize;
