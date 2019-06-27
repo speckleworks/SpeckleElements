@@ -25,6 +25,8 @@ namespace SpeckleElementsGSA
         return;
 
       Structural2DElementMesh obj = new Structural2DElementMesh();
+      obj.ApplicationId = GSA.GetSID(typeof(GSA2DElementMesh).GetGSAKeyword(), GSAId);
+
       obj.Vertices = new List<double>();
       obj.Faces = new List<int>();
       obj.ElementApplicationId = new List<string>();
@@ -157,7 +159,7 @@ namespace SpeckleElementsGSA
       foreach (string member in uniqueMembers)
       {
         var elementList = GSASenderObjects[typeof(GSA2DElement)].Where(x => (x as GSA2DElement).Member == member).Cast<GSA2DElement>().ToList();
-        GSA2DElementMesh mesh = new GSA2DElementMesh();
+        GSA2DElementMesh mesh = new GSA2DElementMesh() { GSAId = Convert.ToInt32(member) };
         mesh.ParseGWACommand(GSA, elementList);
         meshes.Add(mesh);
 
