@@ -1086,9 +1086,8 @@ namespace SpeckleElementsGSA
         Dictionary<string, object> ret = new Dictionary<string, object>();
 
         foreach (string key in keys)
-        { 
-          
-          ret[key] = res.Select(x => x.dynaResults.GetValue(counter)).ToList();
+        {
+          ret[key] = res.Select(x => (double)x.dynaResults.GetValue(counter)).ToList();
           counter++;
         }
 
