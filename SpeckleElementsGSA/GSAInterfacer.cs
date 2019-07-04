@@ -1,4 +1,4 @@
-﻿using Gsa_10_0;
+﻿using Interop.Gsa_10_0;
 using SpeckleCore;
 using SpeckleElements;
 using SQLite;
@@ -155,7 +155,7 @@ namespace SpeckleElementsGSA
             if (command.StartsWith("GET_ALL\tMEMB"))
             {
               // TODO: Member GET_ALL work around
-              GSAObject.EntitiesInList("all", GsaEntity.MEMBER, out Array memberRefs);
+              GSAObject.EntitiesInList("all", GsaEntity.MEMBER, out int[] memberRefs);
 
               if (memberRefs == null || memberRefs.Length == 0)
                 return "";
@@ -914,7 +914,7 @@ namespace SpeckleElementsGSA
         {
           try
           {
-            GSAObject.EntitiesInList(pieces[i], (GsaEntity)type, out Array itemTemp);
+            GSAObject.EntitiesInList(pieces[i], (GsaEntity)type, out int[] itemTemp);
             items.AddRange((int[])itemTemp);
           }
           catch
