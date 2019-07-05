@@ -799,7 +799,7 @@ namespace SpeckleElements
             ZAxis == null || ZAxis.Count() <= i ? null : ZAxis[i],
             EndRelease == null || EndRelease.Count() < i * 2 + 2 ? null : EndRelease.Skip(i * 2).Take(2).ToArray(),
             Offset == null || Offset.Count() < i * 2 + 2 ? null : Offset.Skip(i * 2).Take(2).ToArray(),
-            ElementApplicationId != null && ElementApplicationId.Count() > i ? ElementApplicationId[i] : null
+            ElementApplicationId != null && ElementApplicationId.Count() > i ? ElementApplicationId[i] : ApplicationId + "_" + i.ToString()
         );
         element.Dummy = Dummy;
         element.MeshSize = MeshSize;
@@ -943,7 +943,7 @@ namespace SpeckleElements
             PropertyRef,
             Axis != null && Axis.Count() > faceCounter? Axis[faceCounter] : null,
             Offset != null && Offset.Count() > faceCounter ? Offset[faceCounter] : 0,
-            ElementApplicationId != null && ElementApplicationId.Count() > faceCounter ? ElementApplicationId[faceCounter] : null
+            ElementApplicationId != null && ElementApplicationId.Count() > faceCounter ? ElementApplicationId[faceCounter] : ApplicationId + "_" + faceCounter.ToString()
         );
         element.Dummy = Dummy;
         element.MeshSize = MeshSize;
