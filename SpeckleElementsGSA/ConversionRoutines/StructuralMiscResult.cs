@@ -32,7 +32,13 @@ namespace SpeckleElementsGSA
       if (loadtasks != null && loadtasks.Length > 0)
       {
         for (var i = 0; i < loadtasks.Count(); i++)
-          loadCaseNames.Add("A" + loadtasks[i][1], loadtasks[i][2]);
+        {
+          if (loadtasks[i].Length > 2)
+          {
+            loadCaseNames.Add("A" + loadtasks[i][1], loadtasks[i][2]);
+          }
+        }
+          
       }
 
       //The "C"s
@@ -40,7 +46,12 @@ namespace SpeckleElementsGSA
       if (combotasks != null && combotasks.Length > 0)
       {
         for (var i = 0; i < combotasks.Count(); i++)
-          loadCaseNames.Add("C" + combotasks[i][1], combotasks[i][2]);
+        {
+          if (combotasks[i].Length > 2)
+          {
+            loadCaseNames.Add("C" + combotasks[i][1], combotasks[i][2]);
+          }
+        }
       }
 
       if (Conversions.GSAMiscResults.Count() == 0)
