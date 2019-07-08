@@ -797,6 +797,13 @@ namespace SpeckleElements
       get => StructuralProperties.ContainsKey("result") ? (StructuralProperties["result"] as Dictionary<string, object>) : null;
       set => StructuralProperties["result"] = value;
     }
+
+    [SNJ.JsonIgnore]
+    public double LocalMeshSize
+    {
+      get => StructuralProperties.ContainsKey("localMeshSize") ? ((double)StructuralProperties["localMeshSize"]) : 0;
+      set => StructuralProperties["localMeshSize"] = value;
+    }
   }
 
   //----

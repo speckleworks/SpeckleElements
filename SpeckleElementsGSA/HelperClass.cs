@@ -497,6 +497,31 @@ namespace SpeckleElementsGSA
 
       return ret;
     }
+
+    public static double? LineLength(this double[] coordinates)
+    {
+      if (coordinates.Count() < 6)
+      {
+        return null;
+      }
+      var x = Math.Abs(coordinates[3] - coordinates[0]);
+      var y = Math.Abs(coordinates[4] - coordinates[1]);
+      var z = Math.Abs(coordinates[5] - coordinates[2]);
+      return Math.Sqrt(Math.Pow(x, 2) + Math.Pow(y, 2) + Math.Pow(z, 2));
+    }
+
+    public static double ToDouble(this object o)
+    {
+      try
+      {
+        var d = Convert.ToDouble(o);
+        return d;
+      }
+      catch
+      {
+        return 0d;
+      }
+    }
     #endregion
   }
 }
