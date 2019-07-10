@@ -1,10 +1,10 @@
-﻿extern alias SpeckleNewtonsoft;
-using SNJ = SpeckleNewtonsoft.Newtonsoft.Json;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 using SpeckleCore;
 using SpeckleCoreGeometryClasses;
 
@@ -19,7 +19,7 @@ namespace SpeckleElements
     public override string Type { get => base.Type + "/StructuralVectorThree"; }
     
     /// <summary>Base SpeckleVector.</summary>
-    [SNJ.JsonIgnore]
+    [JsonIgnore]
     public SpeckleVector baseVector
     {
       get => this as SpeckleVector;
@@ -33,7 +33,7 @@ namespace SpeckleElements
     public override string Type { get => "StructuralVectorBoolThree"; }
     
     /// <summary>An array containing the X, Y, and Z values of the vector.</summary>
-    [SNJ.JsonProperty("value", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
+    [JsonProperty("value", Required = Required.Default, NullValueHandling = NullValueHandling.Ignore)]
     public List<bool> Value { get; set; }
   }
 
@@ -43,7 +43,7 @@ namespace SpeckleElements
     public override string Type { get => "StructuralVectorSix"; }
     
     /// <summary>An array containing the X, Y, Z, XX, YY, and ZZ values of the vector.</summary>
-    [SNJ.JsonProperty("value", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
+    [JsonProperty("value", Required = Required.Default, NullValueHandling = NullValueHandling.Ignore)]
     public List<double> Value { get; set; }
   }
 
@@ -53,7 +53,7 @@ namespace SpeckleElements
     public override string Type { get => "StructuralVectorBoolSix"; }
     
     /// <summary>An array containing the X, Y, Z, XX, YY, and ZZ values of the vector.</summary>
-    [SNJ.JsonProperty("value", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
+    [JsonProperty("value", Required = Required.Default, NullValueHandling = NullValueHandling.Ignore)]
     public List<bool> Value { get; set; }
   }
 
@@ -63,7 +63,7 @@ namespace SpeckleElements
     public override string Type { get => base.Type + "/StructuralAxis"; }
     
     /// <summary>Base SpecklePlane.</summary>
-    [SNJ.JsonIgnore]
+    [JsonIgnore]
     public SpecklePlane basePlane
     {
       get => this as SpecklePlane;
@@ -85,8 +85,8 @@ namespace SpeckleElements
     public override string Type { get => "StructuralLoadCase"; }
     
     /// <summary>Type of load the case contains.</summary>
-    [SNJ.JsonConverter(typeof(SNJ.Converters.StringEnumConverter))]
-    [SNJ.JsonProperty("caseType", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
+    [JsonConverter(typeof(StringEnumConverter))]
+    [JsonProperty("caseType", Required = Required.Default, NullValueHandling = NullValueHandling.Ignore)]
     public StructuralLoadCaseType CaseType { get; set; }
   }
 
@@ -96,16 +96,16 @@ namespace SpeckleElements
     public override string Type { get => "StructuralLoadTask"; }
     
     /// <summary>Type of analysis to perform.</summary>
-    [SNJ.JsonConverter(typeof(SNJ.Converters.StringEnumConverter))]
-    [SNJ.JsonProperty("taskType", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
+    [JsonConverter(typeof(StringEnumConverter))]
+    [JsonProperty("taskType", Required = Required.Default, NullValueHandling = NullValueHandling.Ignore)]
     public StructuralLoadTaskType TaskType { get; set; }
 
     /// <summary>Application IDs of StructuralLoadCase to include.</summary>
-    [SNJ.JsonProperty("loadCaseRefs", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
+    [JsonProperty("loadCaseRefs", Required = Required.Default, NullValueHandling = NullValueHandling.Ignore)]
     public List<string> LoadCaseRefs { get; set; }
 
     /// <summary>Load factors for each load case.</summary>
-    [SNJ.JsonProperty("loadFactors", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
+    [JsonProperty("loadFactors", Required = Required.Default, NullValueHandling = NullValueHandling.Ignore)]
     public List<double> LoadFactors { get; set; }
   }
 
@@ -115,24 +115,24 @@ namespace SpeckleElements
     public override string Type { get => "StructuralLoadTaskBuckling"; }
     
     /// <summary>Type of analysis to perform.</summary>
-    [SNJ.JsonConverter(typeof(SNJ.Converters.StringEnumConverter))]
-    [SNJ.JsonProperty("taskType", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
+    [JsonConverter(typeof(StringEnumConverter))]
+    [JsonProperty("taskType", Required = Required.Default, NullValueHandling = NullValueHandling.Ignore)]
     public StructuralLoadTaskType TaskType { get => StructuralLoadTaskType.Buckling; }
 
     /// <summary>Number of modes.</summary>
-    [SNJ.JsonProperty("numModes", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
+    [JsonProperty("numModes", Required = Required.Default, NullValueHandling = NullValueHandling.Ignore)]
     public int NumModes { get; set; }
 
     /// <summary>Maximum number of iterations.</summary>
-    [SNJ.JsonProperty("maxNumIterations", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
+    [JsonProperty("maxNumIterations", Required = Required.Default, NullValueHandling = NullValueHandling.Ignore)]
     public int MaxNumIterations { get; set; }
 
     /// <summary>Name of the combination case.</summary>
-    [SNJ.JsonProperty("resultCaseRef", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
+    [JsonProperty("resultCaseRef", Required = Required.Default, NullValueHandling = NullValueHandling.Ignore)]
     public string ResultCaseRef { get; set; }
 
     /// <summary>Stage definition for the task</summary>
-    [SNJ.JsonProperty("stageDefinitionRef", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
+    [JsonProperty("stageDefinitionRef", Required = Required.Default, NullValueHandling = NullValueHandling.Ignore)]
     public string StageDefinitionRef { get; set; }
   }
 
@@ -142,24 +142,24 @@ namespace SpeckleElements
     public override string Type { get => "StructuralLoadCombo"; }
     
     /// <summary>Type of combination method.</summary>
-    [SNJ.JsonConverter(typeof(SNJ.Converters.StringEnumConverter))]
-    [SNJ.JsonProperty("comboType", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
+    [JsonConverter(typeof(StringEnumConverter))]
+    [JsonProperty("comboType", Required = Required.Default, NullValueHandling = NullValueHandling.Ignore)]
     public StructuralLoadComboType ComboType { get; set; }
 
     /// <summary>Application IDs of StructuralLoadTask to include.</summary>
-    [SNJ.JsonProperty("loadTaskRefs", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
+    [JsonProperty("loadTaskRefs", Required = Required.Default, NullValueHandling = NullValueHandling.Ignore)]
     public List<string> LoadTaskRefs { get; set; }
 
     /// <summary>Load factors for each load task.</summary>
-    [SNJ.JsonProperty("loadTaskFactors", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
+    [JsonProperty("loadTaskFactors", Required = Required.Default, NullValueHandling = NullValueHandling.Ignore)]
     public List<double> LoadTaskFactors { get; set; }
 
     /// <summary>Application IDs of StructuralLoadCombo to include.</summary>
-    [SNJ.JsonProperty("loadComboRefs", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
+    [JsonProperty("loadComboRefs", Required = Required.Default, NullValueHandling = NullValueHandling.Ignore)]
     public List<string> LoadComboRefs { get; set; }
 
     /// <summary>Load factors for each load combo.</summary>
-    [SNJ.JsonProperty("loadComboFactors", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
+    [JsonProperty("loadComboFactors", Required = Required.Default, NullValueHandling = NullValueHandling.Ignore)]
     public List<double> LoadComboFactors { get; set; }
   }
 
@@ -169,15 +169,15 @@ namespace SpeckleElements
     public override string Type { get => "Structural0DLoad"; }
     
     /// <summary>A list of Fx, Fy, Fz, Mx, My, and Mz loads.</summary>
-    [SNJ.JsonProperty("loading", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
+    [JsonProperty("loading", Required = Required.Default, NullValueHandling = NullValueHandling.Ignore)]
     public StructuralVectorSix Loading { get; set; }
 
     /// <summary>Application IDs of StructuralNodes to apply load.</summary>
-    [SNJ.JsonProperty("nodeRefs", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
+    [JsonProperty("nodeRefs", Required = Required.Default, NullValueHandling = NullValueHandling.Ignore)]
     public List<string> NodeRefs { get; set; }
 
     /// <summary>Application ID of StructuralLoadCase.</summary>
-    [SNJ.JsonProperty("loadCaseRef", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
+    [JsonProperty("loadCaseRef", Required = Required.Default, NullValueHandling = NullValueHandling.Ignore)]
     public string LoadCaseRef { get; set; }
   }
 
@@ -187,15 +187,15 @@ namespace SpeckleElements
     public override string Type { get => "Structural1DLoad"; }
     
     /// <summary>A list of Fx, Fy, Fz, Mx, My, and Mz loads.</summary>
-    [SNJ.JsonProperty("loading", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
+    [JsonProperty("loading", Required = Required.Default, NullValueHandling = NullValueHandling.Ignore)]
     public StructuralVectorSix Loading { get; set; }
 
     /// <summary>Application IDs of Structural1DElements to apply load.</summary>
-    [SNJ.JsonProperty("elementRefs", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
+    [JsonProperty("elementRefs", Required = Required.Default, NullValueHandling = NullValueHandling.Ignore)]
     public List<string> ElementRefs { get; set; }
 
     /// <summary>Application ID of StructuralLoadCase.</summary>
-    [SNJ.JsonProperty("loadCaseRef", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
+    [JsonProperty("loadCaseRef", Required = Required.Default, NullValueHandling = NullValueHandling.Ignore)]
     public string LoadCaseRef { get; set; }
   }
 
@@ -205,15 +205,15 @@ namespace SpeckleElements
     public override string Type { get => "Structural2DLoad"; }
     
     /// <summary>A list of Fx, Fy, and Fz loads.</summary>
-    [SNJ.JsonProperty("loading", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
+    [JsonProperty("loading", Required = Required.Default, NullValueHandling = NullValueHandling.Ignore)]
     public StructuralVectorThree Loading { get; set; }
 
     /// <summary>Application IDs of Structural2DElementMeshes to apply load.</summary>
-    [SNJ.JsonProperty("elementRefs", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
+    [JsonProperty("elementRefs", Required = Required.Default, NullValueHandling = NullValueHandling.Ignore)]
     public List<string> ElementRefs { get; set; }
 
     /// <summary>Application ID of StructuralLoadCase.</summary>
-    [SNJ.JsonProperty("loadCaseRef", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
+    [JsonProperty("loadCaseRef", Required = Required.Default, NullValueHandling = NullValueHandling.Ignore)]
     public string LoadCaseRef { get; set; }
   }
 
@@ -222,7 +222,7 @@ namespace SpeckleElements
   {
     public override string Type { get => base.Type + "/Structural1DLoadLine"; }
 
-    [SNJ.JsonIgnore]
+    [JsonIgnore]
     private Dictionary<string, object> StructuralProperties
     {
       get
@@ -246,7 +246,7 @@ namespace SpeckleElements
     }
     
     /// <summary>Base SpeckleLine.</summary>
-    [SNJ.JsonIgnore]
+    [JsonIgnore]
     public SpeckleLine baseLine
     {
       get => this as SpeckleLine;
@@ -258,7 +258,7 @@ namespace SpeckleElements
     }
 
     /// <summary>A list of Fx, Fy, Fz, Mx, My, and Mz loads.</summary>
-    [SNJ.JsonIgnore]
+    [JsonIgnore]
     public StructuralVectorSix Loading
     {
       get => StructuralProperties.ContainsKey("loading") ? (StructuralProperties["loading"] as StructuralVectorSix) : null;
@@ -266,7 +266,7 @@ namespace SpeckleElements
     }
 
     /// <summary>Application ID of StructuralLoadCase.</summary>
-    [SNJ.JsonIgnore]
+    [JsonIgnore]
     public string LoadCaseRef
     {
       get => StructuralProperties.ContainsKey("loadCaseRef") ? (StructuralProperties["loadCaseRef"] as string) : null;
@@ -279,7 +279,7 @@ namespace SpeckleElements
   {
     public override string Type { get => base.Type + "/Structural2DLoadPanel"; }
 
-    [SNJ.JsonIgnore]
+    [JsonIgnore]
     private Dictionary<string, object> StructuralProperties
     {
       get
@@ -303,7 +303,7 @@ namespace SpeckleElements
     }
     
     /// <summary>Base SpecklePolyline.</summary>
-    [SNJ.JsonIgnore]
+    [JsonIgnore]
     public SpecklePolyline basePolyline
     {
       get => this as SpecklePolyline;
@@ -316,7 +316,7 @@ namespace SpeckleElements
     }
 
     /// <summary>A list of Fx, Fy, and Fz loads.</summary>
-    [SNJ.JsonIgnore]
+    [JsonIgnore]
     public StructuralVectorThree Loading
     {
       get => StructuralProperties.ContainsKey("loading") ? (StructuralProperties["loading"] as StructuralVectorThree) : null;
@@ -324,7 +324,7 @@ namespace SpeckleElements
     }
 
     /// <summary>Application ID of StructuralLoadCase.</summary>
-    [SNJ.JsonIgnore]
+    [JsonIgnore]
     public string LoadCaseRef
     {
       get => StructuralProperties.ContainsKey("loadCaseRef") ? (StructuralProperties["loadCaseRef"] as string) : null;
@@ -337,7 +337,7 @@ namespace SpeckleElements
   {
     public override string Type { get => base.Type + "/StructuralAssembly"; }
 
-    [SNJ.JsonIgnore]
+    [JsonIgnore]
     private Dictionary<string, object> StructuralProperties
     {
       get
@@ -360,7 +360,7 @@ namespace SpeckleElements
       }
     }
     
-    [SNJ.JsonIgnore]
+    [JsonIgnore]
     public int NumPoints
     {
       get
@@ -375,7 +375,7 @@ namespace SpeckleElements
     }
 
     /// <summary>Base SpeckleLine.</summary>
-    [SNJ.JsonIgnore]
+    [JsonIgnore]
     public SpeckleLine BaseLine
     {
       get => this as SpeckleLine;
@@ -386,14 +386,14 @@ namespace SpeckleElements
       }
     }
 
-    [SNJ.JsonIgnore]
+    [JsonIgnore]
     public SpecklePoint OrientationPoint
     {
       get => StructuralProperties.ContainsKey("orientationPoint") ? (StructuralProperties["orientationPoint"] as SpecklePoint) : null;
       set => StructuralProperties["orientationPoint"] = value;
     }
 
-    [SNJ.JsonIgnore]
+    [JsonIgnore]
     public double Width
     {
       get => (StructuralProperties.ContainsKey("width") && double.TryParse(StructuralProperties["width"].ToString(), out double width)) ? width : 0;
@@ -401,7 +401,7 @@ namespace SpeckleElements
     }
 
     /// <summary>Application ID of StructuralLoadCase.</summary>
-    [SNJ.JsonIgnore]
+    [JsonIgnore]
     public List<string> ElementRefs
     {
       get
@@ -436,11 +436,11 @@ namespace SpeckleElements
     public override string Type { get => "StructuralStageDefinition"; }
     
     /// <summary>Application ID of members to include in the stage of the construction sequence.</summary>
-    [SNJ.JsonProperty("elementRefs", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
+    [JsonProperty("elementRefs", Required = Required.Default, NullValueHandling = NullValueHandling.Ignore)]
     public List<string> ElementRefs { get; set; }
 
     /// <summary>Number of days in the stage</summary>
-    [SNJ.JsonProperty("stageDays", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
+    [JsonProperty("stageDays", Required = Required.Default, NullValueHandling = NullValueHandling.Ignore)]
     public int StageDays { get; set; }
   }
 
@@ -450,11 +450,11 @@ namespace SpeckleElements
     public override string Type { get => "StructuralGravityLoading"; }
     
     /// <summary>A list of x, y, z factors</summary>
-    [SNJ.JsonProperty("gravityFactors", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
+    [JsonProperty("gravityFactors", Required = Required.Default, NullValueHandling = NullValueHandling.Ignore)]
     public StructuralVectorThree GravityFactors { get; set; }
 
     /// <summary>Application ID of StructuralLoadCase.</summary>
-    [SNJ.JsonProperty("loadCaseRef", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
+    [JsonProperty("loadCaseRef", Required = Required.Default, NullValueHandling = NullValueHandling.Ignore)]
     public string LoadCaseRef { get; set; }
   }
 
@@ -466,7 +466,7 @@ namespace SpeckleElements
   {
     public override string Type { get => base.Type + "/StructuralLinearSpringProperty"; }
 
-    [SNJ.JsonIgnore]
+    [JsonIgnore]
     private Dictionary<string, object> StructuralProperties
     {
       get
@@ -490,7 +490,7 @@ namespace SpeckleElements
     }
     
     /// <summary>Axis of the spring.</summary>
-    [SNJ.JsonIgnore]
+    [JsonIgnore]
     public StructuralSpringAxis Axis
     {
       get => StructuralProperties.ContainsKey("axis")
@@ -500,7 +500,7 @@ namespace SpeckleElements
     }
 
     /// <summary>X, Y, Z, XX, YY, ZZ stiffnesses.</summary>
-    [SNJ.JsonIgnore]
+    [JsonIgnore]
     public StructuralVectorSix Stiffness
     {
       get => StructuralProperties.ContainsKey("stiffness") ? (StructuralProperties["stiffness"] as StructuralVectorSix) : null;
@@ -514,35 +514,35 @@ namespace SpeckleElements
     public override string Type { get => "StructuralMaterialConcrete"; }
     
     /// <summary>Young's modulus (E) of material.</summary>
-    [SNJ.JsonProperty("youngsModulus", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
+    [JsonProperty("youngsModulus", Required = Required.Default, NullValueHandling = NullValueHandling.Ignore)]
     public double YoungsModulus { get; set; }
 
     /// <summary>Shear modulus (G) of material.</summary>
-    [SNJ.JsonProperty("shearModulus", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
+    [JsonProperty("shearModulus", Required = Required.Default, NullValueHandling = NullValueHandling.Ignore)]
     public double ShearModulus { get; set; }
 
     /// <summary>Poission's ratio (ν) of material.</summary>
-    [SNJ.JsonProperty("poissonsRatio", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
+    [JsonProperty("poissonsRatio", Required = Required.Default, NullValueHandling = NullValueHandling.Ignore)]
     public double PoissonsRatio { get; set; }
 
     /// <summary>Density (ρ) of material.</summary>
-    [SNJ.JsonProperty("density", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
+    [JsonProperty("density", Required = Required.Default, NullValueHandling = NullValueHandling.Ignore)]
     public double Density { get; set; }
 
     /// <summary>Coefficient of thermal expansion (α) of material.</summary>
-    [SNJ.JsonProperty("coeffThermalExpansion", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
+    [JsonProperty("coeffThermalExpansion", Required = Required.Default, NullValueHandling = NullValueHandling.Ignore)]
     public double CoeffThermalExpansion { get; set; }
 
     /// <summary>Compressive strength.</summary>
-    [SNJ.JsonProperty("compressiveStrength", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
+    [JsonProperty("compressiveStrength", Required = Required.Default, NullValueHandling = NullValueHandling.Ignore)]
     public double CompressiveStrength { get; set; }
 
     /// <summary>Max strain at failure.</summary>
-    [SNJ.JsonProperty("maxStrain", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
+    [JsonProperty("maxStrain", Required = Required.Default, NullValueHandling = NullValueHandling.Ignore)]
     public double MaxStrain { get; set; }
 
     /// <summary>Aggragate size.</summary>
-    [SNJ.JsonProperty("aggragateSize", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
+    [JsonProperty("aggragateSize", Required = Required.Default, NullValueHandling = NullValueHandling.Ignore)]
     public double AggragateSize { get; set; }
   }
 
@@ -552,35 +552,35 @@ namespace SpeckleElements
     public override string Type { get => "StructuralMaterialSteel"; }
     
     /// <summary>Young's modulus (E) of material.</summary>
-    [SNJ.JsonProperty("youngsModulus", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
+    [JsonProperty("youngsModulus", Required = Required.Default, NullValueHandling = NullValueHandling.Ignore)]
     public double YoungsModulus { get; set; }
 
     /// <summary>Shear modulus (G) of material.</summary>
-    [SNJ.JsonProperty("shearModulus", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
+    [JsonProperty("shearModulus", Required = Required.Default, NullValueHandling = NullValueHandling.Ignore)]
     public double ShearModulus { get; set; }
 
     /// <summary>Poission's ratio (ν) of material.</summary>
-    [SNJ.JsonProperty("poissonsRatio", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
+    [JsonProperty("poissonsRatio", Required = Required.Default, NullValueHandling = NullValueHandling.Ignore)]
     public double PoissonsRatio { get; set; }
 
     /// <summary>Density (ρ) of material.</summary>
-    [SNJ.JsonProperty("density", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
+    [JsonProperty("density", Required = Required.Default, NullValueHandling = NullValueHandling.Ignore)]
     public double Density { get; set; }
 
     /// <summary>Coefficient of thermal expansion (α) of material.</summary>
-    [SNJ.JsonProperty("coeffThermalExpansion", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
+    [JsonProperty("coeffThermalExpansion", Required = Required.Default, NullValueHandling = NullValueHandling.Ignore)]
     public double CoeffThermalExpansion { get; set; }
 
     /// <summary>Yield strength.</summary>
-    [SNJ.JsonProperty("yieldStrength", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
+    [JsonProperty("yieldStrength", Required = Required.Default, NullValueHandling = NullValueHandling.Ignore)]
     public double YieldStrength { get; set; }
 
     /// <summary>Ultimate strength.</summary>
-    [SNJ.JsonProperty("ultimateStrength", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
+    [JsonProperty("ultimateStrength", Required = Required.Default, NullValueHandling = NullValueHandling.Ignore)]
     public double UltimateStrength { get; set; }
 
     /// <summary>Max strain at failure.</summary>
-    [SNJ.JsonProperty("maxStrain", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
+    [JsonProperty("maxStrain", Required = Required.Default, NullValueHandling = NullValueHandling.Ignore)]
     public double MaxStrain { get; set; }
   }
 
@@ -590,24 +590,24 @@ namespace SpeckleElements
     public override string Type { get => "Structural1DProperty"; }
     
     /// <summary>SpecklePolyline or SpeckleCircle of the cross-section.</summary>
-    [SNJ.JsonProperty("profile", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
+    [JsonProperty("profile", Required = Required.Default, NullValueHandling = NullValueHandling.Ignore)]
     public SpeckleObject Profile { get; set; }
 
     /// <summary>Cross-section shape.</summary>
-    [SNJ.JsonConverter(typeof(SNJ.Converters.StringEnumConverter))]
-    [SNJ.JsonProperty("shape", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
+    [JsonConverter(typeof(StringEnumConverter))]
+    [JsonProperty("shape", Required = Required.Default, NullValueHandling = NullValueHandling.Ignore)]
     public Structural1DPropertyShape Shape { get; set; }
 
     /// <summary>Is the section filled or hollow?</summary>
-    [SNJ.JsonProperty("hollow", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
+    [JsonProperty("hollow", Required = Required.Default, NullValueHandling = NullValueHandling.Ignore)]
     public bool Hollow { get; set; }
 
     /// <summary>Thickness of the section if hollow.</summary>
-    [SNJ.JsonProperty("thickness", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
+    [JsonProperty("thickness", Required = Required.Default, NullValueHandling = NullValueHandling.Ignore)]
     public double Thickness { get; set; }
 
     /// <summary>Application ID of StructuralMaterial.</summary>
-    [SNJ.JsonProperty("materialRef", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
+    [JsonProperty("materialRef", Required = Required.Default, NullValueHandling = NullValueHandling.Ignore)]
     public string MaterialRef { get; set; }
   }
 
@@ -617,15 +617,15 @@ namespace SpeckleElements
     public override string Type { get => "Structural2DProperty"; }
     
     /// <summary>Thickness of the 2D element.</summary>
-    [SNJ.JsonProperty("thickness", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
+    [JsonProperty("thickness", Required = Required.Default, NullValueHandling = NullValueHandling.Ignore)]
     public double Thickness { get; set; }
 
     /// <summary>Application ID of StructuralMaterial.</summary>
-    [SNJ.JsonProperty("materialRef", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
+    [JsonProperty("materialRef", Required = Required.Default, NullValueHandling = NullValueHandling.Ignore)]
     public string MaterialRef { get; set; }
 
     /// <summary>Reference surface for property.</summary>
-    [SNJ.JsonProperty("referenceSurface", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
+    [JsonProperty("referenceSurface", Required = Required.Default, NullValueHandling = NullValueHandling.Ignore)]
     public Structural2DPropertyReferenceSurface ReferenceSurface { get; set; }
   }
   #endregion
@@ -636,7 +636,7 @@ namespace SpeckleElements
   {
     public override string Type { get => base.Type + "/StructuralNode"; }
 
-    [SNJ.JsonIgnore]
+    [JsonIgnore]
     private Dictionary<string, object> StructuralProperties
     {
       get
@@ -660,7 +660,7 @@ namespace SpeckleElements
     }
     
     /// <summary>Base SpecklePoint.</summary>
-    [SNJ.JsonIgnore]
+    [JsonIgnore]
     public SpecklePoint basePoint
     {
       get => this as SpecklePoint;
@@ -668,7 +668,7 @@ namespace SpeckleElements
     }
 
     /// <summary>Local axis of the node.</summary>
-    [SNJ.JsonIgnore]
+    [JsonIgnore]
     public StructuralAxis Axis
     {
       get => StructuralProperties.ContainsKey("axis") ? (StructuralProperties["axis"] as StructuralAxis) : null;
@@ -676,7 +676,7 @@ namespace SpeckleElements
     }
 
     /// <summary>A list of the X, Y, Z, Rx, Ry, and Rz restraints.</summary>
-    [SNJ.JsonIgnore]
+    [JsonIgnore]
     public StructuralVectorBoolSix Restraint
     {
       get => StructuralProperties.ContainsKey("restraint") ? (StructuralProperties["restraint"] as StructuralVectorBoolSix) : null;
@@ -684,7 +684,7 @@ namespace SpeckleElements
     }
 
     /// <summary>A list of the X, Y, Z, Rx, Ry, and Rz stiffnesses.</summary>
-    [SNJ.JsonIgnore]
+    [JsonIgnore]
     public StructuralVectorSix Stiffness
     {
       get => StructuralProperties.ContainsKey("stiffness") ? (StructuralProperties["stiffness"] as StructuralVectorSix) : null;
@@ -692,7 +692,7 @@ namespace SpeckleElements
     }
 
     /// <summary>Mass of the node.</summary>
-    [SNJ.JsonIgnore]
+    [JsonIgnore]
     public double Mass
     {
       get => StructuralProperties.ContainsKey("mass") ? ((double)StructuralProperties["mass"]) : 0;
@@ -700,7 +700,7 @@ namespace SpeckleElements
     }
 
     /// <summary>Analysis results.</summary>
-    [SNJ.JsonIgnore]
+    [JsonIgnore]
     public Dictionary<string, object> Result
     {
       get => StructuralProperties.ContainsKey("result") ? (StructuralProperties["result"] as Dictionary<string, object>) : null;
@@ -713,7 +713,7 @@ namespace SpeckleElements
   {
     public override string Type { get => base.Type + "/Structural1DElement"; }
 
-    [SNJ.JsonIgnore]
+    [JsonIgnore]
     private Dictionary<string, object> StructuralProperties
     {
       get
@@ -737,7 +737,7 @@ namespace SpeckleElements
     }
     
     /// <summary>Base SpeckleLine.</summary>
-    [SNJ.JsonIgnore]
+    [JsonIgnore]
     public SpeckleLine baseLine
     {
       get => this as SpeckleLine;
@@ -745,7 +745,7 @@ namespace SpeckleElements
     }
 
     /// <summary>Type of 1D element.</summary>
-    [SNJ.JsonIgnore]
+    [JsonIgnore]
     public Structural1DElementType ElementType
     {
       get => StructuralProperties.ContainsKey("elementType") ? (Structural1DElementType)Enum.Parse(typeof(Structural1DElementType), (StructuralProperties["elementType"] as string), true) : Structural1DElementType.Generic;
@@ -753,7 +753,7 @@ namespace SpeckleElements
     }
 
     /// <summary>Application ID of Structural1DProperty.</summary>
-    [SNJ.JsonIgnore]
+    [JsonIgnore]
     public string PropertyRef
     {
       get => StructuralProperties.ContainsKey("propertyRef") ? (StructuralProperties["propertyRef"] as string) : null;
@@ -761,7 +761,7 @@ namespace SpeckleElements
     }
 
     /// <summary>Local axis of 1D element.</summary>
-    [SNJ.JsonIgnore]
+    [JsonIgnore]
     public StructuralVectorThree ZAxis
     {
       get => StructuralProperties.ContainsKey("zAxis") ? (StructuralProperties["zAxis"] as StructuralVectorThree) : null;
@@ -769,7 +769,7 @@ namespace SpeckleElements
     }
 
     /// <summary>List of X, Y, Z, Rx, Ry, and Rz releases on each end.</summary>
-    [SNJ.JsonIgnore]
+    [JsonIgnore]
     public List<StructuralVectorBoolSix> EndRelease
     {
       get
@@ -797,7 +797,7 @@ namespace SpeckleElements
     }
 
     /// <summary>List of X, Y, and, Z offsets on each end.</summary>
-    [SNJ.JsonIgnore]
+    [JsonIgnore]
     public List<StructuralVectorThree> Offset
     {
       get
@@ -825,7 +825,7 @@ namespace SpeckleElements
     }
 
     /// <summary>GSA target mesh size.</summary>
-    [SNJ.JsonIgnore]
+    [JsonIgnore]
     public double MeshSize
     {
       get => StructuralProperties.ContainsKey("gsaMeshSize") ? ((double)StructuralProperties["gsaMeshSize"]) : 0;
@@ -833,7 +833,7 @@ namespace SpeckleElements
     }
 
     /// <summary>GSA dummy status.</summary>
-    [SNJ.JsonIgnore]
+    [JsonIgnore]
     public bool Dummy
     {
       get => StructuralProperties.ContainsKey("gsaDummy") ? ((bool)StructuralProperties["gsaDummy"]) : false;
@@ -841,7 +841,7 @@ namespace SpeckleElements
     }
 
     /// <summary>Vertex location of results.</summary>
-    [SNJ.JsonIgnore]
+    [JsonIgnore]
     public List<double> ResultVertices
     {
       get
@@ -870,7 +870,7 @@ namespace SpeckleElements
     }
 
     /// <summary>Analysis results.</summary>
-    [SNJ.JsonIgnore]
+    [JsonIgnore]
     public Dictionary<string, object> Result
     {
       get => StructuralProperties.ContainsKey("result") ? (StructuralProperties["result"] as Dictionary<string, object>) : null;
@@ -883,7 +883,7 @@ namespace SpeckleElements
   {
     public override string Type { get => base.Type + "/Structural1DElementPolyline"; }
 
-    [SNJ.JsonIgnore]
+    [JsonIgnore]
     private Dictionary<string, object> StructuralProperties
     {
       get
@@ -907,7 +907,7 @@ namespace SpeckleElements
     }
     
     /// <summary>Application ID of elements to reference from other objects.</summary>
-    [SNJ.JsonIgnore]
+    [JsonIgnore]
     public List<string> ElementApplicationId
     {
       get
@@ -936,7 +936,7 @@ namespace SpeckleElements
     }
 
     /// <summary>Base SpecklePolyline.</summary>
-    [SNJ.JsonIgnore]
+    [JsonIgnore]
     public SpecklePolyline basePolyline
     {
       get => this as SpecklePolyline;
@@ -949,7 +949,7 @@ namespace SpeckleElements
     }
 
     /// <summary>Type of 1D element.</summary>
-    [SNJ.JsonIgnore]
+    [JsonIgnore]
     public Structural1DElementType ElementType
     {
       get => StructuralProperties.ContainsKey("elementType") ? (Structural1DElementType)Enum.Parse(typeof(Structural1DElementType), (StructuralProperties["elementType"] as string), true) : Structural1DElementType.Generic;
@@ -957,7 +957,7 @@ namespace SpeckleElements
     }
 
     /// <summary>Application ID of Structural1DProperty.</summary>
-    [SNJ.JsonIgnore]
+    [JsonIgnore]
     public string PropertyRef
     {
       get => StructuralProperties.ContainsKey("propertyRef") ? (StructuralProperties["propertyRef"] as string) : null;
@@ -965,7 +965,7 @@ namespace SpeckleElements
     }
 
     /// <summary>Local Z axis of 1D elements.</summary>
-    [SNJ.JsonIgnore]
+    [JsonIgnore]
     public List<StructuralVectorThree> ZAxis
     {
       get
@@ -994,7 +994,7 @@ namespace SpeckleElements
     }
 
     /// <summary>List of X, Y, Z, Rx, Ry, and Rz releases of each node.</summary>
-    [SNJ.JsonIgnore]
+    [JsonIgnore]
     public List<StructuralVectorBoolSix> EndRelease
     {
       get
@@ -1023,7 +1023,7 @@ namespace SpeckleElements
     }
 
     /// <summary>List of X, Y, Z, Rx, Ry, and Rz offsets of each node.</summary>
-    [SNJ.JsonIgnore]
+    [JsonIgnore]
     public List<StructuralVectorThree> Offset
     {
       get
@@ -1052,7 +1052,7 @@ namespace SpeckleElements
     }
 
     /// <summary>GSA target mesh size.</summary>
-    [SNJ.JsonIgnore]
+    [JsonIgnore]
     public double MeshSize
     {
       get => StructuralProperties.ContainsKey("gsaMeshSize") ? ((double)StructuralProperties["gsaMeshSize"]) : 0;
@@ -1060,7 +1060,7 @@ namespace SpeckleElements
     }
 
     /// <summary>GSA dummy status.</summary>
-    [SNJ.JsonIgnore]
+    [JsonIgnore]
     public bool Dummy
     {
       get => StructuralProperties.ContainsKey("gsaDummy") ? ((bool)StructuralProperties["gsaDummy"]) : false;
@@ -1068,7 +1068,7 @@ namespace SpeckleElements
     }
 
     /// <summary>Vertex location of results.</summary>
-    [SNJ.JsonIgnore]
+    [JsonIgnore]
     public List<double> ResultVertices
     {
       get
@@ -1097,7 +1097,7 @@ namespace SpeckleElements
     }
 
     /// <summary>Analysis results.</summary>
-    [SNJ.JsonIgnore]
+    [JsonIgnore]
     public Dictionary<string, object> Result
     {
       get => StructuralProperties.ContainsKey("result") ? (StructuralProperties["result"] as Dictionary<string, object>) : null;
@@ -1110,7 +1110,7 @@ namespace SpeckleElements
   {
     public override string Type { get => base.Type + "/Structural2DElement"; }
 
-    [SNJ.JsonIgnore]
+    [JsonIgnore]
     private Dictionary<string, object> StructuralProperties
     {
       get
@@ -1134,7 +1134,7 @@ namespace SpeckleElements
     }
     
     /// <summary>Base SpeckleMesh.</summary>
-    [SNJ.JsonIgnore]
+    [JsonIgnore]
     public SpeckleMesh baseMesh
     {
       get => this as SpeckleMesh;
@@ -1148,7 +1148,7 @@ namespace SpeckleElements
     }
 
     /// <summary>Type of 2D element.</summary>
-    [SNJ.JsonIgnore]
+    [JsonIgnore]
     public Structural2DElementType ElementType
     {
       get => StructuralProperties.ContainsKey("elementType") ? (Structural2DElementType)Enum.Parse(typeof(Structural2DElementType), (StructuralProperties["elementType"] as string), true) : Structural2DElementType.Generic;
@@ -1156,7 +1156,7 @@ namespace SpeckleElements
     }
 
     /// <summary>Application ID of Structural2DProperty.</summary>
-    [SNJ.JsonIgnore]
+    [JsonIgnore]
     public string PropertyRef
     {
       get => StructuralProperties.ContainsKey("propertyRef") ? (StructuralProperties["propertyRef"] as string) : null;
@@ -1164,7 +1164,7 @@ namespace SpeckleElements
     }
 
     /// <summary>Local axis of 2D element.</summary>
-    [SNJ.JsonIgnore]
+    [JsonIgnore]
     public StructuralAxis Axis
     {
       get => StructuralProperties.ContainsKey("axis") ? (StructuralProperties["axis"] as StructuralAxis) : null;
@@ -1172,7 +1172,7 @@ namespace SpeckleElements
     }
 
     /// <summary>Offset of 2D element.</summary>
-    [SNJ.JsonIgnore]
+    [JsonIgnore]
     public double Offset
     {
       get => StructuralProperties.ContainsKey("offset") ? ((double)StructuralProperties["offset"]) : 0;
@@ -1180,7 +1180,7 @@ namespace SpeckleElements
     }
 
     /// <summary>GSA target mesh size.</summary>
-    [SNJ.JsonIgnore]
+    [JsonIgnore]
     public double MeshSize
     {
       get => StructuralProperties.ContainsKey("gsaMeshSize") ? ((double)StructuralProperties["gsaMeshSize"]) : 0;
@@ -1188,7 +1188,7 @@ namespace SpeckleElements
     }
 
     /// <summary>GSA dummy status.</summary>
-    [SNJ.JsonIgnore]
+    [JsonIgnore]
     public bool Dummy
     {
       get => StructuralProperties.ContainsKey("gsaDummy") ? ((bool)StructuralProperties["gsaDummy"]) : false;
@@ -1196,7 +1196,7 @@ namespace SpeckleElements
     }
 
     /// <summary>Analysis results.</summary>
-    [SNJ.JsonIgnore]
+    [JsonIgnore]
     public Dictionary<string, object> Result
     {
       get => StructuralProperties.ContainsKey("result") ? (StructuralProperties["result"] as Dictionary<string, object>) : null;
@@ -1209,7 +1209,7 @@ namespace SpeckleElements
   {
     public override string Type { get => base.Type + "/Structural2DElementMesh"; }
 
-    [SNJ.JsonIgnore]
+    [JsonIgnore]
     private Dictionary<string, object> StructuralProperties
     {
       get
@@ -1233,7 +1233,7 @@ namespace SpeckleElements
     }
     
     /// <summary>Application ID of elements to reference from other objects.</summary>
-    [SNJ.JsonIgnore]
+    [JsonIgnore]
     public List<string> ElementApplicationId
     {
       get
@@ -1262,7 +1262,7 @@ namespace SpeckleElements
     }
 
     /// <summary>Base SpeckleMesh.</summary>
-    [SNJ.JsonIgnore]
+    [JsonIgnore]
     public SpeckleMesh baseMesh
     {
       get => this as SpeckleMesh;
@@ -1276,7 +1276,7 @@ namespace SpeckleElements
     }
 
     /// <summary>Type of 2D element.</summary>
-    [SNJ.JsonIgnore]
+    [JsonIgnore]
     public Structural2DElementType ElementType
     {
       get => StructuralProperties.ContainsKey("elementType") ? (Structural2DElementType)Enum.Parse(typeof(Structural2DElementType), (StructuralProperties["elementType"] as string), true) : Structural2DElementType.Generic;
@@ -1284,7 +1284,7 @@ namespace SpeckleElements
     }
 
     /// <summary>Application ID of Structural2DProperty.</summary>
-    [SNJ.JsonIgnore]
+    [JsonIgnore]
     public string PropertyRef
     {
       get => StructuralProperties.ContainsKey("propertyRef") ? (StructuralProperties["propertyRef"] as string) : null;
@@ -1292,7 +1292,7 @@ namespace SpeckleElements
     }
 
     /// <summary>Local axis of each 2D element.</summary>
-    [SNJ.JsonIgnore]
+    [JsonIgnore]
     public List<StructuralAxis> Axis
     {
       get
@@ -1320,7 +1320,7 @@ namespace SpeckleElements
     }
 
     /// <summary>Offset of easch 2D element.</summary>
-    [SNJ.JsonIgnore]
+    [JsonIgnore]
     public List<double> Offset
     {
       get
@@ -1349,7 +1349,7 @@ namespace SpeckleElements
     }
 
     /// <summary>GSA target mesh size.</summary>
-    [SNJ.JsonIgnore]
+    [JsonIgnore]
     public double MeshSize
     {
       get => StructuralProperties.ContainsKey("gsaMeshSize") ? ((double)StructuralProperties["gsaMeshSize"]) : 0;
@@ -1357,7 +1357,7 @@ namespace SpeckleElements
     }
 
     /// <summary>GSA dummy status.</summary>
-    [SNJ.JsonIgnore]
+    [JsonIgnore]
     public bool Dummy
     {
       get => StructuralProperties.ContainsKey("gsaDummy") ? ((bool)StructuralProperties["gsaDummy"]) : false;
@@ -1365,7 +1365,7 @@ namespace SpeckleElements
     }
 
     /// <summary>Analysis results.</summary>
-    [SNJ.JsonIgnore]
+    [JsonIgnore]
     public Dictionary<string, object> Result
     {
       get => StructuralProperties.ContainsKey("result") ? (StructuralProperties["result"] as Dictionary<string, object>) : null;
@@ -1378,7 +1378,7 @@ namespace SpeckleElements
   {
     public override string Type { get => base.Type + "/Structural2DVoid"; }
 
-    [SNJ.JsonIgnore]
+    [JsonIgnore]
     private Dictionary<string, object> StructuralProperties
     {
       get
@@ -1402,7 +1402,7 @@ namespace SpeckleElements
     }
     
     /// <summary>Base SpeckleMesh.</summary>
-    [SNJ.JsonIgnore]
+    [JsonIgnore]
     public SpeckleMesh baseMesh
     {
       get => this as SpeckleMesh;
@@ -1424,16 +1424,16 @@ namespace SpeckleElements
     public override string Type { get => "StructuralNodeResult"; }
     
     /// <summary>ApplicationID of object referred to.</summary>
-    [SNJ.JsonProperty("targetRef", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
+    [JsonProperty("targetRef", Required = Required.Default, NullValueHandling = NullValueHandling.Ignore)]
     public string TargetRef { get; set; }
 
     /// <summary>Indicates whether the results are in the global or local axis.</summary>
-    [SNJ.JsonProperty("isGlobal", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
+    [JsonProperty("isGlobal", Required = Required.Default, NullValueHandling = NullValueHandling.Ignore)]
     public bool IsGlobal { get; set; }
 
     /// <summary>Results.</summary>
-    [SNJ.JsonProperty("value", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
-    [SpeckleNewtonsoft.Newtonsoft.Json.JsonConverter(typeof(SpecklePropertiesConverter))]
+    [JsonProperty("value", Required = Required.Default, NullValueHandling = NullValueHandling.Ignore)]
+    [Newtonsoft.Json.JsonConverter(typeof(SpecklePropertiesConverter))]
     public Dictionary<string, object> Value { get; set; }
   }
 
@@ -1443,16 +1443,16 @@ namespace SpeckleElements
     public override string Type { get => "Structural1DElementResult"; }
 
     /// <summary>ApplicationID of object referred to.</summary>
-    [SNJ.JsonProperty("targetRef", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
+    [JsonProperty("targetRef", Required = Required.Default, NullValueHandling = NullValueHandling.Ignore)]
     public string TargetRef { get; set; }
 
     /// <summary>Indicates whether the results are in the global or local axis.</summary>
-    [SNJ.JsonProperty("isGlobal", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
+    [JsonProperty("isGlobal", Required = Required.Default, NullValueHandling = NullValueHandling.Ignore)]
     public bool IsGlobal { get; set; }
 
     /// <summary>Results.</summary>
-    [SNJ.JsonProperty("value", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
-    [SpeckleNewtonsoft.Newtonsoft.Json.JsonConverter(typeof(SpecklePropertiesConverter))]
+    [JsonProperty("value", Required = Required.Default, NullValueHandling = NullValueHandling.Ignore)]
+    [Newtonsoft.Json.JsonConverter(typeof(SpecklePropertiesConverter))]
     public Dictionary<string, object> Value { get; set; }
   }
 
@@ -1462,16 +1462,16 @@ namespace SpeckleElements
     public override string Type { get => "Structural2DElementResult"; }
 
     /// <summary>ApplicationID of object referred to.</summary>
-    [SNJ.JsonProperty("targetRef", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
+    [JsonProperty("targetRef", Required = Required.Default, NullValueHandling = NullValueHandling.Ignore)]
     public string TargetRef { get; set; }
 
     /// <summary>Indicates whether the results are in the global or local axis.</summary>
-    [SNJ.JsonProperty("isGlobal", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
+    [JsonProperty("isGlobal", Required = Required.Default, NullValueHandling = NullValueHandling.Ignore)]
     public bool IsGlobal { get; set; }
 
     /// <summary>Results.</summary>
-    [SNJ.JsonProperty("value", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
-    [SpeckleNewtonsoft.Newtonsoft.Json.JsonConverter(typeof(SpecklePropertiesConverter))]
+    [JsonProperty("value", Required = Required.Default, NullValueHandling = NullValueHandling.Ignore)]
+    [Newtonsoft.Json.JsonConverter(typeof(SpecklePropertiesConverter))]
     public Dictionary<string, object> Value { get; set; }
   }
 
@@ -1481,20 +1481,20 @@ namespace SpeckleElements
     public override string Type { get => "StructuralMiscResult"; }
     
     /// <summary>Description of result.</summary>
-    [SNJ.JsonProperty("description", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
+    [JsonProperty("description", Required = Required.Default, NullValueHandling = NullValueHandling.Ignore)]
     public string Description { get; set; }
 
     /// <summary>ApplicationID of object referred to.</summary>
-    [SNJ.JsonProperty("targetRef", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
+    [JsonProperty("targetRef", Required = Required.Default, NullValueHandling = NullValueHandling.Ignore)]
     public string TargetRef { get; set; }
 
     /// <summary>Indicates whether the results are in the global or local axis.</summary>
-    [SNJ.JsonProperty("isGlobal", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
+    [JsonProperty("isGlobal", Required = Required.Default, NullValueHandling = NullValueHandling.Ignore)]
     public bool IsGlobal { get; set; }
 
     /// <summary>Results.</summary>
-    [SNJ.JsonProperty("value", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
-    [SpeckleNewtonsoft.Newtonsoft.Json.JsonConverter(typeof(SpecklePropertiesConverter))]
+    [JsonProperty("value", Required = Required.Default, NullValueHandling = NullValueHandling.Ignore)]
+    [Newtonsoft.Json.JsonConverter(typeof(SpecklePropertiesConverter))]
     public Dictionary<string, object> Value { get; set; }
   }
   #endregion

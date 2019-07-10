@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>$id$</id>
+    <version>$version$</version>
+    <title>$title$</title>
+    <authors>$author$</authors>
+    <owners>$author$</owners>
+    <license type="expression">MIT</license>
+    <projectUrl>https://github.com/speckleworks/SpeckleCoreGeometry</projectUrl>
+    <iconUrl>https://avatars2.githubusercontent.com/u/31284874</iconUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>$description$</description>
+    <releaseNotes></releaseNotes>
+    <copyright>$copyright$</copyright>
+    <tags>speckle elements</tags>
+    <dependencies>
+      <!--<dependency id="SpeckleCore" version="1.5.1.318" />-->
+      <dependency id="SpeckleCoreGeometry" version="1.1.0.55" />
+      <!--<dependency id="Revit.RevitApiUI.x64" version="2019.0.0" />
+      <dependency id="Revit.RevitApi.x64" version="2019.0.0" />
+      <dependency id="Newtonsoft.Json" version="12.0.2" />-->
+    </dependencies>
+  </metadata>
+</package>
