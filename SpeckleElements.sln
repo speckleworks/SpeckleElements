@@ -3,11 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29001.49
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpeckleElementsClasses", "SpeckleElements\SpeckleElementsClasses.csproj", "{42E1DB9C-E4D5-4190-9977-874E8143DCC5}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpeckleElementsClasses", "SpeckleElementsClasses\SpeckleElementsClasses.csproj", "{42E1DB9C-E4D5-4190-9977-874E8143DCC5}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpeckleElementsRevit", "SpeckleElementsRevit\SpeckleElementsRevit.csproj", "{C08796BB-C109-4961-AB72-A2A74C06E510}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpeckleElements", "SpeckleElementsBuilder\SpeckleElements.csproj", "{F7980709-1E82-44B6-B3F8-0450A1FE6DC3}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpeckleElements", "SpeckleElements\SpeckleElements.csproj", "{F7980709-1E82-44B6-B3F8-0450A1FE6DC3}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{A93C835E-F211-4C89-BF90-483997E83B98}"
 	ProjectSection(SolutionItems) = preProject

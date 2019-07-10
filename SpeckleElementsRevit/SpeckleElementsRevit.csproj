@@ -214,10 +214,9 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\SpeckleElements\SpeckleElementsClasses.csproj">
+    <ProjectReference Include="..\SpeckleElementsClasses\SpeckleElementsClasses.csproj">
       <Project>{42e1db9c-e4d5-4190-9977-874e8143dcc5}</Project>
       <Name>SpeckleElementsClasses</Name>
-      <Private>False</Private>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

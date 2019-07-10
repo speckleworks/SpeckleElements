@@ -7,8 +7,8 @@
     <ProjectGuid>{F7980709-1E82-44B6-B3F8-0450A1FE6DC3}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>SpeckleElementsBuilder</RootNamespace>
-    <AssemblyName>SpeckleElementsBuilder</AssemblyName>
+    <RootNamespace>SpeckleElements</RootNamespace>
+    <AssemblyName>SpeckleElements</AssemblyName>
     <TargetFrameworkVersion>v4.7.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
@@ -54,7 +54,7 @@
       <Project>{c08796bb-c109-4961-ab72-a2a74c06e510}</Project>
       <Name>SpeckleElementsRevit</Name>
     </ProjectReference>
-    <ProjectReference Include="..\SpeckleElements\SpeckleElementsClasses.csproj">
+    <ProjectReference Include="..\SpeckleElementsClasses\SpeckleElementsClasses.csproj">
       <Project>{42e1db9c-e4d5-4190-9977-874e8143dcc5}</Project>
       <Name>SpeckleElementsClasses</Name>
     </ProjectReference>
