@@ -227,7 +227,7 @@ namespace SpeckleElementsGSA
       List<GSA1DElementPolyline> polylines = new List<GSA1DElementPolyline>();
 
       // Perform mesh merging
-      var uniqueMembers = new List<string>(GSASenderObjects[typeof(GSA1DElement)].Select(x => (x as GSA1DElement).Member).Distinct());
+      var uniqueMembers = new List<string>(GSASenderObjects[typeof(GSA1DElement)].Select(x => (x as GSA1DElement).Member).Where(m => Convert.ToInt32(m) > 0).Distinct());
       foreach (string member in uniqueMembers)
       {
         var elementList = GSASenderObjects[typeof(GSA1DElement)].Where(x => (x as GSA1DElement).Member == member).Cast<GSA1DElement>().ToList();

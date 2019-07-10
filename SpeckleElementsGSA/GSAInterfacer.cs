@@ -899,7 +899,9 @@ namespace SpeckleElementsGSA
         if (pieces[i].IsDigits())
           items.Add(Convert.ToInt32(pieces[i]));
         else if (pieces[i].Contains('"'))
+        { 
           items.AddRange(ConvertNamedGSAList(pieces[i], type));
+        }
         else if (pieces[i] == "to")
         {
           int lowerRange = Convert.ToInt32(pieces[i - 1]);
@@ -933,13 +935,28 @@ namespace SpeckleElementsGSA
     /// <returns></returns>
     public int[] ConvertNamedGSAList(string list, GSAEntity type)
     {
-      list = list.Trim(new char[] { '"' });
+      list = list.Trim(new char[] { '"', ' ' });
 
-      string res = GetGWARecords("GET\tLIST\t" + list).FirstOrDefault();
+      try
+      {
+        string res = GetGWARecords("GET\tLIST\t" + list).FirstOrDefault();
 
-      string[] pieces = res.Split(new char[] { '\t' });
+        string[] pieces = res.Split(new char[] { '\t' });
 
-      return ConvertGSAList(pieces[pieces.Length - 1], type);
+        return ConvertGSAList(pieces[pieces.Length - 1], type);
+      }
+      catch
+      {
+        try
+        { 
+        GSAObject.EntitiesInList("\"" + list + "\"", (GsaEntity)type, out int[] itemTemp);
+          if (itemTemp == null)
+            return new int[0];
+          else
+            return (int[])itemTemp;
+        }
+        catch { return new int[0]; }
+      }
     }
 
     /// <summary>

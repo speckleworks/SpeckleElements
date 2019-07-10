@@ -155,7 +155,7 @@ namespace SpeckleElementsGSA
       List<GSA2DElementMesh> meshes = new List<GSA2DElementMesh>();
 
       // Perform mesh merging
-      var uniqueMembers = new List<string>(GSASenderObjects[typeof(GSA2DElement)].Select(x => (x as GSA2DElement).Member).Distinct());
+      var uniqueMembers = new List<string>(GSASenderObjects[typeof(GSA2DElement)].Select(x => (x as GSA2DElement).Member).Where(m => Convert.ToInt32(m) > 0).Distinct());
       foreach (string member in uniqueMembers)
       {
         var elementList = GSASenderObjects[typeof(GSA2DElement)].Where(x => (x as GSA2DElement).Member == member).Cast<GSA2DElement>().ToList();
