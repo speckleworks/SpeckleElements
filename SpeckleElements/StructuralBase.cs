@@ -431,9 +431,9 @@ namespace SpeckleElements
   }
 
   [Serializable]
-  public partial class StructuralStageDefinition : SpeckleObject, IStructural
+  public partial class StructuralConstructionStage : SpeckleObject, IStructural
   {
-    public override string Type { get => "StructuralStageDefinition"; }
+    public override string Type { get => "StructuralConstructionStage"; }
     
     /// <summary>Application ID of members to include in the stage of the construction sequence.</summary>
     [SNJ.JsonProperty("elementRefs", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]

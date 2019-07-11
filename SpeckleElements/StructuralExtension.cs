@@ -672,6 +672,27 @@ namespace SpeckleElements
     }
   }
 
+  public partial class StructuralConstructionStage
+  {
+    public StructuralConstructionStage() { }
+
+    public StructuralConstructionStage(string[] elementRefs, int stageDays, string applicationId = null, Dictionary<string, object> properties = null)
+    {
+      this.ElementRefs = elementRefs.ToList();
+      this.StageDays = stageDays;
+      this.ApplicationId = applicationId;
+      this.Properties = properties;
+
+      this.GenerateHash();
+    }
+
+    public override void Scale(double factor)
+    {
+      this.Properties = ScaleProperties(this.Properties, factor);
+      this.GenerateHash();
+    }
+  }
+
   public partial class StructuralTemperatureInterval
   {
     public StructuralTemperatureInterval() { }

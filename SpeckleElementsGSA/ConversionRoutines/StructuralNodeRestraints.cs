@@ -6,7 +6,7 @@ using SpeckleElements;
 
 namespace SpeckleElementsGSA
 {
-  [GSAObject("GEN_REST.2", new string[] { }, "elements", true, true, new Type[] { typeof(GSANode), typeof(GSAStageDefinition) }, new Type[] { typeof(GSANode), typeof(GSAStageDefinition) })]
+  [GSAObject("GEN_REST.2", new string[] { }, "elements", true, true, new Type[] { typeof(GSANode), typeof(GSAConstructionStage) }, new Type[] { typeof(GSANode), typeof(GSAConstructionStage) })]
   public class GSAGeneralisedNodeRestraints : IGSASpeckleContainer
   {
     public int GSAId { get; set; }
@@ -14,7 +14,7 @@ namespace SpeckleElementsGSA
     public List<string> SubGWACommand { get; set; } = new List<string>();
     public dynamic Value { get; set; } = new StructuralNodeRestraints();
 
-    public void ParseGWACommand(GSAInterfacer GSA, List<GSANode> nodes, List<GSAStageDefinition> stages)
+    public void ParseGWACommand(GSAInterfacer GSA, List<GSANode> nodes, List<GSAConstructionStage> stages)
     {
       if (this.GWACommand == null)
         return;
@@ -66,7 +66,7 @@ namespace SpeckleElementsGSA
       var stageDefStr = "all"; //default value
       if (obj.StageDefinitionRefs != null && obj.StageDefinitionRefs.Count() >= 1)
       {
-        var stageDefIndices = GSA.Indexer.LookupIndices(typeof(GSAStageDefinition), obj.StageDefinitionRefs);
+        var stageDefIndices = GSA.Indexer.LookupIndices(typeof(GSAConstructionStage), obj.StageDefinitionRefs);
         stageDefIndices.Sort();
         stageDefStr = string.Join(" ", stageDefIndices);
       }
@@ -107,7 +107,7 @@ namespace SpeckleElementsGSA
 
       var genNodeRestraints = new List<GSAGeneralisedNodeRestraints>();
 
-      var stageDefs = GSASenderObjects[typeof(GSAStageDefinition)].Cast<GSAStageDefinition>().ToList();
+      var stageDefs = GSASenderObjects[typeof(GSAConstructionStage)].Cast<GSAConstructionStage>().ToList();
       var nodes = GSASenderObjects[typeof(GSANode)].Cast<GSANode>().ToList();
 
       string keyword = destinationType.GetGSAKeyword();

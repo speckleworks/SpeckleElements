@@ -941,7 +941,15 @@ namespace SpeckleElementsGSA
         {
           try
           {
-            GSAObject.EntitiesInList(pieces[i], (GsaEntity)type, out int[] itemTemp);
+            int[] itemTemp;
+            GSAObject.EntitiesInList(pieces[i], (GsaEntity)type, out itemTemp);
+
+            if (itemTemp == null)
+              GSAObject.EntitiesInList("\"" + list + "\"", (GsaEntity)type, out itemTemp);
+
+            if (itemTemp == null)
+              continue;
+
             items.AddRange((int[])itemTemp);
           }
           catch
@@ -974,7 +982,7 @@ namespace SpeckleElementsGSA
       {
         try
         { 
-        GSAObject.EntitiesInList("\"" + list + "\"", (GsaEntity)type, out int[] itemTemp);
+          GSAObject.EntitiesInList("\"" + list + "\"", (GsaEntity)type, out int[] itemTemp);
           if (itemTemp == null)
             return new int[0];
           else

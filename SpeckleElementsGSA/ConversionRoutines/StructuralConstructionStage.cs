@@ -6,20 +6,20 @@ using SpeckleElements;
 
 namespace SpeckleElementsGSA
 {
-  [GSAObject("ANAL_STAGE.3", new string[] { "LIST.1" }, "elements", true, true, new Type[] { typeof(GSA1DElement), typeof(GSA2DElement), typeof(GSA1DMember), typeof(GSA2DMember) }, new Type[] { typeof(GSA1DMember), typeof(GSA2DMember) })]
-  public class GSAStageDefinition : IGSASpeckleContainer
+  [GSAObject("ANAL_STAGE.3", new string[] { "LIST.1" }, "elements", true, true, new Type[] { typeof(GSA1DElement), typeof(GSA2DElement), typeof(GSA1DMember), typeof(GSA2DMember) }, new Type[] { typeof(GSA1DElement), typeof(GSA2DElement), typeof(GSA1DMember), typeof(GSA2DMember) })]
+  public class GSAConstructionStage : IGSASpeckleContainer
   {
     public int GSAId { get; set; }
     public string GWACommand { get; set; }
     public List<string> SubGWACommand { get; set; } = new List<string>();
-    public dynamic Value { get; set; } = new StructuralStageDefinition();
+    public dynamic Value { get; set; } = new StructuralConstructionStage();
 
     public void ParseGWACommand(GSAInterfacer GSA, List<GSA1DElement> e1Ds, List<GSA2DElement> e2Ds, List<GSA1DMember> m1Ds, List<GSA2DMember> m2Ds)
     {
       if (this.GWACommand == null)
         return;
 
-      StructuralStageDefinition obj = new StructuralStageDefinition();
+      StructuralConstructionStage obj = new StructuralConstructionStage();
 
       string[] pieces = this.GWACommand.ListSplit("\t");
 
@@ -37,10 +37,10 @@ namespace SpeckleElementsGSA
 
       if (Conversions.GSATargetLayer == GSATargetLayer.Analysis)
       {
-        var elementId = elementList.ListSplit(" ").Where(x => !x.StartsWith("G")).Select(x => Convert.ToInt32(x));
+        var elementId = GSA.ConvertGSAList(elementList, GSAEntity.ELEMENT);
         foreach (int id in elementId)
         {
-          object elem = e1Ds.Where(e => e.GSAId == id).FirstOrDefault();
+          IGSASpeckleContainer elem = e1Ds.Where(e => e.GSAId == id).FirstOrDefault();
 
           if (elem == null)
             elem = e2Ds.Where(e => e.GSAId == id).FirstOrDefault();
@@ -48,8 +48,8 @@ namespace SpeckleElementsGSA
           if (elem == null)
             continue;
 
-          obj.ElementRefs.Add((elem as SpeckleObject).ApplicationId);
-          this.SubGWACommand.Add((elem as IGSASpeckleContainer).GWACommand);
+          obj.ElementRefs.Add((elem.Value as SpeckleObject).ApplicationId);
+          this.SubGWACommand.Add(elem.GWACommand);
         }
       }
       else
@@ -68,16 +68,7 @@ namespace SpeckleElementsGSA
       }
 
       counter++; //Skip creep coefficient
-      var intString = pieces[counter++];
-      try
-      {
-        var converted = int.TryParse(intString, out int stageDays);
-        if (converted)
-        {
-          obj.StageDays = stageDays;
-        }
-      }
-      catch { }
+      obj.StageDays = Convert.ToInt32(pieces[counter++]);
 
       this.Value = obj;
     }
@@ -87,12 +78,11 @@ namespace SpeckleElementsGSA
       if (this.Value == null)
         return;
 
-      StructuralStageDefinition stageDef = this.Value as StructuralStageDefinition;
+      StructuralConstructionStage stageDef = this.Value as StructuralConstructionStage;
 
-      string keyword = typeof(GSAStageDefinition).GetGSAKeyword();
-      var subkeywords = typeof(GSAStageDefinition).GetSubGSAKeyword();
+      string keyword = typeof(GSAConstructionStage).GetGSAKeyword();
 
-      int index = GSA.Indexer.ResolveIndex(typeof(GSAStageDefinition), stageDef);
+      int index = GSA.Indexer.ResolveIndex(typeof(GSAConstructionStage), stageDef);
 
       var target = new List<int>();
       var targetString = " ";
@@ -138,21 +128,21 @@ namespace SpeckleElementsGSA
 
   public static partial class Conversions
   {
-    public static bool ToNative(this StructuralStageDefinition stageDefinition)
+    public static bool ToNative(this StructuralConstructionStage stage)
     {
-      var gsaStageDefinition = new GSAStageDefinition() { Value = stageDefinition };
+      var gsaStageDefinition = new GSAConstructionStage() { Value = stage };
 
       gsaStageDefinition.SetGWACommand(GSA);
 
       return true;
     }
 
-    public static SpeckleObject ToSpeckle(this GSAStageDefinition dummyObject)
+    public static SpeckleObject ToSpeckle(this GSAConstructionStage dummyObject)
     {
-      if (!GSASenderObjects.ContainsKey(typeof(GSAStageDefinition)))
-        GSASenderObjects[typeof(GSAStageDefinition)] = new List<object>();
+      if (!GSASenderObjects.ContainsKey(typeof(GSAConstructionStage)))
+        GSASenderObjects[typeof(GSAConstructionStage)] = new List<object>();
 
-      List<GSAStageDefinition> stageDefs = new List<GSAStageDefinition>();
+      List<GSAConstructionStage> stageDefs = new List<GSAConstructionStage>();
       var e1Ds = new List<GSA1DElement>();
       var e2Ds = new List<GSA2DElement>();
       var m1Ds = new List<GSA1DMember>();
@@ -169,8 +159,8 @@ namespace SpeckleElementsGSA
         m2Ds = GSASenderObjects[typeof(GSA2DMember)].Cast<GSA2DMember>().ToList();
       }
 
-      string keyword = typeof(GSAStageDefinition).GetGSAKeyword();
-      string[] subKeywords = typeof(GSAStageDefinition).GetSubGSAKeyword();
+      string keyword = typeof(GSAConstructionStage).GetGSAKeyword();
+      string[] subKeywords = typeof(GSAConstructionStage).GetSubGSAKeyword();
 
       string[] lines = GSA.GetGWARecords("GET_ALL\t" + keyword);
       List<string> deletedLines = GSA.GetDeletedGWARecords("GET_ALL\t" + keyword).ToList();
@@ -178,22 +168,22 @@ namespace SpeckleElementsGSA
         deletedLines.AddRange(GSA.GetDeletedGWARecords("GET_ALL\t" + k));
 
       // Remove deleted lines
-      GSASenderObjects[typeof(GSAStageDefinition)].RemoveAll(l => deletedLines.Contains((l as IGSASpeckleContainer).GWACommand));
+      GSASenderObjects[typeof(GSAConstructionStage)].RemoveAll(l => deletedLines.Contains((l as IGSASpeckleContainer).GWACommand));
       foreach (KeyValuePair<Type, List<object>> kvp in GSASenderObjects)
         kvp.Value.RemoveAll(l => (l as IGSASpeckleContainer).SubGWACommand.Any(x => deletedLines.Contains(x)));
 
       // Filter only new lines
-      string[] prevLines = GSASenderObjects[typeof(GSAStageDefinition)].Select(l => (l as IGSASpeckleContainer).GWACommand).ToArray();
+      string[] prevLines = GSASenderObjects[typeof(GSAConstructionStage)].Select(l => (l as IGSASpeckleContainer).GWACommand).ToArray();
       string[] newLines = lines.Where(l => !prevLines.Contains(l)).ToArray();
 
       foreach (string p in newLines)
       {
-        GSAStageDefinition combo = new GSAStageDefinition() { GWACommand = p };
-        combo.ParseGWACommand(GSA, e1Ds, e2Ds, m1Ds, m2Ds);
-        stageDefs.Add(combo);
+        GSAConstructionStage stageDef = new GSAConstructionStage() { GWACommand = p };
+        stageDef.ParseGWACommand(GSA, e1Ds, e2Ds, m1Ds, m2Ds);
+        stageDefs.Add(stageDef);
       }
 
-      GSASenderObjects[typeof(GSAStageDefinition)].AddRange(stageDefs);
+      GSASenderObjects[typeof(GSAConstructionStage)].AddRange(stageDefs);
 
       if (stageDefs.Count() > 0 || deletedLines.Count() > 0) return new SpeckleObject();
 

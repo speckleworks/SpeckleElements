@@ -79,12 +79,6 @@ namespace SpeckleElements
     Combo
   }
 
-  public enum StructuralSpringAxis
-  {
-    Global,
-    Vertical
-  }
-
   public enum StructuralThermalLoadingType
   {
     Uniform,
