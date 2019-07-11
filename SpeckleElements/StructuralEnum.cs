@@ -78,11 +78,4 @@ namespace SpeckleElements
     Task,
     Combo
   }
-
-  public enum StructuralThermalLoadingType
-  {
-    Uniform,
-    Gradient,
-    General
-  }
 }
