@@ -39,8 +39,8 @@ namespace SpeckleElementsGSA
         List<GSANode> targetNodes = nodes
             .Where(n => targetNodeRefs.Contains(n.GSAId)).ToList();
 
-        obj.NodeRefs = nodes.Select(n => (string)n.Value.ApplicationId).ToList();
-        this.SubGWACommand.AddRange(nodes.Select(n => n.GWACommand));
+        obj.NodeRefs = targetNodes.Select(n => (string)n.Value.ApplicationId).ToList();
+        this.SubGWACommand.AddRange(targetNodes.Select(n => n.GWACommand));
 
         foreach (GSANode n in targetNodes)
           n.ForceSend = true;

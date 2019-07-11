@@ -765,6 +765,28 @@ namespace SpeckleElements
     }
   }
 
+  public partial class StructuralStagedNodalRestraints
+  {
+    public StructuralStagedNodalRestraints() { }
+
+    public StructuralStagedNodalRestraints(StructuralVectorBoolSix restraint, string[] nodeRefs, string[] constructionStageRefs, string applicationId = null, Dictionary<string, object> properties = null)
+    {
+      this.Restraint = restraint;
+      this.NodeRefs = nodeRefs.ToList();
+      this.ConstructionStageRefs = constructionStageRefs.ToList();
+      this.ApplicationId = applicationId;
+      this.Properties = properties;
+
+      GenerateHash();
+    }
+
+    public override void Scale(double factor)
+    {
+      this.Properties = ScaleProperties(this.Properties, factor);
+      this.GenerateHash();
+    }
+  }
+
   public partial class Structural1DElement
   {
     public Structural1DElement() { }

@@ -7,37 +7,48 @@ using SpeckleElements;
 namespace SpeckleElementsGSA
 {
   [GSAObject("GEN_REST.2", new string[] { }, "elements", true, true, new Type[] { typeof(GSANode), typeof(GSAConstructionStage) }, new Type[] { typeof(GSANode), typeof(GSAConstructionStage) })]
-  public class GSAGeneralisedNodeRestraints : IGSASpeckleContainer
+  public class GSAStructuralStagedNodalRestraints : IGSASpeckleContainer
   {
     public int GSAId { get; set; }
     public string GWACommand { get; set; }
     public List<string> SubGWACommand { get; set; } = new List<string>();
-    public dynamic Value { get; set; } = new StructuralNodeRestraints();
+    public dynamic Value { get; set; } = new StructuralStagedNodalRestraints();
 
     public void ParseGWACommand(GSAInterfacer GSA, List<GSANode> nodes, List<GSAConstructionStage> stages)
     {
       if (this.GWACommand == null)
         return;
 
-      StructuralNodeRestraints obj = new StructuralNodeRestraints();
+      StructuralStagedNodalRestraints obj = new StructuralStagedNodalRestraints();
 
       string[] pieces = this.GWACommand.ListSplit("\t");
 
       int counter = 1; // Skip identifier
-
-      this.GSAId = Convert.ToInt32(pieces[counter++]);
-      obj.ApplicationId = GSA.GetSID(this.GetGSAKeyword(), this.GSAId);
+      
       obj.Name = pieces[counter++];
 
       //Restraints
-      var gwaRestraintBits = pieces[counter++].ListSplit(" ").Select(b => (b == "1") ? true : false).ToArray();
-      obj.Restraint = new StructuralVectorBoolSix(gwaRestraintBits);
+      var restraints = new bool[6];
+      for (int i = 0; i < 6; i++)
+        restraints[i] = pieces[counter++] == "1";
+      obj.Restraint = new StructuralVectorBoolSix(restraints);
+      
+      int[] targetNodeRefs = GSA.ConvertGSAList(pieces[counter++], GSAEntity.NODE);
 
-      var gwaNodeGsaIds = pieces[counter++].ListSplit(" ");
-      obj.ElementRefs = nodes.Where(n => gwaNodeGsaIds.Any(gwaNodeId => gwaNodeId == n.GSAId.ToString())).Select(x => (string)x.Value.ApplicationId).ToList();
+      if (nodes != null)
+      {
+        List<GSANode> targetNodes = nodes
+            .Where(n => targetNodeRefs.Contains(n.GSAId)).ToList();
 
+        obj.NodeRefs = targetNodes.Select(n => (string)n.Value.ApplicationId).ToList();
+        this.SubGWACommand.AddRange(targetNodes.Select(n => n.GWACommand));
+
+        foreach (GSANode n in targetNodes)
+          n.ForceSend = true;
+      }
+      
       var gwaStageDefGsaIds = pieces[counter++].ListSplit(" ");
-      obj.StageDefinitionRefs = stages.Where(sd => gwaStageDefGsaIds.Any(gwaSDId => gwaSDId == sd.GSAId.ToString())).Select(x => (string)x.Value.ApplicationId).ToList();
+      obj.ConstructionStageRefs = stages.Where(sd => gwaStageDefGsaIds.Any(gwaSDId => gwaSDId == sd.GSAId.ToString())).Select(x => (string)x.Value.ApplicationId).ToList();
 
       this.Value = obj;
     }
@@ -47,37 +58,35 @@ namespace SpeckleElementsGSA
       if (this.Value == null)
         return;
 
-      StructuralNodeRestraints obj = this.Value as StructuralNodeRestraints;
-			var destinationType = typeof(GSAGeneralisedNodeRestraints);
+      StructuralStagedNodalRestraints obj = this.Value as StructuralStagedNodalRestraints;
+			var destinationType = typeof(GSAStructuralStagedNodalRestraints);
 
 			string keyword = destinationType.GetGSAKeyword();
       var subkeywords = destinationType.GetSubGSAKeyword();
 
       int index = GSA.Indexer.ResolveIndex(destinationType, obj);
 
-      var nodesStr = "all"; //default value
-      if (obj.ElementRefs != null && obj.ElementRefs.Count() >= 1)
+      var nodesStr = "none"; //default value
+      if (obj.NodeRefs != null && obj.NodeRefs.Count() >= 1)
       {
-        var nodeIndices = GSA.Indexer.LookupIndices(typeof(GSANode), obj.ElementRefs);
-        nodeIndices.Sort();
+        var nodeIndices = GSA.Indexer.LookupIndices(typeof(GSANode), obj.NodeRefs);
         nodesStr = string.Join(" ", nodeIndices);
       }
 
       var stageDefStr = "all"; //default value
-      if (obj.StageDefinitionRefs != null && obj.StageDefinitionRefs.Count() >= 1)
+      if (obj.ConstructionStageRefs != null && obj.ConstructionStageRefs.Count() >= 1)
       {
-        var stageDefIndices = GSA.Indexer.LookupIndices(typeof(GSAConstructionStage), obj.StageDefinitionRefs);
-        stageDefIndices.Sort();
+        var stageDefIndices = GSA.Indexer.LookupIndices(typeof(GSAConstructionStage), obj.ConstructionStageRefs);
         stageDefStr = string.Join(" ", stageDefIndices);
       }
 
       var ls = new List<string>
-        {
-          "SET_AT",
-          index.ToString(),
-          keyword + ":" + GSA.GenerateSID(obj),
-					string.IsNullOrEmpty(obj.Name) ? " " : obj.Name
-				};
+      {
+        "SET_AT",
+        index.ToString(),
+        keyword + ":" + GSA.GenerateSID(obj),
+				string.IsNullOrEmpty(obj.Name) ? " " : obj.Name
+			};
 
 			ls.AddRange(obj.Restraint.Value.Select(v => v ? "1" : "0"));
 			ls.Add(nodesStr);
@@ -89,23 +98,23 @@ namespace SpeckleElementsGSA
 
   public static partial class Conversions
   {
-    public static bool ToNative(this StructuralNodeRestraints nodeRestraints)
+    public static bool ToNative(this StructuralStagedNodalRestraints restraint)
     {
-      var gsaGeneralisedNodeRestraints = new GSAGeneralisedNodeRestraints() { Value = nodeRestraints };
+      var gsaGeneralisedNodeRestraints = new GSAStructuralStagedNodalRestraints() { Value = restraint };
 
       gsaGeneralisedNodeRestraints.SetGWACommand(GSA);
 
       return true;
     }
 
-    public static SpeckleObject ToSpeckle(this GSAGeneralisedNodeRestraints dummyObject)
+    public static SpeckleObject ToSpeckle(this GSAStructuralStagedNodalRestraints dummyObject)
     {
-      var destinationType = typeof(GSAGeneralisedNodeRestraints);
+      var destinationType = typeof(GSAStructuralStagedNodalRestraints);
 
       if (!GSASenderObjects.ContainsKey(destinationType))
         GSASenderObjects[destinationType] = new List<object>();
 
-      var genNodeRestraints = new List<GSAGeneralisedNodeRestraints>();
+      var genNodeRestraints = new List<GSAStructuralStagedNodalRestraints>();
 
       var stageDefs = GSASenderObjects[typeof(GSAConstructionStage)].Cast<GSAConstructionStage>().ToList();
       var nodes = GSASenderObjects[typeof(GSANode)].Cast<GSANode>().ToList();
@@ -129,7 +138,7 @@ namespace SpeckleElementsGSA
 
       foreach (string p in newLines)
       {
-        var genNodeRestraint = new GSAGeneralisedNodeRestraints() { GWACommand = p };
+        var genNodeRestraint = new GSAStructuralStagedNodalRestraints() { GWACommand = p };
         genNodeRestraint.ParseGWACommand(GSA, nodes, stageDefs);
         genNodeRestraints.Add(genNodeRestraint);
       }

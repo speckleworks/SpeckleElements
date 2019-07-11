@@ -733,28 +733,24 @@ namespace SpeckleElements
       set => StructuralProperties["localMeshSize"] = value;
     }
   }
-
-  //----
-  /// <summary>Generalised node restraints</summary>
+  
   [Serializable]
-  public partial class StructuralNodeRestraints : SpeckleObject, IStructural
+  public partial class StructuralStagedNodalRestraints : SpeckleObject, IStructural
   {
-    public override string Type { get => base.Type + "/StructuralNodeRestraints"; }
+    public override string Type { get => "StructuralStagedNodalRestraints"; }
     
     /// <summary>A list of the X, Y, Z, Rx, Ry, and Rz restraints.</summary>
     [SNJ.JsonProperty("restraint", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
     public StructuralVectorBoolSix Restraint { get; set; }
 
-    /// <summary>Application IDs of Structural1DElements to apply load.</summary>
-    [SNJ.JsonProperty("elementRefs", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
-    public List<string> ElementRefs { get; set; }
+    /// <summary>Application IDs of StructuralNodes to apply restrain.</summary>
+    [SNJ.JsonProperty("nodeRefs", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
+    public List<string> NodeRefs { get; set; }
 
-    /// <summary>Stage definition for the task</summary>
-    [SNJ.JsonProperty("stageDefinitionRefs", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
-    public List<string> StageDefinitionRefs { get; set; }
-
+    /// <summary>Application IDs of StructuralConstructionStages to apply restraints on</summary>
+    [SNJ.JsonProperty("constructionStageRefs", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
+    public List<string> ConstructionStageRefs { get; set; }
   }
-  //--
 
   [Serializable]
   public partial class Structural1DElement : SpeckleLine, IStructural
