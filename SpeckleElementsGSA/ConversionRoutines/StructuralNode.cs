@@ -67,7 +67,7 @@ namespace SpeckleElementsGSA
         }
         else if (s == "MESH")
         {
-          obj.LocalMeshSize = pieces[counter++].ToDouble();
+          obj.GSALocalMeshSize = pieces[counter++].ToDouble();
           counter++; // Edge length
           counter++; // Radius
           counter++; // Tie to mesh
@@ -169,14 +169,14 @@ namespace SpeckleElementsGSA
       {
         List<string> subLs = new List<string>();
 
-        if (node.LocalMeshSize == 0)
+        if (node.GSALocalMeshSize == 0)
         {
           ls.Add("NO_MESH");
         }
         else
         {
           subLs.Add("MESH");
-          subLs.Add(node.LocalMeshSize.ToString());
+          subLs.Add(node.GSALocalMeshSize.ToString());
           subLs.Add("0"); // Radius
           subLs.Add("NO"); // Tie to mesh
           subLs.Add("NO"); // column rigidity will be generated

@@ -726,8 +726,9 @@ namespace SpeckleElements
       set => StructuralProperties["result"] = value;
     }
 
+    /// <summary>GSA local mesh size around node.</summary>
     [SNJ.JsonIgnore]
-    public double LocalMeshSize
+    public double GSALocalMeshSize
     {
       get => StructuralProperties.ContainsKey("gsaLocalMeshSize") ? ((double)StructuralProperties["gsaLocalMeshSize"]) : 0;
       set => StructuralProperties["gsaLocalMeshSize"] = value;
@@ -870,7 +871,7 @@ namespace SpeckleElements
 
     /// <summary>GSA target mesh size.</summary>
     [SNJ.JsonIgnore]
-    public double MeshSize
+    public double GSAMeshSize
     {
       get => StructuralProperties.ContainsKey("gsaMeshSize") ? ((double)StructuralProperties["gsaMeshSize"]) : 0;
       set => StructuralProperties["gsaMeshSize"] = value;
@@ -878,7 +879,7 @@ namespace SpeckleElements
 
     /// <summary>GSA dummy status.</summary>
     [SNJ.JsonIgnore]
-    public bool Dummy
+    public bool GSADummy
     {
       get => StructuralProperties.ContainsKey("gsaDummy") ? ((bool)StructuralProperties["gsaDummy"]) : false;
       set => StructuralProperties["gsaDummy"] = value;
@@ -1097,7 +1098,7 @@ namespace SpeckleElements
 
     /// <summary>GSA target mesh size.</summary>
     [SNJ.JsonIgnore]
-    public double MeshSize
+    public double GSAMeshSize
     {
       get => StructuralProperties.ContainsKey("gsaMeshSize") ? ((double)StructuralProperties["gsaMeshSize"]) : 0;
       set => StructuralProperties["gsaMeshSize"] = value;
@@ -1105,7 +1106,7 @@ namespace SpeckleElements
 
     /// <summary>GSA dummy status.</summary>
     [SNJ.JsonIgnore]
-    public bool Dummy
+    public bool GSADummy
     {
       get => StructuralProperties.ContainsKey("gsaDummy") ? ((bool)StructuralProperties["gsaDummy"]) : false;
       set => StructuralProperties["gsaDummy"] = value;
@@ -1225,7 +1226,7 @@ namespace SpeckleElements
 
     /// <summary>GSA target mesh size.</summary>
     [SNJ.JsonIgnore]
-    public double MeshSize
+    public double GSAMeshSize
     {
       get => StructuralProperties.ContainsKey("gsaMeshSize") ? ((double)StructuralProperties["gsaMeshSize"]) : 0;
       set => StructuralProperties["gsaMeshSize"] = value;
@@ -1233,7 +1234,7 @@ namespace SpeckleElements
 
     /// <summary>GSA dummy status.</summary>
     [SNJ.JsonIgnore]
-    public bool Dummy
+    public bool GSADummy
     {
       get => StructuralProperties.ContainsKey("gsaDummy") ? ((bool)StructuralProperties["gsaDummy"]) : false;
       set => StructuralProperties["gsaDummy"] = value;
@@ -1394,7 +1395,7 @@ namespace SpeckleElements
 
     /// <summary>GSA target mesh size.</summary>
     [SNJ.JsonIgnore]
-    public double MeshSize
+    public double GSAMeshSize
     {
       get => StructuralProperties.ContainsKey("gsaMeshSize") ? ((double)StructuralProperties["gsaMeshSize"]) : 0;
       set => StructuralProperties["gsaMeshSize"] = value;
@@ -1402,7 +1403,7 @@ namespace SpeckleElements
 
     /// <summary>GSA dummy status.</summary>
     [SNJ.JsonIgnore]
-    public bool Dummy
+    public bool GSADummy
     {
       get => StructuralProperties.ContainsKey("gsaDummy") ? ((bool)StructuralProperties["gsaDummy"]) : false;
       set => StructuralProperties["gsaDummy"] = value;

@@ -887,8 +887,8 @@ namespace SpeckleElements
             Offset == null || Offset.Count() < i * 2 + 2 ? null : Offset.Skip(i * 2).Take(2).ToArray(),
             ElementApplicationId != null && ElementApplicationId.Count() > i ? ElementApplicationId[i] : ApplicationId + "_" + i.ToString()
         );
-        element.Dummy = Dummy;
-        element.MeshSize = MeshSize;
+        element.GSADummy = GSADummy;
+        element.GSAMeshSize = GSAMeshSize;
         elements.Add(element);
       }
 
@@ -956,7 +956,7 @@ namespace SpeckleElements
       this.PropertyRef = propertyRef;
       this.Axis = axis.ToList();
       this.Offset = offset.ToList();
-      this.MeshSize = meshSize;
+      this.GSAMeshSize = meshSize;
       this.ApplicationId = applicationId;
       this.TextureCoordinates = null;
 
@@ -1031,8 +1031,8 @@ namespace SpeckleElements
             Offset != null && Offset.Count() > faceCounter ? Offset[faceCounter] : 0,
             ElementApplicationId != null && ElementApplicationId.Count() > faceCounter ? ElementApplicationId[faceCounter] : ApplicationId + "_" + faceCounter.ToString()
         );
-        element.Dummy = Dummy;
-        element.MeshSize = MeshSize;
+        element.GSADummy = GSADummy;
+        element.GSAMeshSize = GSAMeshSize;
         elements.Add(element);
 
         faceCounter++;

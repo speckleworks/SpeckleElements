@@ -205,7 +205,7 @@ namespace SpeckleElementsGSA
       }
 
       //ls.Add("NORMAL"); // Action // TODO: EL.4 SUPPORT
-      ls.Add(element.Dummy ? "DUMMY" : "");
+      ls.Add(element.GSADummy ? "DUMMY" : "");
 
       GSA.RunGWACommand(string.Join("\t", ls));
     }
@@ -354,7 +354,7 @@ namespace SpeckleElementsGSA
         ls.Add(GSA.Get1DAngle(member.Value.ToArray(), member.ZAxis).ToString());
       }
       catch { ls.Add("0"); }
-      ls.Add(member.MeshSize == 0 ? "0" : member.MeshSize.ToString()); // Target mesh size
+      ls.Add(member.GSAMeshSize == 0 ? "0" : member.GSAMeshSize.ToString()); // Target mesh size
       ls.Add("MESH"); // TODO: What is this?
       ls.Add("BEAM"); // Element type
       ls.Add("0"); // Fire
@@ -362,7 +362,7 @@ namespace SpeckleElementsGSA
       ls.Add("0"); // Time 2
       ls.Add("0"); // Time 3
       ls.Add("0"); // TODO: What is this?
-      ls.Add(member.Dummy ? "DUMMY" : "ACTIVE");
+      ls.Add(member.GSADummy ? "DUMMY" : "ACTIVE");
 
       try
       {

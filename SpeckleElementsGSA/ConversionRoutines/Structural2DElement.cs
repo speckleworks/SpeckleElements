@@ -140,7 +140,7 @@ namespace SpeckleElementsGSA
       ls.Add(mesh.Offset.ToString());
 
       //ls.Add("NORMAL"); // Action // TODO: EL.4 SUPPORT
-      ls.Add(mesh.Dummy ? "DUMMY" : "");
+      ls.Add(mesh.GSADummy ? "DUMMY" : "");
 
       GSA.RunGWACommand(string.Join("\t", ls));
     }
@@ -280,7 +280,7 @@ namespace SpeckleElementsGSA
         ls.Add(GSA.Get2DAngle(coor.ToArray(), mesh.Axis.First()).ToString());
       }
       catch { ls.Add("0"); }
-      ls.Add(mesh.MeshSize == 0 ? "1" : mesh.MeshSize.ToString()); // Target mesh size
+      ls.Add(mesh.GSAMeshSize == 0 ? "1" : mesh.GSAMeshSize.ToString()); // Target mesh size
       ls.Add("MESH"); // TODO: What is this?
       ls.Add("LINEAR"); // Element type
       ls.Add("0"); // Fire
@@ -288,7 +288,7 @@ namespace SpeckleElementsGSA
       ls.Add("0"); // Time 2
       ls.Add("0"); // Time 3
       ls.Add("0"); // TODO: What is this?
-      ls.Add(mesh.Dummy ? "DUMMY" : "ACTIVE");
+      ls.Add(mesh.GSADummy ? "DUMMY" : "ACTIVE");
       ls.Add("NO"); // Internal auto offset
       ls.Add(mesh.Offset != null ? mesh.Offset.First().ToString() : "0"); // Offset z
       ls.Add("ALL"); // Exposure
