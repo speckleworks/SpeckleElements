@@ -137,8 +137,6 @@ namespace SpeckleElementsGSA
           subLs.Add(node.Restraint.Value[3] ? "1" : "0");
           subLs.Add(node.Restraint.Value[4] ? "1" : "0");
           subLs.Add(node.Restraint.Value[5] ? "1" : "0");
-
-          this.ForceSend = true;
         }
 
         ls.AddRange(subLs);
@@ -161,8 +159,6 @@ namespace SpeckleElementsGSA
           subLs.Add(node.Stiffness.Value[3].ToString());
           subLs.Add(node.Stiffness.Value[4].ToString());
           subLs.Add(node.Stiffness.Value[5].ToString());
-
-          this.ForceSend = true;
         }
 
         ls.AddRange(subLs);
@@ -171,23 +167,27 @@ namespace SpeckleElementsGSA
 
       try
       {
+        List<string> subLs = new List<string>();
+
         if (node.LocalMeshSize == 0)
         {
           ls.Add("NO_MESH");
         }
         else
         {
-          ls.Add("MESH");
-          ls.Add(node.LocalMeshSize.ToString());
-          ls.Add("0"); // Radius
-          ls.Add("NO"); // Tie to mesh
-          ls.Add("NO"); // column rigidity will be generated
-          ls.Add("0"); // Column property number
-          ls.Add("0"); //Column orientation node
-          ls.Add("0"); //Column orientation angle
-          ls.Add("1"); //Column dimension factor
-          ls.Add("0"); //Column slab thickness factor
+          subLs.Add("MESH");
+          subLs.Add(node.LocalMeshSize.ToString());
+          subLs.Add("0"); // Radius
+          subLs.Add("NO"); // Tie to mesh
+          subLs.Add("NO"); // column rigidity will be generated
+          subLs.Add("0"); // Column property number
+          subLs.Add("0"); //Column orientation node
+          subLs.Add("0"); //Column orientation angle
+          subLs.Add("1"); //Column dimension factor
+          subLs.Add("0"); //Column slab thickness factor
         }
+
+        ls.AddRange(subLs);
       }
       catch (Exception)
       {
