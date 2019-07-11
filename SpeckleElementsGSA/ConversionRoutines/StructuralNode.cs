@@ -67,6 +67,7 @@ namespace SpeckleElementsGSA
         }
         else if (s == "MESH")
         {
+          obj.LocalMeshSize = pieces[counter++].ToDouble();
           counter++; // Edge length
           counter++; // Radius
           counter++; // Tie to mesh
@@ -168,7 +169,30 @@ namespace SpeckleElementsGSA
       }
       catch { ls.Add("NO_STIFF"); }
 
-      ls.Add("NO_MESH");
+      try
+      {
+        if (node.LocalMeshSize == 0)
+        {
+          ls.Add("NO_MESH");
+        }
+        else
+        {
+          ls.Add("MESH");
+          ls.Add(node.LocalMeshSize.ToString());
+          ls.Add("0"); // Radius
+          ls.Add("NO"); // Tie to mesh
+          ls.Add("NO"); // column rigidity will be generated
+          ls.Add("0"); // Column property number
+          ls.Add("0"); //Column orientation node
+          ls.Add("0"); //Column orientation angle
+          ls.Add("1"); //Column dimension factor
+          ls.Add("0"); //Column slab thickness factor
+        }
+      }
+      catch (Exception)
+      {
+        ls.Add("NO_MESH");
+      }
 
       GSA.RunGWACommand(string.Join("\t", ls));
     }

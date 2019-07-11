@@ -126,7 +126,8 @@ namespace SpeckleElementsGSA
           var m2DIndices = GSA.Indexer.LookupIndices(typeof(GSA2DMember), assembly.ElementRefs).Where(x => x.HasValue).Select(x => x.Value).ToList();
           target.AddRange(m1DIndices);
           target.AddRange(m2DIndices);
-          targetString = string.Join(" ", target);
+          //targetString = string.Join(" ", target);
+          targetString = string.Join(" ", target.Select(x => "G" + x));
         }
       }
 
@@ -145,14 +146,15 @@ namespace SpeckleElementsGSA
           keyword + ":" + GSA.GenerateSID(assembly),
           index.ToString(),
           string.IsNullOrEmpty(assembly.Name) ? "" : assembly.Name,
-          Conversions.GSATargetLayer == GSATargetLayer.Analysis ? "ELEMENT" : "MEMBER",
+          //Conversions.GSATargetLayer == GSATargetLayer.Analysis ? "ELEMENT" : "MEMBER",
+          "ELEMENT",
           targetString,
           nodeIndices[0].ToString(),
           nodeIndices[1].ToString(),
           GSA.NodeAt(assembly.OrientationPoint.Value[0], assembly.OrientationPoint.Value[1], assembly.OrientationPoint.Value[2], Conversions.GSACoincidentNodeAllowance).ToString(),
           "", //Empty list for int_topo as it assumed that the line is never curved
-          assembly.Width.ToString(),
-          assembly.Width.ToString(),
+          assembly.Width.ToString(), //Y
+          "0", //Z
           "LAGRANGE",
           "0", //Curve order - reserved for future use according to the documentation
           "POINTS",

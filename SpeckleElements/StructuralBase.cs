@@ -458,6 +458,97 @@ namespace SpeckleElements
     public string LoadCaseRef { get; set; }
   }
 
+  [Serializable]
+  public partial class StructuralTemperatureInterval : SpeckleObject, IStructural
+  {
+    public override string Type { get => "StructuralTemperatureInterval"; }
+
+    [SNJ.JsonProperty("top", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
+    public double Top { get; set; }
+
+    [SNJ.JsonProperty("bottom", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
+    public double Bottom { get; set; }
+  }
+
+    [Serializable]
+  public partial class Structural2DElementLoadingThermal : SpeckleObject, IStructural
+  {
+    public override string Type { get => "Structural2DElementLoadingThermal"; }
+
+    /// <summary>In the case of uniform type: the temperature</summary>
+    [SNJ.JsonIgnore]
+    public double UniformTemperature
+    {
+      get => (StructuralProperties.ContainsKey("uniformTemperature") && double.TryParse(StructuralProperties["uniformTemperature"].ToString(), out double uniformTemperature))
+        ? uniformTemperature : 0;
+      set => StructuralProperties["uniformTemperature"] = value;
+    }
+
+    /// <summary>In the case of uniform type: the temperature</summary>
+    [SNJ.JsonIgnore]
+    public List<StructuralTemperatureInterval> Positions
+    {
+      set => StructuralProperties["Positions"] = value;
+      get
+      {
+          if (StructuralProperties.ContainsKey("Positions"))
+          {
+            try
+            {
+              try
+              {
+                return (List<StructuralTemperatureInterval>)StructuralProperties["Positions"];
+              }
+              catch
+              {
+                return ((List<object>)StructuralProperties["Positions"]).Select(x => x as StructuralTemperatureInterval).ToList();
+              }
+            }
+            catch
+            { return null; }
+          }
+          else
+            return null;
+        }
+      }
+
+    /// <summary>Application ID of StructuralLoadCase.</summary>
+    [SNJ.JsonProperty("loadCaseRef", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
+    public string LoadCaseRef { get; set; }
+
+    /// <summary>Application IDs of Structural1DElements to apply load.</summary>
+    [SNJ.JsonProperty("elementRefs", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
+    public List<string> ElementRefs { get; set; }
+
+    /// <summary>Uniform,Gradient or General.</summary>
+    [SNJ.JsonConverter(typeof(SNJ.Converters.StringEnumConverter))]
+    [SNJ.JsonProperty("loadingType", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
+    public StructuralThermalLoadingType LoadingType { get; set; }
+
+    [SNJ.JsonIgnore]
+    private Dictionary<string, object> StructuralProperties
+    {
+      get
+      {
+        if (base.Properties == null)
+          base.Properties = new Dictionary<string, object>();
+
+        if (!base.Properties.ContainsKey("structural"))
+          base.Properties["structural"] = new Dictionary<string, object>();
+
+        return base.Properties["structural"] as Dictionary<string, object>;
+
+      }
+      set
+      {
+        if (base.Properties == null)
+          base.Properties = new Dictionary<string, object>();
+
+        base.Properties["structural"] = value;
+      }
+    }
+  }
+
   #endregion
 
   #region Properties
@@ -706,7 +797,59 @@ namespace SpeckleElements
       get => StructuralProperties.ContainsKey("result") ? (StructuralProperties["result"] as Dictionary<string, object>) : null;
       set => StructuralProperties["result"] = value;
     }
+
+    [SNJ.JsonIgnore]
+    public double LocalMeshSize
+    {
+      get => StructuralProperties.ContainsKey("localMeshSize") ? ((double)StructuralProperties["localMeshSize"]) : 0;
+      set => StructuralProperties["localMeshSize"] = value;
+    }
   }
+
+  //----
+  /// <summary>Generalised node restraints</summary>
+  [Serializable]
+  public partial class StructuralNodeRestraints : SpeckleObject, IStructural
+  {
+    public override string Type { get => base.Type + "/StructuralNodeRestraints"; }
+
+    [SNJ.JsonIgnore]
+    private Dictionary<string, object> StructuralProperties
+    {
+      get
+      {
+        if (base.Properties == null)
+          base.Properties = new Dictionary<string, object>();
+
+        if (!base.Properties.ContainsKey("structural"))
+          base.Properties["structural"] = new Dictionary<string, object>();
+
+        return base.Properties["structural"] as Dictionary<string, object>;
+
+      }
+      set
+      {
+        if (base.Properties == null)
+          base.Properties = new Dictionary<string, object>();
+
+        base.Properties["structural"] = value;
+      }
+    }
+
+    /// <summary>A list of the X, Y, Z, Rx, Ry, and Rz restraints.</summary>
+    [SNJ.JsonProperty("restraint", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
+    public StructuralVectorBoolSix Restraint { get; set; }
+
+    /// <summary>Application IDs of Structural1DElements to apply load.</summary>
+    [SNJ.JsonProperty("elementRefs", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
+    public List<string> ElementRefs { get; set; }
+
+    /// <summary>Stage definition for the task</summary>
+    [SNJ.JsonProperty("stageDefinitionRefs", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
+    public List<string> StageDefinitionRefs { get; set; }
+
+  }
+  //--
 
   [Serializable]
   public partial class Structural1DElement : SpeckleLine, IStructural
@@ -1496,6 +1639,10 @@ namespace SpeckleElements
     [SNJ.JsonProperty("value", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
     [SpeckleNewtonsoft.Newtonsoft.Json.JsonConverter(typeof(SpecklePropertiesConverter))]
     public Dictionary<string, object> Value { get; set; }
+
+    /// <summary>ApplicationID of object referred to.</summary>
+    [SNJ.JsonProperty("loadCaseRef", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
+    public string LoadCaseRef { get; set; }
   }
   #endregion
 }

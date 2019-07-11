@@ -80,6 +80,25 @@ namespace SpeckleElementsGSA
       return newPieces;
     }
 
+    public string[][] GetSplitGWARecordsByKeyword(string keyword)
+    {
+      var gwaResults = GetGWARecords("GET_ALL\t" + keyword);
+      var numRows = gwaResults.Count();
+      if (numRows == 0)
+        return null;
+
+      var splitRecords = new string[numRows][];
+
+      for (var i = 0; i < numRows; i++)
+      {
+        var pieces = ((string)gwaResults[i]).Split(new string[] { "\t" }, StringSplitOptions.None);  //Empty values should be preserved
+        if (pieces.Count() > 0)
+          splitRecords[i] = pieces;
+      }
+
+      return splitRecords;
+    }
+
     /// <summary>
     /// Returns a list of new GWA records with the index of the record prepended.
     /// </summary>
@@ -228,14 +247,15 @@ namespace SpeckleElementsGSA
 
         string[] split = p.ListSplit("\t");
 
-        if (split[1].IsDigits())
+				if (split[1].IsDigits())
         {
           // Uses SET
           if (!Indexer.InBaseline(split[0], Convert.ToInt32(split[1])))
             RunGWACommand("BLANK\t" + split[0] + "\t" + split[1], false);
         }
-        else
+				else if (split[0].IsDigits())
         {
+
           // Uses SET_AT
           if (!Indexer.InBaseline(split[1], Convert.ToInt32(split[0])))
           {
@@ -276,7 +296,12 @@ namespace SpeckleElementsGSA
             }
           }
         }
-      }
+        else
+				{
+					//Some commands - like "LOAD_GRAVITY.2" and "LOAD_2D_THERMAL.2" have no indices at all in their GWA commands
+          //TODO
+				}
+			}
     }
     #endregion
 

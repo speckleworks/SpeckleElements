@@ -84,4 +84,11 @@ namespace SpeckleElements
     Global,
     Vertical
   }
+
+  public enum StructuralThermalLoadingType
+  {
+    Uniform,
+    Gradient,
+    General
+  }
 }
