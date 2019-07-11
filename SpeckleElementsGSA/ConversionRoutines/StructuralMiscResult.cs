@@ -25,35 +25,6 @@ namespace SpeckleElementsGSA
     {
       GSASenderObjects[typeof(GSAMiscResult)] = new List<object>();
 
-      var loadCaseNames = new Dictionary<string, string>();
-
-      //The "A"s
-      var loadtasks = GSA.GetSplitGWARecordsByKeyword((typeof(GSALoadTask)).GetGSAKeyword());
-      if (loadtasks != null && loadtasks.Length > 0)
-      {
-        for (var i = 0; i < loadtasks.Count(); i++)
-        {
-          if (loadtasks[i].Length > 2)
-          {
-            loadCaseNames.Add("A" + loadtasks[i][1], loadtasks[i][2]);
-          }
-        }
-          
-      }
-
-      //The "C"s
-      var combotasks = GSA.GetSplitGWARecordsByKeyword((typeof(GSALoadCombo)).GetGSAKeyword());
-      if (combotasks != null && combotasks.Length > 0)
-      {
-        for (var i = 0; i < combotasks.Count(); i++)
-        {
-          if (combotasks[i].Length > 2)
-          {
-            loadCaseNames.Add("C" + combotasks[i][1], combotasks[i][2]);
-          }
-        }
-      }
-
       if (Conversions.GSAMiscResults.Count() == 0)
         return new SpeckleNull();
 
@@ -68,8 +39,6 @@ namespace SpeckleElementsGSA
 
           int id = 0;
           int highestIndex = 0;
-
-          var loadCaseName = (loadCaseNames.ContainsKey(loadCase)) ? loadCaseNames[loadCase] : "";
 
           if (!string.IsNullOrEmpty(kvp.Value.Item1))
           {
@@ -88,15 +57,15 @@ namespace SpeckleElementsGSA
                 id++;
                 continue;
               }
-              
+
               StructuralMiscResult newRes = new StructuralMiscResult();
               newRes.Description = kvp.Key;
               if (id != 0)
                 newRes.TargetRef = GSA.GetSID(kvp.Value.Item1, id);
               newRes.IsGlobal = !GSAResultInLocalAxis;
               newRes.Value = resultExport;
-							newRes.LoadCaseRef = loadCaseName;
-							newRes.GenerateHash();
+              newRes.ResultSource = loadCase;
+              newRes.GenerateHash();
               results.Add(new GSAMiscResult() { Value = newRes });
             }
             id++;

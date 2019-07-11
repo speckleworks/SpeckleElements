@@ -1541,9 +1541,9 @@ namespace SpeckleElements
     [SpeckleNewtonsoft.Newtonsoft.Json.JsonConverter(typeof(SpecklePropertiesConverter))]
     public Dictionary<string, object> Value { get; set; }
 
-    /// <summary>ApplicationID of object referred to.</summary>
-    [SNJ.JsonProperty("loadCaseRef", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
-    public string LoadCaseRef { get; set; }
+    /// <summary>String indicating source of result.</summary>
+    [SNJ.JsonProperty("resultSource", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
+    public string ResultSource { get; set; }
   }
   #endregion
 }
