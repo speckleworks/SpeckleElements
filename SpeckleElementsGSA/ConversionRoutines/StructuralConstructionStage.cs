@@ -83,8 +83,7 @@ namespace SpeckleElementsGSA
       string keyword = typeof(GSAConstructionStage).GetGSAKeyword();
 
       int index = GSA.Indexer.ResolveIndex(typeof(GSAConstructionStage), stageDef);
-
-      var target = new List<int>();
+      
       var targetString = " ";
 
       if (stageDef.ElementRefs != null && stageDef.ElementRefs.Count() > 0)
@@ -92,18 +91,28 @@ namespace SpeckleElementsGSA
         if (Conversions.GSATargetLayer == GSATargetLayer.Analysis)
         {
           var e1DIndices = GSA.Indexer.LookupIndices(typeof(GSA1DElement), stageDef.ElementRefs).Where(x => x.HasValue).Select(x => x.Value).ToList();
+          var e1DPolyIndices = GSA.Indexer.LookupIndices(typeof(GSA1DElementPolyline), stageDef.ElementRefs).Where(x => x.HasValue).Select(x => x.Value).ToList();
           var e2DIndices = GSA.Indexer.LookupIndices(typeof(GSA2DElement), stageDef.ElementRefs).Where(x => x.HasValue).Select(x => x.Value).ToList();
-          target.AddRange(e1DIndices);
-          target.AddRange(e2DIndices);
-          targetString = string.Join(" ", target);
+          var e2DMeshIndices = GSA.Indexer.LookupIndices(typeof(GSA2DElementMesh), stageDef.ElementRefs).Where(x => x.HasValue).Select(x => x.Value).ToList();
+
+          targetString = string.Join(" ",
+            e1DIndices.Select(x => x.ToString())
+            .Concat(e1DPolyIndices.Select(x => "G" + x.ToString()))
+            .Concat(e2DIndices.Select(x => x.ToString()))
+            .Concat(e2DMeshIndices.Select(x => "G" + x.ToString()))
+          );
         }
         else if (Conversions.GSATargetLayer == GSATargetLayer.Design)
         {
           var m1DIndices = GSA.Indexer.LookupIndices(typeof(GSA1DMember), stageDef.ElementRefs).Where(x => x.HasValue).Select(x => x.Value).ToList();
+          var m1DPolyIndices = GSA.Indexer.LookupIndices(typeof(GSA1DElementPolyline), stageDef.ElementRefs).Where(x => x.HasValue).Select(x => x.Value).ToList();
           var m2DIndices = GSA.Indexer.LookupIndices(typeof(GSA2DMember), stageDef.ElementRefs).Where(x => x.HasValue).Select(x => x.Value).ToList();
-          target.AddRange(m1DIndices);
-          target.AddRange(m2DIndices);
-          targetString = string.Join(" ", target.Select(x => "G" + x));
+
+          targetString = string.Join(" ",
+            m1DIndices.Select(x => "G" + x.ToString())
+            .Concat(m1DPolyIndices.Select(x => "G" + x.ToString()))
+            .Concat(m2DIndices.Select(x => "G" + x.ToString()))
+          );
         }
       }
 

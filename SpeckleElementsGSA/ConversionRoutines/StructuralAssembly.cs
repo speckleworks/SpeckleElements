@@ -1,9 +1,9 @@
-﻿using SpeckleCore;
-using SpeckleElements;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using SpeckleCore;
 using SpeckleCoreGeometryClasses;
+using SpeckleElements;
 
 namespace SpeckleElementsGSA
 {
@@ -107,7 +107,6 @@ namespace SpeckleElementsGSA
 
       int index = GSA.Indexer.ResolveIndex(destType, assembly);
 
-      var target = new List<int>();
       var targetString = " ";
 
       if (assembly.ElementRefs != null && assembly.ElementRefs.Count() > 0)
@@ -115,19 +114,29 @@ namespace SpeckleElementsGSA
         if (Conversions.GSATargetLayer == GSATargetLayer.Analysis)
         {
           var e1DIndices = GSA.Indexer.LookupIndices(typeof(GSA1DElement), assembly.ElementRefs).Where(x => x.HasValue).Select(x => x.Value).ToList();
+          var e1DPolyIndices = GSA.Indexer.LookupIndices(typeof(GSA1DElementPolyline), assembly.ElementRefs).Where(x => x.HasValue).Select(x => x.Value).ToList();
           var e2DIndices = GSA.Indexer.LookupIndices(typeof(GSA2DElement), assembly.ElementRefs).Where(x => x.HasValue).Select(x => x.Value).ToList();
-          target.AddRange(e1DIndices);
-          target.AddRange(e2DIndices);
-          targetString = string.Join(" ", target);
+          var e2DMeshIndices = GSA.Indexer.LookupIndices(typeof(GSA2DElementMesh), assembly.ElementRefs).Where(x => x.HasValue).Select(x => x.Value).ToList();
+
+          targetString = string.Join(" ",
+            e1DIndices.Select(x => x.ToString())
+            .Concat(e1DPolyIndices.Select(x => "G" + x.ToString()))
+            .Concat(e2DIndices.Select(x => x.ToString()))
+            .Concat(e2DMeshIndices.Select(x => "G" + x.ToString()))
+          );
         }
         else if (Conversions.GSATargetLayer == GSATargetLayer.Design)
         {
           var m1DIndices = GSA.Indexer.LookupIndices(typeof(GSA1DMember), assembly.ElementRefs).Where(x => x.HasValue).Select(x => x.Value).ToList();
+          var m1DPolyIndices = GSA.Indexer.LookupIndices(typeof(GSA1DElementPolyline), assembly.ElementRefs).Where(x => x.HasValue).Select(x => x.Value).ToList();
           var m2DIndices = GSA.Indexer.LookupIndices(typeof(GSA2DMember), assembly.ElementRefs).Where(x => x.HasValue).Select(x => x.Value).ToList();
-          target.AddRange(m1DIndices);
-          target.AddRange(m2DIndices);
-          //targetString = string.Join(" ", target);
-          targetString = string.Join(" ", target.Select(x => "G" + x));
+
+          // TODO: Once assemblies can properly target members, this should target members explicitly
+          targetString = string.Join(" ",
+            m1DIndices.Select(x => "G" + x.ToString())
+            .Concat(m1DPolyIndices.Select(x => "G" + x.ToString()))
+            .Concat(m2DIndices.Select(x => "G" + x.ToString()))
+          );
         }
       }
 
@@ -146,6 +155,7 @@ namespace SpeckleElementsGSA
           keyword + ":" + GSA.GenerateSID(assembly),
           index.ToString(),
           string.IsNullOrEmpty(assembly.Name) ? "" : assembly.Name,
+          // TODO: Once assemblies can properly target members, this should target members explicitly
           //Conversions.GSATargetLayer == GSATargetLayer.Analysis ? "ELEMENT" : "MEMBER",
           "ELEMENT",
           targetString,
