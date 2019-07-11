@@ -652,11 +652,11 @@ namespace SpeckleElements
     }
   }
 
-  public partial class StructuralLinearSpringProperty
+  public partial class StructuralSpringProperty
   {
-    public StructuralLinearSpringProperty() { }
+    public StructuralSpringProperty() { }
 
-    public StructuralLinearSpringProperty(StructuralSpringAxis axis, StructuralVectorSix stiffness, string applicationId = null, Dictionary<string, object> properties = null)
+    public StructuralSpringProperty(StructuralAxis axis, StructuralVectorSix stiffness, string applicationId = null, Dictionary<string, object> properties = null)
     {
       this.Axis = axis;
       this.Stiffness = stiffness;

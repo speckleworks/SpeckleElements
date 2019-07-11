@@ -553,53 +553,6 @@ namespace SpeckleElements
 
   #region Properties
   [Serializable]
-  public partial class StructuralLinearSpringProperty : SpeckleObject, IStructural
-  {
-    public override string Type { get => base.Type + "/StructuralLinearSpringProperty"; }
-
-    [SNJ.JsonIgnore]
-    private Dictionary<string, object> StructuralProperties
-    {
-      get
-      {
-        if (base.Properties == null)
-          base.Properties = new Dictionary<string, object>();
-
-        if (!base.Properties.ContainsKey("structural"))
-          base.Properties["structural"] = new Dictionary<string, object>();
-
-        return base.Properties["structural"] as Dictionary<string, object>;
-
-      }
-      set
-      {
-        if (base.Properties == null)
-          base.Properties = new Dictionary<string, object>();
-
-        base.Properties["structural"] = value;
-      }
-    }
-    
-    /// <summary>Axis of the spring.</summary>
-    [SNJ.JsonIgnore]
-    public StructuralSpringAxis Axis
-    {
-      get => StructuralProperties.ContainsKey("axis")
-        ? (StructuralSpringAxis)Enum.Parse(typeof(StructuralSpringAxis), (StructuralProperties["axis"] as string), true) 
-        : StructuralSpringAxis.Global;
-      set => StructuralProperties["axis"] = value.ToString();
-    }
-
-    /// <summary>X, Y, Z, XX, YY, ZZ stiffnesses.</summary>
-    [SNJ.JsonIgnore]
-    public StructuralVectorSix Stiffness
-    {
-      get => StructuralProperties.ContainsKey("stiffness") ? (StructuralProperties["stiffness"] as StructuralVectorSix) : null;
-      set => StructuralProperties["stiffness"] = value;
-    }
-  }
-
-  [Serializable]
   public partial class StructuralMaterialConcrete : SpeckleObject, IStructural
   {
     public override string Type { get => "StructuralMaterialConcrete"; }
@@ -718,6 +671,51 @@ namespace SpeckleElements
     /// <summary>Reference surface for property.</summary>
     [SNJ.JsonProperty("referenceSurface", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
     public Structural2DPropertyReferenceSurface ReferenceSurface { get; set; }
+  }
+
+  [Serializable]
+  public partial class StructuralSpringProperty : SpeckleObject, IStructural
+  {
+    public override string Type { get => base.Type + "/StructuralSpringProperty"; }
+
+    [SNJ.JsonIgnore]
+    private Dictionary<string, object> StructuralProperties
+    {
+      get
+      {
+        if (base.Properties == null)
+          base.Properties = new Dictionary<string, object>();
+
+        if (!base.Properties.ContainsKey("structural"))
+          base.Properties["structural"] = new Dictionary<string, object>();
+
+        return base.Properties["structural"] as Dictionary<string, object>;
+
+      }
+      set
+      {
+        if (base.Properties == null)
+          base.Properties = new Dictionary<string, object>();
+
+        base.Properties["structural"] = value;
+      }
+    }
+
+    /// <summary>Local axis of the spring.</summary>
+    [SNJ.JsonIgnore]
+    public StructuralAxis Axis
+    {
+      get => StructuralProperties.ContainsKey("axis") ? (StructuralProperties["axis"] as StructuralAxis) : null;
+      set => StructuralProperties["axis"] = value;
+    }
+
+    /// <summary>X, Y, Z, XX, YY, ZZ stiffnesses.</summary>
+    [SNJ.JsonIgnore]
+    public StructuralVectorSix Stiffness
+    {
+      get => StructuralProperties.ContainsKey("stiffness") ? (StructuralProperties["stiffness"] as StructuralVectorSix) : null;
+      set => StructuralProperties["stiffness"] = value;
+    }
   }
   #endregion
 

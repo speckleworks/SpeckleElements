@@ -75,7 +75,7 @@
     <Compile Include="ConversionRoutines\Structural2DElementLoadingThermal.cs" />
     <Compile Include="ConversionRoutines\StructuralAssembly.cs" />
     <Compile Include="ConversionRoutines\StructuralGravityLoading.cs" />
-    <Compile Include="ConversionRoutines\StructuralLinearSpringProperty.cs" />
+    <Compile Include="ConversionRoutines\StructuralSpringProperty.cs" />
     <Compile Include="ConversionRoutines\StructuralLoadTaskBuckling.cs" />
     <Compile Include="ConversionRoutines\StructuralNodeRestraints.cs" />
     <Compile Include="ConversionRoutines\StructuralStageDefinition.cs" />
