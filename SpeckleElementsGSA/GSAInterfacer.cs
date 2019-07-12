@@ -202,6 +202,22 @@ namespace SpeckleElementsGSA
 
               GSAGetCache[command] = string.Join("\n", result);
             }
+            else if (!command.StartsWith("GET\tMEMB") && !(command.StartsWith("GET\tANAL.") || command.StartsWith("GET\tANAL\t")))
+            {
+              // Let's speed things up a bit
+              var commandPieces = command.Split(new char[] { '\t' });
+              var newCommand = "GET_ALL\t" + commandPieces[1];
+
+              GSAGetCache[newCommand] = GSAObject.GwaCommand(newCommand);
+
+              var allRecords = ((string)GSAGetCache[newCommand]).Split(new string[] { "\n" }, StringSplitOptions.RemoveEmptyEntries);
+              
+              foreach(string rec in allRecords)
+              {
+                var recPieces = rec.Split(new char[] { '\t' });
+                GSAGetCache["GET\t" + commandPieces[1] + "\t" + recPieces[1]] = rec;
+              }
+            }
             else
             {
               GSAGetCache[command] = GSAObject.GwaCommand(command);
@@ -1061,12 +1077,25 @@ namespace SpeckleElementsGSA
     public string GetSID(string keyword, int id)
     {
       if (!SidCache.ContainsKey(keyword + "\t" + id.ToString()))
-      { 
+      {
         try
         {
-          SidCache[keyword + "\t" + id.ToString()] = GSAObject.GetSidTagValue(keyword, id, SID_TAG);
-          if (string.IsNullOrEmpty(SidCache[keyword + "\t" + id.ToString()]))
-            SidCache[keyword + "\t" + id.ToString()] = "gsa/" + keyword + "_" + id.ToString();
+          // Look in GET cache first
+          if (GSAGetCache.ContainsKey("GET\t" + keyword + "\t" + id.ToString()))
+          {
+            var command = (string)GSAGetCache["GET\t" + keyword + "\t" + id.ToString()];
+            var match = Regex.Match(command, "(?<={" + SID_TAG + ":).*?(?=})");
+            if (!string.IsNullOrEmpty(match.Value))
+              SidCache[keyword + "\t" + id.ToString()] = match.Value;
+            else
+              SidCache[keyword + "\t" + id.ToString()] = "gsa/" + keyword + "_" + id.ToString();
+          }
+          else
+          {
+            SidCache[keyword + "\t" + id.ToString()] = GSAObject.GetSidTagValue(keyword, id, SID_TAG);
+            if (string.IsNullOrEmpty(SidCache[keyword + "\t" + id.ToString()]))
+              SidCache[keyword + "\t" + id.ToString()] = "gsa/" + keyword + "_" + id.ToString();
+          } 
         }
         catch
         {
