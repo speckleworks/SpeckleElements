@@ -9,8 +9,6 @@ namespace SpeckleElementsGSA
   [GSAObject("LOAD_GRAVITY.2", new string[] { }, "loads", true, true, new Type[] { typeof(GSALoadCase) }, new Type[] { typeof(GSALoadCase) })]
   public class GSAGravityLoading : IGSASpeckleContainer
   {
-    public int Axis; // Store this temporarily to generate other loads
-
     public int GSAId { get; set; }
     public string GWACommand { get; set; }
     public List<string> SubGWACommand { get; set; } = new List<string>();
@@ -118,7 +116,6 @@ namespace SpeckleElementsGSA
       foreach (string p in newLines)
       {
         GSAGravityLoading load = new GSAGravityLoading() { GWACommand = p };
-        //Pass in ALL the nodes and members - the Parse_ method will search through them
         load.ParseGWACommand(GSA);
         loads.Add(load);
       }

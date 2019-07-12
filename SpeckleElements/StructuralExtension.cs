@@ -354,27 +354,27 @@ namespace SpeckleElements
     }
   }
 
-    public partial class StructuralLoadTaskBuckling
+  public partial class StructuralLoadTaskBuckling
+  {
+    public StructuralLoadTaskBuckling() { }
+
+    public StructuralLoadTaskBuckling(int numModes, int maxNumIterations, string resultCaseRef, string applicationId = null, Dictionary<string, object> properties = null, string stageDefinitionRef = null)
     {
-        public StructuralLoadTaskBuckling() { }
-
-        public StructuralLoadTaskBuckling(int numModes, int maxNumIterations, string resultCaseRef, string applicationId = null, Dictionary<string, object> properties = null, string stageDefinitionRef = null)
-        {
-            this.ApplicationId = applicationId;
-            this.Properties = properties;
-            this.NumModes = numModes;
-            this.MaxNumIterations = maxNumIterations;
-            this.ResultCaseRef = resultCaseRef;
-            this.StageDefinitionRef = stageDefinitionRef;
-            GenerateHash();
-        }
-
-        public override void Scale(double factor)
-        {
-            this.Properties = ScaleProperties(this.Properties, factor);
-            this.GenerateHash();
-        }
+      this.ApplicationId = applicationId;
+      this.Properties = properties;
+      this.NumModes = numModes;
+      this.MaxNumIterations = maxNumIterations;
+      this.ResultCaseRef = resultCaseRef;
+      this.StageDefinitionRef = stageDefinitionRef;
+      GenerateHash();
     }
+
+    public override void Scale(double factor)
+    {
+      this.Properties = ScaleProperties(this.Properties, factor);
+      this.GenerateHash();
+    }
+  }
 
   public partial class StructuralLoadCombo
   {
@@ -466,6 +466,31 @@ namespace SpeckleElements
     }
   }
 
+  public partial class Structural1DLoadLine
+  {
+    public Structural1DLoadLine() { }
+
+    public Structural1DLoadLine(double[] value, StructuralVectorSix loading, string loadCaseRef, string applicationId = null, Dictionary<string, object> properties = null)
+    {
+      this.Properties = properties;
+      this.Value = value.ToList();
+      this.Loading = loading;
+      this.LoadCaseRef = loadCaseRef;
+      this.ApplicationId = applicationId;
+
+      GenerateHash();
+    }
+
+    public override void Scale(double factor)
+    {
+      for (int i = 0; i < this.Value.Count(); i++)
+        this.Value[i] *= factor;
+
+      this.Properties = ScaleProperties(this.Properties, factor);
+      this.GenerateHash();
+    }
+  }
+
   public partial class Structural2DLoadPanel
   {
     public Structural2DLoadPanel() { }
@@ -486,6 +511,24 @@ namespace SpeckleElements
       for (int i = 0; i < this.Value.Count(); i++)
         this.Value[i] *= factor;
 
+      this.Properties = ScaleProperties(this.Properties, factor);
+      this.GenerateHash();
+    }
+  }
+
+  public partial class Structural2DThermalLoad
+  {
+    public Structural2DThermalLoad() { }
+    public Structural2DThermalLoad(double topTemperature, double bottomTemperature, string loadCaseRef, string[] elementRefs, string applicationId = null, Dictionary<string, object> properties = null)
+    {
+      this.TopTemperature = topTemperature;
+      this.BottomTemperature = bottomTemperature;
+      this.LoadCaseRef = loadCaseRef;
+      this.ElementRefs = elementRefs.ToList();
+    }
+
+    public override void Scale(double factor)
+    {
       this.Properties = ScaleProperties(this.Properties, factor);
       this.GenerateHash();
     }
@@ -652,11 +695,11 @@ namespace SpeckleElements
     }
   }
 
-  public partial class StructuralLinearSpringProperty
+  public partial class StructuralSpringProperty
   {
-    public StructuralLinearSpringProperty() { }
+    public StructuralSpringProperty() { }
 
-    public StructuralLinearSpringProperty(StructuralSpringAxis axis, StructuralVectorSix stiffness, string applicationId = null, Dictionary<string, object> properties = null)
+    public StructuralSpringProperty(StructuralAxis axis, StructuralVectorSix stiffness, string applicationId = null, Dictionary<string, object> properties = null)
     {
       this.Axis = axis;
       this.Stiffness = stiffness;
@@ -672,13 +715,18 @@ namespace SpeckleElements
     }
   }
 
-  public partial class StructuralTemperatureInterval
+  public partial class StructuralConstructionStage
   {
-    public StructuralTemperatureInterval() { }
-    public StructuralTemperatureInterval(double top, double bottom)
+    public StructuralConstructionStage() { }
+
+    public StructuralConstructionStage(string[] elementRefs, int stageDays, string applicationId = null, Dictionary<string, object> properties = null)
     {
-      this.Top = top;
-      this.Bottom = bottom;
+      this.ElementRefs = elementRefs.ToList();
+      this.StageDays = stageDays;
+      this.ApplicationId = applicationId;
+      this.Properties = properties;
+
+      this.GenerateHash();
     }
 
     public override void Scale(double factor)
@@ -712,6 +760,28 @@ namespace SpeckleElements
       for (int i = 0; i < this.Value.Count(); i++)
         this.Value[i] *= factor;
 
+      this.Properties = ScaleProperties(this.Properties, factor);
+      this.GenerateHash();
+    }
+  }
+
+  public partial class StructuralStagedNodalRestraints
+  {
+    public StructuralStagedNodalRestraints() { }
+
+    public StructuralStagedNodalRestraints(StructuralVectorBoolSix restraint, string[] nodeRefs, string[] constructionStageRefs, string applicationId = null, Dictionary<string, object> properties = null)
+    {
+      this.Restraint = restraint;
+      this.NodeRefs = nodeRefs.ToList();
+      this.ConstructionStageRefs = constructionStageRefs.ToList();
+      this.ApplicationId = applicationId;
+      this.Properties = properties;
+
+      GenerateHash();
+    }
+
+    public override void Scale(double factor)
+    {
       this.Properties = ScaleProperties(this.Properties, factor);
       this.GenerateHash();
     }
@@ -807,7 +877,7 @@ namespace SpeckleElements
       List<Structural1DElement> elements = new List<Structural1DElement>();
 
       for (int i = 0; i < Value.Count() / 3 - 1; i++)
-      { 
+      {
         Structural1DElement element = new Structural1DElement(
             Value.Skip(i * 3).Take(6).ToArray(),
             ElementType,
@@ -815,7 +885,7 @@ namespace SpeckleElements
             ZAxis == null || ZAxis.Count() <= i ? null : ZAxis[i],
             EndRelease == null || EndRelease.Count() < i * 2 + 2 ? null : EndRelease.Skip(i * 2).Take(2).ToArray(),
             Offset == null || Offset.Count() < i * 2 + 2 ? null : Offset.Skip(i * 2).Take(2).ToArray(),
-            ElementApplicationId != null && ElementApplicationId.Count() > i ? ElementApplicationId[i] : null
+            ElementApplicationId != null && ElementApplicationId.Count() > i ? ElementApplicationId[i] : ApplicationId + "_" + i.ToString()
         );
         element.Dummy = Dummy;
         element.MeshSize = MeshSize;
@@ -859,7 +929,7 @@ namespace SpeckleElements
 
       GenerateHash();
     }
-    
+
     public override void Scale(double factor)
     {
       for (int i = 0; i < this.Vertices.Count(); i++)
@@ -957,9 +1027,9 @@ namespace SpeckleElements
             colors.Count() == vertices.Count() / 3 ? colors.ToArray() : new int[0],
             ElementType,
             PropertyRef,
-            Axis != null && Axis.Count() > faceCounter? Axis[faceCounter] : null,
+            Axis != null && Axis.Count() > faceCounter ? Axis[faceCounter] : null,
             Offset != null && Offset.Count() > faceCounter ? Offset[faceCounter] : 0,
-            ElementApplicationId != null && ElementApplicationId.Count() > faceCounter ? ElementApplicationId[faceCounter] : null
+            ElementApplicationId != null && ElementApplicationId.Count() > faceCounter ? ElementApplicationId[faceCounter] : ApplicationId + "_" + faceCounter.ToString()
         );
         element.Dummy = Dummy;
         element.MeshSize = MeshSize;

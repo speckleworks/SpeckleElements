@@ -78,17 +78,4 @@ namespace SpeckleElements
     Task,
     Combo
   }
-
-  public enum StructuralSpringAxis
-  {
-    Global,
-    Vertical
-  }
-
-  public enum StructuralThermalLoadingType
-  {
-    Uniform,
-    Gradient,
-    General
-  }
 }

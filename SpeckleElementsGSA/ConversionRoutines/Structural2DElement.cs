@@ -86,7 +86,8 @@ namespace SpeckleElementsGSA
 
       counter++; // Dummy
 
-      Member = pieces[counter++];
+      if (counter < pieces.Length)
+        Member = pieces[counter++];
 
       this.Value = obj;
     }

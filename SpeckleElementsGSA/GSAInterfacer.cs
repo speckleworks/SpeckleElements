@@ -1,4 +1,4 @@
-﻿using Gsa_10_0;
+﻿using Interop.Gsa_10_0;
 using SpeckleCore;
 using SpeckleElements;
 using SQLite;
@@ -174,7 +174,7 @@ namespace SpeckleElementsGSA
             if (command.StartsWith("GET_ALL\tMEMB"))
             {
               // TODO: Member GET_ALL work around
-              GSAObject.EntitiesInList("all", GsaEntity.MEMBER, out Array memberRefs);
+              GSAObject.EntitiesInList("all", GsaEntity.MEMBER, out int[] memberRefs);
 
               if (memberRefs == null || memberRefs.Length == 0)
                 return "";
@@ -924,7 +924,9 @@ namespace SpeckleElementsGSA
         if (pieces[i].IsDigits())
           items.Add(Convert.ToInt32(pieces[i]));
         else if (pieces[i].Contains('"'))
+        { 
           items.AddRange(ConvertNamedGSAList(pieces[i], type));
+        }
         else if (pieces[i] == "to")
         {
           int lowerRange = Convert.ToInt32(pieces[i - 1]);
@@ -939,7 +941,15 @@ namespace SpeckleElementsGSA
         {
           try
           {
-            GSAObject.EntitiesInList(pieces[i], (GsaEntity)type, out Array itemTemp);
+            int[] itemTemp;
+            GSAObject.EntitiesInList(pieces[i], (GsaEntity)type, out itemTemp);
+
+            if (itemTemp == null)
+              GSAObject.EntitiesInList("\"" + list + "\"", (GsaEntity)type, out itemTemp);
+
+            if (itemTemp == null)
+              continue;
+
             items.AddRange((int[])itemTemp);
           }
           catch
@@ -958,13 +968,28 @@ namespace SpeckleElementsGSA
     /// <returns></returns>
     public int[] ConvertNamedGSAList(string list, GSAEntity type)
     {
-      list = list.Trim(new char[] { '"' });
+      list = list.Trim(new char[] { '"', ' ' });
 
-      string res = GetGWARecords("GET\tLIST\t" + list).FirstOrDefault();
+      try
+      {
+        string res = GetGWARecords("GET\tLIST\t" + list).FirstOrDefault();
 
-      string[] pieces = res.Split(new char[] { '\t' });
+        string[] pieces = res.Split(new char[] { '\t' });
 
-      return ConvertGSAList(pieces[pieces.Length - 1], type);
+        return ConvertGSAList(pieces[pieces.Length - 1], type);
+      }
+      catch
+      {
+        try
+        { 
+          GSAObject.EntitiesInList("\"" + list + "\"", (GsaEntity)type, out int[] itemTemp);
+          if (itemTemp == null)
+            return new int[0];
+          else
+            return (int[])itemTemp;
+        }
+        catch { return new int[0]; }
+      }
     }
 
     /// <summary>
@@ -1111,9 +1136,8 @@ namespace SpeckleElementsGSA
         Dictionary<string, object> ret = new Dictionary<string, object>();
 
         foreach (string key in keys)
-        { 
-          
-          ret[key] = res.Select(x => x.dynaResults.GetValue(counter)).ToList();
+        {
+          ret[key] = res.Select(x => (double)x.dynaResults.GetValue(counter)).ToList();
           counter++;
         }
 
