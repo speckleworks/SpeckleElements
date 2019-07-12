@@ -76,7 +76,7 @@ namespace SpeckleElementsGSA
         throw new Exception("GetGWAGetCommands() only takes in GET commands");
 
       object result = RunGWACommand(command);
-      string[] newPieces = ((string)result).Split(new string[] { "\n" }, StringSplitOptions.RemoveEmptyEntries);//.Select((s, idx) => idx.ToString() + ":" + s).ToArray();
+      string[] newPieces = ((string)result).Split(new string[] { "\n" }, StringSplitOptions.RemoveEmptyEntries).Select((s, idx) => idx.ToString() + ":" + s).ToArray();
       return newPieces;
     }
 
@@ -116,8 +116,8 @@ namespace SpeckleElementsGSA
         if ((result as string) == (PreviousGSAGetCache[command] as string))
           return new string[0];
 
-        string[] newPieces = ((string)result).Split(new string[] { "\n" }, StringSplitOptions.RemoveEmptyEntries);//.Select((s,idx) => idx.ToString() + ":" + s).ToArray();
-        string[] prevPieces = ((string)PreviousGSAGetCache[command]).Split(new string[] { "\n" }, StringSplitOptions.RemoveEmptyEntries);//.Select((s, idx) => idx.ToString() + ":" + s).ToArray();
+        string[] newPieces = ((string)result).Split(new string[] { "\n" }, StringSplitOptions.RemoveEmptyEntries).Select((s,idx) => idx.ToString() + ":" + s).ToArray();
+        string[] prevPieces = ((string)PreviousGSAGetCache[command]).Split(new string[] { "\n" }, StringSplitOptions.RemoveEmptyEntries).Select((s, idx) => idx.ToString() + ":" + s).ToArray();
 
         string[] ret = newPieces.Where(n => !prevPieces.Contains(n)).ToArray();
 
@@ -125,7 +125,7 @@ namespace SpeckleElementsGSA
       }
       else
       {
-        return ((string)result).Split(new string[] { "\n" }, StringSplitOptions.RemoveEmptyEntries);//.Select((s, idx) => idx.ToString() + ":" + s).ToArray();
+        return ((string)result).Split(new string[] { "\n" }, StringSplitOptions.RemoveEmptyEntries).Select((s, idx) => idx.ToString() + ":" + s).ToArray();
       }
     }
 
@@ -146,8 +146,8 @@ namespace SpeckleElementsGSA
         if ((result as string) == (PreviousGSAGetCache[command] as string))
           return new string[0];
 
-        string[] newPieces = ((string)result).Split(new string[] { "\n" }, StringSplitOptions.RemoveEmptyEntries);//.Select((s, idx) => idx.ToString() + ":" + s).ToArray();
-        string[] prevPieces = ((string)PreviousGSAGetCache[command]).Split(new string[] { "\n" }, StringSplitOptions.RemoveEmptyEntries);//.Select((s, idx) => idx.ToString() + ":" + s).ToArray();
+        string[] newPieces = ((string)result).Split(new string[] { "\n" }, StringSplitOptions.RemoveEmptyEntries).Select((s, idx) => idx.ToString() + ":" + s).ToArray();
+        string[] prevPieces = ((string)PreviousGSAGetCache[command]).Split(new string[] { "\n" }, StringSplitOptions.RemoveEmptyEntries).Select((s, idx) => idx.ToString() + ":" + s).ToArray();
 
         string[] ret = prevPieces.Where(p => !newPieces.Contains(p)).ToArray();
 
