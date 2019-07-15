@@ -38,6 +38,9 @@ namespace SpeckleElementsGSA
       obj.Offset = new List<StructuralVectorThree>();
       obj.ResultVertices = new List<double>();
 
+      if (Conversions.GSAElement1DResults.Count > 0 && Conversions.GSAEmbedResults)
+        obj.Result = new Dictionary<string, object>();
+
       // Match up coordinates
       List<Tuple<string, string>> coordinates = new List<Tuple<string, string>>();
 
@@ -114,11 +117,8 @@ namespace SpeckleElementsGSA
         }
 
         // Result merging
-        if (Conversions.GSAElement1DResults.Count > 0)
-        { 
-          if (obj.Result == null)
-            obj.Result = new Dictionary<string, object>();
-          
+        if (obj.Result != null)
+        {
           try
           { 
             foreach (string loadCase in element.Value.Result.Keys)
@@ -161,7 +161,6 @@ namespace SpeckleElementsGSA
           {
             // UNABLE TO MERGE RESULTS
             obj.Result = null;
-            break;
           }
         }
 

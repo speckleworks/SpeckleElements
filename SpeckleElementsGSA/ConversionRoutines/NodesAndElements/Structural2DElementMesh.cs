@@ -36,6 +36,9 @@ namespace SpeckleElementsGSA
       obj.Axis = new List<StructuralAxis>();
       obj.Offset = new List<double>();
 
+      if (Conversions.GSAElement2DResults.Count > 0 && Conversions.GSAEmbedResults)
+        obj.Result = new Dictionary<string, object>();
+
       foreach (GSA2DElement e in elements)
       {
         int verticesOffset = obj.Vertices.Count() / 3;
@@ -49,11 +52,8 @@ namespace SpeckleElementsGSA
         obj.ElementApplicationId.Add(e.Value.ApplicationId);
 
         // Result merging
-        if (Conversions.GSAElement2DResults.Count > 0)
+        if (obj.Result != null)
         {
-          if (obj.Result == null)
-            obj.Result = new Dictionary<string, object>();
-
           try
           {
             foreach (string loadCase in e.Value.Result.Keys)
@@ -91,7 +91,6 @@ namespace SpeckleElementsGSA
           {
             // UNABLE TO MERGE RESULTS
             obj.Result = null;
-            break;
           }
         }
 
