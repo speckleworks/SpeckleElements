@@ -131,21 +131,27 @@
     </Reference>
     <Reference Include="SpeckleCore, Version=1.5.1.319, Culture=neutral, processorArchitecture=AMD64">
       <HintPath>..\packages\SpeckleCore.1.5.1.319\lib\net45\SpeckleCore.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="SpeckleCoreGeometry, Version=1.1.0.57, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\SpeckleCoreGeometry.1.1.0.57\lib\net461\SpeckleCoreGeometry.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="SpeckleCoreGeometryClasses, Version=1.1.0.57, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\SpeckleCoreGeometry.1.1.0.57\lib\net461\SpeckleCoreGeometryClasses.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="SpeckleCoreGeometryDynamo, Version=1.1.0.57, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\SpeckleCoreGeometry.1.1.0.57\lib\net461\SpeckleCoreGeometryDynamo.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="SpeckleCoreGeometryRevit, Version=1.1.0.57, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\SpeckleCoreGeometry.1.1.0.57\lib\net461\SpeckleCoreGeometryRevit.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="SpeckleCoreGeometryRhino, Version=1.1.0.57, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\SpeckleCoreGeometry.1.1.0.57\lib\net461\SpeckleCoreGeometryRhino.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="SQLite-net, Version=1.5.231.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\sqlite-net-pcl.1.5.231\lib\netstandard1.1\SQLite-net.dll</HintPath>
@@ -216,6 +222,7 @@
     <ProjectReference Include="..\SpeckleElementsClasses\SpeckleElementsClasses.csproj">
       <Project>{42e1db9c-e4d5-4190-9977-874e8143dcc5}</Project>
       <Name>SpeckleElementsClasses</Name>
+      <Private>False</Private>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
@@ -234,4 +241,7 @@
   <Import Project="..\packages\SQLitePCLRaw.lib.e_sqlite3.v110_xp.1.1.11\build\net35\SQLitePCLRaw.lib.e_sqlite3.v110_xp.targets" Condition="Exists('..\packages\SQLitePCLRaw.lib.e_sqlite3.v110_xp.1.1.11\build\net35\SQLitePCLRaw.lib.e_sqlite3.v110_xp.targets')" />
   <Import Project="..\packages\RhinoCommon.6.12.19029.6381\build\net45\RhinoCommon.targets" Condition="Exists('..\packages\RhinoCommon.6.12.19029.6381\build\net45\RhinoCommon.targets')" />
   <Import Project="..\packages\Grasshopper.6.12.19029.6381\build\net45\Grasshopper.targets" Condition="Exists('..\packages\Grasshopper.6.12.19029.6381\build\net45\Grasshopper.targets')" />
+  <PropertyGroup>
+    <PostBuildEvent>copy /Y "$(TargetDir)" "%25localappdata%25\SpeckleKitsDebug\SpeckleElements"</PostBuildEvent>
+  </PropertyGroup>
 </Project>
