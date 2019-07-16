@@ -631,6 +631,24 @@ namespace SpeckleElements
       }
     }
 
+    /// <summary>Application ID of StructuralSpringProperty.</summary>
+    [SNJ.JsonIgnore]
+    public double DampingRatio
+    {
+      get => StructuralProperties.ContainsKey("dampingRatio") ? (double)StructuralProperties["dampingRatio"] : 0;
+      set => StructuralProperties["dampingRatio"] = value;
+    }
+
+    /// <summary>Application ID of StructuralSpringProperty.</summary>
+    [SNJ.JsonIgnore]
+    public StructuralSpringPropertyType SpringType
+    {
+      get => StructuralProperties.ContainsKey("springType") 
+        ? (StructuralSpringPropertyType)Enum.Parse(typeof(StructuralSpringPropertyType), (StructuralProperties["springType"] as string), true) 
+        : StructuralSpringPropertyType.General;
+      set => StructuralProperties["springType"] = value.ToString();
+    }
+
     /// <summary>Local axis of the spring.</summary>
     [SNJ.JsonIgnore]
     public StructuralAxis Axis
@@ -911,6 +929,67 @@ namespace SpeckleElements
           return null;
       }
       set => StructuralProperties["resultVertices"] = value;
+    }
+
+    /// <summary>Analysis results.</summary>
+    [SNJ.JsonIgnore]
+    public Dictionary<string, object> Result
+    {
+      get => StructuralProperties.ContainsKey("result") ? (StructuralProperties["result"] as Dictionary<string, object>) : null;
+      set => StructuralProperties["result"] = value;
+    }
+  }
+
+  [Serializable]
+  public partial class Structural0DSpring : SpecklePoint, IStructural
+  {
+    public override string Type { get => base.Type + "/Structural0DSpring"; }
+
+    [SNJ.JsonIgnore]
+    private Dictionary<string, object> StructuralProperties
+    {
+      get
+      {
+        if (base.Properties == null)
+          base.Properties = new Dictionary<string, object>();
+
+        if (!base.Properties.ContainsKey("structural"))
+          base.Properties["structural"] = new Dictionary<string, object>();
+
+        return base.Properties["structural"] as Dictionary<string, object>;
+
+      }
+      set
+      {
+        if (base.Properties == null)
+          base.Properties = new Dictionary<string, object>();
+
+        base.Properties["structural"] = value;
+      }
+    }
+
+    /// <summary>Base SpeckleLine.</summary>
+    [SNJ.JsonIgnore]
+    public SpecklePoint basePoint
+    {
+      get => this as SpecklePoint;
+      set => this.Value = value.Value;
+    }
+
+    /// <summary>Application ID of Structural1DProperty.</summary>
+    [SNJ.JsonIgnore]
+    public string PropertyRef
+    {
+      get => StructuralProperties.ContainsKey("propertyRef") ? (StructuralProperties["propertyRef"] as string) : null;
+      set => StructuralProperties["propertyRef"] = value;
+    }
+
+    /// <summary>GSA dummy status.</summary>
+    [SNJ.JsonIgnore]
+    public bool Dummy
+    {
+      get => StructuralProperties.ContainsKey("gsaDummy") ? ((bool)StructuralProperties["gsaDummy"]) : false;
+      set => StructuralProperties["gsaDummy"] = value;
     }
 
     /// <summary>Analysis results.</summary>

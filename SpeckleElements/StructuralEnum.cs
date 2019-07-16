@@ -78,4 +78,18 @@ namespace SpeckleElements
     Task,
     Combo
   }
+
+  public enum StructuralSpringPropertyType
+  {
+    General,
+    Axial,
+    Torsional,
+    //Matrix, not supported yet
+    Compression,
+    Tension,
+    Connector,
+    Lockup,
+    Gap,
+    Friction
+  }
 }

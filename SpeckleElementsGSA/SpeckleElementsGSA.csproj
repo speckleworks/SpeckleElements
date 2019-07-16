@@ -72,6 +72,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ConversionRoutines\Structural0DSpring.cs" />
     <Compile Include="ConversionRoutines\Structural2DThermalLoad.cs" />
     <Compile Include="ConversionRoutines\StructuralAssembly.cs" />
     <Compile Include="ConversionRoutines\StructuralGravityLoading.cs" />

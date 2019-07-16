@@ -44,21 +44,32 @@ namespace SpeckleElementsGSA
       }
 
       var springPropertyType = pieces[counter++];
+      obj.SpringType = springPropertyType.StringToEnum<StructuralSpringPropertyType>();
 
       var stiffnesses = new double[6];
 
-      switch (springPropertyType.ToLower())
+      switch (obj.SpringType)
       {
-        case "general":
+        case StructuralSpringPropertyType.General:
           counter--;
           for (var i = 0; i < 6; i++)
             double.TryParse(pieces[counter += 2], out stiffnesses[i]);
           counter--;
           break;
-        case "axial":
+        case StructuralSpringPropertyType.Friction:
+          counter--;
+          for (var i = 0; i < 3; i++)
+            double.TryParse(pieces[counter += 2], out stiffnesses[i]);
+          counter--;
+          break;
+        case StructuralSpringPropertyType.Axial:
+        case StructuralSpringPropertyType.Tension:
+        case StructuralSpringPropertyType.Compression:
+        case StructuralSpringPropertyType.Lockup:
+        case StructuralSpringPropertyType.Gap:
           double.TryParse(pieces[counter++], out stiffnesses[0]);
           break;
-        case "torsional":
+        case StructuralSpringPropertyType.Torsional:
           // TODO: As of build 48 of GSA, the torsional stiffness is not extracted in GWA records
           return;
         default:
@@ -67,6 +78,23 @@ namespace SpeckleElementsGSA
       
       obj.Stiffness = new StructuralVectorSix(stiffnesses);
       this.Value = obj;
+    }
+
+    private string SpringPropertyTypeToGWA(StructuralSpringPropertyType springPropertyType)
+    {
+      //Even though the values are mostly just the upper case versions of the num values - create an explicit 
+      //conversion here in case the enum values ever change
+      switch (springPropertyType)
+      {
+        case StructuralSpringPropertyType.Axial: return "AXIAL";
+        case StructuralSpringPropertyType.Torsional: return "TORSIONAL";
+        case StructuralSpringPropertyType.Compression: return "COMPRESSION";
+        case StructuralSpringPropertyType.Tension: return "TENSION";
+        case StructuralSpringPropertyType.Connector: return "CONNECT";
+        case StructuralSpringPropertyType.Lockup: return "LOCKUP";
+        case StructuralSpringPropertyType.Gap: return "GAP";
+        default: return "GENERAL";
+      }
     }
 
     public void SetGWACommand(GSAInterfacer GSA)
@@ -82,25 +110,27 @@ namespace SpeckleElementsGSA
 
       int index = GSA.Indexer.ResolveIndex(destType, springProp);
 
-      string axisRef = "GLOBAL";
+      string axisRef = "GLOBAL"; //Default value
 
-      if (springProp.Axis.Xdir.Value.SequenceEqual(new double[] { 1, 0, 0 }) &&
-        springProp.Axis.Ydir.Value.SequenceEqual(new double[] { 0, 1, 0 }) &&
-        springProp.Axis.Normal.Value.SequenceEqual(new double[] { 0, 0, 1 }))
-        axisRef = "GLOBAL";
-      else if (springProp.Axis.Xdir.Value.SequenceEqual(new double[] { 0, 0, 1 }) &&
+      if (springProp.Axis != null)
+      {
+        if (springProp.Axis.Xdir.Value.SequenceEqual(new double[] { 0, 0, 1 }) &&
         springProp.Axis.Ydir.Value.SequenceEqual(new double[] { 1, 0, 0 }) &&
         springProp.Axis.Normal.Value.SequenceEqual(new double[] { 0, 1, 0 }))
-        axisRef = "VERTICAL";
-      else
-        try
         {
-          axisRef = GSA.SetAxis(springProp.Axis).ToString();
+          axisRef = "VERTICAL";
         }
-        catch { axisRef = "GLOBAL"; }
+        else
+        {
+          try
+          {
+            axisRef = GSA.SetAxis(springProp.Axis).ToString();
+          }
+          catch { axisRef = "GLOBAL"; }
+        }
+      }
 
-
-      List<string> ls = new List<string>
+      var ls = new List<string>
       {
         "SET",
         keyword + ":" + GSA.GenerateSID(springProp),
@@ -108,7 +138,7 @@ namespace SpeckleElementsGSA
         string.IsNullOrEmpty(springProp.Name) ? "" : springProp.Name,
         "NO_RGB",
         axisRef,
-        "GENERAL"
+        SpringPropertyTypeToGWA(springProp.SpringType)
       };
 
       for (var i = 0; i < 6; i++)

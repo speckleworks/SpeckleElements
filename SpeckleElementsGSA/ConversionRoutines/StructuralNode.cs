@@ -399,7 +399,8 @@ namespace SpeckleElementsGSA
       foreach (string p in newLines)
       {
         string[] pPieces = p.ListSplit("\t");
-        if (pPieces[4].ParseElementNumNodes() == 1)
+        var typeString = pPieces[4];
+        if (typeString != ElementNumNodes.GRD_SPRING.ToString() && typeString.ParseElementNumNodes() == 1)
         {
           GSA0DElement massNode = new GSA0DElement() { GWACommand = p };
           massNode.ParseGWACommand(GSA);

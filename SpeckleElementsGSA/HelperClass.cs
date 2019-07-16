@@ -353,6 +353,16 @@ namespace SpeckleElementsGSA
     }
 
     /// <summary>
+    /// Returns the string corresponding to the enum
+    /// </summary>
+    /// <param name="strValue">string to parse</param>
+    /// <returns>enum value</returns>
+    public static T StringToEnum<T>(this string strValue)
+    {
+      return (T)Enum.Parse(typeof(T), strValue);
+    }
+
+    /// <summary>
     /// Check if GSA member type is 1D
     /// </summary>
     /// <param name="type">GSA member type</param>
