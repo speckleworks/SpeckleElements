@@ -1310,6 +1310,13 @@ namespace SpeckleElements
       set => StructuralProperties["gsaMeshSize"] = value;
     }
 
+    [SNJ.JsonIgnore]
+    public bool GSAAutoOffsets
+    {
+      get => StructuralProperties.ContainsKey("gsaAutoOffsets") ? ((bool)StructuralProperties["gsaAutoOffsets"]) : false;
+      set => StructuralProperties["gsaAutoOffsets"] = value;
+    }
+
     /// <summary>GSA dummy status.</summary>
     [SNJ.JsonIgnore]
     public bool Dummy
@@ -1485,6 +1492,13 @@ namespace SpeckleElements
     {
       get => StructuralProperties.ContainsKey("gsaDummy") ? ((bool)StructuralProperties["gsaDummy"]) : false;
       set => StructuralProperties["gsaDummy"] = value;
+    }
+
+    [SNJ.JsonIgnore]
+    public bool GSAAutoOffsets
+    {
+      get => StructuralProperties.ContainsKey("gsaAutoOffsets") ? ((bool)StructuralProperties["gsaAutoOffsets"]) : false;
+      set => StructuralProperties["gsaAutoOffsets"] = value;
     }
 
     /// <summary>Analysis results.</summary>

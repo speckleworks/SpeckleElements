@@ -913,7 +913,7 @@ namespace SpeckleElements
   {
     public Structural2DElement() { }
 
-    public Structural2DElement(double[] vertices, int[] faces, int[] colors, Structural2DElementType elementType, string propertyRef, StructuralAxis axis, double offset, string applicationId = null, Dictionary<string, object> properties = null)
+    public Structural2DElement(double[] vertices, int[] faces, int[] colors, Structural2DElementType elementType, string propertyRef, StructuralAxis axis, double offset, string applicationId = null, Dictionary<string, object> properties = null, bool autoOffsets = false)
     {
       this.Properties = properties;
       this.Vertices = vertices.ToList();
@@ -924,7 +924,7 @@ namespace SpeckleElements
       this.Axis = axis;
       this.Offset = offset;
       this.ApplicationId = applicationId;
-
+      this.GSAAutoOffsets = autoOffsets;
       this.TextureCoordinates = null;
 
       GenerateHash();
@@ -1029,7 +1029,8 @@ namespace SpeckleElements
             PropertyRef,
             Axis != null && Axis.Count() > faceCounter ? Axis[faceCounter] : null,
             Offset != null && Offset.Count() > faceCounter ? Offset[faceCounter] : 0,
-            ElementApplicationId != null && ElementApplicationId.Count() > faceCounter ? ElementApplicationId[faceCounter] : ApplicationId + "_" + faceCounter.ToString()
+            ElementApplicationId != null && ElementApplicationId.Count() > faceCounter ? ElementApplicationId[faceCounter] : ApplicationId + "_" + faceCounter.ToString(),
+            autoOffsets: GSAAutoOffsets
         );
         element.Dummy = Dummy;
         element.MeshSize = MeshSize;

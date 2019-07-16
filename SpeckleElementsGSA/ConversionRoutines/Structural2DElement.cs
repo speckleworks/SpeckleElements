@@ -289,7 +289,7 @@ namespace SpeckleElementsGSA
       ls.Add("0"); // Time 3
       ls.Add("0"); // TODO: What is this?
       ls.Add(mesh.Dummy ? "DUMMY" : "ACTIVE");
-      ls.Add("NO"); // Internal auto offset
+      ls.Add(mesh.GSAAutoOffsets ? "YES": "NO"); // Internal auto offset
       ls.Add(mesh.Offset != null ? mesh.Offset.First().ToString() : "0"); // Offset z
       ls.Add("ALL"); // Exposure
 
