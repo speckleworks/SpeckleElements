@@ -1144,7 +1144,7 @@ namespace SpeckleElementsGSA
         int num;
 
         // Special case for assemblies
-        if (Enum.IsDefined(typeof(ResHeader), resHeader))
+        if (Enum.IsDefined(typeof(ResHeader), resHeader) || resHeader == 18002000)
         {
           GSAObject.Output_Init_Arr(flags, axis, loadCase, (ResHeader)resHeader, num1DPoints);
           GSAObject.Output_Extract_Arr(id, out var outputExtractResults, out num);
