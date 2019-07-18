@@ -124,11 +124,6 @@
     <Reference Include="SpeckleCoreGeometryRhino, Version=1.1.0.57, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\SpeckleCoreGeometry.1.1.0.57\lib\net461\SpeckleCoreGeometryRhino.dll</HintPath>
     </Reference>
-    <Reference Include="SpeckleNewtonsoft">
-      <HintPath>..\SpeckleCore\SpeckleNewtonsoft.dll</HintPath>
-      <Aliases>SpeckleNewtonsoft</Aliases>
-      <Private>False</Private>
-    </Reference>
     <Reference Include="SQLite-net, Version=1.5.231.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\sqlite-net-pcl.1.5.231\lib\netstandard1.1\SQLite-net.dll</HintPath>
     </Reference>
