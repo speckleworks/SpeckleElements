@@ -54,16 +54,19 @@
       <Project>{c08796bb-c109-4961-ab72-a2a74c06e510}</Project>
       <Name>SpeckleElementsRevit</Name>
     </ProjectReference>
-    <ProjectReference Include="..\SpeckleElements\SpeckleElementsClasses.csproj">
+    <ProjectReference Include="..\SpeckleElementsClasses\SpeckleElementsClasses.csproj">
       <Project>{42e1db9c-e4d5-4190-9977-874e8143dcc5}</Project>
       <Name>SpeckleElementsClasses</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="AfterBuild">
     <!-- REMOVES CRUFT FROM SQLITE -->
     <RemoveDir Directories="$(TargetDir)x64" />
-    <RemoveDir Directories="$(TargetDir)x86" />    
+    <RemoveDir Directories="$(TargetDir)x86" />
     <ItemGroup>
       <BuildFiles Include="$(TargetDir)\*.*" />
     </ItemGroup>

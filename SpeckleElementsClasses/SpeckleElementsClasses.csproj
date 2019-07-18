@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{C08796BB-C109-4961-AB72-A2A74C06E510}</ProjectGuid>
+    <ProjectGuid>{42E1DB9C-E4D5-4190-9977-874E8143DCC5}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>SpeckleElementsRevit</RootNamespace>
-    <AssemblyName>SpeckleElementsRevit</AssemblyName>
+    <RootNamespace>SpeckleElements</RootNamespace>
+    <AssemblyName>SpeckleElements</AssemblyName>
     <TargetFrameworkVersion>v4.7.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
@@ -87,6 +87,7 @@
     <Reference Include="nunit.framework, Version=2.6.3.13283, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
       <HintPath>..\packages\NUnit.2.6.3\lib\nunit.framework.dll</HintPath>
     </Reference>
+    <Reference Include="PresentationCore" />
     <Reference Include="ProtoCore, Version=2.0.2.6986, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\DynamoVisualProgramming.Core.2.0.2.6986\lib\net45\ProtoCore.dll</HintPath>
     </Reference>
@@ -95,11 +96,9 @@
     </Reference>
     <Reference Include="RevitAPI, Version=19.0.0.0, Culture=neutral, processorArchitecture=AMD64">
       <HintPath>..\packages\Revit.RevitApi.x64.2019.0.0\lib\net45\RevitAPI.dll</HintPath>
-      <Private>False</Private>
     </Reference>
     <Reference Include="RevitAPIUI, Version=19.0.0.0, Culture=neutral, processorArchitecture=AMD64">
       <HintPath>..\packages\Revit.RevitApiUI.x64.2019.0.0\lib\net45\RevitAPIUI.dll</HintPath>
-      <Private>False</Private>
     </Reference>
     <Reference Include="Rhino.UI, Version=6.12.19029.6380, Culture=neutral, PublicKeyToken=552281e97c755530, processorArchitecture=MSIL">
       <HintPath>..\packages\RhinoCommon.6.12.19029.6381\lib\net45\Rhino.UI.dll</HintPath>
@@ -124,6 +123,11 @@
     </Reference>
     <Reference Include="SpeckleCoreGeometryRhino, Version=1.1.0.57, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\SpeckleCoreGeometry.1.1.0.57\lib\net461\SpeckleCoreGeometryRhino.dll</HintPath>
+    </Reference>
+    <Reference Include="SpeckleNewtonsoft">
+      <HintPath>..\SpeckleCore\SpeckleNewtonsoft.dll</HintPath>
+      <Aliases>SpeckleNewtonsoft</Aliases>
+      <Private>False</Private>
     </Reference>
     <Reference Include="SQLite-net, Version=1.5.231.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\sqlite-net-pcl.1.5.231\lib\netstandard1.1\SQLite-net.dll</HintPath>
@@ -159,49 +163,38 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ConversionRoutines\AreaLoad.cs" />
-    <Compile Include="ConversionRoutines\LineLoad.cs" />
-    <Compile Include="ConversionRoutines\AnalyticalNode.cs" />
-    <Compile Include="ConversionRoutines\AnalyticalSurface.cs" />
-    <Compile Include="ConversionRoutines\AnalyticalStick.cs" />
-    <Compile Include="ConversionRoutines\Beam.cs" />
-    <Compile Include="ConversionRoutines\Column.cs" />
-    <Compile Include="ConversionRoutines\FamilyInstance.cs" />
-    <Compile Include="ConversionRoutines\Level.cs" />
-    <Compile Include="ConversionRoutines\Floor.cs" />
-    <Compile Include="ConversionRoutines\Room.cs" />
-    <Compile Include="ConversionRoutines\Shaft.cs" />
-    <Compile Include="ConversionRoutines\Topography.cs" />
-    <Compile Include="ConversionRoutines\Wall.cs" />
-    <Compile Include="ConversionsBase.cs" />
-    <Compile Include="ConversionRoutines\Grid.cs" />
-    <Compile Include="MeshingUtils.cs" />
+    <Compile Include="Base.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Structural\Extensions\Properties.cs" />
+    <Compile Include="Structural\Base.cs" />
+    <Compile Include="Structural\Extensions\Base.cs" />
+    <Compile Include="Structural\Extensions\Loads.cs" />
+    <Compile Include="Structural\Extensions\Miscellaneous.cs" />
+    <Compile Include="Structural\Extensions\NodesAndElements.cs" />
+    <Compile Include="Structural\Loads.cs" />
+    <Compile Include="Structural\Miscellaneous.cs" />
+    <Compile Include="Structural\NodesAndElements.cs" />
+    <Compile Include="Structural\Properties.cs" />
+    <Compile Include="Structural\Results.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\SpeckleElementsClasses\SpeckleElementsClasses.csproj">
-      <Project>{42e1db9c-e4d5-4190-9977-874e8143dcc5}</Project>
-      <Name>SpeckleElementsClasses</Name>
-    </ProjectReference>
-  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <Import Project="..\packages\SQLitePCLRaw.lib.e_sqlite3.linux.1.1.11\build\net35\SQLitePCLRaw.lib.e_sqlite3.linux.targets" Condition="Exists('..\packages\SQLitePCLRaw.lib.e_sqlite3.linux.1.1.11\build\net35\SQLitePCLRaw.lib.e_sqlite3.linux.targets')" />
+  <Import Project="..\packages\RhinoCommon.6.12.19029.6381\build\net45\RhinoCommon.targets" Condition="Exists('..\packages\RhinoCommon.6.12.19029.6381\build\net45\RhinoCommon.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
     </PropertyGroup>
+    <Error Condition="!Exists('..\packages\RhinoCommon.6.12.19029.6381\build\net45\RhinoCommon.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\RhinoCommon.6.12.19029.6381\build\net45\RhinoCommon.targets'))" />
+    <Error Condition="!Exists('..\packages\Grasshopper.6.12.19029.6381\build\net45\Grasshopper.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Grasshopper.6.12.19029.6381\build\net45\Grasshopper.targets'))" />
     <Error Condition="!Exists('..\packages\SQLitePCLRaw.lib.e_sqlite3.linux.1.1.11\build\net35\SQLitePCLRaw.lib.e_sqlite3.linux.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\SQLitePCLRaw.lib.e_sqlite3.linux.1.1.11\build\net35\SQLitePCLRaw.lib.e_sqlite3.linux.targets'))" />
     <Error Condition="!Exists('..\packages\SQLitePCLRaw.lib.e_sqlite3.osx.1.1.11\build\net35\SQLitePCLRaw.lib.e_sqlite3.osx.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\SQLitePCLRaw.lib.e_sqlite3.osx.1.1.11\build\net35\SQLitePCLRaw.lib.e_sqlite3.osx.targets'))" />
     <Error Condition="!Exists('..\packages\SQLitePCLRaw.lib.e_sqlite3.v110_xp.1.1.11\build\net35\SQLitePCLRaw.lib.e_sqlite3.v110_xp.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\SQLitePCLRaw.lib.e_sqlite3.v110_xp.1.1.11\build\net35\SQLitePCLRaw.lib.e_sqlite3.v110_xp.targets'))" />
-    <Error Condition="!Exists('..\packages\RhinoCommon.6.12.19029.6381\build\net45\RhinoCommon.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\RhinoCommon.6.12.19029.6381\build\net45\RhinoCommon.targets'))" />
-    <Error Condition="!Exists('..\packages\Grasshopper.6.12.19029.6381\build\net45\Grasshopper.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Grasshopper.6.12.19029.6381\build\net45\Grasshopper.targets'))" />
   </Target>
+  <Import Project="..\packages\Grasshopper.6.12.19029.6381\build\net45\Grasshopper.targets" Condition="Exists('..\packages\Grasshopper.6.12.19029.6381\build\net45\Grasshopper.targets')" />
+  <Import Project="..\packages\SQLitePCLRaw.lib.e_sqlite3.linux.1.1.11\build\net35\SQLitePCLRaw.lib.e_sqlite3.linux.targets" Condition="Exists('..\packages\SQLitePCLRaw.lib.e_sqlite3.linux.1.1.11\build\net35\SQLitePCLRaw.lib.e_sqlite3.linux.targets')" />
   <Import Project="..\packages\SQLitePCLRaw.lib.e_sqlite3.osx.1.1.11\build\net35\SQLitePCLRaw.lib.e_sqlite3.osx.targets" Condition="Exists('..\packages\SQLitePCLRaw.lib.e_sqlite3.osx.1.1.11\build\net35\SQLitePCLRaw.lib.e_sqlite3.osx.targets')" />
   <Import Project="..\packages\SQLitePCLRaw.lib.e_sqlite3.v110_xp.1.1.11\build\net35\SQLitePCLRaw.lib.e_sqlite3.v110_xp.targets" Condition="Exists('..\packages\SQLitePCLRaw.lib.e_sqlite3.v110_xp.1.1.11\build\net35\SQLitePCLRaw.lib.e_sqlite3.v110_xp.targets')" />
-  <Import Project="..\packages\RhinoCommon.6.12.19029.6381\build\net45\RhinoCommon.targets" Condition="Exists('..\packages\RhinoCommon.6.12.19029.6381\build\net45\RhinoCommon.targets')" />
-  <Import Project="..\packages\Grasshopper.6.12.19029.6381\build\net45\Grasshopper.targets" Condition="Exists('..\packages\Grasshopper.6.12.19029.6381\build\net45\Grasshopper.targets')" />
 </Project>

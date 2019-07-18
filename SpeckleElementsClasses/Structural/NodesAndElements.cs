@@ -1,12 +1,11 @@
-﻿extern alias SpeckleNewtonsoft;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 using SpeckleCore;
 using SpeckleCoreGeometryClasses;
-using SNJ = SpeckleNewtonsoft.Newtonsoft.Json;
 
 namespace SpeckleElements
 {
@@ -31,7 +30,7 @@ namespace SpeckleElements
   {
     public override string Type { get => base.Type + "/StructuralNode"; }
 
-    [SNJ.JsonIgnore]
+    [JsonIgnore]
     private Dictionary<string, object> StructuralProperties
     {
       get
@@ -55,7 +54,7 @@ namespace SpeckleElements
     }
 
     /// <summary>Base SpecklePoint.</summary>
-    [SNJ.JsonIgnore]
+    [JsonIgnore]
     public SpecklePoint basePoint
     {
       get => this as SpecklePoint;
@@ -63,7 +62,7 @@ namespace SpeckleElements
     }
 
     /// <summary>Local axis of the node.</summary>
-    [SNJ.JsonIgnore]
+    [JsonIgnore]
     public StructuralAxis Axis
     {
       get => StructuralProperties.ContainsKey("axis") ? (StructuralProperties["axis"] as StructuralAxis) : null;
@@ -71,7 +70,7 @@ namespace SpeckleElements
     }
 
     /// <summary>A list of the X, Y, Z, Rx, Ry, and Rz restraints.</summary>
-    [SNJ.JsonIgnore]
+    [JsonIgnore]
     public StructuralVectorBoolSix Restraint
     {
       get => StructuralProperties.ContainsKey("restraint") ? (StructuralProperties["restraint"] as StructuralVectorBoolSix) : null;
@@ -79,7 +78,7 @@ namespace SpeckleElements
     }
 
     /// <summary>A list of the X, Y, Z, Rx, Ry, and Rz stiffnesses.</summary>
-    [SNJ.JsonIgnore]
+    [JsonIgnore]
     public StructuralVectorSix Stiffness
     {
       get => StructuralProperties.ContainsKey("stiffness") ? (StructuralProperties["stiffness"] as StructuralVectorSix) : null;
@@ -87,7 +86,7 @@ namespace SpeckleElements
     }
 
     /// <summary>Mass of the node.</summary>
-    [SNJ.JsonIgnore]
+    [JsonIgnore]
     public double Mass
     {
       get => StructuralProperties.ContainsKey("mass") ? ((double)StructuralProperties["mass"]) : 0;
@@ -95,7 +94,7 @@ namespace SpeckleElements
     }
 
     /// <summary>Analysis results.</summary>
-    [SNJ.JsonIgnore]
+    [JsonIgnore]
     public Dictionary<string, object> Result
     {
       get => StructuralProperties.ContainsKey("result") ? (StructuralProperties["result"] as Dictionary<string, object>) : null;
@@ -103,7 +102,7 @@ namespace SpeckleElements
     }
 
     /// <summary>GSA local mesh size around node.</summary>
-    [SNJ.JsonIgnore]
+    [JsonIgnore]
     public double GSALocalMeshSize
     {
       get => StructuralProperties.ContainsKey("gsaLocalMeshSize") ? ((double)StructuralProperties["gsaLocalMeshSize"]) : 0;
@@ -116,7 +115,7 @@ namespace SpeckleElements
   {
     public override string Type { get => base.Type + "/Structural1DElement"; }
 
-    [SNJ.JsonIgnore]
+    [JsonIgnore]
     private Dictionary<string, object> StructuralProperties
     {
       get
@@ -140,7 +139,7 @@ namespace SpeckleElements
     }
 
     /// <summary>Base SpeckleLine.</summary>
-    [SNJ.JsonIgnore]
+    [JsonIgnore]
     public SpeckleLine baseLine
     {
       get => this as SpeckleLine;
@@ -148,7 +147,7 @@ namespace SpeckleElements
     }
 
     /// <summary>Type of 1D element.</summary>
-    [SNJ.JsonIgnore]
+    [JsonIgnore]
     public Structural1DElementType ElementType
     {
       get => StructuralProperties.ContainsKey("elementType") ? (Structural1DElementType)Enum.Parse(typeof(Structural1DElementType), (StructuralProperties["elementType"] as string), true) : Structural1DElementType.Generic;
@@ -156,7 +155,7 @@ namespace SpeckleElements
     }
 
     /// <summary>Application ID of Structural1DProperty.</summary>
-    [SNJ.JsonIgnore]
+    [JsonIgnore]
     public string PropertyRef
     {
       get => StructuralProperties.ContainsKey("propertyRef") ? (StructuralProperties["propertyRef"] as string) : null;
@@ -164,7 +163,7 @@ namespace SpeckleElements
     }
 
     /// <summary>Local axis of 1D element.</summary>
-    [SNJ.JsonIgnore]
+    [JsonIgnore]
     public StructuralVectorThree ZAxis
     {
       get => StructuralProperties.ContainsKey("zAxis") ? (StructuralProperties["zAxis"] as StructuralVectorThree) : null;
@@ -172,7 +171,7 @@ namespace SpeckleElements
     }
 
     /// <summary>List of X, Y, Z, Rx, Ry, and Rz releases on each end.</summary>
-    [SNJ.JsonIgnore]
+    [JsonIgnore]
     public List<StructuralVectorBoolSix> EndRelease
     {
       get
@@ -200,7 +199,7 @@ namespace SpeckleElements
     }
 
     /// <summary>List of X, Y, and, Z offsets on each end.</summary>
-    [SNJ.JsonIgnore]
+    [JsonIgnore]
     public List<StructuralVectorThree> Offset
     {
       get
@@ -228,7 +227,7 @@ namespace SpeckleElements
     }
 
     /// <summary>GSA target mesh size.</summary>
-    [SNJ.JsonIgnore]
+    [JsonIgnore]
     public double GSAMeshSize
     {
       get => StructuralProperties.ContainsKey("gsaMeshSize") ? ((double)StructuralProperties["gsaMeshSize"]) : 0;
@@ -236,7 +235,7 @@ namespace SpeckleElements
     }
 
     /// <summary>GSA dummy status.</summary>
-    [SNJ.JsonIgnore]
+    [JsonIgnore]
     public bool GSADummy
     {
       get => StructuralProperties.ContainsKey("gsaDummy") ? ((bool)StructuralProperties["gsaDummy"]) : false;
@@ -244,7 +243,7 @@ namespace SpeckleElements
     }
 
     /// <summary>Vertex location of results.</summary>
-    [SNJ.JsonIgnore]
+    [JsonIgnore]
     public List<double> ResultVertices
     {
       get
@@ -273,7 +272,7 @@ namespace SpeckleElements
     }
 
     /// <summary>Analysis results.</summary>
-    [SNJ.JsonIgnore]
+    [JsonIgnore]
     public Dictionary<string, object> Result
     {
       get => StructuralProperties.ContainsKey("result") ? (StructuralProperties["result"] as Dictionary<string, object>) : null;
@@ -286,7 +285,7 @@ namespace SpeckleElements
   {
     public override string Type { get => base.Type + "/Structural1DElementPolyline"; }
 
-    [SNJ.JsonIgnore]
+    [JsonIgnore]
     private Dictionary<string, object> StructuralProperties
     {
       get
@@ -310,7 +309,7 @@ namespace SpeckleElements
     }
 
     /// <summary>Application ID of elements to reference from other objects.</summary>
-    [SNJ.JsonIgnore]
+    [JsonIgnore]
     public List<string> ElementApplicationId
     {
       get
@@ -339,7 +338,7 @@ namespace SpeckleElements
     }
 
     /// <summary>Base SpecklePolyline.</summary>
-    [SNJ.JsonIgnore]
+    [JsonIgnore]
     public SpecklePolyline basePolyline
     {
       get => this as SpecklePolyline;
@@ -352,7 +351,7 @@ namespace SpeckleElements
     }
 
     /// <summary>Type of 1D element.</summary>
-    [SNJ.JsonIgnore]
+    [JsonIgnore]
     public Structural1DElementType ElementType
     {
       get => StructuralProperties.ContainsKey("elementType") ? (Structural1DElementType)Enum.Parse(typeof(Structural1DElementType), (StructuralProperties["elementType"] as string), true) : Structural1DElementType.Generic;
@@ -360,7 +359,7 @@ namespace SpeckleElements
     }
 
     /// <summary>Application ID of Structural1DProperty.</summary>
-    [SNJ.JsonIgnore]
+    [JsonIgnore]
     public string PropertyRef
     {
       get => StructuralProperties.ContainsKey("propertyRef") ? (StructuralProperties["propertyRef"] as string) : null;
@@ -368,7 +367,7 @@ namespace SpeckleElements
     }
 
     /// <summary>Local Z axis of 1D elements.</summary>
-    [SNJ.JsonIgnore]
+    [JsonIgnore]
     public List<StructuralVectorThree> ZAxis
     {
       get
@@ -397,7 +396,7 @@ namespace SpeckleElements
     }
 
     /// <summary>List of X, Y, Z, Rx, Ry, and Rz releases of each node.</summary>
-    [SNJ.JsonIgnore]
+    [JsonIgnore]
     public List<StructuralVectorBoolSix> EndRelease
     {
       get
@@ -426,7 +425,7 @@ namespace SpeckleElements
     }
 
     /// <summary>List of X, Y, Z, Rx, Ry, and Rz offsets of each node.</summary>
-    [SNJ.JsonIgnore]
+    [JsonIgnore]
     public List<StructuralVectorThree> Offset
     {
       get
@@ -455,7 +454,7 @@ namespace SpeckleElements
     }
 
     /// <summary>GSA target mesh size.</summary>
-    [SNJ.JsonIgnore]
+    [JsonIgnore]
     public double GSAMeshSize
     {
       get => StructuralProperties.ContainsKey("gsaMeshSize") ? ((double)StructuralProperties["gsaMeshSize"]) : 0;
@@ -463,7 +462,7 @@ namespace SpeckleElements
     }
 
     /// <summary>GSA dummy status.</summary>
-    [SNJ.JsonIgnore]
+    [JsonIgnore]
     public bool GSADummy
     {
       get => StructuralProperties.ContainsKey("gsaDummy") ? ((bool)StructuralProperties["gsaDummy"]) : false;
@@ -471,7 +470,7 @@ namespace SpeckleElements
     }
 
     /// <summary>Vertex location of results.</summary>
-    [SNJ.JsonIgnore]
+    [JsonIgnore]
     public List<double> ResultVertices
     {
       get
@@ -500,7 +499,7 @@ namespace SpeckleElements
     }
 
     /// <summary>Analysis results.</summary>
-    [SNJ.JsonIgnore]
+    [JsonIgnore]
     public Dictionary<string, object> Result
     {
       get => StructuralProperties.ContainsKey("result") ? (StructuralProperties["result"] as Dictionary<string, object>) : null;
@@ -513,7 +512,7 @@ namespace SpeckleElements
   {
     public override string Type { get => base.Type + "/Structural2DElement"; }
 
-    [SNJ.JsonIgnore]
+    [JsonIgnore]
     private Dictionary<string, object> StructuralProperties
     {
       get
@@ -537,7 +536,7 @@ namespace SpeckleElements
     }
 
     /// <summary>Base SpeckleMesh.</summary>
-    [SNJ.JsonIgnore]
+    [JsonIgnore]
     public SpeckleMesh baseMesh
     {
       get => this as SpeckleMesh;
@@ -551,7 +550,7 @@ namespace SpeckleElements
     }
 
     /// <summary>Type of 2D element.</summary>
-    [SNJ.JsonIgnore]
+    [JsonIgnore]
     public Structural2DElementType ElementType
     {
       get => StructuralProperties.ContainsKey("elementType") ? (Structural2DElementType)Enum.Parse(typeof(Structural2DElementType), (StructuralProperties["elementType"] as string), true) : Structural2DElementType.Generic;
@@ -559,7 +558,7 @@ namespace SpeckleElements
     }
 
     /// <summary>Application ID of Structural2DProperty.</summary>
-    [SNJ.JsonIgnore]
+    [JsonIgnore]
     public string PropertyRef
     {
       get => StructuralProperties.ContainsKey("propertyRef") ? (StructuralProperties["propertyRef"] as string) : null;
@@ -567,7 +566,7 @@ namespace SpeckleElements
     }
 
     /// <summary>Local axis of 2D element.</summary>
-    [SNJ.JsonIgnore]
+    [JsonIgnore]
     public StructuralAxis Axis
     {
       get => StructuralProperties.ContainsKey("axis") ? (StructuralProperties["axis"] as StructuralAxis) : null;
@@ -575,7 +574,7 @@ namespace SpeckleElements
     }
 
     /// <summary>Offset of 2D element.</summary>
-    [SNJ.JsonIgnore]
+    [JsonIgnore]
     public double Offset
     {
       get => StructuralProperties.ContainsKey("offset") ? ((double)StructuralProperties["offset"]) : 0;
@@ -583,7 +582,7 @@ namespace SpeckleElements
     }
 
     /// <summary>GSA target mesh size.</summary>
-    [SNJ.JsonIgnore]
+    [JsonIgnore]
     public double GSAMeshSize
     {
       get => StructuralProperties.ContainsKey("gsaMeshSize") ? ((double)StructuralProperties["gsaMeshSize"]) : 0;
@@ -591,7 +590,7 @@ namespace SpeckleElements
     }
 
     /// <summary>GSA dummy status.</summary>
-    [SNJ.JsonIgnore]
+    [JsonIgnore]
     public bool GSADummy
     {
       get => StructuralProperties.ContainsKey("gsaDummy") ? ((bool)StructuralProperties["gsaDummy"]) : false;
@@ -599,7 +598,7 @@ namespace SpeckleElements
     }
 
     /// <summary>Analysis results.</summary>
-    [SNJ.JsonIgnore]
+    [JsonIgnore]
     public Dictionary<string, object> Result
     {
       get => StructuralProperties.ContainsKey("result") ? (StructuralProperties["result"] as Dictionary<string, object>) : null;
@@ -612,7 +611,7 @@ namespace SpeckleElements
   {
     public override string Type { get => base.Type + "/Structural2DElementMesh"; }
 
-    [SNJ.JsonIgnore]
+    [JsonIgnore]
     private Dictionary<string, object> StructuralProperties
     {
       get
@@ -636,7 +635,7 @@ namespace SpeckleElements
     }
 
     /// <summary>Application ID of elements to reference from other objects.</summary>
-    [SNJ.JsonIgnore]
+    [JsonIgnore]
     public List<string> ElementApplicationId
     {
       get
@@ -665,7 +664,7 @@ namespace SpeckleElements
     }
 
     /// <summary>Base SpeckleMesh.</summary>
-    [SNJ.JsonIgnore]
+    [JsonIgnore]
     public SpeckleMesh baseMesh
     {
       get => this as SpeckleMesh;
@@ -679,7 +678,7 @@ namespace SpeckleElements
     }
 
     /// <summary>Type of 2D element.</summary>
-    [SNJ.JsonIgnore]
+    [JsonIgnore]
     public Structural2DElementType ElementType
     {
       get => StructuralProperties.ContainsKey("elementType") ? (Structural2DElementType)Enum.Parse(typeof(Structural2DElementType), (StructuralProperties["elementType"] as string), true) : Structural2DElementType.Generic;
@@ -687,7 +686,7 @@ namespace SpeckleElements
     }
 
     /// <summary>Application ID of Structural2DProperty.</summary>
-    [SNJ.JsonIgnore]
+    [JsonIgnore]
     public string PropertyRef
     {
       get => StructuralProperties.ContainsKey("propertyRef") ? (StructuralProperties["propertyRef"] as string) : null;
@@ -695,7 +694,7 @@ namespace SpeckleElements
     }
 
     /// <summary>Local axis of each 2D element.</summary>
-    [SNJ.JsonIgnore]
+    [JsonIgnore]
     public List<StructuralAxis> Axis
     {
       get
@@ -723,7 +722,7 @@ namespace SpeckleElements
     }
 
     /// <summary>Offset of easch 2D element.</summary>
-    [SNJ.JsonIgnore]
+    [JsonIgnore]
     public List<double> Offset
     {
       get
@@ -752,7 +751,7 @@ namespace SpeckleElements
     }
 
     /// <summary>GSA target mesh size.</summary>
-    [SNJ.JsonIgnore]
+    [JsonIgnore]
     public double GSAMeshSize
     {
       get => StructuralProperties.ContainsKey("gsaMeshSize") ? ((double)StructuralProperties["gsaMeshSize"]) : 0;
@@ -760,7 +759,7 @@ namespace SpeckleElements
     }
 
     /// <summary>GSA dummy status.</summary>
-    [SNJ.JsonIgnore]
+    [JsonIgnore]
     public bool GSADummy
     {
       get => StructuralProperties.ContainsKey("gsaDummy") ? ((bool)StructuralProperties["gsaDummy"]) : false;
@@ -768,7 +767,7 @@ namespace SpeckleElements
     }
 
     /// <summary>Analysis results.</summary>
-    [SNJ.JsonIgnore]
+    [JsonIgnore]
     public Dictionary<string, object> Result
     {
       get => StructuralProperties.ContainsKey("result") ? (StructuralProperties["result"] as Dictionary<string, object>) : null;
@@ -781,7 +780,7 @@ namespace SpeckleElements
   {
     public override string Type { get => base.Type + "/Structural2DVoid"; }
 
-    [SNJ.JsonIgnore]
+    [JsonIgnore]
     private Dictionary<string, object> StructuralProperties
     {
       get
@@ -805,7 +804,7 @@ namespace SpeckleElements
     }
 
     /// <summary>Base SpeckleMesh.</summary>
-    [SNJ.JsonIgnore]
+    [JsonIgnore]
     public SpeckleMesh baseMesh
     {
       get => this as SpeckleMesh;

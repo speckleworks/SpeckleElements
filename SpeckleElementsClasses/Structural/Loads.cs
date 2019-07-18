@@ -1,12 +1,11 @@
-﻿extern alias SpeckleNewtonsoft;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 using SpeckleCore;
 using SpeckleCoreGeometryClasses;
-using SNJ = SpeckleNewtonsoft.Newtonsoft.Json;
 
 namespace SpeckleElements
 {
@@ -43,8 +42,8 @@ namespace SpeckleElements
     public override string Type { get => "StructuralLoadCase"; }
 
     /// <summary>Type of load the case contains.</summary>
-    [SNJ.JsonConverter(typeof(SNJ.Converters.StringEnumConverter))]
-    [SNJ.JsonProperty("caseType", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
+    [JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
+    [JsonProperty("caseType", Required = Required.Default, NullValueHandling = NullValueHandling.Ignore)]
     public StructuralLoadCaseType CaseType { get; set; }
   }
 
@@ -54,16 +53,16 @@ namespace SpeckleElements
     public override string Type { get => "StructuralLoadTask"; }
 
     /// <summary>Type of analysis to perform.</summary>
-    [SNJ.JsonConverter(typeof(SNJ.Converters.StringEnumConverter))]
-    [SNJ.JsonProperty("taskType", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
+    [JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
+    [JsonProperty("taskType", Required = Required.Default, NullValueHandling = NullValueHandling.Ignore)]
     public StructuralLoadTaskType TaskType { get; set; }
 
     /// <summary>Application IDs of StructuralLoadCase to include.</summary>
-    [SNJ.JsonProperty("loadCaseRefs", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
+    [JsonProperty("loadCaseRefs", Required = Required.Default, NullValueHandling = NullValueHandling.Ignore)]
     public List<string> LoadCaseRefs { get; set; }
 
     /// <summary>Load factors for each load case.</summary>
-    [SNJ.JsonProperty("loadFactors", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
+    [JsonProperty("loadFactors", Required = Required.Default, NullValueHandling = NullValueHandling.Ignore)]
     public List<double> LoadFactors { get; set; }
   }
 
@@ -73,24 +72,24 @@ namespace SpeckleElements
     public override string Type { get => "StructuralLoadTaskBuckling"; }
 
     /// <summary>Type of analysis to perform.</summary>
-    [SNJ.JsonConverter(typeof(SNJ.Converters.StringEnumConverter))]
-    [SNJ.JsonProperty("taskType", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
+    [JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
+    [JsonProperty("taskType", Required = Required.Default, NullValueHandling = NullValueHandling.Ignore)]
     public StructuralLoadTaskType TaskType { get => StructuralLoadTaskType.Buckling; }
 
     /// <summary>Number of modes.</summary>
-    [SNJ.JsonProperty("numModes", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
+    [JsonProperty("numModes", Required = Required.Default, NullValueHandling = NullValueHandling.Ignore)]
     public int NumModes { get; set; }
 
     /// <summary>Maximum number of iterations.</summary>
-    [SNJ.JsonProperty("maxNumIterations", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
+    [JsonProperty("maxNumIterations", Required = Required.Default, NullValueHandling = NullValueHandling.Ignore)]
     public int MaxNumIterations { get; set; }
 
     /// <summary>Name of the combination case.</summary>
-    [SNJ.JsonProperty("resultCaseRef", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
+    [JsonProperty("resultCaseRef", Required = Required.Default, NullValueHandling = NullValueHandling.Ignore)]
     public string ResultCaseRef { get; set; }
 
     /// <summary>Stage definition for the task</summary>
-    [SNJ.JsonProperty("stageDefinitionRef", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
+    [JsonProperty("stageDefinitionRef", Required = Required.Default, NullValueHandling = NullValueHandling.Ignore)]
     public string StageDefinitionRef { get; set; }
   }
 
@@ -100,24 +99,24 @@ namespace SpeckleElements
     public override string Type { get => "StructuralLoadCombo"; }
 
     /// <summary>Type of combination method.</summary>
-    [SNJ.JsonConverter(typeof(SNJ.Converters.StringEnumConverter))]
-    [SNJ.JsonProperty("comboType", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
+    [JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
+    [JsonProperty("comboType", Required = Required.Default, NullValueHandling = NullValueHandling.Ignore)]
     public StructuralLoadComboType ComboType { get; set; }
 
     /// <summary>Application IDs of StructuralLoadTask to include.</summary>
-    [SNJ.JsonProperty("loadTaskRefs", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
+    [JsonProperty("loadTaskRefs", Required = Required.Default, NullValueHandling = NullValueHandling.Ignore)]
     public List<string> LoadTaskRefs { get; set; }
 
     /// <summary>Load factors for each load task.</summary>
-    [SNJ.JsonProperty("loadTaskFactors", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
+    [JsonProperty("loadTaskFactors", Required = Required.Default, NullValueHandling = NullValueHandling.Ignore)]
     public List<double> LoadTaskFactors { get; set; }
 
     /// <summary>Application IDs of StructuralLoadCombo to include.</summary>
-    [SNJ.JsonProperty("loadComboRefs", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
+    [JsonProperty("loadComboRefs", Required = Required.Default, NullValueHandling = NullValueHandling.Ignore)]
     public List<string> LoadComboRefs { get; set; }
 
     /// <summary>Load factors for each load combo.</summary>
-    [SNJ.JsonProperty("loadComboFactors", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
+    [JsonProperty("loadComboFactors", Required = Required.Default, NullValueHandling = NullValueHandling.Ignore)]
     public List<double> LoadComboFactors { get; set; }
   }
 
@@ -127,11 +126,11 @@ namespace SpeckleElements
     public override string Type { get => "StructuralGravityLoading"; }
 
     /// <summary>A list of x, y, z factors</summary>
-    [SNJ.JsonProperty("gravityFactors", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
+    [JsonProperty("gravityFactors", Required = Required.Default, NullValueHandling = NullValueHandling.Ignore)]
     public StructuralVectorThree GravityFactors { get; set; }
 
     /// <summary>Application ID of StructuralLoadCase.</summary>
-    [SNJ.JsonProperty("loadCaseRef", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
+    [JsonProperty("loadCaseRef", Required = Required.Default, NullValueHandling = NullValueHandling.Ignore)]
     public string LoadCaseRef { get; set; }
   }
 
@@ -141,15 +140,15 @@ namespace SpeckleElements
     public override string Type { get => "Structural0DLoad"; }
 
     /// <summary>A list of Fx, Fy, Fz, Mx, My, and Mz loads.</summary>
-    [SNJ.JsonProperty("loading", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
+    [JsonProperty("loading", Required = Required.Default, NullValueHandling = NullValueHandling.Ignore)]
     public StructuralVectorSix Loading { get; set; }
 
     /// <summary>Application IDs of StructuralNodes to apply load.</summary>
-    [SNJ.JsonProperty("nodeRefs", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
+    [JsonProperty("nodeRefs", Required = Required.Default, NullValueHandling = NullValueHandling.Ignore)]
     public List<string> NodeRefs { get; set; }
 
     /// <summary>Application ID of StructuralLoadCase.</summary>
-    [SNJ.JsonProperty("loadCaseRef", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
+    [JsonProperty("loadCaseRef", Required = Required.Default, NullValueHandling = NullValueHandling.Ignore)]
     public string LoadCaseRef { get; set; }
   }
 
@@ -159,15 +158,15 @@ namespace SpeckleElements
     public override string Type { get => "Structural1DLoad"; }
 
     /// <summary>A list of Fx, Fy, Fz, Mx, My, and Mz loads.</summary>
-    [SNJ.JsonProperty("loading", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
+    [JsonProperty("loading", Required = Required.Default, NullValueHandling = NullValueHandling.Ignore)]
     public StructuralVectorSix Loading { get; set; }
 
     /// <summary>Application IDs of Structural1DElements to apply load.</summary>
-    [SNJ.JsonProperty("elementRefs", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
+    [JsonProperty("elementRefs", Required = Required.Default, NullValueHandling = NullValueHandling.Ignore)]
     public List<string> ElementRefs { get; set; }
 
     /// <summary>Application ID of StructuralLoadCase.</summary>
-    [SNJ.JsonProperty("loadCaseRef", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
+    [JsonProperty("loadCaseRef", Required = Required.Default, NullValueHandling = NullValueHandling.Ignore)]
     public string LoadCaseRef { get; set; }
   }
 
@@ -176,7 +175,7 @@ namespace SpeckleElements
   {
     public override string Type { get => base.Type + "/Structural1DLoadLine"; }
 
-    [SNJ.JsonIgnore]
+    [JsonIgnore]
     private Dictionary<string, object> StructuralProperties
     {
       get
@@ -200,7 +199,7 @@ namespace SpeckleElements
     }
 
     /// <summary>Base SpeckleLine.</summary>
-    [SNJ.JsonIgnore]
+    [JsonIgnore]
     public SpeckleLine baseLine
     {
       get => this as SpeckleLine;
@@ -212,7 +211,7 @@ namespace SpeckleElements
     }
 
     /// <summary>A list of Fx, Fy, Fz, Mx, My, and Mz loads.</summary>
-    [SNJ.JsonIgnore]
+    [JsonIgnore]
     public StructuralVectorSix Loading
     {
       get => StructuralProperties.ContainsKey("loading") ? (StructuralProperties["loading"] as StructuralVectorSix) : null;
@@ -220,7 +219,7 @@ namespace SpeckleElements
     }
 
     /// <summary>Application ID of StructuralLoadCase.</summary>
-    [SNJ.JsonIgnore]
+    [JsonIgnore]
     public string LoadCaseRef
     {
       get => StructuralProperties.ContainsKey("loadCaseRef") ? (StructuralProperties["loadCaseRef"] as string) : null;
@@ -234,15 +233,15 @@ namespace SpeckleElements
     public override string Type { get => "Structural2DLoad"; }
 
     /// <summary>A list of Fx, Fy, and Fz loads.</summary>
-    [SNJ.JsonProperty("loading", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
+    [JsonProperty("loading", Required = Required.Default, NullValueHandling = NullValueHandling.Ignore)]
     public StructuralVectorThree Loading { get; set; }
 
     /// <summary>Application IDs of Structural2DElementMeshes to apply load.</summary>
-    [SNJ.JsonProperty("elementRefs", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
+    [JsonProperty("elementRefs", Required = Required.Default, NullValueHandling = NullValueHandling.Ignore)]
     public List<string> ElementRefs { get; set; }
 
     /// <summary>Application ID of StructuralLoadCase.</summary>
-    [SNJ.JsonProperty("loadCaseRef", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
+    [JsonProperty("loadCaseRef", Required = Required.Default, NullValueHandling = NullValueHandling.Ignore)]
     public string LoadCaseRef { get; set; }
   }
 
@@ -251,7 +250,7 @@ namespace SpeckleElements
   {
     public override string Type { get => base.Type + "/Structural2DLoadPanel"; }
 
-    [SNJ.JsonIgnore]
+    [JsonIgnore]
     private Dictionary<string, object> StructuralProperties
     {
       get
@@ -275,7 +274,7 @@ namespace SpeckleElements
     }
 
     /// <summary>Base SpecklePolyline.</summary>
-    [SNJ.JsonIgnore]
+    [JsonIgnore]
     public SpecklePolyline basePolyline
     {
       get => this as SpecklePolyline;
@@ -288,7 +287,7 @@ namespace SpeckleElements
     }
 
     /// <summary>A list of Fx, Fy, and Fz loads.</summary>
-    [SNJ.JsonIgnore]
+    [JsonIgnore]
     public StructuralVectorThree Loading
     {
       get => StructuralProperties.ContainsKey("loading") ? (StructuralProperties["loading"] as StructuralVectorThree) : null;
@@ -296,7 +295,7 @@ namespace SpeckleElements
     }
 
     /// <summary>Application ID of StructuralLoadCase.</summary>
-    [SNJ.JsonIgnore]
+    [JsonIgnore]
     public string LoadCaseRef
     {
       get => StructuralProperties.ContainsKey("loadCaseRef") ? (StructuralProperties["loadCaseRef"] as string) : null;
@@ -310,19 +309,19 @@ namespace SpeckleElements
     public override string Type { get => "Structural2DThermalLoad"; }
 
     /// <summary>Temperature at the top surface of the element.</summary>
-    [SNJ.JsonProperty("topTemperature", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
+    [JsonProperty("topTemperature", Required = Required.Default, NullValueHandling = NullValueHandling.Ignore)]
     public double TopTemperature;
 
     /// <summary>Temperature at the bottom surface of the element.</summary>
-    [SNJ.JsonProperty("bottomTemperature", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
+    [JsonProperty("bottomTemperature", Required = Required.Default, NullValueHandling = NullValueHandling.Ignore)]
     public double BottomTemperature;
 
     /// <summary>Application ID of StructuralLoadCase.</summary>
-    [SNJ.JsonProperty("loadCaseRef", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
+    [JsonProperty("loadCaseRef", Required = Required.Default, NullValueHandling = NullValueHandling.Ignore)]
     public string LoadCaseRef { get; set; }
 
     /// <summary>Application IDs of Structural2DElements to apply load.</summary>
-    [SNJ.JsonProperty("elementRefs", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
+    [JsonProperty("elementRefs", Required = Required.Default, NullValueHandling = NullValueHandling.Ignore)]
     public List<string> ElementRefs { get; set; }
   }
 

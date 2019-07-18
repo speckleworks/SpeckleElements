@@ -1,6 +1,0 @@
-[submodule "SpeckleCoreGeometry"]
-	path = SpeckleCoreGeometry
-	url = https://github.com/speckleworks/SpeckleCoreGeometry.git
-[submodule "SpeckleCore"]
-	path = SpeckleCore
-	url = https://github.com/speckleworks/SpeckleCore.git

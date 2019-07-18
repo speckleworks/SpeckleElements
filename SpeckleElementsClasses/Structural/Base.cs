@@ -1,4 +1,4 @@
-﻿extern alias SpeckleNewtonsoft;
+﻿
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using SpeckleCore;
 using SpeckleCoreGeometryClasses;
-using SNJ = SpeckleNewtonsoft.Newtonsoft.Json;
+using Newtonsoft.Json;
 
 namespace SpeckleElements
 {
@@ -18,7 +18,7 @@ namespace SpeckleElements
     public override string Type { get => base.Type + "/StructuralVectorThree"; }
 
     /// <summary>Base SpeckleVector.</summary>
-    [SNJ.JsonIgnore]
+    [JsonIgnore]
     public SpeckleVector baseVector
     {
       get => this as SpeckleVector;
@@ -32,7 +32,7 @@ namespace SpeckleElements
     public override string Type { get => "StructuralVectorBoolThree"; }
 
     /// <summary>An array containing the X, Y, and Z values of the vector.</summary>
-    [SNJ.JsonProperty("value", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
+    [JsonProperty("value", Required = Required.Default, NullValueHandling = NullValueHandling.Ignore)]
     public List<bool> Value { get; set; }
   }
 
@@ -42,7 +42,7 @@ namespace SpeckleElements
     public override string Type { get => "StructuralVectorSix"; }
 
     /// <summary>An array containing the X, Y, Z, XX, YY, and ZZ values of the vector.</summary>
-    [SNJ.JsonProperty("value", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
+    [JsonProperty("value", Required = Required.Default, NullValueHandling = NullValueHandling.Ignore)]
     public List<double> Value { get; set; }
   }
 
@@ -52,7 +52,7 @@ namespace SpeckleElements
     public override string Type { get => "StructuralVectorBoolSix"; }
 
     /// <summary>An array containing the X, Y, Z, XX, YY, and ZZ values of the vector.</summary>
-    [SNJ.JsonProperty("value", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
+    [JsonProperty("value", Required = Required.Default, NullValueHandling = NullValueHandling.Ignore)]
     public List<bool> Value { get; set; }
   }
 
@@ -62,7 +62,7 @@ namespace SpeckleElements
     public override string Type { get => base.Type + "/StructuralAxis"; }
 
     /// <summary>Base SpecklePlane.</summary>
-    [SNJ.JsonIgnore]
+    [JsonIgnore]
     public SpecklePlane basePlane
     {
       get => this as SpecklePlane;

@@ -1,12 +1,11 @@
-﻿extern alias SpeckleNewtonsoft;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using SpeckleCore;
 using SpeckleCoreGeometryClasses;
-using SNJ = SpeckleNewtonsoft.Newtonsoft.Json;
+using Newtonsoft.Json;
 
 namespace SpeckleElements
 {

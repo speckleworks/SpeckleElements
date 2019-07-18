@@ -1,12 +1,11 @@
-﻿extern alias SpeckleNewtonsoft;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 using SpeckleCore;
 using SpeckleCoreGeometryClasses;
-using SNJ = SpeckleNewtonsoft.Newtonsoft.Json;
 
 namespace SpeckleElements
 {
@@ -16,16 +15,16 @@ namespace SpeckleElements
     public override string Type { get => "StructuralNodeResult"; }
 
     /// <summary>ApplicationID of object referred to.</summary>
-    [SNJ.JsonProperty("targetRef", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
+    [JsonProperty("targetRef", Required = Required.Default, NullValueHandling = NullValueHandling.Ignore)]
     public string TargetRef { get; set; }
 
     /// <summary>Indicates whether the results are in the global or local axis.</summary>
-    [SNJ.JsonProperty("isGlobal", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
+    [JsonProperty("isGlobal", Required = Required.Default, NullValueHandling = NullValueHandling.Ignore)]
     public bool IsGlobal { get; set; }
 
     /// <summary>Results.</summary>
-    [SNJ.JsonProperty("value", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
-    [SpeckleNewtonsoft.Newtonsoft.Json.JsonConverter(typeof(SpecklePropertiesConverter))]
+    [JsonProperty("value", Required = Required.Default, NullValueHandling = NullValueHandling.Ignore)]
+    [Newtonsoft.Json.JsonConverter(typeof(SpecklePropertiesConverter))]
     public Dictionary<string, object> Value { get; set; }
   }
 
@@ -35,16 +34,16 @@ namespace SpeckleElements
     public override string Type { get => "Structural1DElementResult"; }
 
     /// <summary>ApplicationID of object referred to.</summary>
-    [SNJ.JsonProperty("targetRef", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
+    [JsonProperty("targetRef", Required = Required.Default, NullValueHandling = NullValueHandling.Ignore)]
     public string TargetRef { get; set; }
 
     /// <summary>Indicates whether the results are in the global or local axis.</summary>
-    [SNJ.JsonProperty("isGlobal", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
+    [JsonProperty("isGlobal", Required = Required.Default, NullValueHandling = NullValueHandling.Ignore)]
     public bool IsGlobal { get; set; }
 
     /// <summary>Results.</summary>
-    [SNJ.JsonProperty("value", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
-    [SpeckleNewtonsoft.Newtonsoft.Json.JsonConverter(typeof(SpecklePropertiesConverter))]
+    [JsonProperty("value", Required = Required.Default, NullValueHandling = NullValueHandling.Ignore)]
+    [Newtonsoft.Json.JsonConverter(typeof(SpecklePropertiesConverter))]
     public Dictionary<string, object> Value { get; set; }
   }
 
@@ -54,16 +53,16 @@ namespace SpeckleElements
     public override string Type { get => "Structural2DElementResult"; }
 
     /// <summary>ApplicationID of object referred to.</summary>
-    [SNJ.JsonProperty("targetRef", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
+    [JsonProperty("targetRef", Required = Required.Default, NullValueHandling = NullValueHandling.Ignore)]
     public string TargetRef { get; set; }
 
     /// <summary>Indicates whether the results are in the global or local axis.</summary>
-    [SNJ.JsonProperty("isGlobal", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
+    [JsonProperty("isGlobal", Required = Required.Default, NullValueHandling = NullValueHandling.Ignore)]
     public bool IsGlobal { get; set; }
 
     /// <summary>Results.</summary>
-    [SNJ.JsonProperty("value", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
-    [SpeckleNewtonsoft.Newtonsoft.Json.JsonConverter(typeof(SpecklePropertiesConverter))]
+    [JsonProperty("value", Required = Required.Default, NullValueHandling = NullValueHandling.Ignore)]
+    [Newtonsoft.Json.JsonConverter(typeof(SpecklePropertiesConverter))]
     public Dictionary<string, object> Value { get; set; }
   }
 
@@ -73,24 +72,24 @@ namespace SpeckleElements
     public override string Type { get => "StructuralMiscResult"; }
 
     /// <summary>Description of result.</summary>
-    [SNJ.JsonProperty("description", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
+    [JsonProperty("description", Required = Required.Default, NullValueHandling = NullValueHandling.Ignore)]
     public string Description { get; set; }
 
     /// <summary>ApplicationID of object referred to.</summary>
-    [SNJ.JsonProperty("targetRef", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
+    [JsonProperty("targetRef", Required = Required.Default, NullValueHandling = NullValueHandling.Ignore)]
     public string TargetRef { get; set; }
 
     /// <summary>Indicates whether the results are in the global or local axis.</summary>
-    [SNJ.JsonProperty("isGlobal", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
+    [JsonProperty("isGlobal", Required = Required.Default, NullValueHandling = NullValueHandling.Ignore)]
     public bool IsGlobal { get; set; }
 
     /// <summary>Results.</summary>
-    [SNJ.JsonProperty("value", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
-    [SpeckleNewtonsoft.Newtonsoft.Json.JsonConverter(typeof(SpecklePropertiesConverter))]
+    [JsonProperty("value", Required = Required.Default, NullValueHandling = NullValueHandling.Ignore)]
+    [Newtonsoft.Json.JsonConverter(typeof(SpecklePropertiesConverter))]
     public Dictionary<string, object> Value { get; set; }
 
     /// <summary>String indicating source of result.</summary>
-    [SNJ.JsonProperty("resultSource", Required = SNJ.Required.Default, NullValueHandling = SNJ.NullValueHandling.Ignore)]
+    [JsonProperty("resultSource", Required = Required.Default, NullValueHandling = NullValueHandling.Ignore)]
     public string ResultSource { get; set; }
   }
 }

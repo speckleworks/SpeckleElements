@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("SpeckleElementsBuilder")]
+[assembly: AssemblyTitle("SpeckleElements")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("SpeckleElementsBuilder")]
+[assembly: AssemblyProduct("SpeckleElements")]
 [assembly: AssemblyCopyright("Copyright ©  2019")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("f7980709-1e82-44b6-b3f8-0450a1fe6dc3")]
+[assembly: Guid("42e1db9c-e4d5-4190-9977-874e8143dcc5")]
 
 // Version information for an assembly consists of the following four values:
 //
