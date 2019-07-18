@@ -1,5 +1,4 @@
 ﻿using SpeckleCore;
-using SpeckleElements;
 using System;
 using System.Collections.Generic;
 using System.Drawing;

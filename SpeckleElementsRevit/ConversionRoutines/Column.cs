@@ -19,7 +19,7 @@ namespace SpeckleElementsRevit
       var baseLine = (Curve) SpeckleCore.Converter.Deserialise( obj: myCol.baseLine, excludeAssebmlies: new string[ ] { "SpeckleCoreGeometryDynamo" } );
       var start = baseLine.GetEndPoint( 0 );
       var end = baseLine.GetEndPoint( 1 );
-
+     
       var isVertical = IsColumnVertical( myCol );
 
       // get family symbol; it's used throughout
