@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Autodesk.Revit.DB;
 using SpeckleCore;
-using SpeckleElements;
+using SpeckleElementsClasses;
 
 namespace SpeckleElementsRevit
 {
@@ -74,7 +74,7 @@ namespace SpeckleElementsRevit
 
       // Create base level
       if( myCol.baseLevel == null )
-        myCol.baseLevel = new SpeckleElements.Level() { elevation = baseLine.GetEndPoint( 0 ).Z / Scale, levelName = "Speckle Level " + baseLine.GetEndPoint( 0 ).Z / Scale };
+        myCol.baseLevel = new SpeckleElementsClasses.Level() { elevation = baseLine.GetEndPoint( 0 ).Z / Scale, levelName = "Speckle Level " + baseLine.GetEndPoint( 0 ).Z / Scale };
       var baseLevel = myCol.baseLevel.ToNative() as Autodesk.Revit.DB.Level;
 
 
@@ -92,8 +92,11 @@ namespace SpeckleElementsRevit
         familyInstance.get_Parameter( BuiltInParameter.FAMILY_TOP_LEVEL_PARAM ).Set( myTopLevel.Id );
       }
 
+      familyInstance.get_Parameter(BuiltInParameter.FAMILY_BASE_LEVEL_OFFSET_PARAM).Set(myCol.bottomOffset);
+      familyInstance.get_Parameter(BuiltInParameter.FAMILY_TOP_LEVEL_OFFSET_PARAM).Set(myCol.topOffset);
+
       // Set the location curve
-      if( !isVertical )
+      if ( !isVertical )
       {
         var locationCurve = familyInstance.Location as LocationCurve;
         locationCurve.Curve = baseLine;

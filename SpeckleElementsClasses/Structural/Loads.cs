@@ -7,7 +7,7 @@ using Newtonsoft.Json;
 using SpeckleCore;
 using SpeckleCoreGeometryClasses;
 
-namespace SpeckleElements
+namespace SpeckleElementsClasses
 {
   public enum StructuralLoadCaseType
   {

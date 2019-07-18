@@ -7,7 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Media.Media3D;
 
-namespace SpeckleElements
+namespace SpeckleElementsClasses
 {
   public partial class StructuralVectorThree
   {

@@ -6,13 +6,13 @@ using System.Threading.Tasks;
 using Autodesk.Revit.UI;
 using Autodesk.Revit.DB;
 using SpeckleCore;
-using SpeckleElements;
+using SpeckleElementsClasses;
 
 namespace SpeckleElementsRevit
 {
   public static partial class Conversions
   {
-    public static Autodesk.Revit.DB.Level ToNative( this SpeckleElements.Level myLevel )
+    public static Autodesk.Revit.DB.Level ToNative( this SpeckleElementsClasses.Level myLevel )
     {
       var (docObj, stateObj) = GetExistingElementByApplicationId( myLevel.ApplicationId, myLevel.Type );
 
@@ -62,10 +62,10 @@ namespace SpeckleElementsRevit
       return existingLevel;
     }
 
-    public static SpeckleElements.Level ToSpeckle( this Autodesk.Revit.DB.Level myLevel )
+    public static SpeckleElementsClasses.Level ToSpeckle( this Autodesk.Revit.DB.Level myLevel )
     {
       // TODO
-      var speckleLevel = new SpeckleElements.Level();
+      var speckleLevel = new SpeckleElementsClasses.Level();
       speckleLevel.elevation = myLevel.Elevation / Scale; // UnitUtils.ConvertFromInternalUnits(myLevel.Elevation, DisplayUnitType.Meters)
       speckleLevel.levelName = myLevel.Name;
       speckleLevel.parameters = GetElementParams( myLevel );

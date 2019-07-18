@@ -13,7 +13,7 @@ namespace SpeckleElementsRevit
   {
     // TODO: A polycurve spawning multiple walls is not yet handled properly with diffing, etc.
     // TODO: Most probably, just get rid of the polyline wall handling stuff. It's rather annyoing and confusing...
-    public static Wall ToNative( this SpeckleElements.Wall myWall )
+    public static Wall ToNative( this SpeckleElementsClasses.Wall myWall )
     {
       var (docObj, stateObj) = GetExistingElementByApplicationId( myWall.ApplicationId, myWall.Type );
 
@@ -28,7 +28,7 @@ namespace SpeckleElementsRevit
       {
 
         if( myWall.baseLevel == null )
-          myWall.baseLevel = new SpeckleElements.Level() { elevation = baseCurve.GetEndPoint( 0 ).Z / Scale, levelName = "Speckle Level " + baseCurve.GetEndPoint( 0 ).Z / Scale };
+          myWall.baseLevel = new SpeckleElementsClasses.Level() { elevation = baseCurve.GetEndPoint( 0 ).Z / Scale, levelName = "Speckle Level " + baseCurve.GetEndPoint( 0 ).Z / Scale };
 
         var levelId = ((Level) myWall.baseLevel.ToNative()).Id;
         var revitWall = Wall.Create( Doc, baseCurve, myWallType.Id, levelId, myWall.height * Scale, myWall.offset * Scale, false, true );
@@ -101,9 +101,9 @@ namespace SpeckleElementsRevit
     // TODO: Wall to Speckle
     // TODO: Set levels, heights, etc.
     // Does not go through nicely from revit to revit
-    public static SpeckleElements.Wall ToSpeckle( this Autodesk.Revit.DB.Wall myWall )
+    public static SpeckleElementsClasses.Wall ToSpeckle( this Autodesk.Revit.DB.Wall myWall )
     {
-      var speckleWall = new SpeckleElements.Wall();
+      var speckleWall = new SpeckleElementsClasses.Wall();
       speckleWall.baseCurve = SpeckleCore.Converter.Serialise( ((LocationCurve) myWall.Location).Curve ) as SpeckleObject;
 
       var heightParam = myWall.get_Parameter( BuiltInParameter.WALL_USER_HEIGHT_PARAM );

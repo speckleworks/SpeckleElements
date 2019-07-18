@@ -7,7 +7,7 @@ using Autodesk.Revit.DB;
 using Autodesk.Revit.DB.Structure;
 using SpeckleCore;
 using SpeckleCoreGeometryClasses;
-using SpeckleElements;
+using SpeckleElementsClasses;
 
 namespace SpeckleElementsRevit
 {

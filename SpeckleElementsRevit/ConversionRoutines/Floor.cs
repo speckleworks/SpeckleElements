@@ -6,14 +6,14 @@ using System.Threading.Tasks;
 using Autodesk.Revit.DB;
 using SpeckleCore;
 using SpeckleCoreGeometryClasses;
-using SpeckleElements;
+using SpeckleElementsClasses;
 
 namespace SpeckleElementsRevit
 {
   public static partial class Conversions
   {
 
-    public static Autodesk.Revit.DB.Floor ToNative( this SpeckleElements.Floor mySlab )
+    public static Autodesk.Revit.DB.Floor ToNative( this SpeckleElementsClasses.Floor mySlab )
     {
       var (docObj, stateObj) = GetExistingElementByApplicationId( mySlab.ApplicationId, mySlab.Type );
 
@@ -27,7 +27,7 @@ namespace SpeckleElementsRevit
       foreach( var x in segments ) slabCurves.Append( x );
 
       if( mySlab.level == null )
-        mySlab.level = new SpeckleElements.Level() { createView = true, elevation = segments[ 0 ].GetEndPoint( 0 ).Z / Scale };
+        mySlab.level = new SpeckleElementsClasses.Level() { createView = true, elevation = segments[ 0 ].GetEndPoint( 0 ).Z / Scale };
 
       // NOTE: I have not found a way to edit a slab outline properly, so whenever we bake, we renew the element.
       if( docObj != null )
@@ -51,9 +51,9 @@ namespace SpeckleElementsRevit
       return myTypeBasedFloor;
     }
 
-    public static SpeckleElements.Floor ToSpeckle( this Autodesk.Revit.DB.Floor myFloor )
+    public static SpeckleElementsClasses.Floor ToSpeckle( this Autodesk.Revit.DB.Floor myFloor )
     {
-      var speckleFloor = new SpeckleElements.Floor();
+      var speckleFloor = new SpeckleElementsClasses.Floor();
 
       speckleFloor.parameters = GetElementParams( myFloor );
 

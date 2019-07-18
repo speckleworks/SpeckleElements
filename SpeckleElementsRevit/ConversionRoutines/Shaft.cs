@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Autodesk.Revit.DB;
 using SpeckleCore;
 using SpeckleCoreGeometryClasses;
-using SpeckleElements;
+using SpeckleElementsClasses;
 
 namespace SpeckleElementsRevit
 {
@@ -36,7 +36,7 @@ namespace SpeckleElementsRevit
     // TODO: actually test this
     public static Shaft ToSpeckle( this Opening myShaft )
     {
-      var spkShaft = new SpeckleElements.Shaft();      
+      var spkShaft = new SpeckleElementsClasses.Shaft();      
       var poly = new SpecklePolycurve();
       poly.Segments = new List<SpeckleObject>();
 

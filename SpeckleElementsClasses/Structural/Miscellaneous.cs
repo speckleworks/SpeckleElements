@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Newtonsoft.Json;
 using SpeckleCore;
 using SpeckleCoreGeometryClasses;
-namespace SpeckleElements
+namespace SpeckleElementsClasses
 {
   [Serializable]
   public partial class StructuralAssembly : SpeckleLine, IStructural

@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using SpeckleCore;
 using SpeckleCoreGeometryClasses;
-using SpeckleElements;
+using SpeckleElementsClasses;
 
 namespace SpeckleElementsGSA
 {

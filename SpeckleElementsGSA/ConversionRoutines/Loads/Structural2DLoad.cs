@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using System.Windows.Media.Media3D;
 using SpeckleCore;
 using SpeckleCoreGeometryClasses;
-using SpeckleElements;
+using SpeckleElementsClasses;
 
 namespace SpeckleElementsGSA
 {

@@ -8,7 +8,7 @@ using SpeckleCore;
 using SpeckleCoreGeometryClasses;
 using Newtonsoft.Json;
 
-namespace SpeckleElements
+namespace SpeckleElementsClasses
 {
   public interface IStructural : ISpeckleInitializer { }
   

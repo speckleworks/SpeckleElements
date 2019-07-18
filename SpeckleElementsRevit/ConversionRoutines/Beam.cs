@@ -7,7 +7,7 @@ using Autodesk.Revit.DB;
 using Autodesk.Revit.DB.Structure;
 using SpeckleCore;
 using SpeckleCoreGeometryClasses;
-using SpeckleElements;
+using SpeckleElementsClasses;
 
 namespace SpeckleElementsRevit
 {
@@ -66,7 +66,7 @@ namespace SpeckleElementsRevit
       }
 
       if( myBeam.level == null )
-        myBeam.level = new SpeckleElements.Level() { elevation = 0, levelName = "Speckle Level 0" };
+        myBeam.level = new SpeckleElementsClasses.Level() { elevation = 0, levelName = "Speckle Level 0" };
       var myLevel = myBeam.level.ToNative() as Autodesk.Revit.DB.Level;
 
       var familyInstance = Doc.Create.NewFamilyInstance( baseLine, familySymbol, myLevel, StructuralType.Beam );

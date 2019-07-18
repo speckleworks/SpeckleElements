@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Autodesk.Revit.UI;
 using Autodesk.Revit.DB;
 using SpeckleCore;
-using SpeckleElements;
+using SpeckleElementsClasses;
 using SpeckleCoreGeometryClasses;
 
 namespace SpeckleElementsRevit

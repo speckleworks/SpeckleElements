@@ -7,7 +7,7 @@ using Newtonsoft.Json;
 using SpeckleCore;
 using SpeckleCoreGeometryClasses;
 
-namespace SpeckleElements
+namespace SpeckleElementsClasses
 {
   /// <summary>
   /// Lol interface to force some revit specific props. Not really sure it's needed. It might go.

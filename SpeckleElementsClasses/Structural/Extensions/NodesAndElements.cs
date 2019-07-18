@@ -7,7 +7,7 @@ using System.Windows.Media.Media3D;
 using SpeckleCore;
 using SpeckleCoreGeometryClasses;
 
-namespace SpeckleElements
+namespace SpeckleElementsClasses
 {
   public partial class StructuralNode
   {
