@@ -76,7 +76,7 @@ namespace SpeckleElementsRevit
     {
       var myParamDict = new Dictionary<string, object>();
 
-      foreach( Parameter p in myElement.Parameters )
+      foreach( Parameter p in myElement.ParametersMap )
       {
         switch( p.StorageType )
         {
@@ -125,7 +125,7 @@ namespace SpeckleElementsRevit
       return myParamDict;
     }
 
-    public static void SetElementParams( Element myElement, Dictionary<string, object> parameters )
+    public static void SetElementParams( Element myElement, Dictionary<string, object> parameters, List<string> exclusions = null )
     {
       // TODO: Set parameters please
       if( myElement == null ) return;
@@ -136,9 +136,10 @@ namespace SpeckleElementsRevit
       foreach( var kvp in parameters )
       {
         if( kvp.Key.Contains( "__unitType::" ) ) continue; // skip unit types please
+        if (exclusions != null && exclusions.Contains(kvp.Key)) continue;
         try
         {
-          var myParam = myElement.LookupParameter( kvp.Key );
+          var myParam = myElement.ParametersMap.get_Item( kvp.Key );
           if( myParam == null ) continue;
           if( myParam.IsReadOnly ) continue;
 
