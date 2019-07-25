@@ -323,8 +323,11 @@ namespace SpeckleElementsRevit
         try
         {
           var matType = myFamily.StructuralMaterialType;
-
-          var matAsset = ((Autodesk.Revit.DB.PropertySetElement)Doc.GetElement(((Autodesk.Revit.DB.Material)Doc.GetElement(myFamily.StructuralMaterialId)).StructuralAssetId)).GetStructuralAsset();
+          
+          var structMat = (Autodesk.Revit.DB.Material)Doc.GetElement(myFamily.StructuralMaterialId);
+          if (structMat == null)
+            structMat = (Autodesk.Revit.DB.Material)Doc.GetElement(myFamily.Symbol.get_Parameter(BuiltInParameter.STRUCTURAL_MATERIAL_PARAM).AsElementId());
+          var matAsset = ((Autodesk.Revit.DB.PropertySetElement)Doc.GetElement(structMat.StructuralAssetId)).GetStructuralAsset();
 
           SpeckleObject myMaterial = null;
 
