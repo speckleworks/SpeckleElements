@@ -266,7 +266,7 @@ namespace SpeckleElementsGSA
             load.Value.Loading.TransformOntoAxis(loadAxis);
 
             // If the loading already exists, add element ref to list
-            GSA2DLoad match = loadSubList.Count() > 0 ? loadSubList.Where(l => l.Value.Loading.Equals(load.Value.Loading)).First() : null;
+            GSA2DLoad match = loadSubList.Count() > 0 ? loadSubList.Where(l => (l.Value.Loading.Value as List<double>).SequenceEqual(load.Value.Loading.Value as List<double>)).First() : null;
             if (match != null)
               match.Value.ElementRefs.Add(nRef);
             else

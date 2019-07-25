@@ -186,12 +186,12 @@ namespace SpeckleElementsGSA
           // Transform load to defined axis
           GSANode node = nodes.Where(n => (n.Value.ApplicationId == nRef)).First();
           string gwaRecord = null;
-          StructuralAxis loadAxis = GSA.Parse0DAxis(initLoad.Axis, out gwaRecord, node.Value.ToArray());
+          StructuralAxis loadAxis = GSA.Parse0DAxis(initLoad.Axis, out gwaRecord, node.Value.Value.ToArray());
           load.Value.Loading = initLoad.Value.Loading;
           load.Value.Loading.TransformOntoAxis(loadAxis);
 
           // If the loading already exists, add node ref to list
-          GSA0DLoad match = loadSubList.Count() > 0 ? loadSubList.Where(l => l.Value.Loading.Value.SequenceEqual(load.Value.Loading.Value)).First() : null;
+          GSA0DLoad match = loadSubList.Count() > 0 ? loadSubList.Where(l => (l.Value.Loading.Value as List<double>).SequenceEqual(load.Value.Loading.Value as List<double>)).First() : null;
           if (match != null)
           {
             match.Value.NodeRefs.Add(nRef);
