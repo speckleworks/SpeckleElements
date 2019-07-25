@@ -137,4 +137,22 @@ namespace SpeckleElementsClasses
     [JsonProperty("constructionStageRefs", Required = Required.Default, NullValueHandling = NullValueHandling.Ignore)]
     public List<string> ConstructionStageRefs { get; set; }
   }
+
+  [Serializable]
+  public partial class StructuralRigidConstraints : SpeckleObject, IStructural
+  {
+    public override string Type { get => "StructuralRigidConstraints"; }
+
+    /// <summary>A list of the X, Y, Z, Rx, Ry, and Rz constraints.</summary>
+    [JsonProperty("constraints", Required = Required.Default, NullValueHandling = NullValueHandling.Ignore)]
+    public StructuralVectorBoolSix Constraint { get; set; }
+
+    /// <summary>Application IDs of StructuralNodes to apply constraints.</summary>
+    [JsonProperty("nodeRefs", Required = Required.Default, NullValueHandling = NullValueHandling.Ignore)]
+    public List<string> NodeRefs { get; set; }
+
+    /// <summary>Application IDs of StructuralConstructionStages to apply restraints on</summary>
+    [JsonProperty("constructionStageRefs", Required = Required.Default, NullValueHandling = NullValueHandling.Ignore)]
+    public List<string> ConstructionStageRefs { get; set; }
+  }
 }

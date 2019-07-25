@@ -162,7 +162,7 @@ namespace SpeckleElementsGSA
       foreach (string p in newLines)
       {
         string[] pPieces = p.ListSplit("\t");
-        if (pPieces[4].ParseElementNumNodes() == 2 && pPieces[4] == "SPRING" )
+        if ( pPieces[4] == "SPRING" )
         {
           GSA1DSpring spring = new GSA1DSpring() { GWACommand = p };
           spring.ParseGWACommand(GSA, nodes);

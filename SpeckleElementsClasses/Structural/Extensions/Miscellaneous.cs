@@ -13,7 +13,7 @@ namespace SpeckleElementsClasses
   {
     public StructuralAssembly() { }
 
-    public StructuralAssembly(double[] value, string[] elementRefs, SpeckleLine baseLine, SpecklePoint orientationPoint, int numPoints = 0, string applicationId = null, double width = 0, Dictionary<string, object> properties = null)
+    public StructuralAssembly(double[] value, string[] elementRefs, SpeckleLine baseLine, SpecklePoint orientationPoint, int numPoints = 0, double width = 0, string applicationId = null, Dictionary<string, object> properties = null)
     {
       this.Properties = properties;
       this.ApplicationId = applicationId;
@@ -84,4 +84,27 @@ namespace SpeckleElementsClasses
       this.GenerateHash();
     }
   }
+
+  public partial class StructuralRigidConstraints
+  {
+    public StructuralRigidConstraints() { }
+
+    public StructuralRigidConstraints(StructuralVectorBoolSix constraint, string[] nodeRefs, string[] constructionStageRefs, string applicationId = null, Dictionary<string, object> properties = null)
+    {
+      this.Properties = properties;
+      this.ApplicationId = applicationId;
+      this.Constraint = constraint;
+      this.NodeRefs = nodeRefs.ToList();
+      this.ConstructionStageRefs = constructionStageRefs.ToList();
+
+      GenerateHash();
+    }
+
+    public override void Scale(double factor)
+    {
+      this.Properties = ScaleProperties(this.Properties, factor);
+      this.GenerateHash();
+    }
+  }
+
 }
