@@ -32,7 +32,7 @@ namespace SpeckleElementsGSA
     QUAD8 = 8,
     ROD = 2,
     SPACER = 2,
-    SRING = 2,
+    SPRING = 2,
     STRUT = 2,
     TETRA10 = 10,
     TETRA4 = 4,

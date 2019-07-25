@@ -174,6 +174,7 @@
     <Compile Include="ConversionRoutines\Loads\Structural2DThermalLoad.cs" />
     <Compile Include="ConversionRoutines\Miscellaneous\StructuralAssembly.cs" />
     <Compile Include="ConversionRoutines\Loads\StructuralGravityLoading.cs" />
+    <Compile Include="ConversionRoutines\NodesAndElements\Structural1DSpring.cs" />
     <Compile Include="ConversionRoutines\Properties\StructuralSpringProperty.cs" />
     <Compile Include="ConversionRoutines\Loads\StructuralLoadTaskBuckling.cs" />
     <Compile Include="ConversionRoutines\Miscellaneous\StructuralStagedNodalRestraints.cs" />

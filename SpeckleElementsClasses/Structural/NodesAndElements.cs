@@ -281,6 +281,104 @@ namespace SpeckleElementsClasses
   }
 
   [Serializable]
+  public partial class Structural1DSpring : SpeckleLine, IStructural
+  {
+    public override string Type { get => base.Type + "/Structural1DSpring"; }
+
+    [JsonIgnore]
+    private Dictionary<string, object> StructuralProperties
+    {
+      get
+      {
+        if (base.Properties == null)
+          base.Properties = new Dictionary<string, object>();
+
+        if (!base.Properties.ContainsKey("structural"))
+          base.Properties["structural"] = new Dictionary<string, object>();
+
+        return base.Properties["structural"] as Dictionary<string, object>;
+
+      }
+      set
+      {
+        if (base.Properties == null)
+          base.Properties = new Dictionary<string, object>();
+
+        base.Properties["structural"] = value;
+      }
+    }
+
+    /// <summary>Base SpeckleLine.</summary>
+    [JsonIgnore]
+    public SpeckleLine baseLine
+    {
+      get => this as SpeckleLine;
+      set => this.Value = value.Value;
+    }
+    
+    /// <summary>Application ID of StructuralSpringProperty.</summary>
+    [JsonIgnore]
+    public string PropertyRef
+    {
+      get => StructuralProperties.ContainsKey("propertyRef") ? (StructuralProperties["propertyRef"] as string) : null;
+      set => StructuralProperties["propertyRef"] = value;
+    }
+
+    /// <summary>Local axis of 1D spring.</summary>
+    [JsonIgnore]
+    public StructuralVectorThree ZAxis
+    {
+      get => StructuralProperties.ContainsKey("zAxis") ? (StructuralProperties["zAxis"] as StructuralVectorThree) : null;
+      set => StructuralProperties["zAxis"] = value;
+    }
+    
+    /// <summary>GSA dummy status.</summary>
+    [JsonIgnore]
+    public bool GSADummy
+    {
+      get => StructuralProperties.ContainsKey("gsaDummy") ? ((bool)StructuralProperties["gsaDummy"]) : false;
+      set => StructuralProperties["gsaDummy"] = value;
+    }
+
+    /// <summary>Vertex location of results.</summary>
+    [JsonIgnore]
+    public List<double> ResultVertices
+    {
+      get
+      {
+        if (StructuralProperties.ContainsKey("resultVertices"))
+        {
+          try
+          {
+            try
+            {
+              return (List<double>)StructuralProperties["resultVertices"];
+            }
+            catch
+            {
+              this.ResultVertices = ((List<object>)StructuralProperties["resultVertices"]).Select(x => Convert.ToDouble(x)).ToList();
+              return this.ResultVertices;
+            }
+          }
+          catch
+          { return null; }
+        }
+        else
+          return null;
+      }
+      set => StructuralProperties["resultVertices"] = value;
+    }
+
+    /// <summary>Analysis results.</summary>
+    [JsonIgnore]
+    public Dictionary<string, object> Result
+    {
+      get => StructuralProperties.ContainsKey("result") ? (StructuralProperties["result"] as Dictionary<string, object>) : null;
+      set => StructuralProperties["result"] = value;
+    }
+  }
+
+  [Serializable]
   public partial class Structural1DElementPolyline : SpecklePolyline, IStructural
   {
     public override string Type { get => base.Type + "/Structural1DElementPolyline"; }

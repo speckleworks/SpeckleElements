@@ -529,7 +529,7 @@ namespace SpeckleElementsGSA
       foreach (string p in newLines)
       {
         string[] pPieces = p.ListSplit("\t");
-        if (pPieces[4].ParseElementNumNodes() == 2)
+        if (pPieces[4].ParseElementNumNodes() == 2 && pPieces[4] == "BEAM")
         {
           GSA1DElement element = new GSA1DElement() { GWACommand = p };
           element.ParseGWACommand(GSA, nodes);

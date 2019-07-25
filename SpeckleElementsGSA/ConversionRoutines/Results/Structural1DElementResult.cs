@@ -10,7 +10,7 @@ using SpeckleElementsClasses;
 
 namespace SpeckleElementsGSA
 {
-  [GSAObject("", new string[] { }, "results", true, false, new Type[] { typeof(GSA1DElement) }, new Type[] { })]
+  [GSAObject("", new string[] { }, "results", true, false, new Type[] { typeof(GSA1DElement), typeof(GSA1DSpring) }, new Type[] { })]
   public class GSA1DElementResult : IGSASpeckleContainer
   {
     public int GSAId { get; set; }
@@ -32,6 +32,10 @@ namespace SpeckleElementsGSA
       if (Conversions.GSAEmbedResults)
       {
         List<GSA1DElement> elements = GSASenderObjects[typeof(GSA1DElement)].Cast<GSA1DElement>().ToList();
+        List<GSA1DSpring> springs = GSASenderObjects[typeof(GSA1DSpring)].Cast<GSA1DSpring>().ToList();
+
+        List<IGSASpeckleContainer> entities = elements.Cast<IGSASpeckleContainer>().ToList();
+        entities.AddRange(springs.Cast<IGSASpeckleContainer>());
 
         foreach (KeyValuePair<string, Tuple<int, int, List<string>>> kvp in Conversions.GSAElement1DResults)
         {
@@ -40,38 +44,38 @@ namespace SpeckleElementsGSA
             if (!GSA.CaseExist(loadCase))
               continue;
 
-            foreach (GSA1DElement element in elements)
+            foreach (IGSASpeckleContainer entity in entities)
             {
-              int id = element.GSAId;
+              int id = entity.GSAId;
 
-              if (element.Value.Result == null)
-                element.Value.Result = new Dictionary<string, object>();
+              if (entity.Value.Result == null)
+                entity.Value.Result = new Dictionary<string, object>();
 
               var resultExport = GSA.GetGSAResult(id, kvp.Value.Item1, kvp.Value.Item2, kvp.Value.Item3, loadCase, GSAResultInLocalAxis ? "local" : "global", Conversions.GSAResult1DNumPosition);
             
               if (resultExport == null)
                 continue;
 
-              if (!element.Value.Result.ContainsKey(loadCase))
-                element.Value.Result[loadCase] = new Structural1DElementResult()
+              if (!entity.Value.Result.ContainsKey(loadCase))
+                entity.Value.Result[loadCase] = new Structural1DElementResult()
                 {
                   Value = new Dictionary<string, object>()
                 };
 
-              (element.Value.Result[loadCase] as Structural1DElementResult).Value[kvp.Key] = resultExport;
+              (entity.Value.Result[loadCase] as Structural1DElementResult).Value[kvp.Key] = resultExport;
             }
           }
         }
 
         // Linear interpolate the line values
-        foreach (GSA1DElement element in elements)
+        foreach (IGSASpeckleContainer entity in entities)
         {
-          var dX = (element.Value.Value[3] - element.Value.Value[0]) / (Conversions.GSAResult1DNumPosition + 1);
-          var dY = (element.Value.Value[4] - element.Value.Value[1]) / (Conversions.GSAResult1DNumPosition + 1);
-          var dZ = (element.Value.Value[5] - element.Value.Value[2]) / (Conversions.GSAResult1DNumPosition + 1);
+          var dX = (entity.Value.Value[3] - entity.Value.Value[0]) / (Conversions.GSAResult1DNumPosition + 1);
+          var dY = (entity.Value.Value[4] - entity.Value.Value[1]) / (Conversions.GSAResult1DNumPosition + 1);
+          var dZ = (entity.Value.Value[5] - entity.Value.Value[2]) / (Conversions.GSAResult1DNumPosition + 1);
 
           var interpolatedVertices = new List<double>();
-          interpolatedVertices.AddRange((element.Value.Value as List<double>).Take(3));
+          interpolatedVertices.AddRange((entity.Value.Value as List<double>).Take(3));
         
           for (int i = 1; i <= Conversions.GSAResult1DNumPosition; i++)
           {
@@ -80,9 +84,9 @@ namespace SpeckleElementsGSA
             interpolatedVertices.Add(interpolatedVertices[2] + dZ * i);
           }
 
-          interpolatedVertices.AddRange((element.Value.Value as List<double>).Skip(3).Take(3));
+          interpolatedVertices.AddRange((entity.Value.Value as List<double>).Skip(3).Take(3));
 
-          element.Value.ResultVertices = interpolatedVertices;
+          entity.Value.ResultVertices = interpolatedVertices;
         }
       }
       else
