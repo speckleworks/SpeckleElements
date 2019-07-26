@@ -1,5 +1,4 @@
 ﻿using SpeckleCore;
-using SpeckleElements;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -297,7 +296,7 @@ namespace SpeckleElementsGSA
     }
     #endregion
 
-    #region Miscellanious
+    #region Miscellaneous
     /// <summary>
     /// Returns the GWA keyword from GSAObject objects or type.
     /// </summary>

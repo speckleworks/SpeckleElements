@@ -1,6 +1,6 @@
 ﻿using Interop.Gsa_10_0;
 using SpeckleCore;
-using SpeckleElements;
+using SpeckleElementsClasses;
 using SQLite;
 using System;
 using System.Collections.Generic;
@@ -76,7 +76,7 @@ namespace SpeckleElementsGSA
         throw new Exception("GetGWAGetCommands() only takes in GET commands");
 
       object result = RunGWACommand(command);
-      string[] newPieces = ((string)result).Split(new string[] { "\n" }, StringSplitOptions.RemoveEmptyEntries);//.Select((s, idx) => idx.ToString() + ":" + s).ToArray();
+      string[] newPieces = ((string)result).Split(new string[] { "\n" }, StringSplitOptions.RemoveEmptyEntries).Select((s, idx) => idx.ToString() + ":" + s).ToArray();
       return newPieces;
     }
 
@@ -116,8 +116,8 @@ namespace SpeckleElementsGSA
         if ((result as string) == (PreviousGSAGetCache[command] as string))
           return new string[0];
 
-        string[] newPieces = ((string)result).Split(new string[] { "\n" }, StringSplitOptions.RemoveEmptyEntries);//.Select((s,idx) => idx.ToString() + ":" + s).ToArray();
-        string[] prevPieces = ((string)PreviousGSAGetCache[command]).Split(new string[] { "\n" }, StringSplitOptions.RemoveEmptyEntries);//.Select((s, idx) => idx.ToString() + ":" + s).ToArray();
+        string[] newPieces = ((string)result).Split(new string[] { "\n" }, StringSplitOptions.RemoveEmptyEntries).Select((s,idx) => idx.ToString() + ":" + s).ToArray();
+        string[] prevPieces = ((string)PreviousGSAGetCache[command]).Split(new string[] { "\n" }, StringSplitOptions.RemoveEmptyEntries).Select((s, idx) => idx.ToString() + ":" + s).ToArray();
 
         string[] ret = newPieces.Where(n => !prevPieces.Contains(n)).ToArray();
 
@@ -125,7 +125,7 @@ namespace SpeckleElementsGSA
       }
       else
       {
-        return ((string)result).Split(new string[] { "\n" }, StringSplitOptions.RemoveEmptyEntries);//.Select((s, idx) => idx.ToString() + ":" + s).ToArray();
+        return ((string)result).Split(new string[] { "\n" }, StringSplitOptions.RemoveEmptyEntries).Select((s, idx) => idx.ToString() + ":" + s).ToArray();
       }
     }
 
@@ -146,8 +146,8 @@ namespace SpeckleElementsGSA
         if ((result as string) == (PreviousGSAGetCache[command] as string))
           return new string[0];
 
-        string[] newPieces = ((string)result).Split(new string[] { "\n" }, StringSplitOptions.RemoveEmptyEntries);//.Select((s, idx) => idx.ToString() + ":" + s).ToArray();
-        string[] prevPieces = ((string)PreviousGSAGetCache[command]).Split(new string[] { "\n" }, StringSplitOptions.RemoveEmptyEntries);//.Select((s, idx) => idx.ToString() + ":" + s).ToArray();
+        string[] newPieces = ((string)result).Split(new string[] { "\n" }, StringSplitOptions.RemoveEmptyEntries).Select((s, idx) => idx.ToString() + ":" + s).ToArray();
+        string[] prevPieces = ((string)PreviousGSAGetCache[command]).Split(new string[] { "\n" }, StringSplitOptions.RemoveEmptyEntries).Select((s, idx) => idx.ToString() + ":" + s).ToArray();
 
         string[] ret = prevPieces.Where(p => !newPieces.Contains(p)).ToArray();
 
@@ -201,6 +201,22 @@ namespace SpeckleElementsGSA
               }
 
               GSAGetCache[command] = string.Join("\n", result);
+            }
+            else if (!command.StartsWith("GET\tMEMB") && !(command.StartsWith("GET\tANAL.") || command.StartsWith("GET\tANAL\t")))
+            {
+              // Let's speed things up a bit
+              var commandPieces = command.Split(new char[] { '\t' });
+              var newCommand = "GET_ALL\t" + commandPieces[1];
+
+              GSAGetCache[newCommand] = GSAObject.GwaCommand(newCommand);
+
+              var allRecords = ((string)GSAGetCache[newCommand]).Split(new string[] { "\n" }, StringSplitOptions.RemoveEmptyEntries);
+              
+              foreach(string rec in allRecords)
+              {
+                var recPieces = rec.Split(new char[] { '\t' });
+                GSAGetCache["GET\t" + commandPieces[1] + "\t" + recPieces[1]] = rec;
+              }
             }
             else
             {
@@ -1061,12 +1077,25 @@ namespace SpeckleElementsGSA
     public string GetSID(string keyword, int id)
     {
       if (!SidCache.ContainsKey(keyword + "\t" + id.ToString()))
-      { 
+      {
         try
         {
-          SidCache[keyword + "\t" + id.ToString()] = GSAObject.GetSidTagValue(keyword, id, SID_TAG);
-          if (string.IsNullOrEmpty(SidCache[keyword + "\t" + id.ToString()]))
-            SidCache[keyword + "\t" + id.ToString()] = "gsa/" + keyword + "_" + id.ToString();
+          // Look in GET cache first
+          if (GSAGetCache.ContainsKey("GET\t" + keyword + "\t" + id.ToString()))
+          {
+            var command = (string)GSAGetCache["GET\t" + keyword + "\t" + id.ToString()];
+            var match = Regex.Match(command, "(?<={" + SID_TAG + ":).*?(?=})");
+            if (!string.IsNullOrEmpty(match.Value))
+              SidCache[keyword + "\t" + id.ToString()] = match.Value;
+            else
+              SidCache[keyword + "\t" + id.ToString()] = "gsa/" + keyword + "_" + id.ToString();
+          }
+          else
+          {
+            SidCache[keyword + "\t" + id.ToString()] = GSAObject.GetSidTagValue(keyword, id, SID_TAG);
+            if (string.IsNullOrEmpty(SidCache[keyword + "\t" + id.ToString()]))
+              SidCache[keyword + "\t" + id.ToString()] = "gsa/" + keyword + "_" + id.ToString();
+          } 
         }
         catch
         {

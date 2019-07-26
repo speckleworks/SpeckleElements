@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Autodesk.Revit.DB;
 using SpeckleCore;
-using SpeckleElements;
+using SpeckleElementsClasses;
 
 namespace SpeckleElementsRevit
 {
@@ -16,10 +16,12 @@ namespace SpeckleElementsRevit
     {
       var (docObj, stateObj) = GetExistingElementByApplicationId( myCol.ApplicationId, myCol.Type );
 
+      var exclusions = new List<string> { "Base Offset", "Top Offset" };
+
       var baseLine = (Curve) SpeckleCore.Converter.Deserialise( obj: myCol.baseLine, excludeAssebmlies: new string[ ] { "SpeckleCoreGeometryDynamo" } );
       var start = baseLine.GetEndPoint( 0 );
       var end = baseLine.GetEndPoint( 1 );
-
+     
       var isVertical = IsColumnVertical( myCol );
 
       // get family symbol; it's used throughout
@@ -67,14 +69,14 @@ namespace SpeckleElementsRevit
 
           // Final preparations for good measure
           MatchFlippingAndRotation( existingFamilyInstance, myCol, baseLine );
-          SetElementParams( existingFamilyInstance, myCol.parameters );
+          SetElementParams( existingFamilyInstance, myCol.parameters, exclusions);
           return existingFamilyInstance;
         }
       }
 
       // Create base level
       if( myCol.baseLevel == null )
-        myCol.baseLevel = new SpeckleElements.Level() { elevation = baseLine.GetEndPoint( 0 ).Z / Scale, levelName = "Speckle Level " + baseLine.GetEndPoint( 0 ).Z / Scale };
+        myCol.baseLevel = new SpeckleElementsClasses.Level() { elevation = baseLine.GetEndPoint( 0 ).Z / Scale, levelName = "Speckle Level " + baseLine.GetEndPoint( 0 ).Z / Scale };
       var baseLevel = myCol.baseLevel.ToNative() as Autodesk.Revit.DB.Level;
 
 
@@ -85,15 +87,29 @@ namespace SpeckleElementsRevit
       if( !isVertical )
         familyInstance.get_Parameter( BuiltInParameter.SLANTED_COLUMN_TYPE_PARAM ).Set( (double) SlantedOrVerticalColumnType.CT_EndPoint );
 
+      Autodesk.Revit.DB.Level myTopLevel = null;
       // Set the top level
-      if( myCol.topLevel != null )
+      if ( myCol.topLevel != null )
       {
-        var myTopLevel = myCol.topLevel.ToNative();
+        myTopLevel = myCol.topLevel.ToNative();
         familyInstance.get_Parameter( BuiltInParameter.FAMILY_TOP_LEVEL_PARAM ).Set( myTopLevel.Id );
       }
 
+      //checking if BASE offset needs to be set before or after TOP offset
+      if(myTopLevel!=null && myTopLevel.Elevation + (double)myCol.parameters["Base Offset"] / Scale <= baseLevel.Elevation)
+      {
+        familyInstance.get_Parameter(BuiltInParameter.FAMILY_BASE_LEVEL_OFFSET_PARAM).Set((double)myCol.parameters["Base Offset"] * Scale);
+        familyInstance.get_Parameter(BuiltInParameter.FAMILY_TOP_LEVEL_OFFSET_PARAM).Set((double)myCol.parameters["Top Offset"] * Scale);
+      }
+      else
+      {
+        familyInstance.get_Parameter(BuiltInParameter.FAMILY_TOP_LEVEL_OFFSET_PARAM).Set((double)myCol.parameters["Top Offset"] * Scale);
+        familyInstance.get_Parameter(BuiltInParameter.FAMILY_BASE_LEVEL_OFFSET_PARAM).Set((double)myCol.parameters["Base Offset"] * Scale);
+      }
+     
+
       // Set the location curve
-      if( !isVertical )
+      if ( !isVertical )
       {
         var locationCurve = familyInstance.Location as LocationCurve;
         locationCurve.Curve = baseLine;
@@ -101,7 +117,7 @@ namespace SpeckleElementsRevit
 
       // Final preparations
       MatchFlippingAndRotation( familyInstance, myCol, baseLine );
-      SetElementParams( familyInstance, myCol.parameters );
+      SetElementParams( familyInstance, myCol.parameters, exclusions);
 
       return familyInstance;
     }

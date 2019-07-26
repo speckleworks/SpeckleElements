@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Autodesk.Revit.DB;
 using SpeckleCore;
-using SpeckleElements;
+using SpeckleElementsClasses;
 using SpeckleCoreGeometryClasses;
 
 namespace SpeckleElementsRevit
@@ -34,7 +34,7 @@ namespace SpeckleElementsRevit
         return ColumnToSpeckle( myFamily );
       }
 
-      var speckleFamily = new SpeckleElements.FamilyInstance();
+      var speckleFamily = new SpeckleElementsClasses.FamilyInstance();
 
       speckleFamily.parameters = GetElementParams( myFamily );
 
