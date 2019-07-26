@@ -28,7 +28,13 @@ namespace SpeckleElementsGSA
 
       obj.Name = pieces[counter++].Trim(new char[] { '"' });
 
-      counter++; // Master node. Does not support master node
+      var masterNodeRef = Convert.ToInt32(pieces[counter++]);
+      var masterNode = nodes.Where(n => n.GSAId == masterNodeRef);
+      if (masterNode.Count() > 0)
+      {
+        this.SubGWACommand.Add(masterNode.First().GWACommand);
+        obj.MasterNodeRef = masterNode.First().Value.ApplicationId;
+      }
 
       var constraint = new bool[6];
 
@@ -65,7 +71,8 @@ namespace SpeckleElementsGSA
           constraint = new bool[] { false, true, false, true, false, true };
           break;
         default:
-          // Ignore non-diagonal terms of coupled directions
+          // Ignore non-diagonal terms of coupled directionsl.
+          // Assume if rotational direction is locked, it is locked for all slave directions.
           constraint[0] = linkage.Contains("X:X");
           constraint[1] = linkage.Contains("Y:Y");
           constraint[2] = linkage.Contains("Z:Z");
@@ -124,12 +131,45 @@ namespace SpeckleElementsGSA
       ls.Add("0"); // Master node
 
       List<string> subLs = new List<string>();
-      string[] direction = new string[6] { "X", "Y", "Z", "X", "Y", "Z" };
-      for (int i = 0; i < constraint.Constraint.Value.Count(); i++)
+      if (constraint.Constraint.Value[0])
       {
-        if (constraint.Constraint.Value[i])
-          subLs.Add(direction[i] + ":" + direction[i]);
+        string x = "X:X";
+        if (constraint.Constraint.Value[4])
+          x += "YY";
+        if (constraint.Constraint.Value[5])
+          x += "ZZ";
+        subLs.Add(x);
       }
+
+      if (constraint.Constraint.Value[1])
+      {
+        string y = "Y:Y";
+        if (constraint.Constraint.Value[3])
+          y += "XX";
+        if (constraint.Constraint.Value[5])
+          y += "ZZ";
+        subLs.Add(y);
+      }
+
+      if (constraint.Constraint.Value[2])
+      {
+        string z = "Z:Z";
+        if (constraint.Constraint.Value[3])
+          z += "XX";
+        if (constraint.Constraint.Value[4])
+          z += "YY";
+        subLs.Add(z);
+      }
+
+      if (constraint.Constraint.Value[3])
+        subLs.Add("XX:XX");
+
+      if (constraint.Constraint.Value[4])
+        subLs.Add("YY:YY");
+
+      if (constraint.Constraint.Value[5])
+        subLs.Add("ZZ:ZZ");
+
       ls.Add(string.Join("-", subLs));
       ls.Add(string.Join(" ", nodeRefs));
       ls.Add(string.Join(" ", stageDefRefs));

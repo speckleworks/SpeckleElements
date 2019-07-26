@@ -151,6 +151,10 @@ namespace SpeckleElementsClasses
     [JsonProperty("nodeRefs", Required = Required.Default, NullValueHandling = NullValueHandling.Ignore)]
     public List<string> NodeRefs { get; set; }
 
+    /// <summary>Application ID of master StructuralNodes which all other nodes are tied to.</summary>
+    [JsonProperty("masterNodeRef", Required = Required.Default, NullValueHandling = NullValueHandling.Ignore)]
+    public string MasterNodeRef { get; set; }
+
     /// <summary>Application IDs of StructuralConstructionStages to apply restraints on</summary>
     [JsonProperty("constructionStageRefs", Required = Required.Default, NullValueHandling = NullValueHandling.Ignore)]
     public List<string> ConstructionStageRefs { get; set; }

@@ -89,12 +89,13 @@ namespace SpeckleElementsClasses
   {
     public StructuralRigidConstraints() { }
 
-    public StructuralRigidConstraints(StructuralVectorBoolSix constraint, string[] nodeRefs, string[] constructionStageRefs, string applicationId = null, Dictionary<string, object> properties = null)
+    public StructuralRigidConstraints(StructuralVectorBoolSix constraint, string[] nodeRefs, string masterNodeRef, string[] constructionStageRefs, string applicationId = null, Dictionary<string, object> properties = null)
     {
       this.Properties = properties;
       this.ApplicationId = applicationId;
       this.Constraint = constraint;
       this.NodeRefs = nodeRefs.ToList();
+      this.MasterNodeRef = masterNodeRef;
       this.ConstructionStageRefs = constructionStageRefs.ToList();
 
       GenerateHash();
