@@ -25,7 +25,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
+    <DebugType>portable</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
@@ -109,21 +109,27 @@
     </Reference>
     <Reference Include="SpeckleCore, Version=1.5.1.326, Culture=neutral, processorArchitecture=AMD64">
       <HintPath>..\packages\SpeckleCore.1.5.1.326\lib\net45\SpeckleCore.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="SpeckleCoreGeometry, Version=1.1.0.57, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\SpeckleCoreGeometry.1.1.0.57\lib\net461\SpeckleCoreGeometry.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="SpeckleCoreGeometryClasses, Version=1.1.0.57, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\SpeckleCoreGeometry.1.1.0.57\lib\net461\SpeckleCoreGeometryClasses.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="SpeckleCoreGeometryDynamo, Version=1.1.0.57, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\SpeckleCoreGeometry.1.1.0.57\lib\net461\SpeckleCoreGeometryDynamo.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="SpeckleCoreGeometryRevit, Version=1.1.0.57, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\SpeckleCoreGeometry.1.1.0.57\lib\net461\SpeckleCoreGeometryRevit.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="SpeckleCoreGeometryRhino, Version=1.1.0.57, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\SpeckleCoreGeometry.1.1.0.57\lib\net461\SpeckleCoreGeometryRhino.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="SQLite-net, Version=1.5.231.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\sqlite-net-pcl.1.5.231\lib\netstandard1.1\SQLite-net.dll</HintPath>
@@ -186,6 +192,7 @@
     <ProjectReference Include="..\SpeckleElementsClasses\SpeckleElementsClasses.csproj">
       <Project>{42e1db9c-e4d5-4190-9977-874e8143dcc5}</Project>
       <Name>SpeckleElementsClasses</Name>
+      <Private>False</Private>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
