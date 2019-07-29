@@ -1154,8 +1154,19 @@ namespace SpeckleElementsGSA
             GSAObject.Output_Init_Arr(flags, axis, loadCase, (ResHeader)resHeader, num1DPoints);
             PreviousGSAResultInit = initKey;
           }
-          GSAObject.Output_Extract_Arr(id, out var outputExtractResults, out num);
-          res = (GsaResults[])outputExtractResults;
+          try
+
+          { 
+            GSAObject.Output_Extract_Arr(id, out var outputExtractResults, out num);
+            res = (GsaResults[])outputExtractResults;
+          }
+          catch
+          {
+            // Try reinit if fail
+            GSAObject.Output_Init_Arr(flags, axis, loadCase, (ResHeader)resHeader, num1DPoints);
+            GSAObject.Output_Extract_Arr(id, out var outputExtractResults, out num);
+            res = (GsaResults[])outputExtractResults;
+          }
         }
         else
         {
@@ -1169,8 +1180,18 @@ namespace SpeckleElementsGSA
 
           res = new GsaResults[numPos];
 
-          for (int i = 0; i < numPos; i++)
-            res[i] = new GsaResults() { dynaResults = new double[] { (double)GSAObject.Output_Extract(id, i) } };
+          try
+          { 
+            for (int i = 0; i < numPos; i++)
+              res[i] = new GsaResults() { dynaResults = new double[] { (double)GSAObject.Output_Extract(id, i) } };
+          }
+          catch
+          {
+            // Try reinit if fail
+            GSAObject.Output_Init(flags, axis, loadCase, resHeader, num1DPoints);
+            for (int i = 0; i < numPos; i++)
+              res[i] = new GsaResults() { dynaResults = new double[] { (double)GSAObject.Output_Extract(id, i) } };
+          }
         }
 
         int counter = 0;
