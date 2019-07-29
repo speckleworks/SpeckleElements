@@ -30,6 +30,8 @@ namespace SpeckleElementsGSA
 
     private const string SID_TAG = "speckle_app_id";
 
+    private string PreviousGSAResultInit = "";
+
     #region Communication
     public void InitializeReceiver(ComAuto GSAObject)
     {
@@ -224,7 +226,7 @@ namespace SpeckleElementsGSA
             }
           }
 
-          return GSAGetCache[command];
+          return GSAGetCache.ContainsKey(command) ? GSAGetCache[command] : "";
         }
 
         if (command.StartsWith("SET"))
@@ -1146,13 +1148,23 @@ namespace SpeckleElementsGSA
         // Special case for assemblies
         if (Enum.IsDefined(typeof(ResHeader), resHeader) || resHeader == 18002000)
         {
-          GSAObject.Output_Init_Arr(flags, axis, loadCase, (ResHeader)resHeader, num1DPoints);
+          var initKey = "ARR" + flags.ToString() + axis + loadCase + resHeader.ToString() + num1DPoints.ToString();
+          if (PreviousGSAResultInit != initKey)
+          {
+            GSAObject.Output_Init_Arr(flags, axis, loadCase, (ResHeader)resHeader, num1DPoints);
+            PreviousGSAResultInit = initKey;
+          }
           GSAObject.Output_Extract_Arr(id, out var outputExtractResults, out num);
           res = (GsaResults[])outputExtractResults;
         }
         else
         {
-          GSAObject.Output_Init(flags, axis, loadCase, resHeader, num1DPoints);
+          var initKey = "SINGLE" + flags.ToString() + axis + loadCase + resHeader.ToString() + num1DPoints.ToString();
+          if (PreviousGSAResultInit != initKey)
+          {
+            GSAObject.Output_Init(flags, axis, loadCase, resHeader, num1DPoints);
+            PreviousGSAResultInit = initKey;
+          }
           int numPos = GSAObject.Output_NumElemPos(id);
 
           res = new GsaResults[numPos];
