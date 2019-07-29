@@ -44,46 +44,49 @@ namespace SpeckleElementsGSA
       while (counter < pieces.Length)
       {
         string s = pieces[counter++];
-        if (s == "GRID")
+
+        switch (s)
         {
-          counter++; // Grid place
-          counter++; // Datum
-          counter++; // Grid line A
-          counter++; // Grid line B
-        }
-        else if (s == "REST")
-        {
-          obj.Restraint = new StructuralVectorBoolSix(new bool[6]);
-          for (int i = 0; i < 6; i++)
-            obj.Restraint.Value[i] = pieces[counter++] == "0" ? false : true;
-          this.ForceSend = true;
-        }
-        else if (s == "STIFF")
-        {
-          obj.Stiffness = new StructuralVectorSix(new double[6]);
-          for (int i = 0; i < 6; i++)
-            obj.Stiffness.Value[i] = Convert.ToDouble(pieces[counter++]);
-          this.ForceSend = true;
-        }
-        else if (s == "MESH")
-        {
-          obj.GSALocalMeshSize = pieces[counter++].ToDouble();
-          counter++; // Edge length
-          counter++; // Radius
-          counter++; // Tie to mesh
-          counter++; // Column rigidity
-          counter++; // Column prop
-          counter++; // Column node
-          counter++; // Column angle
-          counter++; // Column factor
-          counter++; // Column slab factor
-        }
-        else
-        {
-          string gwaRec = null;
-          obj.Axis = GSA.Parse0DAxis(Convert.ToInt32(pieces[counter++]), out gwaRec, obj.Value.ToArray());
-          if (gwaRec != null)
-            this.SubGWACommand.Add(gwaRec);
+          case "NO_GRID":
+          case "NO_REST":
+          case "NO_MESH":
+            continue;
+          case "GRID":
+            counter++; // Grid place
+            counter++; // Datum
+            counter++; // Grid line A
+            counter++; // Grid line B
+            break;
+          case "REST":
+            obj.Restraint = new StructuralVectorBoolSix(new bool[6]);
+            for (int i = 0; i < 6; i++)
+              obj.Restraint.Value[i] = pieces[counter++] == "0" ? false : true;
+            this.ForceSend = true;
+            break;
+          case "STIFF":
+            obj.Stiffness = new StructuralVectorSix(new double[6]);
+            for (int i = 0; i < 6; i++)
+              obj.Stiffness.Value[i] = Convert.ToDouble(pieces[counter++]);
+            this.ForceSend = true;
+            break;
+          case "MESH":
+            obj.GSALocalMeshSize = pieces[counter++].ToDouble();
+            counter++; // Edge length
+            counter++; // Radius
+            counter++; // Tie to mesh
+            counter++; // Column rigidity
+            counter++; // Column prop
+            counter++; // Column node
+            counter++; // Column angle
+            counter++; // Column factor
+            counter++; // Column slab factor
+            break;
+          default: // Axis
+            string gwaRec = null;
+            obj.Axis = GSA.Parse0DAxis(Convert.ToInt32(s), out gwaRec, obj.Value.ToArray());
+            if (gwaRec != null)
+              this.SubGWACommand.Add(gwaRec);
+            break;
         }
       }
 
