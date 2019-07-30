@@ -171,6 +171,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ConversionRoutines\Miscellaneous\StructuralBridgeAlignment.cs" />
+    <Compile Include="ConversionRoutines\Miscellaneous\StructuralBridgePath.cs" />
+    <Compile Include="ConversionRoutines\Miscellaneous\StructuralBridgeVehicle.cs" />
     <Compile Include="ConversionRoutines\NodesAndElements\Structural0DSpring.cs" />
     <Compile Include="ConversionRoutines\Loads\Structural2DThermalLoad.cs" />
     <Compile Include="ConversionRoutines\Miscellaneous\StructuralRigidConstraints.cs" />
