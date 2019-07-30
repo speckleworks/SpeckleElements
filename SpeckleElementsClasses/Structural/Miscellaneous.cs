@@ -186,7 +186,7 @@ namespace SpeckleElementsClasses
 
     /// <summary>Axis of effect to be considered.</summary>
     [JsonProperty("axis", Required = Required.Default, NullValueHandling = NullValueHandling.Ignore)]
-    public StructuralAxis axis { get; set; }
+    public StructuralAxis Axis { get; set; }
 
     /// <summary>Directions of effect to be considered.</summary>
     [JsonProperty("directions", Required = Required.Default, NullValueHandling = NullValueHandling.Ignore)]
@@ -194,7 +194,7 @@ namespace SpeckleElementsClasses
 
     /// <summary>GSA grouping of influence effects to combine effects.</summary>
     [JsonProperty("gsaEffectGroup", Required = Required.Default, NullValueHandling = NullValueHandling.Ignore)]
-    public string GSAEffectGroup { get; set; }
+    public int GSAEffectGroup { get; set; }
   }
 
   [Serializable]
@@ -225,6 +225,6 @@ namespace SpeckleElementsClasses
     
     /// <summary>GSA grouping of influence effects to combine effects.</summary>
     [JsonProperty("gsaEffectGroup", Required = Required.Default, NullValueHandling = NullValueHandling.Ignore)]
-    public string GSAEffectGroup { get; set; }
+    public int GSAEffectGroup { get; set; }
   }
 }
