@@ -179,6 +179,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ConversionRoutines\Loads\Structural2DThermalLoad.cs" />
+    <Compile Include="ConversionRoutines\Miscellaneous\Structural1DInfluenceEffect.cs" />
+    <Compile Include="ConversionRoutines\Miscellaneous\StructuralNodalInfluenceEffect.cs" />
     <Compile Include="ConversionRoutines\Miscellaneous\StructuralRigidConstraints.cs" />
     <Compile Include="ConversionRoutines\Miscellaneous\StructuralAssembly.cs" />
     <Compile Include="ConversionRoutines\Loads\StructuralGravityLoading.cs" />
