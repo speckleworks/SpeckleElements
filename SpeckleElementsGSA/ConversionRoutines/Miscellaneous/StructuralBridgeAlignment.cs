@@ -46,12 +46,42 @@ namespace SpeckleElementsGSA
 
       string keyword = destType.GetGSAKeyword();
 
+      int gridSurfaceIndex = GSA.Indexer.ResolveIndex("GRID_SURFACE.1", alignment);
+      int gridPlaneIndex = GSA.Indexer.ResolveIndex("GRID_PLANE.4", alignment);
+
       int index = GSA.Indexer.ResolveIndex(destType, alignment);
 
-      //The width parameter is intentionally not being used here as the meaning doesn't map to the y coordinate parameter of the ASSEMBLY keyword
-      //It is therefore to be ignored here for GSA purposes.
+      var ls = new List<string>();
 
-      var ls = new List<string>
+      ls.Clear();
+      ls.AddRange(new[] {
+        "SET",
+        "GRID_PLANE.4" + ":" + GSA.GenerateSID(alignment),
+        gridPlaneIndex.ToString(),
+        alignment.Name == null || alignment.Name == "" ? " " : alignment.Name,
+        "GENERAL", // Type
+        GSA.SetAxis(alignment.Plane.Xdir, alignment.Plane.Ydir, alignment.Plane.Origin, alignment.Name).ToString(),
+        "0", // Elevation assumed to be at local z=0 (i.e. dictated by the origin)
+        "0", // Elevation above
+        "0" }); // Elevation below
+
+      GSA.RunGWACommand(string.Join("\t", ls));
+      ls.Clear();
+      ls.Add("SET");
+      ls.Add("GRID_SURFACE.1" + ":" + GSA.GenerateSID(alignment));
+      ls.Add(gridSurfaceIndex.ToString());
+      ls.Add(alignment.Name == null || alignment.Name == "" ? " " : alignment.Name);
+      ls.Add(gridPlaneIndex.ToString());
+      ls.Add("2"); // Dimension of elements to target
+      ls.Add("all"); // List of elements to target
+      ls.Add("0.01"); // Tolerance
+      ls.Add("ONE"); // Span option
+      ls.Add("0"); // Span angle
+      GSA.RunGWACommand(string.Join("\t", ls));
+
+
+      ls.Clear();
+      ls.AddRange(new []
         {
           "SET",
           keyword + ":" + GSA.GenerateSID(alignment),
@@ -59,7 +89,7 @@ namespace SpeckleElementsGSA
           string.IsNullOrEmpty(alignment.Name) ? "" : alignment.Name,
           "1", //Grid surface
           alignment.Nodes.Count().ToString(),
-      };
+      });
 
       foreach (var node in alignment.Nodes)
       {

@@ -118,7 +118,7 @@ namespace SpeckleElementsGSA
 
       try
       {
-        ls.Add(GSA.SetAxis(node.Axis).ToString());
+        ls.Add(GSA.SetAxis(node.Axis, node.Name).ToString());
       }
       catch { ls.Add("0"); }
 

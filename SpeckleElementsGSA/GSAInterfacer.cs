@@ -1,5 +1,6 @@
 ﻿using Interop.Gsa_10_0;
 using SpeckleCore;
+using SpeckleCoreGeometryClasses;
 using SpeckleElementsClasses;
 using SQLite;
 using System;
@@ -355,8 +356,10 @@ namespace SpeckleElementsGSA
     /// </summary>
     /// <param name="axis">Axis to set</param>
     /// <returns>Index of axis</returns>
-    public int SetAxis(StructuralAxis axis)
+    public int SetAxis(StructuralAxis axis, string name = "")
     {
+      string gwaAxisName = name ?? "";
+
       if (axis.Xdir.Value.SequenceEqual(new double[] { 1, 0, 0 }) &&
           axis.Ydir.Value.SequenceEqual(new double[] { 0, 1, 0 }) &&
           axis.Normal.Value.SequenceEqual(new double[] { 0, 0, 1 }))
@@ -369,7 +372,7 @@ namespace SpeckleElementsGSA
       ls.Add("SET");
       ls.Add("AXIS");
       ls.Add(res.ToString());
-      ls.Add("");
+      ls.Add(gwaAxisName);
       ls.Add("CART");
 
       ls.Add("0");
@@ -383,6 +386,38 @@ namespace SpeckleElementsGSA
       ls.Add(axis.Ydir.Value[0].ToString());
       ls.Add(axis.Ydir.Value[1].ToString());
       ls.Add(axis.Ydir.Value[2].ToString());
+
+      RunGWACommand(string.Join("\t", ls));
+
+      return res;
+    }
+
+    public int SetAxis(SpeckleVector xVector, SpeckleVector xyVector, SpecklePoint origin, string name = "")
+    {
+      int res = Indexer.ResolveIndex("AXIS");
+
+      string gwaAxisName = name ?? "";
+
+      var ls = new List<string>()
+      {
+        "SET",
+        "AXIS",
+        res.ToString(),
+        gwaAxisName,
+        "CART",
+
+        origin.Value[0].ToString(),
+        origin.Value[1].ToString(),
+        origin.Value[2].ToString(),
+
+        xVector.Value[0].ToString(),
+        xVector.Value[1].ToString(),
+        xVector.Value[2].ToString(),
+
+        xyVector.Value[0].ToString(),
+        xyVector.Value[1].ToString(),
+        xyVector.Value[2].ToString(),
+      };
 
       RunGWACommand(string.Join("\t", ls));
 

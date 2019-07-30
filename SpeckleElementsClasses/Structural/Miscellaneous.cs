@@ -178,8 +178,8 @@ namespace SpeckleElementsClasses
   {
     public override string Type { get => "StructuralBridgeAlignment"; }
 
-    [JsonProperty("elevation", Required = Required.Default, NullValueHandling = NullValueHandling.Ignore)]
-    public double Elevation { get; set; }
+    [JsonProperty("plane", Required = Required.Default, NullValueHandling = NullValueHandling.Ignore)]
+    public SpecklePlane Plane { get; set; }
 
     /// <summary>List nodes on the alignment.</summary>
     [JsonIgnore]
