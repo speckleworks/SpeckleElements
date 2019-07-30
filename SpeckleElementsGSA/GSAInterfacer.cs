@@ -204,7 +204,23 @@ namespace SpeckleElementsGSA
 
               GSAGetCache[command] = string.Join("\n", result);
             }
-            else if (!command.StartsWith("GET\tMEMB") && !(command.StartsWith("GET\tANAL.") || command.StartsWith("GET\tANAL\t")))
+            else if (command.StartsWith("GET_ALL\tPOLYLINE"))
+            {
+              // TODO: Polyline GET_ALL work around
+              int highestRef = (int)RunGWACommand("HIGHEST\tPOLYLINE.1");
+
+              List<string> result = new List<string>();
+
+              for (int i = 1; i <= highestRef; i++)
+              {
+                string res = (string)RunGWACommand("GET\tPOLYLINE\t" + i.ToString());
+                if (res != null && res != "")
+                  (result as List<string>).Add(res);
+              }
+
+              GSAGetCache[command] = string.Join("\n", result);
+            }
+            else if (!command.StartsWith("GET\tMEMB") && !(command.StartsWith("GET\tANAL.") || command.StartsWith("GET\tANAL\t")) && !command.StartsWith("GET\tPOLYLINE"))
             {
               // Let's speed things up a bit
               var commandPieces = command.Split(new char[] { '\t' });

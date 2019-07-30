@@ -200,7 +200,7 @@ namespace SpeckleElementsClasses
   [Serializable]
   public partial class Structural1DInfluenceEffect : SpeckleObject, IStructural
   {
-    public override string Type { get => "StructuralNodalInfluenceEffect"; }
+    public override string Type { get => "Structural1DInfluenceEffect"; }
 
     /// <summary>Value to calculate influence effect for.</summary>
     [JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
