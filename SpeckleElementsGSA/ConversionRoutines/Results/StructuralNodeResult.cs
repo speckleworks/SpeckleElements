@@ -58,7 +58,7 @@ namespace SpeckleElementsGSA
                 {
                   Value = new Dictionary<string, object>()
                 };
-              (node.Value.Result[loadCase] as StructuralNodeResult).Value[kvp.Key] = resultExport;
+              (node.Value.Result[loadCase] as StructuralNodeResult).Value[kvp.Key] = resultExport.ToDictionary( x => x.Key, x => (x.Value as List<double>)[0] as object );
 
               node.ForceSend = true;
             }

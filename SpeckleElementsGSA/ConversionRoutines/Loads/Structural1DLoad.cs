@@ -175,7 +175,7 @@ namespace SpeckleElementsGSA
       }
       catch { loadCaseRef = GSA.Indexer.ResolveIndex(typeof(GSALoadCase), load.LoadCaseRef); }
 
-      string[] direction = new string[6] { "X", "Y", "Z", "X", "Y", "Z" };
+      string[] direction = new string[6] { "X", "Y", "Z", "XX", "YY", "ZZ" };
 
       for (int i = 0; i < load.Loading.Value.Count(); i++)
       {

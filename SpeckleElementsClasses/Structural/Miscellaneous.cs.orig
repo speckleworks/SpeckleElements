@@ -8,12 +8,7 @@ using SpeckleCore;
 using SpeckleCoreGeometryClasses;
 namespace SpeckleElementsClasses
 {
-  public enum StructuralInfluenceEffectType
-  {
-    Displacement,
-    Force,
-  }
-  
+<<<<<<< HEAD
   public enum StructuralBridgeCurvature
   {
     Straight,
@@ -29,6 +24,12 @@ namespace SpeckleElementsClasses
     Vehicle,
     Carriage1Way,
     Carriage2Way
+=======
+  public enum StructuralInfluenceEffectType
+  {
+    Displacement,
+    Force,
+>>>>>>> origin/structural
   }
 
   [Serializable]
@@ -184,6 +185,7 @@ namespace SpeckleElementsClasses
   }
 
   [Serializable]
+<<<<<<< HEAD
   public partial class StructuralBridgeAlignment : SpeckleObject, IStructural
   {
     public override string Type { get => "StructuralBridgeAlignment"; }
@@ -243,7 +245,7 @@ namespace SpeckleElementsClasses
       }
     }
   }
-  
+
   [Serializable]
   public partial class StructuralBridgeAlignmentNode : SpeckleObject, IStructural
   {
@@ -358,9 +360,7 @@ namespace SpeckleElementsClasses
 
     [JsonProperty("rightWheelLoad", Required = Required.Default, NullValueHandling = NullValueHandling.Ignore)]
     public double RightWheelLoad { get; set; }
-  }
-  
-  [Serializable]
+=======
   public partial class StructuralNodalInfluenceEffect : SpeckleObject, IStructural
   {
     public override string Type { get => "StructuralNodalInfluenceEffect"; }
@@ -420,5 +420,6 @@ namespace SpeckleElementsClasses
     /// <summary>GSA grouping of influence effects to combine effects.</summary>
     [JsonProperty("gsaEffectGroup", Required = Required.Default, NullValueHandling = NullValueHandling.Ignore)]
     public int GSAEffectGroup { get; set; }
+>>>>>>> origin/structural
   }
 }

@@ -31,6 +31,8 @@ namespace SpeckleElementsGSA
 
     private const string SID_TAG = "speckle_app_id";
 
+    private string PreviousGSAResultInit = "";
+
     #region Communication
     public void InitializeReceiver(ComAuto GSAObject)
     {
@@ -203,7 +205,23 @@ namespace SpeckleElementsGSA
 
               GSAGetCache[command] = string.Join("\n", result);
             }
-            else if (!command.StartsWith("GET\tMEMB") && !(command.StartsWith("GET\tANAL.") || command.StartsWith("GET\tANAL\t")))
+            else if (command.StartsWith("GET_ALL\tPOLYLINE"))
+            {
+              // TODO: Polyline GET_ALL work around
+              int highestRef = (int)RunGWACommand("HIGHEST\tPOLYLINE.1");
+
+              List<string> result = new List<string>();
+
+              for (int i = 1; i <= highestRef; i++)
+              {
+                string res = (string)RunGWACommand("GET\tPOLYLINE\t" + i.ToString());
+                if (res != null && res != "")
+                  (result as List<string>).Add(res);
+              }
+
+              GSAGetCache[command] = string.Join("\n", result);
+            }
+            else if (!command.StartsWith("GET\tMEMB") && !(command.StartsWith("GET\tANAL.") || command.StartsWith("GET\tANAL\t")) && !command.StartsWith("GET\tPOLYLINE"))
             {
               // Let's speed things up a bit
               var commandPieces = command.Split(new char[] { '\t' });
@@ -225,7 +243,7 @@ namespace SpeckleElementsGSA
             }
           }
 
-          return GSAGetCache[command];
+          return GSAGetCache.ContainsKey(command) ? GSAGetCache[command] : "";
         }
 
         if (command.StartsWith("SET"))
@@ -1181,19 +1199,50 @@ namespace SpeckleElementsGSA
         // Special case for assemblies
         if (Enum.IsDefined(typeof(ResHeader), resHeader) || resHeader == 18002000)
         {
-          GSAObject.Output_Init_Arr(flags, axis, loadCase, (ResHeader)resHeader, num1DPoints);
-          GSAObject.Output_Extract_Arr(id, out var outputExtractResults, out num);
-          res = (GsaResults[])outputExtractResults;
+          var initKey = "ARR" + flags.ToString() + axis + loadCase + resHeader.ToString() + num1DPoints.ToString();
+          if (PreviousGSAResultInit != initKey)
+          {
+            GSAObject.Output_Init_Arr(flags, axis, loadCase, (ResHeader)resHeader, num1DPoints);
+            PreviousGSAResultInit = initKey;
+          }
+          try
+
+          { 
+            GSAObject.Output_Extract_Arr(id, out var outputExtractResults, out num);
+            res = (GsaResults[])outputExtractResults;
+          }
+          catch
+          {
+            // Try reinit if fail
+            GSAObject.Output_Init_Arr(flags, axis, loadCase, (ResHeader)resHeader, num1DPoints);
+            GSAObject.Output_Extract_Arr(id, out var outputExtractResults, out num);
+            res = (GsaResults[])outputExtractResults;
+          }
         }
         else
         {
-          GSAObject.Output_Init(flags, axis, loadCase, resHeader, num1DPoints);
+          var initKey = "SINGLE" + flags.ToString() + axis + loadCase + resHeader.ToString() + num1DPoints.ToString();
+          if (PreviousGSAResultInit != initKey)
+          {
+            GSAObject.Output_Init(flags, axis, loadCase, resHeader, num1DPoints);
+            PreviousGSAResultInit = initKey;
+          }
           int numPos = GSAObject.Output_NumElemPos(id);
 
           res = new GsaResults[numPos];
 
-          for (int i = 0; i < numPos; i++)
-            res[i] = new GsaResults() { dynaResults = new double[] { (double)GSAObject.Output_Extract(id, i) } };
+          try
+          { 
+            for (int i = 0; i < numPos; i++)
+              res[i] = new GsaResults() { dynaResults = new double[] { (double)GSAObject.Output_Extract(id, i) } };
+          }
+          catch
+          {
+            // Try reinit if fail
+            GSAObject.Output_Init(flags, axis, loadCase, resHeader, num1DPoints);
+            for (int i = 0; i < numPos; i++)
+              res[i] = new GsaResults() { dynaResults = new double[] { (double)GSAObject.Output_Extract(id, i) } };
+          }
         }
 
         int counter = 0;
