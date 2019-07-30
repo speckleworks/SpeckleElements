@@ -262,14 +262,8 @@ namespace SpeckleElementsClasses
     [JsonProperty("pathType", Required = Required.Default, NullValueHandling = NullValueHandling.Ignore)]
     public StructuralBridgePathType PathType { get; set; }
 
-    [JsonProperty("leftOffset", Required = Required.Default, NullValueHandling = NullValueHandling.Ignore)]
-    public double LeftOffset { get; set; }
-
-    [JsonProperty("rightOffset", Required = Required.Default, NullValueHandling = NullValueHandling.Ignore)]
-    public double RightOffset { get; set; }
-
-    [JsonProperty("centreOffset", Required = Required.Default, NullValueHandling = NullValueHandling.Ignore)]
-    public double CentreOffset { get; set; }
+    [JsonProperty("offsets", Required = Required.Default, NullValueHandling = NullValueHandling.Ignore)]
+    public List<double> Offsets { get; set; }
 
     [JsonProperty("gauge", Required = Required.Default, NullValueHandling = NullValueHandling.Ignore)]
     public double Gauge { get; set; }
@@ -286,7 +280,7 @@ namespace SpeckleElementsClasses
     [JsonProperty("width", Required = Required.Default, NullValueHandling = NullValueHandling.Ignore)]
     public double Width { get; set; }
 
-    [JsonProperty("axles", Required = Required.Default, NullValueHandling = NullValueHandling.Ignore)]
+    [JsonIgnore]
     public List<StructuralBridgeVehicleAxle> Axles
     {
       get

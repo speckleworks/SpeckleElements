@@ -49,8 +49,8 @@ namespace SpeckleElementsGSA
       int index = GSA.Indexer.ResolveIndex(destType, path);
       int alignmentIndex = GSA.Indexer.LookupIndex(typeof(GSABridgeAlignment), path.AlignmentRef) ?? 1;
 
-      var left = (path.PathType == StructuralBridgePathType.Track || path.PathType == StructuralBridgePathType.Vehicle) ? path.CentreOffset : path.LeftOffset;
-      var right = (path.PathType == StructuralBridgePathType.Track || path.PathType == StructuralBridgePathType.Vehicle) ? path.Gauge : path.RightOffset;
+      var left = path.Offsets.First();
+      var right = (path.PathType == StructuralBridgePathType.Track || path.PathType == StructuralBridgePathType.Vehicle) ? path.Gauge : path.Offsets.Last();
 
       var ls = new List<string>
         {
