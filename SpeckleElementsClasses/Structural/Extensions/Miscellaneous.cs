@@ -108,4 +108,51 @@ namespace SpeckleElementsClasses
     }
   }
 
+  public partial class StructuralNodalInfluenceEffect
+  {
+    public StructuralNodalInfluenceEffect() { }
+
+    public StructuralNodalInfluenceEffect(StructuralInfluenceEffectType effectType, string nodeRef, double factor, StructuralAxis axis, StructuralVectorBoolSix directions, string applicationId = null, Dictionary<string, object> properties = null)
+    {
+      this.Properties = properties;
+      this.ApplicationId = applicationId;
+      this.EffectType = effectType;
+      this.NodeRef = nodeRef;
+      this.Factor = factor;
+      this.Axis = axis;
+      this.Directions = directions;
+
+      GenerateHash();
+    }
+
+    public override void Scale(double factor)
+    {
+      this.Properties = ScaleProperties(this.Properties, factor);
+      this.GenerateHash();
+    }
+  }
+
+  public partial class Structural1DInfluenceEffect
+  {
+    public Structural1DInfluenceEffect() { }
+
+    public Structural1DInfluenceEffect(StructuralInfluenceEffectType effectType, string elementRef, double position, double factor, StructuralVectorBoolSix directions, string applicationId = null, Dictionary<string, object> properties = null)
+    {
+      this.Properties = properties;
+      this.ApplicationId = applicationId;
+      this.EffectType = effectType;
+      this.ElementRef = elementRef;
+      this.Position = position;
+      this.Factor = factor;
+      this.Directions = directions;
+
+      GenerateHash();
+    }
+
+    public override void Scale(double factor)
+    {
+      this.Properties = ScaleProperties(this.Properties, factor);
+      this.GenerateHash();
+    }
+  }
 }

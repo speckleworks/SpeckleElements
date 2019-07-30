@@ -8,6 +8,12 @@ using SpeckleCore;
 using SpeckleCoreGeometryClasses;
 namespace SpeckleElementsClasses
 {
+  public enum StructuralInfluenceEffectType
+  {
+    Displacement,
+    Force,
+  }
+
   [Serializable]
   public partial class StructuralAssembly : SpeckleLine, IStructural
   {
@@ -158,5 +164,67 @@ namespace SpeckleElementsClasses
     /// <summary>Application IDs of StructuralConstructionStages to apply restraints on</summary>
     [JsonProperty("constructionStageRefs", Required = Required.Default, NullValueHandling = NullValueHandling.Ignore)]
     public List<string> ConstructionStageRefs { get; set; }
+  }
+
+  [Serializable]
+  public partial class StructuralNodalInfluenceEffect : SpeckleObject, IStructural
+  {
+    public override string Type { get => "StructuralNodalInfluenceEffect"; }
+
+    /// <summary>Value to calculate influence effect for.</summary>
+    [JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
+    [JsonProperty("effectType", Required = Required.Default, NullValueHandling = NullValueHandling.Ignore)]
+    public StructuralInfluenceEffectType EffectType { get; set; }
+
+    /// <summary>Application ID of StructuralNodes to calculate influence effect at.</summary>
+    [JsonProperty("nodeRef", Required = Required.Default, NullValueHandling = NullValueHandling.Ignore)]
+    public string NodeRef { get; set; }
+
+    /// <summary>Influence effect factor to apply.</summary>
+    [JsonProperty("factor", Required = Required.Default, NullValueHandling = NullValueHandling.Ignore)]
+    public double Factor { get; set; }
+
+    /// <summary>Axis of effect to be considered.</summary>
+    [JsonProperty("axis", Required = Required.Default, NullValueHandling = NullValueHandling.Ignore)]
+    public StructuralAxis axis { get; set; }
+
+    /// <summary>Directions of effect to be considered.</summary>
+    [JsonProperty("directions", Required = Required.Default, NullValueHandling = NullValueHandling.Ignore)]
+    public StructuralVectorBoolSix Directions { get; set; }
+
+    /// <summary>GSA grouping of influence effects to combine effects.</summary>
+    [JsonProperty("gsaEffectGroup", Required = Required.Default, NullValueHandling = NullValueHandling.Ignore)]
+    public string GSAEffectGroup { get; set; }
+  }
+
+  [Serializable]
+  public partial class Structural1DInfluenceEffect : SpeckleObject, IStructural
+  {
+    public override string Type { get => "StructuralNodalInfluenceEffect"; }
+
+    /// <summary>Value to calculate influence effect for.</summary>
+    [JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
+    [JsonProperty("effectType", Required = Required.Default, NullValueHandling = NullValueHandling.Ignore)]
+    public StructuralInfluenceEffectType EffectType { get; set; }
+
+    /// <summary>Application ID of Structural1DElement to calculate influence effect at.</summary>
+    [JsonProperty("elementRef", Required = Required.Default, NullValueHandling = NullValueHandling.Ignore)]
+    public string ElementRef { get; set; }
+
+    /// <summary>Position on the element in percentage (0 to 1) to calculate influence effect at.</summary>
+    [JsonProperty("position", Required = Required.Default, NullValueHandling = NullValueHandling.Ignore)]
+    public double Position { get; set; }
+
+    /// <summary>Influence effect factor to apply.</summary>
+    [JsonProperty("factor", Required = Required.Default, NullValueHandling = NullValueHandling.Ignore)]
+    public double Factor { get; set; }
+
+    /// <summary>Directions of effect to be considered.</summary>
+    [JsonProperty("directions", Required = Required.Default, NullValueHandling = NullValueHandling.Ignore)]
+    public StructuralVectorBoolSix Directions { get; set; }
+    
+    /// <summary>GSA grouping of influence effects to combine effects.</summary>
+    [JsonProperty("gsaEffectGroup", Required = Required.Default, NullValueHandling = NullValueHandling.Ignore)]
+    public string GSAEffectGroup { get; set; }
   }
 }
