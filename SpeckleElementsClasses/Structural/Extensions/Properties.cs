@@ -83,6 +83,13 @@ namespace SpeckleElementsClasses
     public override void Scale(double factor)
     {
       this.Profile.Scale(factor);
+      if (this.Voids != null && this.Voids.Count() > 0)
+      {
+        for (var i = 0; i < this.Voids.Count(); i++)
+        {
+          this.Voids[i].Scale(factor);
+        }
+      }
       this.Thickness *= factor;
 
       this.Properties = ScaleProperties(this.Properties, factor);

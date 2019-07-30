@@ -132,8 +132,8 @@ namespace SpeckleElementsClasses
     public SpeckleObject Profile { get; set; }
 
     /// <summary>SpecklePolyline or SpeckleCircle of the cross-section.</summary>
-    [JsonProperty("voidProfile", Required = Required.Default, NullValueHandling = NullValueHandling.Ignore)]
-    public SpeckleObject VoidProfile { get; set; }
+    [JsonProperty("voids", Required = Required.Default, NullValueHandling = NullValueHandling.Ignore)]
+    public List<SpeckleObject> Voids { get; set; }
 
     /// <summary>Cross-section shape.</summary>
     [JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
