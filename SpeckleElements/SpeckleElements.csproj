@@ -50,10 +50,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\SpeckleElementsGSA\SpeckleElementsGSA.csproj">
-      <Project>{686cf31d-5d4c-4e57-a2fc-267ec7bb78c5}</Project>
-      <Name>SpeckleElementsGSA</Name>
-    </ProjectReference>
     <ProjectReference Include="..\SpeckleElementsRevit\SpeckleElementsRevit.csproj">
       <Project>{c08796bb-c109-4961-ab72-a2a74c06e510}</Project>
       <Name>SpeckleElementsRevit</Name>

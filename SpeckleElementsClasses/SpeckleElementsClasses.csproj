@@ -167,17 +167,6 @@
   <ItemGroup>
     <Compile Include="Base.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Structural\Extensions\Properties.cs" />
-    <Compile Include="Structural\Base.cs" />
-    <Compile Include="Structural\Extensions\Base.cs" />
-    <Compile Include="Structural\Extensions\Loads.cs" />
-    <Compile Include="Structural\Extensions\Miscellaneous.cs" />
-    <Compile Include="Structural\Extensions\NodesAndElements.cs" />
-    <Compile Include="Structural\Loads.cs" />
-    <Compile Include="Structural\Miscellaneous.cs" />
-    <Compile Include="Structural\NodesAndElements.cs" />
-    <Compile Include="Structural\Properties.cs" />
-    <Compile Include="Structural\Results.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
