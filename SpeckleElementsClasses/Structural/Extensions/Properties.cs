@@ -67,12 +67,13 @@ namespace SpeckleElementsClasses
   {
     public Structural1DProperty() { }
 
-    public Structural1DProperty(SpeckleObject profile, Structural1DPropertyShape shape, bool hollow, double thickness, string materialRef, string applicationId = null, Dictionary<string, object> properties = null)
+    public Structural1DProperty(SpeckleObject profile, Structural1DPropertyShape shape, bool hollow, double thickness, string catalogueName, string materialRef, string applicationId = null, Dictionary<string, object> properties = null)
     {
       this.Profile = profile;
       this.Shape = shape;
       this.Hollow = hollow;
       this.Thickness = thickness;
+      this.CatalogueName = catalogueName;
       this.MaterialRef = materialRef;
       this.ApplicationId = applicationId;
       this.Properties = properties;

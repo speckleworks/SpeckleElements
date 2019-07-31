@@ -128,6 +128,7 @@ namespace SpeckleElementsGSA
           string transformed = TransformCategorySection(desc);
           if (transformed == null)
             return prop;
+          prop.CatalogueName = pieces[2];
           return SetStandardDesc(prop, transformed, gsaUnit);
         default:
           return prop;
@@ -153,6 +154,7 @@ namespace SpeckleElementsGSA
                     -width/2, height/2 , 0,
                     -width/2, -height/2 , 0,
                     width/2, -height/2 , 0});
+        (prop.Profile as SpecklePolyline).Closed = true;
         prop.Shape = Structural1DPropertyShape.Rectangular;
         prop.Hollow = false;
       }
@@ -173,6 +175,7 @@ namespace SpeckleElementsGSA
                     -width/2, height/2 , 0,
                     -width/2, -height/2 , 0,
                     width/2, -height/2 , 0});
+        (prop.Profile as SpecklePolyline).Closed = true;
         prop.Shape = Structural1DPropertyShape.Rectangular;
         prop.Hollow = true;
         prop.Thickness = (t1 + t2) / 2; // TODO: Takes average thickness
@@ -187,6 +190,7 @@ namespace SpeckleElementsGSA
                 new SpeckleVector(1, 0, 0),
                 new SpeckleVector(0, 1, 0)),
             diameter / 2);
+        (prop.Profile as SpecklePolyline).Closed = true;
         prop.Shape = Structural1DPropertyShape.Circular;
         prop.Hollow = false;
       }
@@ -201,6 +205,7 @@ namespace SpeckleElementsGSA
                 new SpeckleVector(1, 0, 0),
                 new SpeckleVector(0, 1, 0)),
             diameter / 2);
+        (prop.Profile as SpecklePolyline).Closed = true;
         prop.Shape = Structural1DPropertyShape.Circular;
         prop.Hollow = true;
         prop.Thickness = t;
@@ -226,6 +231,7 @@ namespace SpeckleElementsGSA
                     width/2, -depth/2, 0,
                     width/2, -(depth/2 - flangeThickness), 0,
                     webThickness/2, -(depth/2 - flangeThickness), 0});
+        (prop.Profile as SpecklePolyline).Closed = true;
         prop.Shape = Structural1DPropertyShape.I;
         prop.Hollow = false;
       }
@@ -246,6 +252,7 @@ namespace SpeckleElementsGSA
                     -webThickness/2, - flangeThickness, 0,
                     -webThickness/2, -depth, 0,
                     webThickness/2, -depth, 0});
+        (prop.Profile as SpecklePolyline).Closed = true;
         prop.Shape = Structural1DPropertyShape.T;
         prop.Hollow = false;
       }
@@ -266,6 +273,7 @@ namespace SpeckleElementsGSA
                     width, -depth/2, 0,
                     width, -(depth/2 - flangeThickness), 0,
                     webThickness, -(depth/2 - flangeThickness), 0});
+        (prop.Profile as SpecklePolyline).Closed = true;
         prop.Shape = Structural1DPropertyShape.Generic;
         prop.Hollow = false;
       }
@@ -284,6 +292,7 @@ namespace SpeckleElementsGSA
                     webThickness, flangeThickness, 0,
                     webThickness, depth, 0,
                     0, depth, 0});
+        (prop.Profile as SpecklePolyline).Closed = true;
         prop.Shape = Structural1DPropertyShape.Generic;
         prop.Hollow = false;
       }
@@ -298,6 +307,7 @@ namespace SpeckleElementsGSA
                     -topWidth/2, depth/2 , 0,
                     -bottomWidth/2, -depth/2 , 0,
                     bottomWidth/2, -depth/2 , 0});
+        (prop.Profile as SpecklePolyline).Closed = true;
         prop.Shape = Structural1DPropertyShape.Generic;
         prop.Hollow = false;
       }
@@ -322,6 +332,7 @@ namespace SpeckleElementsGSA
           coor.Add(0);
         }
         prop.Profile = new SpecklePolyline(coor.ToArray());
+        (prop.Profile as SpecklePolyline).Closed = true;
         prop.Shape = Structural1DPropertyShape.Generic;
         prop.Hollow = false;
       }
@@ -346,6 +357,7 @@ namespace SpeckleElementsGSA
           coor.Add(0);
         }
         prop.Profile = new SpecklePolyline(coor.ToArray());
+        (prop.Profile as SpecklePolyline).Closed = true;
         prop.Shape = Structural1DPropertyShape.Generic;
         prop.Hollow = true;
         prop.Thickness = thickness;
@@ -387,6 +399,7 @@ namespace SpeckleElementsGSA
         }
 
         prop.Profile = new SpecklePolyline(coor.ToArray());
+        (prop.Profile as SpecklePolyline).Closed = true;
         prop.Shape = Structural1DPropertyShape.Generic;
         prop.Hollow = false;
         return prop;
@@ -400,6 +413,13 @@ namespace SpeckleElementsGSA
 
     private string GetGSADesc(Structural1DProperty prop, string gsaUnit)
     {
+      if (!string.IsNullOrEmpty(prop.CatalogueName))
+      {
+        var desc = GetGSACategorySection(prop.CatalogueName);
+        if (!string.IsNullOrEmpty(desc))
+          return desc;
+      }
+        
       if (prop.Profile == null)
         return "";
 
@@ -511,7 +531,7 @@ namespace SpeckleElementsGSA
       {
         using (SQLiteConnection conn = new SQLiteConnection(DbPath, SQLiteOpenFlags.ReadOnly))
         {
-          string query_type = "SELECT TYPE_NUM" +
+          string query_type = "SELECT TYPE_NUM, TYPE_ABR" +
               " FROM Types" +
               " WHERE TYPE_ABR = ?";
 
@@ -520,18 +540,30 @@ namespace SpeckleElementsGSA
           if (type.Count() == 0)
             return null;
 
-          int typeNum = type.ToList()[0].TYPE_NUM;
+          int typeCounter = 0;
 
-          string query_sect = "SELECT SECT_SHAPE, SECT_DEPTH_DIAM, SECT_WIDTH, SECT_WEB_THICK, SECT_FLG_THICK" +
-              " FROM Sect" +
-              " WHERE SECT_TYPE_NUM = ?";
+          GSASection s = null;
 
-          IEnumerable<GSASection> sect = conn.Query<GSASection>(query_sect, new object[] { typeNum });
+          while (typeCounter < type.Count())
+          { 
+            int typeNum = type.ToList()[typeCounter].TYPE_NUM;
 
-          if (sect.Count() == 0)
+            string query_sect = "SELECT SECT_NAME, SECT_SHAPE, SECT_TYPE_NUM, SECT_DEPTH_DIAM, SECT_WIDTH, SECT_WEB_THICK, SECT_FLG_THICK" +
+                " FROM Sect" +
+                " WHERE SECT_TYPE_NUM = ? AND lower(SECT_NAME) = lower(?)";
+
+            IEnumerable<GSASection> sect = conn.Query<GSASection>(query_sect, new object[] { typeNum, pieces[2] });
+            if (sect.Count() > 0)
+            {
+              s = sect.ToList()[0];
+              break;
+            }
+
+            typeCounter++;
+          }
+
+          if (s == null)
             return null;
-
-          GSASection s = sect.ToList()[0];
 
           switch ((GSACAtSectionType)s.SECT_SHAPE)
           {
@@ -566,12 +598,54 @@ namespace SpeckleElementsGSA
       }
       catch { return null; }
     }
+
+    /// <summary>
+    /// Gets GSA category section string from name of section.
+    /// </summary>
+    /// <param name="name">Name of section</param>
+    /// <returns>GSA section description or null if error.</returns>
+    public string GetGSACategorySection(string name)
+    {
+      string DbPath = System.Environment.GetFolderPath(System.Environment.SpecialFolder.ProgramFiles) + @"\Oasys\GSA 10.0\sectlib.db3";
+
+      try
+      {
+        using (SQLiteConnection conn = new SQLiteConnection(DbPath, SQLiteOpenFlags.ReadOnly))
+        {
+          string query_sect = "SELECT SECT_NAME, SECT_SHAPE, SECT_TYPE_NUM, SECT_DEPTH_DIAM, SECT_WIDTH, SECT_WEB_THICK, SECT_FLG_THICK" +
+              " FROM Sect" +
+              " WHERE lower(SECT_NAME) = lower(?)" +
+              " ORDER BY SECT_DATE_ADDED DESC LIMIT 1";
+
+          IEnumerable<GSASection> sect = conn.Query<GSASection>(query_sect, new object[] { name });
+
+          if (sect.Count() == 0)
+            return null;
+
+          int typeNum = sect.ToList()[0].SECT_TYPE_NUM;
+
+          string query_type = "SELECT TYPE_NUM, TYPE_ABR" +
+              " FROM Types" +
+              " WHERE TYPE_NUM = ?";
+
+          IEnumerable<GSASectionType> type = conn.Query<GSASectionType>(query_type, new object[] { typeNum });
+
+          if (type.Count() == 0)
+            return null;
+
+          return "CAT%" + type.ToList()[0].TYPE_ABR + "%" + sect.ToList()[0].SECT_NAME;
+        }
+      }
+      catch { return null; }
+    }
   }
 
   #region GSA Category Section Helper Classes
   public class GSASection
   {
+    public string SECT_NAME { get; set; }
     public int SECT_SHAPE { get; set; }
+    public int SECT_TYPE_NUM { get; set; }
     public float SECT_DEPTH_DIAM { get; set; }
     public float SECT_WIDTH { get; set; }
     public float SECT_WEB_THICK { get; set; }
@@ -581,6 +655,7 @@ namespace SpeckleElementsGSA
   public class GSASectionType
   {
     public int TYPE_NUM { get; set; }
+    public string TYPE_ABR { get; set; }
   }
   #endregion
 

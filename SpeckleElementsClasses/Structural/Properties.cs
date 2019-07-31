@@ -130,6 +130,10 @@ namespace SpeckleElementsClasses
     [JsonProperty("thickness", Required = Required.Default, NullValueHandling = NullValueHandling.Ignore)]
     public double Thickness { get; set; }
 
+    /// <summary>Catalogue section name which will take precedence over the profile.</summary>
+    [JsonProperty("catalogueName", Required = Required.Default, NullValueHandling = NullValueHandling.Ignore)]
+    public string CatalogueName { get; set; }
+
     /// <summary>Application ID of StructuralMaterial.</summary>
     [JsonProperty("materialRef", Required = Required.Default, NullValueHandling = NullValueHandling.Ignore)]
     public string MaterialRef { get; set; }
