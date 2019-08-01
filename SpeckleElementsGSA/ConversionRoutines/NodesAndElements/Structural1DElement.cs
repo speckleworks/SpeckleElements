@@ -323,17 +323,20 @@ namespace SpeckleElementsGSA
       int propRef = 0;
       try
       {
-        propRef = GSA.Indexer.LookupIndex(typeof(GSA1DProperty), member.PropertyRef).Value;
+        propRef = (member.ElementType == Structural1DElementType.Spring) 
+          ? GSA.Indexer.LookupIndex(typeof(GSASpringProperty), member.PropertyRef).Value 
+          : GSA.Indexer.LookupIndex(typeof(GSA1DProperty), member.PropertyRef).Value;
       }
       catch { }
 
-      List<string> ls = new List<string>();
-
-      ls.Add("SET");
-      ls.Add(keyword + ":" + GSA.GenerateSID(member));
-      ls.Add(index.ToString());
-      ls.Add(member.Name == null || member.Name == "" ? " " : member.Name);
-      ls.Add("NO_RGB");
+      var ls = new List<string>
+      {
+        "SET",
+        keyword + ":" + GSA.GenerateSID(member),
+        index.ToString(),
+        member.Name == null || member.Name == "" ? " " : member.Name,
+        "NO_RGB"
+      };
       if (member.ElementType == Structural1DElementType.Beam)
         ls.Add("BEAM");
       else if (member.ElementType == Structural1DElementType.Column)
@@ -344,7 +347,7 @@ namespace SpeckleElementsGSA
         ls.Add("1D_GENERIC");
       ls.Add(propRef.ToString());
       ls.Add(group != 0 ? group.ToString() : index.ToString()); // TODO: This allows for targeting of elements from members group
-      string topo = "";
+      var topo = "";
       for (int i = 0; i < member.Value.Count(); i += 3)
         topo += GSA.NodeAt(member.Value[i], member.Value[i + 1], member.Value[i + 2], Conversions.GSACoincidentNodeAllowance).ToString() + " ";
       ls.Add(topo);
@@ -356,12 +359,12 @@ namespace SpeckleElementsGSA
       catch { ls.Add("0"); }
       ls.Add(member.GSAMeshSize == 0 ? "0" : member.GSAMeshSize.ToString()); // Target mesh size
       ls.Add("MESH"); // TODO: What is this?
-      ls.Add("BEAM"); // Element type
+      ls.Add((member.ElementType == Structural1DElementType.Spring) ? "SPRING": "BEAM"); // Element type
       ls.Add("0"); // Fire
       ls.Add("0"); // Time 1
       ls.Add("0"); // Time 2
       ls.Add("0"); // Time 3
-      ls.Add("0"); // TODO: What is this?
+      ls.Add("0"); // Time 4
       ls.Add(member.GSADummy ? "DUMMY" : "ACTIVE");
 
       try
