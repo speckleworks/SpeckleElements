@@ -146,6 +146,9 @@ namespace SpeckleElementsRevit
       if ( sym == null )
       {
         MissingFamiliesAndTypes.Add( columnFamily + " " + columnType );
+      } else
+      {
+        MissingFamiliesAndTypes.Remove( columnFamily + " " + columnType ); // nasty
       }
 
       return sym;
@@ -209,18 +212,28 @@ namespace SpeckleElementsRevit
     {
       var myColumn = new Column();
 
-      myColumn.baseLine = ( SpeckleCoreGeometryClasses.SpeckleLine ) SpeckleCore.Converter.Serialise( myFamily.GetAnalyticalModel().GetCurve() );
+      var baseLevel = ( Autodesk.Revit.DB.Level ) Doc.GetElement( myFamily.get_Parameter( BuiltInParameter.FAMILY_BASE_LEVEL_PARAM ).AsElementId() );
+      var topLevel = ( Autodesk.Revit.DB.Level ) Doc.GetElement( myFamily.get_Parameter( BuiltInParameter.FAMILY_TOP_LEVEL_PARAM ).AsElementId() );
+
+      myColumn.baseLevel = baseLevel?.ToSpeckle();
+      myColumn.topLevel = topLevel?.ToSpeckle();
+
+      try
+      {
+        myColumn.baseLine = ( SpeckleCoreGeometryClasses.SpeckleLine ) SpeckleCore.Converter.Serialise( myFamily.GetAnalyticalModel().GetCurve() );
+      } catch
+      {
+        var basePt = (myFamily.Location as LocationPoint).Point;
+        var topPt = new XYZ( basePt.X, basePt.Y, topLevel.Elevation );
+        myColumn.baseLine = ( SpeckleCoreGeometryClasses.SpeckleLine ) SpeckleCore.Converter.Serialise( Line.CreateBound( basePt, topPt ) );
+      }
 
       myColumn.columnFamily = myFamily.Symbol.FamilyName;
       myColumn.columnType = Doc.GetElement( myFamily.GetTypeId() ).Name;
 
       myColumn.parameters = GetElementParams( myFamily );
 
-      var baseLevel = ( Autodesk.Revit.DB.Level ) Doc.GetElement( myFamily.get_Parameter( BuiltInParameter.FAMILY_BASE_LEVEL_PARAM ).AsElementId() );
-      var topLevel = ( Autodesk.Revit.DB.Level ) Doc.GetElement( myFamily.get_Parameter( BuiltInParameter.FAMILY_TOP_LEVEL_PARAM ).AsElementId() );
 
-      myColumn.baseLevel = baseLevel?.ToSpeckle();
-      myColumn.topLevel = topLevel?.ToSpeckle();
 
       // TODO: Maybe move this column properties in the class defintion
       myColumn.Properties[ "__facingFlipped" ] = myFamily.FacingFlipped;

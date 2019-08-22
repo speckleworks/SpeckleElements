@@ -24,12 +24,12 @@ namespace SpeckleElementsRevit
       // TODO: check if this family is a column (BuiltInCategory.OST_StructuralColumns)
       // or a beam (BuiltInCategory.OST_StructuralFraming or BuiltInCategory.OST_BeamAnalytical?)
 
-      if( myFamily.Category.Id.IntegerValue == (int) BuiltInCategory.OST_StructuralFraming )
+      if ( myFamily.Category.Id.IntegerValue == ( int ) BuiltInCategory.OST_StructuralFraming )
       {
         return BeamToSpeckle( myFamily );
       }
 
-      if(myFamily.Category.Id.IntegerValue == (int) BuiltInCategory.OST_StructuralColumns )
+      if ( myFamily.Category.Id.IntegerValue == ( int ) BuiltInCategory.OST_StructuralColumns || myFamily.Category.Id.IntegerValue == ( int ) BuiltInCategory.OST_Columns )
       {
         return ColumnToSpeckle( myFamily );
       }
@@ -41,7 +41,7 @@ namespace SpeckleElementsRevit
       var allSolids = GetElementSolids( myFamily, opt: new Options() { DetailLevel = ViewDetailLevel.Fine, ComputeReferences = true } );
 
       var famSubElements = GetFamSubElements( myFamily );
-      foreach( var sb in famSubElements )
+      foreach ( var sb in famSubElements )
       {
         allSolids.AddRange( GetElementSolids( sb ) );
       }
@@ -57,11 +57,11 @@ namespace SpeckleElementsRevit
     public static List<Element> GetFamSubElements( Autodesk.Revit.DB.FamilyInstance myFamily )
     {
       var mySubElements = new List<Element>();
-      foreach( var id in myFamily.GetSubComponentIds() )
+      foreach ( var id in myFamily.GetSubComponentIds() )
       {
         var element = Doc.GetElement( id );
         mySubElements.Add( element );
-        if( element is Autodesk.Revit.DB.FamilyInstance )
+        if ( element is Autodesk.Revit.DB.FamilyInstance )
         {
           mySubElements.AddRange( GetFamSubElements( element as Autodesk.Revit.DB.FamilyInstance ) );
         }

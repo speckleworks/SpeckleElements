@@ -366,7 +366,7 @@ namespace SpeckleElementsRevit
       if ( collectorElems.Count() > 0 )
       {
         MissingFamiliesAndTypes.Add( familyName + " " + typeName );
-        return collectorElems.First();
+        //return collectorElems.First();
       }
 
       return null;
