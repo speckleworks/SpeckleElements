@@ -6,13 +6,13 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("SpeckleElements")]
-[assembly: AssemblyDescription("")]
-[assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("SpeckleElements")]
-[assembly: AssemblyCopyright("Copyright ©  2019")]
-[assembly: AssemblyTrademark("")]
-[assembly: AssemblyCulture("")]
+[assembly: AssemblyDescription( "A higher level object model (beams, walls, etc.) for Speckle." )]
+[assembly: AssemblyConfiguration( "" )]
+[assembly: AssemblyCompany( "https://speckle.works" )]
+[assembly: AssemblyProduct( "SpeckleElementsBuilder" )]
+[assembly: AssemblyCopyright( "Copyright © 2019 Project Contributors. Licensed under the MIT license." )]
+[assembly: AssemblyTrademark( "" )]
+[assembly: AssemblyCulture( "" )]
 
 // Setting ComVisible to false makes the types in this assembly not visible
 // to COM components.  If you need to access a type in this assembly from

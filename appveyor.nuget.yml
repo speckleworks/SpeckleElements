@@ -36,11 +36,9 @@ assembly_info:
   assembly_version: '{version}'
   assembly_file_version: '{version}'
 
-
 # Build Configuration
 platform: Any CPU
 configuration: Release
-
 
 before_build:
   - nuget restore
@@ -49,28 +47,17 @@ build:
   publish_nuget: true
   include_nuget_references: true
   publish_nuget_symbols: true
-  project: SpeckleElements.sln
+  project: SpeckleElementsClasses\SpeckleElementsClasses.csproj
   verbosity: minimal
-
-# zip everything into a zip file containing package folder structure
-after_build:
-  - 7z a SpeckleElements-%APPVEYOR_BUILD_VERSION%.zip "%APPVEYOR_BUILD_FOLDER%\SpeckleElements\bin\Release\*"
-
-artifacts:
-  path: SpeckleElements-%APPVEYOR_BUILD_VERSION%.zip
-  name: Release
 
 #deploy to nuget
 deploy:
-  - release: SpeckleElements-$(APPVEYOR_BUILD_VERSION)
-    tag: $(APPVEYOR_REPO_TAG_NAME)
-    description: 'Revit-centric object model built on top of SpeckleCoreGeometry.'
-    provider: GitHub
-    auth_token:
-      secure: D5tPFvdQMg9sIe0sSvQjEWw4KAdOk1jyxNwiH5qP5DpDmUH6n6NgTdA+56vXS1Pe # your encrypted token from GitHub
-    artifact: SpeckleElements-$(APPVEYOR_BUILD_VERSION).zip
-    draft: false
-    prerelease: true
-    force_update: true
-    on:              # release from master branch only
-      appveyor_repo_tag: true        # deploy on tag push only
+  - provider: NuGet
+    server:                  # remove to push to NuGet.org
+    api_key:
+      secure: n4EiHDLVSLjOzqT7OOOg3US3PWs6fNsOaGpyT/EFBKrTKl/1wMmmKt73MNuTngD+
+    skip_symbols: false
+    symbol_server:           # remove to push symbols to SymbolSource.org
+    artifact: /.*\.nupkg/
+    on:
+      branch: nuget
