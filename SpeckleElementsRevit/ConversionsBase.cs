@@ -54,6 +54,10 @@ namespace SpeckleElementsRevit
 
     public static GenericElement ToSpeckle( this Element myElement )
     {
+
+      if ( myElement.Category.CategoryType == CategoryType.AnalyticalModel )
+        return null;
+
       var generic = new GenericElement();
 
       (generic.Faces, generic.Vertices) = GetFaceVertexArrayFromElement( myElement );
