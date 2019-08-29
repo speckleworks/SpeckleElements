@@ -83,6 +83,7 @@ namespace SpeckleElementsRevit
       // Get params from the unique list
       foreach ( Parameter p in myElement.ParametersMap )
       {
+        var keyName = SanitizeKeyname( p.Definition.Name );
         switch ( p.StorageType )
         {
           case StorageType.Double:
@@ -90,22 +91,22 @@ namespace SpeckleElementsRevit
             var val = p.AsDouble();
             try
             {
-              myParamDict[ p.Definition.Name ] = UnitUtils.ConvertFromInternalUnits( val, p.DisplayUnitType );
-              myParamDict[ "__unitType::" + p.Definition.Name ] = p.Definition.UnitType.ToString();
+              myParamDict[ keyName ] = UnitUtils.ConvertFromInternalUnits( val, p.DisplayUnitType );
+              myParamDict[ "__unitType::" + keyName ] = p.Definition.UnitType.ToString();
               // populate units dictionary
               UnitDictionary[ p.Definition.UnitType.ToString() ] = p.DisplayUnitType.ToString();
             }
             catch ( Exception e )
             {
-              myParamDict[ p.Definition.Name ] = val;
+              myParamDict[ keyName ] = val;
             }
             break;
           case StorageType.Integer:
-            myParamDict[ p.Definition.Name ] = p.AsInteger();
-            //myParamDict[ p.Definition.Name ] = UnitUtils.ConvertFromInternalUnits( p.AsInteger(), p.DisplayUnitType);
+            myParamDict[ keyName ] = p.AsInteger();
+            //myParamDict[ keyName ] = UnitUtils.ConvertFromInternalUnits( p.AsInteger(), p.DisplayUnitType);
             break;
           case StorageType.String:
-            myParamDict[ p.Definition.Name ] = p.AsString();
+            myParamDict[ keyName ] = p.AsString();
             break;
           case StorageType.ElementId:
             // TODO: Properly get ref elemenet and serialise it in here.
@@ -113,10 +114,10 @@ namespace SpeckleElementsRevit
             //var docEl = Doc.GetElement( p.AsElementId() );
             //var spk = SpeckleCore.Converter.Serialise( docEl );
             //if( !(spk is SpeckleNull) ) {
-            //  myParamDict[ p.Definition.Name + "_el" ] = spk;
-            //  myParamDict[ p.Definition.Name ] = p.AsValueString();
+            //  myParamDict[ keyName + "_el" ] = spk;
+            //  myParamDict[ keyName ] = p.AsValueString();
             //} else
-            myParamDict[ p.Definition.Name ] = p.AsValueString();
+            myParamDict[ keyName ] = p.AsValueString();
             break;
           case StorageType.None:
             break;
@@ -126,7 +127,9 @@ namespace SpeckleElementsRevit
       // Get any other parameters from the "big" list
       foreach ( Parameter p in myElement.Parameters )
       {
-        if ( myParamDict.ContainsKey( p.Definition.Name ) ) continue;
+        var keyName = SanitizeKeyname( p.Definition.Name );
+
+        if ( myParamDict.ContainsKey( keyName ) ) continue;
         switch ( p.StorageType )
         {
           case StorageType.Double:
@@ -134,33 +137,31 @@ namespace SpeckleElementsRevit
             var val = p.AsDouble();
             try
             {
-              myParamDict[ p.Definition.Name ] = UnitUtils.ConvertFromInternalUnits( val, p.DisplayUnitType );
-              myParamDict[ "__unitType::" + p.Definition.Name ] = p.Definition.UnitType.ToString();
+              myParamDict[ keyName ] = UnitUtils.ConvertFromInternalUnits( val, p.DisplayUnitType );
+              myParamDict[ "__unitType::" + keyName ] = p.Definition.UnitType.ToString();
               // populate units dictionary
               UnitDictionary[ p.Definition.UnitType.ToString() ] = p.DisplayUnitType.ToString();
             }
             catch ( Exception e )
             {
-              myParamDict[ p.Definition.Name ] = val;
+              myParamDict[ keyName ] = val;
             }
             break;
           case StorageType.Integer:
-            myParamDict[ p.Definition.Name ] = p.AsInteger();
-            //myParamDict[ p.Definition.Name ] = UnitUtils.ConvertFromInternalUnits( p.AsInteger(), p.DisplayUnitType);
+            myParamDict[ keyName ] = p.AsInteger();
+            //myParamDict[ keyName ] = UnitUtils.ConvertFromInternalUnits( p.AsInteger(), p.DisplayUnitType);
             break;
           case StorageType.String:
-            myParamDict[ p.Definition.Name ] = p.AsString();
+            myParamDict[ keyName ] = p.AsString();
             break;
           case StorageType.ElementId:
-            myParamDict[ p.Definition.Name ] = p.AsValueString();
+            myParamDict[ keyName ] = p.AsValueString();
             break;
           case StorageType.None:
             break;
         }
       }
 
-      // TODO: Sanitise keys
-      // ...
       // myParamDict["__units"] = unitsDict;
       // TODO: BIG CORE PROBLEM: failure to serialise things with nested dictionary (like the line above).
       return myParamDict;
@@ -180,7 +181,8 @@ namespace SpeckleElementsRevit
         if ( exclusions != null && exclusions.Contains( kvp.Key ) ) continue;
         try
         {
-          var myParam = myElement.ParametersMap.get_Item( kvp.Key );
+          var keyName = UnsanitizeKeyname( kvp.Key );
+          var myParam = myElement.ParametersMap.get_Item( keyName );
           if ( myParam == null ) continue;
           if ( myParam.IsReadOnly ) continue;
 
@@ -223,6 +225,16 @@ namespace SpeckleElementsRevit
         }
       }
 
+    }
+
+    public static string SanitizeKeyname( string keyName)
+    {
+      return keyName.Replace( ".", "☞" ); // BECAUSE FML
+    }
+
+    public static string UnsanitizeKeyname( string keyname)
+    {
+      return keyname.Replace( "☞", "." );
     }
 
     /// <summary>
