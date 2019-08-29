@@ -42,9 +42,8 @@
       <HintPath>..\packages\Revit.RevitApiUI.x64.2019.0.0\lib\net45\RevitAPIUI.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="SpeckleCore, Version=1.5.2.343, Culture=neutral, processorArchitecture=AMD64">
-      <HintPath>..\packages\SpeckleCore.1.5.2.343\lib\net45\SpeckleCore.dll</HintPath>
-      <Private>False</Private>
+    <Reference Include="SpeckleCore, Version=1.6.1.0, Culture=neutral, processorArchitecture=AMD64">
+      <HintPath>..\packages\SpeckleCore.1.6.1\lib\net45\SpeckleCore.dll</HintPath>
     </Reference>
     <Reference Include="SpeckleCoreGeometryClasses, Version=1.2.8.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\SpeckleCoreGeometry.1.2.8\lib\net461\SpeckleCoreGeometryClasses.dll</HintPath>
