@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Autodesk.Revit.DB;
 using Autodesk.Revit.DB.Structure;
 using SpeckleCore;
+using SpeckleCore.Data;
 using SpeckleCoreGeometryClasses;
 using SpeckleElementsClasses;
 
@@ -31,8 +32,8 @@ namespace SpeckleElementsRevit
       // Freak out if we don't have a symbol.
       if( familySymbol == null )
       {
-        MissingFamiliesAndTypes.Add( myBeam.beamFamily + " " + myBeam.beamType );
-        return null;
+        ConversionErrors.Add(new SpeckleConversionError { Message = $"Missing family: {myBeam.beamFamily} {myBeam.beamType}" });
+        throw new RevitFamilyNotFoundException($"No 'Beam' family found in the project");
       }
 
       // Activate the symbol yo! 
