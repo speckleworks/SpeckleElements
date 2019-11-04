@@ -245,6 +245,10 @@ namespace SpeckleElementsRevit
       }
       else if ( myFamily.Location is LocationCurve )
       {
+        var myAngle = myFamily.get_Parameter( BuiltInParameter.STRUCTURAL_BEND_DIR_ANGLE ).AsDouble(); // Stands for cross-section rotation!
+        var rads = UnitUtils.ConvertFromInternalUnits( myAngle, DisplayUnitType.DUT_RADIANS );
+        myColumn.Properties[ "__rotation" ] = rads;
+
         // TODO: Figure this column rotation shit out. 
         // For now... Do nothing??
         //var t = myFamily.GetTotalTransform();
