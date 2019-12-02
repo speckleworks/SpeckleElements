@@ -381,17 +381,28 @@ namespace SpeckleElementsRevit
       if ( ( familyName == null || typeName == null ) && collectorElems.Count() > 0 )
         return collectorElems.First();
 
+      //match family and type
       foreach ( var e in collectorElems )
       {
         if ( e.FamilyName == familyName && e.Name == typeName )
           return e;
       }
 
+      //match type
+      foreach (var e in collectorElems)
+      {
+        if (e.FamilyName == familyName)
+        {
+          ConversionErrors.Add(new SpeckleConversionError { Message = $"Missing type: {familyName} {typeName}" });
+          return e;
+        }
+          
+      }
+
       if ( collectorElems.Count() > 0 )
       {
-        //error already handled
-        //MissingFamiliesAndTypes.Add( familyName + " " + typeName );
-        //return collectorElems.First();
+        ConversionErrors.Add(new SpeckleConversionError { Message = $"Missing family: {familyName} {typeName}" });
+        return collectorElems.First();
       }
 
       return null;
