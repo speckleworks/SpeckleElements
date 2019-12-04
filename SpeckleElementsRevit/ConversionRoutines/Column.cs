@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Autodesk.Revit.DB;
 using SpeckleCore;
+using SpeckleCore.Data;
 using SpeckleElementsClasses;
 
 namespace SpeckleElementsRevit
@@ -28,8 +29,12 @@ namespace SpeckleElementsRevit
       FamilySymbol familySymbol = TryGetColumnFamilySymbol( myCol.columnFamily, myCol.columnType );
 
       // Freak out if we don't have a symbol.
-      if ( familySymbol == null )
-        return null;
+      if ( familySymbol == null)
+      {
+        ConversionErrors.Add(new SpeckleConversionError { Message = $"Missing family: {myCol.columnFamily} {myCol.columnType}" });
+        throw new RevitFamilyNotFoundException($"No 'Column' family found in the project");
+      }
+        
 
       // Activate the symbol yo! 
       if ( !familySymbol.IsActive ) familySymbol.Activate();
@@ -141,14 +146,6 @@ namespace SpeckleElementsRevit
       if ( sym == null )
       {
         sym = GetFamilySymbolByFamilyNameAndTypeAndCategory( columnFamily, columnType, BuiltInCategory.OST_Columns );
-      }
-
-      if ( sym == null )
-      {
-        MissingFamiliesAndTypes.Add( columnFamily + " " + columnType );
-      } else
-      {
-        MissingFamiliesAndTypes.Remove( columnFamily + " " + columnType ); // nasty
       }
 
       return sym;

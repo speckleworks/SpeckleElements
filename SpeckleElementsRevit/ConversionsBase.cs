@@ -8,6 +8,7 @@ using Autodesk.Revit.DB;
 using SpeckleCore;
 using SpeckleElementsClasses;
 using SpeckleCoreGeometryClasses;
+using SpeckleCore.Data;
 
 namespace SpeckleElementsRevit
 {
@@ -36,7 +37,13 @@ namespace SpeckleElementsRevit
     /// Keeps track of the missing families and their types from the bake process. It's a quite roundabout way of doing things, but it keeps concerns separated. 
     /// More and more doubts about this architecture every day...
     /// </summary>
-    public static HashSet<string> MissingFamiliesAndTypes { get; set; } = new HashSet<string>();
+    //public static HashSet<string> MissingFamiliesAndTypes { get; set; } = new HashSet<string>();
+
+    /// <summary>
+    /// Keeps track of conversion errors. It's a quite roundabout way of doing things, but it keeps concerns separated. 
+    /// More and more doubts about this architecture every day...
+    /// </summary>
+    public static HashSet<SpeckleError> ConversionErrors { get; set; } = new HashSet<SpeckleError>();
 
     /// <summary>
     /// Gets populated with the UnitTypes and UnitDisplayTypes during conversion. 
@@ -49,7 +56,8 @@ namespace SpeckleElementsRevit
   {
     static double Scale { get => Initialiser.RevitScale; }
     static Document Doc { get => Initialiser.RevitApp.ActiveUIDocument.Document; }
-    static HashSet<string> MissingFamiliesAndTypes { get => Initialiser.MissingFamiliesAndTypes; }
+    //static HashSet<string> MissingFamiliesAndTypes { get => Initialiser.MissingFamiliesAndTypes; }
+    static HashSet<SpeckleError> ConversionErrors { get => Initialiser.ConversionErrors; }
     static Dictionary<string, string> UnitDictionary { get => Initialiser.UnitDictionary; }
 
     public static GenericElement ToSpeckle( this Element myElement )
@@ -253,7 +261,7 @@ namespace SpeckleElementsRevit
         if ( myElement.Name == name ) return myElement;
 
       // now returning the first type, which means we didn't find the type we were actually looking for.
-      MissingFamiliesAndTypes.Add( "Wall type " + name );
+      ConversionErrors.Add(new SpeckleConversionError { Message = $"Missing wall type: {name}", Details = $"{collector.FirstElement().Name} has been used instead." });
       return collector.FirstElement();
     }
 
@@ -373,16 +381,28 @@ namespace SpeckleElementsRevit
       if ( ( familyName == null || typeName == null ) && collectorElems.Count() > 0 )
         return collectorElems.First();
 
+      //match family and type
       foreach ( var e in collectorElems )
       {
         if ( e.FamilyName == familyName && e.Name == typeName )
           return e;
       }
 
+      //match type
+      foreach (var e in collectorElems)
+      {
+        if (e.FamilyName == familyName)
+        {
+          ConversionErrors.Add(new SpeckleConversionError { Message = $"Missing type: {familyName} {typeName}" });
+          return e;
+        }
+          
+      }
+
       if ( collectorElems.Count() > 0 )
       {
-        MissingFamiliesAndTypes.Add( familyName + " " + typeName );
-        //return collectorElems.First();
+        ConversionErrors.Add(new SpeckleConversionError { Message = $"Missing family: {familyName} {typeName}" });
+        return collectorElems.First();
       }
 
       return null;
