@@ -35,18 +35,18 @@ namespace SpeckleElementsClasses
     [JsonIgnore]
     public Level level
     {
-      get => ( Properties != null && Properties.ContainsKey( "level" ) ) ? ( Properties[ "level" ] as Level ) : null;
-      set => Properties[ "level" ] = value;
+      get => (Properties != null && Properties.ContainsKey("level")) ? (Properties["level"] as Level) : null;
+      set => Properties["level"] = value;
     }
 
     [JsonIgnore]
     public Dictionary<string, object> parameters
     {
-      get => ( Properties != null && Properties.ContainsKey( "parameters" ) ) ? ( Properties[ "parameters" ] as Dictionary<string, object> ) : null;
-      set => Properties[ "parameters" ] = value;
+      get => (Properties != null && Properties.ContainsKey("parameters")) ? (Properties["parameters"] as Dictionary<string, object>) : null;
+      set => Properties["parameters"] = value;
     }
 
-    public GridLine( ) { }
+    public GridLine() { }
   }
 
   [Serializable]
@@ -64,32 +64,32 @@ namespace SpeckleElementsClasses
     [JsonIgnore]
     public double elevation
     {
-      get => ( Properties != null && Properties.ContainsKey( "elevation" ) ) ? ( ( double ) Properties[ "elevation" ] ) : 0;
-      set => Properties[ "elevation" ] = value;
+      get => (Properties != null && Properties.ContainsKey("elevation")) ? ((double)Properties["elevation"]) : 0;
+      set => Properties["elevation"] = value;
     }
 
     [JsonIgnore]
     public string levelName
     {
-      get => ( Properties != null && Properties.ContainsKey( "levelName" ) ) ? ( ( string ) Properties[ "levelName" ] ) : null;
-      set => Properties[ "levelName" ] = value;
+      get => (Properties != null && Properties.ContainsKey("levelName")) ? ((string)Properties["levelName"]) : null;
+      set => Properties["levelName"] = value;
     }
 
     [JsonIgnore]
     public bool createView
     {
-      get => ( Properties != null && Properties.ContainsKey( "createView" ) ) ? ( ( bool ) Properties[ "createView" ] ) : false;
-      set => Properties[ "createView" ] = value;
+      get => (Properties != null && Properties.ContainsKey("createView")) ? ((bool)Properties["createView"]) : false;
+      set => Properties["createView"] = value;
     }
 
     [JsonIgnore]
     public Dictionary<string, object> parameters
     {
-      get => ( Properties != null && Properties.ContainsKey( "parameters" ) ) ? ( Properties[ "parameters" ] as Dictionary<string, object> ) : null;
-      set => Properties[ "parameters" ] = value;
+      get => (Properties != null && Properties.ContainsKey("parameters")) ? (Properties["parameters"] as Dictionary<string, object>) : null;
+      set => Properties["parameters"] = value;
     }
 
-    public Level( ) { }
+    public Level() { }
   }
 
   [Serializable]
@@ -100,8 +100,8 @@ namespace SpeckleElementsClasses
     [JsonIgnore]
     public SpeckleObject baseCurve
     {
-      get => ( Properties != null && Properties.ContainsKey( "baseCurve" ) ) ? ( ( SpeckleObject ) Properties[ "baseCurve" ] ) : null;
-      set => Properties[ "baseCurve" ] = value;
+      get => (Properties != null && Properties.ContainsKey("baseCurve")) ? ((SpeckleObject)Properties["baseCurve"]) : null;
+      set => Properties["baseCurve"] = value;
     }
 
     [JsonIgnore]
@@ -114,46 +114,46 @@ namespace SpeckleElementsClasses
     [JsonIgnore]
     public string wallType
     {
-      get => ( Properties != null && Properties.ContainsKey( "wallType" ) ) ? ( ( string ) Properties[ "wallType" ] ) : null;
-      set => Properties[ "wallType" ] = value;
+      get => (Properties != null && Properties.ContainsKey("wallType")) ? ((string)Properties["wallType"]) : null;
+      set => Properties["wallType"] = value;
     }
 
     [JsonIgnore]
     public double height
     {
-      get => ( Properties != null && Properties.ContainsKey( "height" ) ) ? ( ( double ) Properties[ "height" ] ) : 1;
-      set => Properties[ "height" ] = value;
+      get => (Properties != null && Properties.ContainsKey("height")) ? ((double)Properties["height"]) : 1;
+      set => Properties["height"] = value;
     }
 
     [JsonIgnore]
     public double offset
     {
-      get => ( Properties != null && Properties.ContainsKey( "offset" ) ) ? ( ( double ) Properties[ "offset" ] ) : 0;
-      set => Properties[ "offset" ] = value;
+      get => (Properties != null && Properties.ContainsKey("offset")) ? ((double)Properties["offset"]) : 0;
+      set => Properties["offset"] = value;
     }
 
     [JsonIgnore]
     public Level baseLevel
     {
-      get => ( Properties != null && Properties.ContainsKey( "baseLevel" ) ) ? ( Properties[ "baseLevel" ] as Level ) : null;
-      set => Properties[ "baseLevel" ] = value;
+      get => (Properties != null && Properties.ContainsKey("baseLevel")) ? (Properties["baseLevel"] as Level) : null;
+      set => Properties["baseLevel"] = value;
     }
 
     [JsonIgnore]
     public Level topLevel
     {
-      get => (Properties != null && Properties.ContainsKey( "topLevel" )) ? (Properties[ "topLevel" ] as Level) : null;
-      set => Properties[ "topLevel" ] = value;
+      get => (Properties != null && Properties.ContainsKey("topLevel")) ? (Properties["topLevel"] as Level) : null;
+      set => Properties["topLevel"] = value;
     }
 
     [JsonIgnore]
     public Dictionary<string, object> parameters
     {
-      get => ( Properties != null && Properties.ContainsKey( "parameters" ) ) ? ( Properties[ "parameters" ] as Dictionary<string, object> ) : null;
-      set => Properties[ "parameters" ] = value;
+      get => (Properties != null && Properties.ContainsKey("parameters")) ? (Properties["parameters"] as Dictionary<string, object>) : null;
+      set => Properties["parameters"] = value;
     }
 
-    public Wall( ) { }
+    public Wall() { }
   }
 
   [Serializable]
@@ -164,8 +164,8 @@ namespace SpeckleElementsClasses
     [JsonIgnore]
     public SpeckleObject baseCurve
     {
-      get => ( Properties != null && Properties.ContainsKey( "baseCurve" ) ) ? ( ( SpeckleObject ) Properties[ "baseCurve" ] ) : null;
-      set => Properties[ "baseCurve" ] = value;
+      get => (Properties != null && Properties.ContainsKey("baseCurve")) ? ((SpeckleObject)Properties["baseCurve"]) : null;
+      set => Properties["baseCurve"] = value;
     }
 
     [JsonIgnore]
@@ -178,39 +178,39 @@ namespace SpeckleElementsClasses
     [JsonIgnore]
     public string floorType
     {
-      get => ( Properties != null && Properties.ContainsKey( "floorType" ) ) ? ( ( string ) Properties[ "floorType" ] ) : null;
-      set => Properties[ "floorType" ] = value;
+      get => (Properties != null && Properties.ContainsKey("floorType")) ? ((string)Properties["floorType"]) : null;
+      set => Properties["floorType"] = value;
     }
 
     [JsonIgnore]
     public Level level
     {
-      get => ( Properties != null && Properties.ContainsKey( "level" ) ) ? ( Properties[ "level" ] as Level ) : null;
-      set => Properties[ "level" ] = value;
+      get => (Properties != null && Properties.ContainsKey("level")) ? (Properties["level"] as Level) : null;
+      set => Properties["level"] = value;
     }
 
     [JsonIgnore]
     public SpeckleLine slopedArrow
     {
-      get => ( Properties != null && Properties.ContainsKey( "slopedArrow" ) ) ? ( Properties[ "slopedArrow" ] as SpeckleLine ) : null;
-      set => Properties[ "slopedArrow" ] = value;
+      get => (Properties != null && Properties.ContainsKey("slopedArrow")) ? (Properties["slopedArrow"] as SpeckleLine) : null;
+      set => Properties["slopedArrow"] = value;
     }
 
     [JsonIgnore]
     public double slope
     {
-      get => ( Properties != null && Properties.ContainsKey( "slope" ) ) ? ( ( double ) Properties[ "slope" ] ) : 0;
-      set => Properties[ "slope" ] = value;
+      get => (Properties != null && Properties.ContainsKey("slope")) ? ((double)Properties["slope"]) : 0;
+      set => Properties["slope"] = value;
     }
 
     [JsonIgnore]
     public Dictionary<string, object> parameters
     {
-      get => ( Properties != null && Properties.ContainsKey( "parameters" ) ) ? ( Properties[ "parameters" ] as Dictionary<string, object> ) : null;
-      set => Properties[ "parameters" ] = value;
+      get => (Properties != null && Properties.ContainsKey("parameters")) ? (Properties["parameters"] as Dictionary<string, object>) : null;
+      set => Properties["parameters"] = value;
     }
 
-    public Floor( ) { }
+    public Floor() { }
   }
 
   [Serializable]
@@ -221,8 +221,8 @@ namespace SpeckleElementsClasses
     [JsonIgnore]
     public SpeckleLine baseLine
     {
-      get => ( Properties != null && Properties.ContainsKey( "baseLine" ) ) ? ( ( SpeckleLine ) Properties[ "baseLine" ] ) : null;
-      set => Properties[ "baseLine" ] = value;
+      get => (Properties != null && Properties.ContainsKey("baseLine")) ? ((SpeckleLine)Properties["baseLine"]) : null;
+      set => Properties["baseLine"] = value;
     }
 
     [JsonIgnore]
@@ -235,85 +235,87 @@ namespace SpeckleElementsClasses
     [JsonIgnore]
     public string columnFamily
     {
-      get => ( Properties != null && Properties.ContainsKey( "columnFamily" ) ) ? ( ( string ) Properties[ "columnFamily" ] ) : null;
-      set => Properties[ "columnFamily" ] = value;
+      get => (Properties != null && Properties.ContainsKey("columnFamily")) ? ((string)Properties["columnFamily"]) : null;
+      set => Properties["columnFamily"] = value;
     }
 
     [JsonIgnore]
     public string columnType
     {
-      get => ( Properties != null && Properties.ContainsKey( "columnType" ) ) ? ( ( string ) Properties[ "columnType" ] ) : null;
-      set => Properties[ "columnType" ] = value;
+      get => (Properties != null && Properties.ContainsKey("columnType")) ? ((string)Properties["columnType"]) : null;
+      set => Properties["columnType"] = value;
     }
 
     [JsonIgnore]
     public Level baseLevel
     {
-      get => (Properties != null && Properties.ContainsKey( "baseLevel" )) ? (Properties[ "baseLevel" ] as Level) : null;
-      set => Properties[ "baseLevel" ] = value;
+      get => (Properties != null && Properties.ContainsKey("baseLevel")) ? (Properties["baseLevel"] as Level) : null;
+      set => Properties["baseLevel"] = value;
     }
 
     [JsonIgnore]
     public Level topLevel
     {
-      get => (Properties != null && Properties.ContainsKey( "topLevel" )) ? (Properties[ "topLevel" ] as Level) : null;
-      set => Properties[ "topLevel" ] = value;
+      get => (Properties != null && Properties.ContainsKey("topLevel")) ? (Properties["topLevel"] as Level) : null;
+      set => Properties["topLevel"] = value;
     }
 
     [JsonIgnore]
     public double topOffset
     {
-      get => (Properties != null && Properties.ContainsKey( "topOffset" )) ? ((double) Properties[ "topOffset" ]) : 0;
-      set => Properties[ "topOffset" ] = value;
+      get => (Properties != null && Properties.ContainsKey("topOffset")) ? ((double)Properties["topOffset"]) : 0;
+      set => Properties["topOffset"] = value;
     }
 
     [JsonIgnore]
     public double bottomOffset
     {
-      get => (Properties != null && Properties.ContainsKey( "bottomOffset" )) ? ((double) Properties[ "bottomOffset" ]) : 0;
-      set => Properties[ "bottomOffset" ] = value;
+      get => (Properties != null && Properties.ContainsKey("bottomOffset")) ? ((double)Properties["bottomOffset"]) : 0;
+      set => Properties["bottomOffset"] = value;
     }
 
     [JsonIgnore]
     public Dictionary<string, object> parameters
     {
-      get => ( Properties != null && Properties.ContainsKey( "parameters" ) ) ? ( Properties[ "parameters" ] as Dictionary<string, object> ) : null;
-      set => Properties[ "parameters" ] = value;
+      get => (Properties != null && Properties.ContainsKey("parameters")) ? (Properties["parameters"] as Dictionary<string, object>) : null;
+      set => Properties["parameters"] = value;
     }
-    public Column( ) { }
+    public Column() { }
   }
 
+
+  // !!! Brace and Beam use the same properties !!! 
   [Serializable]
-  public partial class Beam : SpeckleMesh, ISpeckleElement
+  public partial class Brace : SpeckleMesh, ISpeckleElement
   {
-    public override string Type { get => base.Type + "/" + "Beam"; }
+    public override string Type { get => base.Type + "/" + "Brace"; }
 
     [JsonIgnore]
     public SpeckleLine baseLine
     {
-      get => ( Properties != null && Properties.ContainsKey( "baseLine" ) ) ? ( ( SpeckleLine ) Properties[ "baseLine" ] ) : null;
-      set => Properties[ "baseLine" ] = value;
+      get => (Properties != null && Properties.ContainsKey("baseLine")) ? ((SpeckleLine)Properties["baseLine"]) : null;
+      set => Properties["baseLine"] = value;
     }
 
     [JsonIgnore]
-    public string beamFamily
+    public string braceFamily
     {
-      get => ( Properties != null && Properties.ContainsKey( "beamFamily" ) ) ? ( ( string ) Properties[ "beamFamily" ] ) : null;
-      set => Properties[ "beamFamily" ] = value;
+      get => (Properties != null && Properties.ContainsKey("braceFamily")) ? ((string)Properties["braceFamily"]) : null;
+      set => Properties["braceFamily"] = value;
     }
 
     [JsonIgnore]
-    public string beamType
+    public string braceType
     {
-      get => ( Properties != null && Properties.ContainsKey( "beamType" ) ) ? ( ( string ) Properties[ "beamType" ] ) : null;
-      set => Properties[ "beamType" ] = value;
+      get => (Properties != null && Properties.ContainsKey("braceType")) ? ((string)Properties["braceType"]) : null;
+      set => Properties["braceType"] = value;
     }
 
     [JsonIgnore]
     public Level level
     {
-      get => ( Properties != null && Properties.ContainsKey( "level" ) ) ? ( Properties[ "level" ] as Level ) : null;
-      set => Properties[ "level" ] = value;
+      get => (Properties != null && Properties.ContainsKey("level")) ? (Properties["level"] as Level) : null;
+      set => Properties["level"] = value;
     }
 
     [JsonIgnore]
@@ -326,12 +328,64 @@ namespace SpeckleElementsClasses
     [JsonIgnore]
     public Dictionary<string, object> parameters
     {
-      get => ( Properties != null && Properties.ContainsKey( "parameters" ) ) ? ( Properties[ "parameters" ] as Dictionary<string, object> ) : null;
-      set => Properties[ "parameters" ] = value;
+      get => (Properties != null && Properties.ContainsKey("parameters")) ? (Properties["parameters"] as Dictionary<string, object>) : null;
+      set => Properties["parameters"] = value;
     }
 
-    public Beam( ) { }
+    public Brace() { }
   }
+
+  // !!! Brace and Beam use the same properties !!!
+  [Serializable]
+  public partial class Beam : SpeckleMesh, ISpeckleElement
+  {
+    public override string Type { get => base.Type + "/" + "Beam"; }
+
+    [JsonIgnore]
+    public SpeckleLine baseLine
+    {
+      get => (Properties != null && Properties.ContainsKey("baseLine")) ? ((SpeckleLine)Properties["baseLine"]) : null;
+      set => Properties["baseLine"] = value;
+    }
+
+    [JsonIgnore]
+    public string beamFamily
+    {
+      get => (Properties != null && Properties.ContainsKey("beamFamily")) ? ((string)Properties["beamFamily"]) : null;
+      set => Properties["beamFamily"] = value;
+    }
+
+    [JsonIgnore]
+    public string beamType
+    {
+      get => (Properties != null && Properties.ContainsKey("beamType")) ? ((string)Properties["beamType"]) : null;
+      set => Properties["beamType"] = value;
+    }
+
+    [JsonIgnore]
+    public Level level
+    {
+      get => (Properties != null && Properties.ContainsKey("level")) ? (Properties["level"] as Level) : null;
+      set => Properties["level"] = value;
+    }
+
+    [JsonIgnore]
+    public SpeckleMesh displayMesh
+    {
+      get => this as SpeckleMesh;
+      set { this.Vertices = value.Vertices; this.Faces = value.Faces; }
+    }
+
+    [JsonIgnore]
+    public Dictionary<string, object> parameters
+    {
+      get => (Properties != null && Properties.ContainsKey("parameters")) ? (Properties["parameters"] as Dictionary<string, object>) : null;
+      set => Properties["parameters"] = value;
+    }
+
+    public Beam() { }
+  }
+
 
   [Serializable]
   public partial class Shaft : SpeckleMesh, ISpeckleElement
@@ -341,22 +395,22 @@ namespace SpeckleElementsClasses
     [JsonIgnore]
     public Level bottomLevel
     {
-      get => ( Properties != null && Properties.ContainsKey( "bottomLevel" ) ) ? ( Properties[ "bottomLevel" ] as Level ) : null;
-      set => Properties[ "bottomLevel" ] = value;
+      get => (Properties != null && Properties.ContainsKey("bottomLevel")) ? (Properties["bottomLevel"] as Level) : null;
+      set => Properties["bottomLevel"] = value;
     }
 
     [JsonIgnore]
     public Level topLevel
     {
-      get => ( Properties != null && Properties.ContainsKey( "topLevel" ) ) ? ( Properties[ "topLevel" ] as Level ) : null;
-      set => Properties[ "topLevel" ] = value;
+      get => (Properties != null && Properties.ContainsKey("topLevel")) ? (Properties["topLevel"] as Level) : null;
+      set => Properties["topLevel"] = value;
     }
 
     [JsonIgnore]
     public SpeckleObject baseCurve
     {
-      get => ( Properties != null && Properties.ContainsKey( "baseCurve" ) ) ? ( ( SpeckleObject ) Properties[ "baseCurve" ] ) : null;
-      set => Properties[ "baseCurve" ] = value;
+      get => (Properties != null && Properties.ContainsKey("baseCurve")) ? ((SpeckleObject)Properties["baseCurve"]) : null;
+      set => Properties["baseCurve"] = value;
     }
 
     [JsonIgnore]
@@ -369,11 +423,11 @@ namespace SpeckleElementsClasses
     [JsonIgnore]
     public Dictionary<string, object> parameters
     {
-      get => ( Properties != null && Properties.ContainsKey( "parameters" ) ) ? ( Properties[ "parameters" ] as Dictionary<string, object> ) : null;
-      set => Properties[ "parameters" ] = value;
+      get => (Properties != null && Properties.ContainsKey("parameters")) ? (Properties["parameters"] as Dictionary<string, object>) : null;
+      set => Properties["parameters"] = value;
     }
 
-    public Shaft( ) { }
+    public Shaft() { }
   }
 
   [Serializable]
@@ -391,11 +445,11 @@ namespace SpeckleElementsClasses
     [JsonIgnore]
     public Dictionary<string, object> parameters
     {
-      get => ( Properties != null && Properties.ContainsKey( "parameters" ) ) ? ( Properties[ "parameters" ] as Dictionary<string, object> ) : null;
-      set => Properties[ "parameters" ] = value;
+      get => (Properties != null && Properties.ContainsKey("parameters")) ? (Properties["parameters"] as Dictionary<string, object>) : null;
+      set => Properties["parameters"] = value;
     }
 
-    public Topography( ) { }
+    public Topography() { }
   }
 
   [Serializable]
@@ -406,46 +460,46 @@ namespace SpeckleElementsClasses
     [JsonIgnore]
     public List<SpecklePoint> points
     {
-      get => ( Properties != null && Properties.ContainsKey( "points" ) ) ? ( Properties[ "points" ] as List<SpecklePoint> ) : null;
-      set => Properties[ "points" ] = value;
+      get => (Properties != null && Properties.ContainsKey("points")) ? (Properties["points"] as List<SpecklePoint>) : null;
+      set => Properties["points"] = value;
     }
 
     [JsonIgnore]
     public string view
     {
-      get => ( Properties != null && Properties.ContainsKey( "view" ) ) ? ( ( string ) Properties[ "view" ] ) : null;
-      set => Properties[ "view" ] = value;
+      get => (Properties != null && Properties.ContainsKey("view")) ? ((string)Properties["view"]) : null;
+      set => Properties["view"] = value;
     }
 
     [JsonIgnore]
     public Level level
     {
-      get => ( Properties != null && Properties.ContainsKey( "level" ) ) ? ( Properties[ "level" ] as Level ) : null;
-      set => Properties[ "level" ] = value;
+      get => (Properties != null && Properties.ContainsKey("level")) ? (Properties["level"] as Level) : null;
+      set => Properties["level"] = value;
     }
 
     [JsonIgnore]
     public string familyName
     {
-      get => ( Properties != null && Properties.ContainsKey( "familyName" ) ) ? ( ( string ) Properties[ "familyName" ] ) : null;
-      set => Properties[ "familyName" ] = value;
+      get => (Properties != null && Properties.ContainsKey("familyName")) ? ((string)Properties["familyName"]) : null;
+      set => Properties["familyName"] = value;
     }
 
     [JsonIgnore]
     public string familyType
     {
-      get => ( Properties != null && Properties.ContainsKey( "familyType" ) ) ? ( ( string ) Properties[ "familyType" ] ) : null;
-      set => Properties[ "familyType" ] = value;
+      get => (Properties != null && Properties.ContainsKey("familyType")) ? ((string)Properties["familyType"]) : null;
+      set => Properties["familyType"] = value;
     }
 
     [JsonIgnore]
     public Dictionary<string, object> parameters
     {
-      get => ( Properties != null && Properties.ContainsKey( "parameters" ) ) ? ( Properties[ "parameters" ] as Dictionary<string, object> ) : null;
-      set => Properties[ "parameters" ] = value;
+      get => (Properties != null && Properties.ContainsKey("parameters")) ? (Properties["parameters"] as Dictionary<string, object>) : null;
+      set => Properties["parameters"] = value;
     }
 
-    public FamilyInstance( ) { }
+    public FamilyInstance() { }
   }
 
   [Serializable]
@@ -456,59 +510,59 @@ namespace SpeckleElementsClasses
     [JsonIgnore]
     public Dictionary<string, object> parameters
     {
-      get => ( Properties != null && Properties.ContainsKey( "parameters" ) ) ? ( Properties[ "parameters" ] as Dictionary<string, object> ) : null;
-      set => Properties[ "parameters" ] = value;
+      get => (Properties != null && Properties.ContainsKey("parameters")) ? (Properties["parameters"] as Dictionary<string, object>) : null;
+      set => Properties["parameters"] = value;
     }
 
-    public GenericElement( ) { }
+    public GenericElement() { }
   }
 
   [Serializable]
-  public partial class Room: SpeckleMesh, ISpeckleElement
+  public partial class Room : SpeckleMesh, ISpeckleElement
   {
     public override string Type { get => base.Type + "/" + "Room"; }
 
     [JsonIgnore]
     public SpeckleObject baseCurve
     {
-      get => (Properties != null && Properties.ContainsKey( "baseCurve" )) ? ((SpeckleObject) Properties[ "baseCurve" ]) : null;
-      set => Properties[ "baseCurve" ] = value;
+      get => (Properties != null && Properties.ContainsKey("baseCurve")) ? ((SpeckleObject)Properties["baseCurve"]) : null;
+      set => Properties["baseCurve"] = value;
     }
 
     [JsonIgnore]
     public SpecklePoint roomLocation
     {
-      get => (Properties != null && Properties.ContainsKey( "roomLocation" )) ? ((SpecklePoint) Properties[ "roomLocation" ]) : null;
-      set => Properties[ "roomLocation" ] = value;
+      get => (Properties != null && Properties.ContainsKey("roomLocation")) ? ((SpecklePoint)Properties["roomLocation"]) : null;
+      set => Properties["roomLocation"] = value;
     }
 
     [JsonIgnore]
     public string roomName
     {
-      get => (Properties != null && Properties.ContainsKey( "roomName" )) ? ((string) Properties[ "roomName" ]) : null;
-      set => Properties[ "roomName" ] = value;
+      get => (Properties != null && Properties.ContainsKey("roomName")) ? ((string)Properties["roomName"]) : null;
+      set => Properties["roomName"] = value;
     }
-    
+
     // WTF Moment: room number is a string property in revit. LOLOLOL
     [JsonIgnore]
     public string roomNumber
     {
-      get => (Properties != null && Properties.ContainsKey( "roomNumber" )) ? ((string) Properties[ "roomNumber" ]) : null;
-      set => Properties[ "roomNumber" ] = value;
+      get => (Properties != null && Properties.ContainsKey("roomNumber")) ? ((string)Properties["roomNumber"]) : null;
+      set => Properties["roomNumber"] = value;
     }
 
     [JsonIgnore]
     public double roomArea
     {
-      get => (Properties != null && Properties.ContainsKey( "roomArea" )) ? ((double) Properties[ "roomArea" ]) : 0;
-      set => Properties[ "roomArea" ] = value;
+      get => (Properties != null && Properties.ContainsKey("roomArea")) ? ((double)Properties["roomArea"]) : 0;
+      set => Properties["roomArea"] = value;
     }
 
     [JsonIgnore]
     public double roomVolume
     {
-      get => (Properties != null && Properties.ContainsKey( "roomVolume" )) ? ((double) Properties[ "roomVolume" ]) : 0;
-      set => Properties[ "roomVolume" ] = value;
+      get => (Properties != null && Properties.ContainsKey("roomVolume")) ? ((double)Properties["roomVolume"]) : 0;
+      set => Properties["roomVolume"] = value;
     }
 
 
@@ -521,8 +575,8 @@ namespace SpeckleElementsClasses
     [JsonIgnore]
     public Dictionary<string, object> parameters
     {
-      get => (Properties != null && Properties.ContainsKey( "parameters" )) ? (Properties[ "parameters" ] as Dictionary<string, object>) : null;
-      set => Properties[ "parameters" ] = value;
+      get => (Properties != null && Properties.ContainsKey("parameters")) ? (Properties["parameters"] as Dictionary<string, object>) : null;
+      set => Properties["parameters"] = value;
     }
 
     public Room() { }

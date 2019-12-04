@@ -12,10 +12,49 @@ using SpeckleElementsClasses;
 
 namespace SpeckleElementsRevit
 {
+
   public static partial class Conversions
   {
-    // TODO
-    public static Element ToNative( this Beam myBeam )
+    //Trying to reduce code duplication, beam and brace are basically the same elements in Revit
+    public static Element ToNative(this Brace myBrace)
+    {
+      var myBeam = new Beam()
+      {
+        beamFamily = myBrace.braceFamily,
+        beamType = myBrace.braceType,
+        baseLine = myBrace.baseLine,
+        parameters = myBrace.parameters,
+        level = myBrace.level
+      };
+
+      return StructuralFramingToNative(myBeam, StructuralType.Brace);
+    }
+
+    //Trying to reduce code duplication, beam and brace are basically the same elements in Revit
+    public static SpeckleObject BraceToSpeckle(Autodesk.Revit.DB.FamilyInstance myFamily)
+    {
+      var myBeam = BeamToSpeckle(myFamily) as Beam;
+
+      var myBrace = new Brace()
+      {
+        braceFamily = myBeam.beamFamily,
+        braceType = myBeam.beamType,
+        baseLine = myBeam.baseLine,
+        parameters = myBeam.parameters,
+        level = myBeam.level
+      };
+
+
+      return myBrace;
+    }
+
+    public static Element ToNative(this Beam myBeam)
+    {
+      return StructuralFramingToNative(myBeam, StructuralType.Beam);
+    }
+
+
+    public static Element StructuralFramingToNative(Beam myBeam, StructuralType structuralType)
     {
       var (docObj, stateObj) = GetExistingElementByApplicationId( myBeam.ApplicationId, myBeam.Type );
       try
@@ -73,7 +112,7 @@ namespace SpeckleElementsRevit
           myBeam.level = new SpeckleElementsClasses.Level() { elevation = 0, levelName = "Speckle Level 0" };
         var myLevel = myBeam.level.ToNative() as Autodesk.Revit.DB.Level;
 
-        var familyInstance = Doc.Create.NewFamilyInstance( baseLine, familySymbol, myLevel, StructuralType.Beam );
+        var familyInstance = Doc.Create.NewFamilyInstance( baseLine, familySymbol, myLevel, structuralType);
 
 
         SetElementParams( familyInstance, myBeam.parameters );
