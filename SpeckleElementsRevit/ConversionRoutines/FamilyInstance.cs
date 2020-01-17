@@ -7,12 +7,40 @@ using Autodesk.Revit.DB;
 using SpeckleCore;
 using SpeckleElementsClasses;
 using SpeckleCoreGeometryClasses;
+using SpeckleCore.Data;
 
 namespace SpeckleElementsRevit
 {
   public static partial class Conversions
   {
-    // TODO: Family instance conversions and such
+    public static Autodesk.Revit.DB.FamilyInstance ToNative(this SpeckleElementsClasses.FamilyInstance myFamInst)
+    {
+      var (docObj, stateObj) = GetExistingElementByApplicationId(myFamInst.ApplicationId, myFamInst.Type);
+
+
+      // get family symbol; it's used throughout
+      FamilySymbol familySymbol = GetFamilySymbolByFamilyNameAndType(myFamInst.familyName, myFamInst.familyType);
+
+      // Freak out if we don't have a symbol.
+      if (familySymbol == null)
+      {
+        ConversionErrors.Add(new SpeckleConversionError { Message = $"Missing family: {myFamInst.familyName} {myFamInst.familyType}" });
+        throw new RevitFamilyNotFoundException($"No such family found in the project");
+      }
+
+      // Activate the symbol yo! 
+      if (!familySymbol.IsActive) familySymbol.Activate();
+
+      XYZ xyz = (XYZ)SpeckleCore.Converter.Deserialise(obj: myFamInst.basePoint, excludeAssebmlies: new string[] { "SpeckleCoreGeometryDynamo" });
+
+   
+      var myTypeBasedFamInst = Doc.Create.NewFamilyInstance(xyz, familySymbol, Autodesk.Revit.DB.Structure.StructuralType.NonStructural);
+
+      SetElementParams(myTypeBasedFamInst, myFamInst.parameters);
+      return myTypeBasedFamInst;
+    }
+
+
 
     /// <summary>
     /// Entry point for all revit family conversions. TODO: Check for Beams and Columns and any other "dedicated" speckle elements and convert them as such rather than to the generic "family instance" object.
