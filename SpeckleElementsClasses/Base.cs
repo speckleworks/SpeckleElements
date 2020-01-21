@@ -453,6 +453,66 @@ namespace SpeckleElementsClasses
   }
 
   [Serializable]
+  public partial class AdaptiveComponent : SpeckleMesh, ISpeckleElement
+  {
+
+    public override string Type { get => base.Type + "/" + "AdaptiveComponent"; }
+
+    [JsonIgnore]
+    public Dictionary<string, object> parameters
+    {
+      get => (Properties != null && Properties.ContainsKey("parameters")) ? (Properties["parameters"] as Dictionary<string, object>) : null;
+      set => Properties["parameters"] = value;
+    }
+
+    public AdaptiveComponent() { }
+  }
+
+  [Serializable]
+  public partial class HostedFamilyInstance : SpeckleMesh, ISpeckleElement
+  {
+
+    public override string Type { get => base.Type + "/" + "HostedFamilyInstance"; }
+
+    [JsonIgnore]
+    public Dictionary<string, object> parameters
+    {
+      get => (Properties != null && Properties.ContainsKey("parameters")) ? (Properties["parameters"] as Dictionary<string, object>) : null;
+      set => Properties["parameters"] = value;
+    }
+
+    [JsonIgnore]
+    public string hostElementSpeckleId
+    {
+      get => (Properties != null && Properties.ContainsKey("hostElementSpeckleId")) ? ((string)Properties["hostElementSpeckleId"]) : null;
+      set => Properties["hostElementSpeckleId"] = value;
+    }
+
+    [JsonIgnore]
+    public string familyName
+    {
+      get => (Properties != null && Properties.ContainsKey("familyName")) ? ((string)Properties["familyName"]) : null;
+      set => Properties["familyName"] = value;
+    }
+
+    [JsonIgnore]
+    public string familyType
+    {
+      get => (Properties != null && Properties.ContainsKey("familyType")) ? ((string)Properties["familyType"]) : null;
+      set => Properties["familyType"] = value;
+    }
+
+    [JsonIgnore]
+    public List<SpecklePoint> points
+    {
+      get => (Properties != null && Properties.ContainsKey("points")) ? (Properties["points"] as List<SpecklePoint>) : null;
+      set => Properties["points"] = value;
+    }
+
+    public HostedFamilyInstance() { }
+  }
+
+  [Serializable]
   public partial class FamilyInstance : SpeckleMesh, ISpeckleElement
   {
     public override string Type { get => base.Type + "/" + "FamilyInstance"; }
