@@ -518,25 +518,25 @@ namespace SpeckleElementsClasses
     public override string Type { get => base.Type + "/" + "FamilyInstance"; }
 
     [JsonIgnore]
-    public List<SpecklePoint> points
+    public SpecklePoint basePoint
     {
-      get => (Properties != null && Properties.ContainsKey("points")) ? (Properties["points"] as List<SpecklePoint>) : null;
-      set => Properties["points"] = value;
+      get => (Properties != null && Properties.ContainsKey("basePoint")) ? (Properties["basePoint"] as SpecklePoint) : null;
+      set => Properties["basePoint"] = value;
     }
 
-    [JsonIgnore]
-    public string view
-    {
-      get => (Properties != null && Properties.ContainsKey("view")) ? ((string)Properties["view"]) : null;
-      set => Properties["view"] = value;
-    }
+    //[JsonIgnore]
+    //public string view
+    //{
+    //  get => (Properties != null && Properties.ContainsKey("view")) ? ((string)Properties["view"]) : null;
+    //  set => Properties["view"] = value;
+    //}
 
-    [JsonIgnore]
-    public Level level
-    {
-      get => (Properties != null && Properties.ContainsKey("level")) ? (Properties["level"] as Level) : null;
-      set => Properties["level"] = value;
-    }
+    //[JsonIgnore]
+    //public Level level
+    //{
+    //  get => (Properties != null && Properties.ContainsKey("level")) ? (Properties["level"] as Level) : null;
+    //  set => Properties["level"] = value;
+    //}
 
     [JsonIgnore]
     public string familyName
