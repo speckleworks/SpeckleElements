@@ -40,8 +40,6 @@ namespace SpeckleElementsRevit
       return myTypeBasedFamInst;
     }
 
-
-
     /// <summary>
     /// Entry point for all revit family conversions. TODO: Check for Beams and Columns and any other "dedicated" speckle elements and convert them as such rather than to the generic "family instance" object.
     /// </summary>
