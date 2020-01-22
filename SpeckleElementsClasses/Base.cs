@@ -459,6 +459,20 @@ namespace SpeckleElementsClasses
     public override string Type { get => base.Type + "/" + "AdaptiveComponent"; }
 
     [JsonIgnore]
+    public string familyName
+    {
+      get => (Properties != null && Properties.ContainsKey("familyName")) ? ((string)Properties["familyName"]) : null;
+      set => Properties["familyName"] = value;
+    }
+
+    [JsonIgnore]
+    public List<SpecklePoint> points
+    {
+      get => (Properties != null && Properties.ContainsKey("points")) ? (Properties["points"] as List<SpecklePoint>) : null;
+      set => Properties["points"] = value;
+    }
+
+    [JsonIgnore]
     public Dictionary<string, object> parameters
     {
       get => (Properties != null && Properties.ContainsKey("parameters")) ? (Properties["parameters"] as Dictionary<string, object>) : null;
