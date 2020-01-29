@@ -492,6 +492,14 @@ namespace SpeckleElementsClasses
       set => Properties["familyType"] = value;
     }
 
+    //rotation around the Z axis in degress
+    [JsonIgnore]
+    public double? rotation
+    {
+      get => (Properties != null && Properties.ContainsKey("rotation")) ? ((double)Properties["rotation"]) : 0;
+      set => Properties["rotation"] = value;
+    }
+
     [JsonIgnore]
     public Dictionary<string, object> parameters
     {
