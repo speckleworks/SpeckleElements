@@ -109,6 +109,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ConversionRoutines\BeamBrace.cs" />
+    <Compile Include="ConversionRoutines\AdaptiveComponent.cs" />
     <Compile Include="ConversionRoutines\Column.cs" />
     <Compile Include="ConversionRoutines\FamilyInstance.cs" />
     <Compile Include="ConversionRoutines\Level.cs" />
