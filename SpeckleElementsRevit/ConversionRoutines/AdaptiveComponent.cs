@@ -25,9 +25,15 @@ namespace SpeckleElementsRevit
 
         var component = AdaptiveComponentInstanceUtils.CreateAdaptiveComponentInstance(Doc, symbol);
         
-        //IList<ElementId> placePointIds = new List<ElementId>();
-        //placePointIds = AdaptiveComponentInstanceUtils.GetInstancePlacementPointElementRefIds(instance);
+        var pointIds = new List<ElementId>();
+        pointIds = AdaptiveComponentInstanceUtils.GetInstancePlacementPointElementRefIds(component).ToList();
 
+        // TODO: check if points match lengths
+
+        for(int i = 0; i< pointIds.Count; i++)
+        {
+
+        }
 
       } else // we have a document object already, so check if we can edit it.
       {
