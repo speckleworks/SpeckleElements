@@ -466,9 +466,30 @@ namespace SpeckleElementsClasses
     }
 
     [JsonIgnore]
+    public string familyType
+    {
+      get => (Properties != null && Properties.ContainsKey("familyType")) ? ((string)Properties["familyType"]) : null;
+      set => Properties["familyType"] = value;
+    }
+
+    [JsonIgnore]
     public List<SpecklePoint> points
     {
-      get => (Properties != null && Properties.ContainsKey("points")) ? (Properties["points"] as List<SpecklePoint>) : null;
+      get
+      {
+        if (Properties == null || !Properties.ContainsKey("points"))
+          return null;
+        try
+        {
+          return (Properties["points"] as List<object>).Select(x => x as SpecklePoint).ToList();
+        }
+        catch
+        {
+          //fail quietly
+        }
+        return null;
+       
+      }
       set => Properties["points"] = value;
     }
 
