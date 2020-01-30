@@ -43,7 +43,7 @@ namespace SpeckleElementsRevit
         var r = (double)myFamInst.rotation;
         XYZ point1 = new XYZ(xyz.X, xyz.Y, 0);
         XYZ point2 = new XYZ(xyz.X, xyz.Y, 10);
-        Line axis = Line.CreateBound(point1, point2);
+        Autodesk.Revit.DB.Line axis = Autodesk.Revit.DB.Line.CreateBound(point1, point2);
 
         ElementTransformUtils.RotateElement(Doc, myTypeBasedFamInst.Id, axis, Math.PI * r / 180);
       }

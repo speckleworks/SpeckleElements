@@ -20,6 +20,63 @@ namespace SpeckleElementsClasses
   // TODO: We need a consensus on how to define/set family types or whatever they're called
   // for the various objects that support them, ie walls, floors, etc.
 
+
+  public enum CurveType
+  {
+    ModelCurve,
+    DetailCurve,
+    RoomBounding
+  }
+
+  /// <summary>
+  /// Inspired by Grevit https://github.com/grevit-dev/Grevit/blob/3c7a5cc198e00dfa4cc1e892edba7c7afd1a3f84/Grevit.Types/Types/Grevit.cs#L851
+  /// </summary>
+  [Serializable]
+  public partial class Curve : SpecklePolycurve, ISpeckleElement
+  {
+    public override string Type { get => base.Type + "/" + "Curve"; }
+
+    
+    [JsonIgnore]
+    public SpeckleObject baseCurve
+    {
+      get => (Properties != null && Properties.ContainsKey("baseCurve")) ? ((SpeckleObject)Properties["baseCurve"]) : null;
+      set => Properties["baseCurve"] = value;
+    }
+
+
+    [JsonIgnore]
+    public CurveType curveType
+    {
+      get
+      {
+        if (Properties == null || !Properties.ContainsKey("curveType"))
+          return CurveType.ModelCurve;
+        int i = Convert.ToInt32(Properties["curveType"]);
+        return (CurveType)i;
+      }
+      set => Properties["curveType"] = value;
+    }
+
+
+
+    //[JsonIgnore]
+    //public Level level
+    //{
+    //  get => (Properties != null && Properties.ContainsKey("level")) ? (Properties["level"] as Level) : null;
+    //  set => Properties["level"] = value;
+    //}
+
+    [JsonIgnore]
+    public Dictionary<string, object> parameters
+    {
+      get => (Properties != null && Properties.ContainsKey("parameters")) ? (Properties["parameters"] as Dictionary<string, object>) : null;
+      set => Properties["parameters"] = value;
+    }
+
+    public Curve() { }
+  }
+
   [Serializable]
   public partial class GridLine : SpeckleLine, ISpeckleElement
   {
@@ -488,7 +545,7 @@ namespace SpeckleElementsClasses
           //fail quietly
         }
         return null;
-       
+
       }
       set => Properties["points"] = value;
     }
