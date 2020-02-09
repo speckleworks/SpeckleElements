@@ -14,7 +14,7 @@ namespace SpeckleElementsRevit
 {
   public class Initialiser : ISpeckleInitializer
   {
-    public Initialiser( ) { }
+    public Initialiser() { }
 
     /// <summary>
     /// Revit doc will be injected in here by the revit plugin. 
@@ -60,17 +60,17 @@ namespace SpeckleElementsRevit
     static HashSet<SpeckleError> ConversionErrors { get => Initialiser.ConversionErrors; }
     static Dictionary<string, string> UnitDictionary { get => Initialiser.UnitDictionary; }
 
-    public static GenericElement ToSpeckle( this Element myElement )
+    public static GenericElement ToSpeckle(this Element myElement)
     {
 
-      if ( myElement.Category.CategoryType == CategoryType.AnalyticalModel )
+      if (myElement.Category.CategoryType == CategoryType.AnalyticalModel)
         return null;
 
       var generic = new GenericElement();
 
-      (generic.Faces, generic.Vertices) = GetFaceVertexArrayFromElement( myElement );
+      (generic.Faces, generic.Vertices) = GetFaceVertexArrayFromElement(myElement);
 
-      generic.parameters = GetElementParams( myElement );
+      generic.parameters = GetElementParams(myElement);
 
       generic.ApplicationId = myElement.UniqueId;
       generic.GenerateHash();
@@ -84,37 +84,37 @@ namespace SpeckleElementsRevit
     /// </summary>
     /// <param name="myElement"></param>
     /// <returns></returns>
-    public static Dictionary<string, object> GetElementParams( Element myElement )
+    public static Dictionary<string, object> GetElementParams(Element myElement)
     {
       var myParamDict = new Dictionary<string, object>();
 
       // Get params from the unique list
-      foreach ( Parameter p in myElement.ParametersMap )
+      foreach (Parameter p in myElement.ParametersMap)
       {
-        var keyName = SanitizeKeyname( p.Definition.Name );
-        switch ( p.StorageType )
+        var keyName = SanitizeKeyname(p.Definition.Name);
+        switch (p.StorageType)
         {
           case StorageType.Double:
             // NOTE: do not use p.AsDouble() as direct input for unit utils conversion, it doesn't work.  ¯\_(ツ)_/¯
             var val = p.AsDouble();
             try
             {
-              myParamDict[ keyName ] = UnitUtils.ConvertFromInternalUnits( val, p.DisplayUnitType );
-              myParamDict[ "__unitType::" + keyName ] = p.Definition.UnitType.ToString();
+              myParamDict[keyName] = UnitUtils.ConvertFromInternalUnits(val, p.DisplayUnitType);
+              myParamDict["__unitType::" + keyName] = p.Definition.UnitType.ToString();
               // populate units dictionary
-              UnitDictionary[ p.Definition.UnitType.ToString() ] = p.DisplayUnitType.ToString();
+              UnitDictionary[p.Definition.UnitType.ToString()] = p.DisplayUnitType.ToString();
             }
-            catch ( Exception e )
+            catch (Exception e)
             {
-              myParamDict[ keyName ] = val;
+              myParamDict[keyName] = val;
             }
             break;
           case StorageType.Integer:
-            myParamDict[ keyName ] = p.AsInteger();
+            myParamDict[keyName] = p.AsInteger();
             //myParamDict[ keyName ] = UnitUtils.ConvertFromInternalUnits( p.AsInteger(), p.DisplayUnitType);
             break;
           case StorageType.String:
-            myParamDict[ keyName ] = p.AsString();
+            myParamDict[keyName] = p.AsString();
             break;
           case StorageType.ElementId:
             // TODO: Properly get ref elemenet and serialise it in here.
@@ -125,7 +125,7 @@ namespace SpeckleElementsRevit
             //  myParamDict[ keyName + "_el" ] = spk;
             //  myParamDict[ keyName ] = p.AsValueString();
             //} else
-            myParamDict[ keyName ] = p.AsValueString();
+            myParamDict[keyName] = p.AsValueString();
             break;
           case StorageType.None:
             break;
@@ -133,37 +133,37 @@ namespace SpeckleElementsRevit
       }
 
       // Get any other parameters from the "big" list
-      foreach ( Parameter p in myElement.Parameters )
+      foreach (Parameter p in myElement.Parameters)
       {
-        var keyName = SanitizeKeyname( p.Definition.Name );
+        var keyName = SanitizeKeyname(p.Definition.Name);
 
-        if ( myParamDict.ContainsKey( keyName ) ) continue;
-        switch ( p.StorageType )
+        if (myParamDict.ContainsKey(keyName)) continue;
+        switch (p.StorageType)
         {
           case StorageType.Double:
             // NOTE: do not use p.AsDouble() as direct input for unit utils conversion, it doesn't work.  ¯\_(ツ)_/¯
             var val = p.AsDouble();
             try
             {
-              myParamDict[ keyName ] = UnitUtils.ConvertFromInternalUnits( val, p.DisplayUnitType );
-              myParamDict[ "__unitType::" + keyName ] = p.Definition.UnitType.ToString();
+              myParamDict[keyName] = UnitUtils.ConvertFromInternalUnits(val, p.DisplayUnitType);
+              myParamDict["__unitType::" + keyName] = p.Definition.UnitType.ToString();
               // populate units dictionary
-              UnitDictionary[ p.Definition.UnitType.ToString() ] = p.DisplayUnitType.ToString();
+              UnitDictionary[p.Definition.UnitType.ToString()] = p.DisplayUnitType.ToString();
             }
-            catch ( Exception e )
+            catch (Exception e)
             {
-              myParamDict[ keyName ] = val;
+              myParamDict[keyName] = val;
             }
             break;
           case StorageType.Integer:
-            myParamDict[ keyName ] = p.AsInteger();
+            myParamDict[keyName] = p.AsInteger();
             //myParamDict[ keyName ] = UnitUtils.ConvertFromInternalUnits( p.AsInteger(), p.DisplayUnitType);
             break;
           case StorageType.String:
-            myParamDict[ keyName ] = p.AsString();
+            myParamDict[keyName] = p.AsString();
             break;
           case StorageType.ElementId:
-            myParamDict[ keyName ] = p.AsValueString();
+            myParamDict[keyName] = p.AsValueString();
             break;
           case StorageType.None:
             break;
@@ -175,52 +175,52 @@ namespace SpeckleElementsRevit
       return myParamDict;
     }
 
-    public static void SetElementParams( Element myElement, Dictionary<string, object> parameters, List<string> exclusions = null )
+    public static void SetElementParams(Element myElement, Dictionary<string, object> parameters, List<string> exclusions = null)
     {
       // TODO: Set parameters please
-      if ( myElement == null ) return;
-      if ( parameters == null ) return;
+      if (myElement == null) return;
+      if (parameters == null) return;
 
       var questForTheBest = UnitDictionary;
 
-      foreach ( var kvp in parameters )
+      foreach (var kvp in parameters)
       {
-        if ( kvp.Key.Contains( "__unitType::" ) ) continue; // skip unit types please
-        if ( exclusions != null && exclusions.Contains( kvp.Key ) ) continue;
+        if (kvp.Key.Contains("__unitType::")) continue; // skip unit types please
+        if (exclusions != null && exclusions.Contains(kvp.Key)) continue;
         try
         {
-          var keyName = UnsanitizeKeyname( kvp.Key );
-          var myParam = myElement.ParametersMap.get_Item( keyName );
-          if ( myParam == null ) continue;
-          if ( myParam.IsReadOnly ) continue;
+          var keyName = UnsanitizeKeyname(kvp.Key);
+          var myParam = myElement.ParametersMap.get_Item(keyName);
+          if (myParam == null) continue;
+          if (myParam.IsReadOnly) continue;
 
-          switch ( myParam.StorageType )
+          switch (myParam.StorageType)
           {
             case StorageType.Double:
-              var hasUnitKey = parameters.ContainsKey( "__unitType::" + myParam.Definition.Name );
-              if ( hasUnitKey )
+              var hasUnitKey = parameters.ContainsKey("__unitType::" + myParam.Definition.Name);
+              if (hasUnitKey)
               {
-                var unitType = ( string ) parameters[ "__unitType::" + kvp.Key ];
-                var sourceUnitString = UnitDictionary[ unitType ];
+                var unitType = (string)parameters["__unitType::" + kvp.Key];
+                var sourceUnitString = UnitDictionary[unitType];
                 DisplayUnitType sourceUnit;
-                Enum.TryParse<DisplayUnitType>( sourceUnitString, out sourceUnit );
+                Enum.TryParse<DisplayUnitType>(sourceUnitString, out sourceUnit);
 
-                var convertedValue = UnitUtils.ConvertToInternalUnits( Convert.ToDouble( kvp.Value ), sourceUnit );
+                var convertedValue = UnitUtils.ConvertToInternalUnits(Convert.ToDouble(kvp.Value), sourceUnit);
 
-                myParam.Set( convertedValue );
+                myParam.Set(convertedValue);
               }
               else
               {
-                myParam.Set( Convert.ToDouble( kvp.Value ) );
+                myParam.Set(Convert.ToDouble(kvp.Value));
               }
               break;
 
             case StorageType.Integer:
-              myParam.Set( Convert.ToInt32( kvp.Value ) );
+              myParam.Set(Convert.ToInt32(kvp.Value));
               break;
 
             case StorageType.String:
-              myParam.Set( Convert.ToString( kvp.Value ) );
+              myParam.Set(Convert.ToString(kvp.Value));
               break;
 
             case StorageType.ElementId:
@@ -228,21 +228,21 @@ namespace SpeckleElementsRevit
               break;
           }
         }
-        catch ( Exception e )
+        catch (Exception e)
         {
         }
       }
 
     }
 
-    public static string SanitizeKeyname( string keyName)
+    public static string SanitizeKeyname(string keyName)
     {
-      return keyName.Replace( ".", "☞" ); // BECAUSE FML
+      return keyName.Replace(".", "☞"); // BECAUSE FML
     }
 
-    public static string UnsanitizeKeyname( string keyname)
+    public static string UnsanitizeKeyname(string keyname)
     {
-      return keyname.Replace( "☞", "." );
+      return keyname.Replace("☞", ".");
     }
 
     /// <summary>
@@ -251,14 +251,14 @@ namespace SpeckleElementsRevit
     /// <param name="type"></param>
     /// <param name="name"></param>
     /// <returns></returns>
-    public static Element GetElementByName( Type type, string name )
+    public static Element GetElementByName(Type type, string name)
     {
-      var collector = new FilteredElementCollector( Doc ).OfClass( type );
+      var collector = new FilteredElementCollector(Doc).OfClass(type);
 
-      if ( name == null ) return collector.FirstElement();
+      if (name == null) return collector.FirstElement();
 
-      foreach ( var myElement in collector.ToElements() )
-        if ( myElement.Name == name ) return myElement;
+      foreach (var myElement in collector.ToElements())
+        if (myElement.Name == name) return myElement;
 
       // now returning the first type, which means we didn't find the type we were actually looking for.
       ConversionErrors.Add(new SpeckleConversionError { Message = $"Missing wall type: {name}", Details = $"{collector.FirstElement().Name} has been used instead." });
@@ -271,23 +271,23 @@ namespace SpeckleElementsRevit
     /// </summary>
     /// <param name="ApplicationId"></param>
     /// <returns></returns>
-    public static (Element, SpeckleObject) GetExistingElementByApplicationId( string ApplicationId, string ObjectType )
+    public static (Element, SpeckleObject) GetExistingElementByApplicationId(string ApplicationId, string ObjectType)
     {
-      foreach ( var stream in Initialiser.LocalRevitState )
+      foreach (var stream in Initialiser.LocalRevitState)
       {
-        var found = stream.Objects.FirstOrDefault( s => s.ApplicationId == ApplicationId && ( string ) s.Properties[ "__type" ] == ObjectType );
-        if ( found != null )
-          return (Doc.GetElement( found.Properties[ "revitUniqueId" ] as string ), ( SpeckleObject ) found);
+        var found = stream.Objects.FirstOrDefault(s => s.ApplicationId == ApplicationId && (string)s.Properties["__type"] == ObjectType);
+        if (found != null)
+          return (Doc.GetElement(found.Properties["revitUniqueId"] as string), (SpeckleObject)found);
       }
       return (null, null);
     }
 
-    public static (List<Element>, List<SpeckleObject>) GetExistingElementsByApplicationId( string ApplicationId, string ObjectType )
+    public static (List<Element>, List<SpeckleObject>) GetExistingElementsByApplicationId(string ApplicationId, string ObjectType)
     {
-      var allStateObjects = ( from p in Initialiser.LocalRevitState.SelectMany( s => s.Objects ) select p ).ToList();
+      var allStateObjects = (from p in Initialiser.LocalRevitState.SelectMany(s => s.Objects) select p).ToList();
 
-      var found = allStateObjects.Where( obj => obj.ApplicationId == ApplicationId && ( string ) obj.Properties[ "__type" ] == ObjectType );
-      var revitObjs = found.Select( obj => Doc.GetElement( obj.Properties[ "revitUniqueId" ] as string ) );
+      var found = allStateObjects.Where(obj => obj.ApplicationId == ApplicationId && (string)obj.Properties["__type"] == ObjectType);
+      var revitObjs = found.Select(obj => Doc.GetElement(obj.Properties["revitUniqueId"] as string));
 
       return (revitObjs.ToList(), found.ToList());
     }
@@ -298,54 +298,54 @@ namespace SpeckleElementsRevit
     /// </summary>
     /// <param name="crv">A speckle curve.</param>
     /// <returns></returns>
-    public static List<Curve> GetSegmentList( object crv )
+    public static List<Autodesk.Revit.DB.Curve> GetSegmentList(object crv)
     {
-      List<Curve> myCurves = new List<Curve>();
-      switch ( crv )
+      List<Autodesk.Revit.DB.Curve> myCurves = new List<Autodesk.Revit.DB.Curve>();
+      switch (crv)
       {
         case SpeckleLine line:
-          myCurves.Add( ( Line ) SpeckleCore.Converter.Deserialise( obj: line, excludeAssebmlies: new string[ ] { "SpeckleCoreGeometryDynamo" } ) );
+          myCurves.Add((Autodesk.Revit.DB.Line)SpeckleCore.Converter.Deserialise(obj: line, excludeAssebmlies: new string[] { "SpeckleCoreGeometryDynamo" }));
           return myCurves;
 
         case SpeckleArc arc:
-          myCurves.Add( ( Arc ) SpeckleCore.Converter.Deserialise( obj: arc, excludeAssebmlies: new string[ ] { "SpeckleCoreGeometryDynamo" } ) );
+          myCurves.Add((Arc)SpeckleCore.Converter.Deserialise(obj: arc, excludeAssebmlies: new string[] { "SpeckleCoreGeometryDynamo" }));
           return myCurves;
 
         case SpeckleCurve nurbs:
-          myCurves.Add( ( Curve ) SpeckleCore.Converter.Deserialise( obj: nurbs, excludeAssebmlies: new string[ ] { "SpeckleCoreGeometryDynamo" } ) );
+          myCurves.Add((Autodesk.Revit.DB.Curve)SpeckleCore.Converter.Deserialise(obj: nurbs, excludeAssebmlies: new string[] { "SpeckleCoreGeometryDynamo" }));
           return myCurves;
 
         case SpecklePolyline poly:
-          if ( poly.Value.Count == 6 )
+          if (poly.Value.Count == 6)
           {
-            myCurves.Add( ( Line ) SpeckleCore.Converter.Deserialise( obj: new SpeckleLine( poly.Value ), excludeAssebmlies: new string[ ] { "SpeckleCoreGeometryDynamo" } ) );
+            myCurves.Add((Autodesk.Revit.DB.Line)SpeckleCore.Converter.Deserialise(obj: new SpeckleLine(poly.Value), excludeAssebmlies: new string[] { "SpeckleCoreGeometryDynamo" }));
           }
           else
           {
             List<SpecklePoint> pts = new List<SpecklePoint>();
-            for ( int i = 0; i < poly.Value.Count; i += 3 )
+            for (int i = 0; i < poly.Value.Count; i += 3)
             {
-              pts.Add( new SpecklePoint( poly.Value[ i ], poly.Value[ i + 1 ], poly.Value[ i + 2 ] ) );
+              pts.Add(new SpecklePoint(poly.Value[i], poly.Value[i + 1], poly.Value[i + 2]));
             }
 
-            for ( int i = 1; i < pts.Count; i++ )
+            for (int i = 1; i < pts.Count; i++)
             {
-              var speckleLine = new SpeckleLine( new double[ ] { pts[ i - 1 ].Value[ 0 ], pts[ i - 1 ].Value[ 1 ], pts[ i - 1 ].Value[ 2 ], pts[ i ].Value[ 0 ], pts[ i ].Value[ 1 ], pts[ i ].Value[ 2 ] } );
+              var speckleLine = new SpeckleLine(new double[] { pts[i - 1].Value[0], pts[i - 1].Value[1], pts[i - 1].Value[2], pts[i].Value[0], pts[i].Value[1], pts[i].Value[2] });
 
-              myCurves.Add( ( Line ) SpeckleCore.Converter.Deserialise( obj: speckleLine, excludeAssebmlies: new string[ ] { "SpeckleCoreGeometryDynamo" } ) );
+              myCurves.Add((Autodesk.Revit.DB.Line)SpeckleCore.Converter.Deserialise(obj: speckleLine, excludeAssebmlies: new string[] { "SpeckleCoreGeometryDynamo" }));
             }
 
-            if ( poly.Closed )
+            if (poly.Closed)
             {
-              var speckleLine = new SpeckleLine( new double[ ] { pts[ pts.Count - 1 ].Value[ 0 ], pts[ pts.Count - 1 ].Value[ 1 ], pts[ pts.Count - 1 ].Value[ 2 ], pts[ 0 ].Value[ 0 ], pts[ 0 ].Value[ 1 ], pts[ 0 ].Value[ 2 ] } );
-              myCurves.Add( ( Line ) SpeckleCore.Converter.Deserialise( obj: speckleLine, excludeAssebmlies: new string[ ] { "SpeckleCoreGeometryDynamo" } ) );
+              var speckleLine = new SpeckleLine(new double[] { pts[pts.Count - 1].Value[0], pts[pts.Count - 1].Value[1], pts[pts.Count - 1].Value[2], pts[0].Value[0], pts[0].Value[1], pts[0].Value[2] });
+              myCurves.Add((Autodesk.Revit.DB.Line)SpeckleCore.Converter.Deserialise(obj: speckleLine, excludeAssebmlies: new string[] { "SpeckleCoreGeometryDynamo" }));
             }
           }
           return myCurves;
 
         case SpecklePolycurve plc:
-          foreach ( var seg in plc.Segments )
-            myCurves.AddRange( GetSegmentList( seg ) );
+          foreach (var seg in plc.Segments)
+            myCurves.AddRange(GetSegmentList(seg));
           return myCurves;
 
       }
@@ -359,32 +359,46 @@ namespace SpeckleElementsRevit
     /// <param name="type"></param>
     /// <param name="name"></param>
     /// <returns></returns>
-    public static Element GetElementByClassAndName( Type type, string name = null )
+    public static Element GetElementByClassAndName(Type type, string name = null)
     {
-      var collector = new FilteredElementCollector( Doc ).OfClass( type );
+      var collector = new FilteredElementCollector(Doc).OfClass(type);
 
       // check against element name
-      if ( name == null )
+      if (name == null)
         return collector.FirstElement();
 
-      foreach ( var e in collector.ToElements() )
-        if ( e.Name == name )
+      foreach (var e in collector.ToElements())
+        if (e.Name == name)
           return e;
 
       return collector.FirstElement();
     }
 
-    public static FamilySymbol GetFamilySymbolByFamilyNameAndTypeAndCategory( string familyName, string typeName, BuiltInCategory category )
+    public static FamilySymbol GetFamilySymbolByFamilyNameAndType(string familyName, string typeName)
     {
-      var collectorElems = new FilteredElementCollector( Doc ).WhereElementIsElementType().OfClass( typeof( FamilySymbol ) ).OfCategory( category ).ToElements().Cast<FamilySymbol>();
+      var collectorElems = new FilteredElementCollector(Doc).WhereElementIsElementType().OfClass(typeof(FamilySymbol)).ToElements().Cast<FamilySymbol>();
+      return GetFamilySymbol(collectorElems, familyName, typeName);
+    }
 
-      if ( ( familyName == null || typeName == null ) && collectorElems.Count() > 0 )
+
+    public static FamilySymbol GetFamilySymbolByFamilyNameAndTypeAndCategory(string familyName, string typeName, BuiltInCategory category)
+    {
+      var collectorElems = new FilteredElementCollector(Doc).WhereElementIsElementType().OfClass(typeof(FamilySymbol)).OfCategory(category).ToElements().Cast<FamilySymbol>();
+      return GetFamilySymbol(collectorElems, familyName, typeName);
+    }
+
+    /// <summary>
+    /// Tries fo find the closest match otherwise returns whatever is closest and generates some errors
+    /// </summary>
+    private static FamilySymbol GetFamilySymbol(IEnumerable<FamilySymbol> collectorElems, string familyName, string typeName)
+    {
+      if ((familyName == null || typeName == null) && collectorElems.Count() > 0)
         return collectorElems.First();
 
       //match family and type
-      foreach ( var e in collectorElems )
+      foreach (var e in collectorElems)
       {
-        if ( e.FamilyName == familyName && e.Name == typeName )
+        if (e.FamilyName == familyName && e.Name == typeName)
           return e;
       }
 
@@ -396,10 +410,9 @@ namespace SpeckleElementsRevit
           ConversionErrors.Add(new SpeckleConversionError { Message = $"Missing type: {familyName} {typeName}" });
           return e;
         }
-          
       }
 
-      if ( collectorElems.Count() > 0 )
+      if (collectorElems.Count() > 0)
       {
         ConversionErrors.Add(new SpeckleConversionError { Message = $"Missing family: {familyName} {typeName}" });
         return collectorElems.First();

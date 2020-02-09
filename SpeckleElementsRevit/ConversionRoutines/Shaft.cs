@@ -40,7 +40,7 @@ namespace SpeckleElementsRevit
       var poly = new SpecklePolycurve();
       poly.Segments = new List<SpeckleObject>();
 
-      foreach ( Curve curve in myShaft.BoundaryCurves )
+      foreach (Autodesk.Revit.DB.Curve curve in myShaft.BoundaryCurves )
       {
         if ( curve == null ) continue;
         poly.Segments.Add( SpeckleCore.Converter.Serialise( curve ) as SpeckleObject );

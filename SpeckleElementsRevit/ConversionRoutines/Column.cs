@@ -27,7 +27,7 @@ namespace SpeckleElementsRevit
 
       }
 
-      var baseLine = (Curve)SpeckleCore.Converter.Deserialise(obj: myCol.baseLine, excludeAssebmlies: new string[] { "SpeckleCoreGeometryDynamo" });
+      var baseLine = (Autodesk.Revit.DB.Curve)SpeckleCore.Converter.Deserialise(obj: myCol.baseLine, excludeAssebmlies: new string[] { "SpeckleCoreGeometryDynamo" });
       var start = baseLine.GetEndPoint(0);
       var end = baseLine.GetEndPoint(1);
 
@@ -146,7 +146,7 @@ namespace SpeckleElementsRevit
       return familyInstance;
     }
 
-    private static void SetColParams(Column myCol, Autodesk.Revit.DB.FamilyInstance familyInstance, Curve baseLine, List<string> exclusions, Autodesk.Revit.DB.Level myTopLevel, Autodesk.Revit.DB.Level baseLevel)
+    private static void SetColParams(Column myCol, Autodesk.Revit.DB.FamilyInstance familyInstance, Autodesk.Revit.DB.Curve baseLine, List<string> exclusions, Autodesk.Revit.DB.Level myTopLevel, Autodesk.Revit.DB.Level baseLevel)
     {
       //checking if BASE offset needs to be set before or after TOP offset
       if (myTopLevel != null && myTopLevel.Elevation + (double)myCol.bottomOffset / Scale <= baseLevel.Elevation)
@@ -178,7 +178,7 @@ namespace SpeckleElementsRevit
       return sym;
     }
 
-    private static void MatchFlippingAndRotation(Autodesk.Revit.DB.FamilyInstance myInstance, Column myColumn, Curve baseLine)
+    private static void MatchFlippingAndRotation(Autodesk.Revit.DB.FamilyInstance myInstance, Column myColumn, Autodesk.Revit.DB.Curve baseLine)
     {
 
       // TODO: All these try catches can be replaced with if ( Dictionary.ContainsKey(LOLOLO) )
@@ -205,7 +205,7 @@ namespace SpeckleElementsRevit
 
         var start = baseLine.GetEndPoint(0);
         var end = baseLine.GetEndPoint(1);
-        var myLine = Line.CreateBound(start, end);
+        var myLine = Autodesk.Revit.DB.Line.CreateBound(start, end);
 
         if (myInstance.Location is LocationPoint)
           ((LocationPoint)myInstance.Location).Rotate(myLine, rotation - ((LocationPoint)myInstance.Location).Rotation);
@@ -250,7 +250,7 @@ namespace SpeckleElementsRevit
       {
         var basePt = (myFamily.Location as LocationPoint).Point;
         var topPt = new XYZ(basePt.X, basePt.Y, topLevel.Elevation);
-        myColumn.baseLine = (SpeckleCoreGeometryClasses.SpeckleLine)SpeckleCore.Converter.Serialise(Line.CreateBound(basePt, topPt));
+        myColumn.baseLine = (SpeckleCoreGeometryClasses.SpeckleLine)SpeckleCore.Converter.Serialise(Autodesk.Revit.DB.Line.CreateBound(basePt, topPt));
       }
 
       myColumn.columnFamily = myFamily.Symbol.FamilyName;

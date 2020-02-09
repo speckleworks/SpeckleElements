@@ -85,7 +85,7 @@ namespace SpeckleElementsRevit
         {
           foreach( var curve in crvloop )
           {
-            var c = curve as Curve;
+            var c = curve as Autodesk.Revit.DB.Curve;
 
             if ( c == null ) continue;
             poly.Segments.Add( SpeckleCore.Converter.Serialise( c ) as SpeckleObject );

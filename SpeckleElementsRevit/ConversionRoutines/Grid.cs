@@ -20,7 +20,7 @@ namespace SpeckleElementsRevit
       // If no doc object, means we need to create it!
       if( docObj == null )
       {
-        var res = Grid.Create( Doc, Line.CreateBound( new XYZ( myGridLine.Value[ 0 ] * Scale, myGridLine.Value[ 1 ] * Scale, 0 ), new XYZ( myGridLine.Value[ 3 ] * Scale, myGridLine.Value[ 4 ] * Scale, 0 ) ) );
+        var res = Grid.Create( Doc, Autodesk.Revit.DB.Line.CreateBound( new XYZ( myGridLine.Value[ 0 ] * Scale, myGridLine.Value[ 1 ] * Scale, 0 ), new XYZ( myGridLine.Value[ 3 ] * Scale, myGridLine.Value[ 4 ] * Scale, 0 ) ) );
         return res;
       }
 
@@ -51,12 +51,12 @@ namespace SpeckleElementsRevit
       if( angle > 0.00001 )
       {
         var crossProd = newDirection.CrossProduct( currentDirection ).Z;
-        ElementTransformUtils.RotateElement( Doc, myGrid.Id, Line.CreateUnbound( newStart, XYZ.BasisZ ), crossProd < 0 ? angle : -angle );
+        ElementTransformUtils.RotateElement( Doc, myGrid.Id, Autodesk.Revit.DB.Line.CreateUnbound( newStart, XYZ.BasisZ ), crossProd < 0 ? angle : -angle );
       }
 
       try
       {
-        myGrid.SetCurveInView( DatumExtentType.Model, Doc.ActiveView, Line.CreateBound( newStart, newEnd ) );
+        myGrid.SetCurveInView( DatumExtentType.Model, Doc.ActiveView, Autodesk.Revit.DB.Line.CreateBound( newStart, newEnd ) );
       }
       catch( Exception e )
       {

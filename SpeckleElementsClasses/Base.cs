@@ -20,6 +20,63 @@ namespace SpeckleElementsClasses
   // TODO: We need a consensus on how to define/set family types or whatever they're called
   // for the various objects that support them, ie walls, floors, etc.
 
+
+  public enum CurveType
+  {
+    ModelCurve,
+    DetailCurve,
+    RoomBounding
+  }
+
+  /// <summary>
+  /// Inspired by Grevit https://github.com/grevit-dev/Grevit/blob/3c7a5cc198e00dfa4cc1e892edba7c7afd1a3f84/Grevit.Types/Types/Grevit.cs#L851
+  /// </summary>
+  [Serializable]
+  public partial class Curve : SpecklePolycurve, ISpeckleElement
+  {
+    public override string Type { get => base.Type + "/" + "Curve"; }
+
+    
+    [JsonIgnore]
+    public SpeckleObject baseCurve
+    {
+      get => (Properties != null && Properties.ContainsKey("baseCurve")) ? ((SpeckleObject)Properties["baseCurve"]) : null;
+      set => Properties["baseCurve"] = value;
+    }
+
+
+    [JsonIgnore]
+    public CurveType curveType
+    {
+      get
+      {
+        if (Properties == null || !Properties.ContainsKey("curveType"))
+          return CurveType.ModelCurve;
+        int i = Convert.ToInt32(Properties["curveType"]);
+        return (CurveType)i;
+      }
+      set => Properties["curveType"] = value;
+    }
+
+
+
+    //[JsonIgnore]
+    //public Level level
+    //{
+    //  get => (Properties != null && Properties.ContainsKey("level")) ? (Properties["level"] as Level) : null;
+    //  set => Properties["level"] = value;
+    //}
+
+    [JsonIgnore]
+    public Dictionary<string, object> parameters
+    {
+      get => (Properties != null && Properties.ContainsKey("parameters")) ? (Properties["parameters"] as Dictionary<string, object>) : null;
+      set => Properties["parameters"] = value;
+    }
+
+    public Curve() { }
+  }
+
   [Serializable]
   public partial class GridLine : SpeckleLine, ISpeckleElement
   {
@@ -453,29 +510,74 @@ namespace SpeckleElementsClasses
   }
 
   [Serializable]
-  public partial class FamilyInstance : SpeckleMesh, ISpeckleElement
+  public partial class AdaptiveComponent : SpeckleMesh, ISpeckleElement
   {
-    public override string Type { get => base.Type + "/" + "FamilyInstance"; }
+
+    public override string Type { get => base.Type + "/" + "AdaptiveComponent"; }
+
+    [JsonIgnore]
+    public string familyName
+    {
+      get => (Properties != null && Properties.ContainsKey("familyName")) ? ((string)Properties["familyName"]) : null;
+      set => Properties["familyName"] = value;
+    }
+
+    [JsonIgnore]
+    public string familyType
+    {
+      get => (Properties != null && Properties.ContainsKey("familyType")) ? ((string)Properties["familyType"]) : null;
+      set => Properties["familyType"] = value;
+    }
 
     [JsonIgnore]
     public List<SpecklePoint> points
     {
-      get => (Properties != null && Properties.ContainsKey("points")) ? (Properties["points"] as List<SpecklePoint>) : null;
+      get
+      {
+        if (Properties == null || !Properties.ContainsKey("points"))
+          return null;
+        try
+        {
+          return (Properties["points"] as List<object>).Select(x => x as SpecklePoint).ToList();
+        }
+        catch
+        {
+          //fail quietly
+        }
+        return null;
+
+      }
       set => Properties["points"] = value;
     }
 
     [JsonIgnore]
-    public string view
+    public Dictionary<string, object> parameters
     {
-      get => (Properties != null && Properties.ContainsKey("view")) ? ((string)Properties["view"]) : null;
-      set => Properties["view"] = value;
+      get => (Properties != null && Properties.ContainsKey("parameters")) ? (Properties["parameters"] as Dictionary<string, object>) : null;
+      set => Properties["parameters"] = value;
+    }
+
+    public AdaptiveComponent() { }
+  }
+
+  [Serializable]
+  public partial class HostedFamilyInstance : SpeckleMesh, ISpeckleElement
+  {
+
+    public override string Type { get => base.Type + "/" + "HostedFamilyInstance"; }
+
+    [JsonIgnore]
+    public Dictionary<string, object> parameters
+    {
+      get => (Properties != null && Properties.ContainsKey("parameters")) ? (Properties["parameters"] as Dictionary<string, object>) : null;
+      set => Properties["parameters"] = value;
     }
 
     [JsonIgnore]
-    public Level level
+    public string hostElementSpeckleId
     {
-      get => (Properties != null && Properties.ContainsKey("level")) ? (Properties["level"] as Level) : null;
-      set => Properties["level"] = value;
+      get => (Properties != null && Properties.ContainsKey("hostElementSpeckleId")) ? ((string)Properties["hostElementSpeckleId"]) : null;
+      set => Properties["hostElementSpeckleId"] = value;
     }
 
     [JsonIgnore]
@@ -490,6 +592,64 @@ namespace SpeckleElementsClasses
     {
       get => (Properties != null && Properties.ContainsKey("familyType")) ? ((string)Properties["familyType"]) : null;
       set => Properties["familyType"] = value;
+    }
+
+    [JsonIgnore]
+    public List<SpecklePoint> points
+    {
+      get => (Properties != null && Properties.ContainsKey("points")) ? (Properties["points"] as List<SpecklePoint>) : null;
+      set => Properties["points"] = value;
+    }
+
+    public HostedFamilyInstance() { }
+  }
+
+  [Serializable]
+  public partial class FamilyInstance : SpeckleMesh, ISpeckleElement
+  {
+    public override string Type { get => base.Type + "/" + "FamilyInstance"; }
+
+    [JsonIgnore]
+    public SpecklePoint basePoint
+    {
+      get => (Properties != null && Properties.ContainsKey("basePoint")) ? (Properties["basePoint"] as SpecklePoint) : null;
+      set => Properties["basePoint"] = value;
+    }
+
+    //[JsonIgnore]
+    //public string view
+    //{
+    //  get => (Properties != null && Properties.ContainsKey("view")) ? ((string)Properties["view"]) : null;
+    //  set => Properties["view"] = value;
+    //}
+
+    //[JsonIgnore]
+    //public Level level
+    //{
+    //  get => (Properties != null && Properties.ContainsKey("level")) ? (Properties["level"] as Level) : null;
+    //  set => Properties["level"] = value;
+    //}
+
+    [JsonIgnore]
+    public string familyName
+    {
+      get => (Properties != null && Properties.ContainsKey("familyName")) ? ((string)Properties["familyName"]) : null;
+      set => Properties["familyName"] = value;
+    }
+
+    [JsonIgnore]
+    public string familyType
+    {
+      get => (Properties != null && Properties.ContainsKey("familyType")) ? ((string)Properties["familyType"]) : null;
+      set => Properties["familyType"] = value;
+    }
+
+    //rotation around the Z axis in degress
+    [JsonIgnore]
+    public double? rotation
+    {
+      get => (Properties != null && Properties.ContainsKey("rotation")) ? ((double)Properties["rotation"]) : 0;
+      set => Properties["rotation"] = value;
     }
 
     [JsonIgnore]

@@ -67,6 +67,7 @@
     </Reference>
     <Reference Include="SpeckleCore, Version=1.6.17.0, Culture=neutral, processorArchitecture=AMD64">
       <HintPath>..\packages\SpeckleCore.1.6.17-wip\lib\net45\SpeckleCore.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="SpeckleCoreGeometryClasses, Version=1.2.8.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\SpeckleCoreGeometry.1.2.8\lib\net461\SpeckleCoreGeometryClasses.dll</HintPath>
@@ -108,7 +109,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ConversionRoutines\Curve.cs" />
     <Compile Include="ConversionRoutines\BeamBrace.cs" />
+    <Compile Include="ConversionRoutines\AdaptiveComponent.cs" />
     <Compile Include="ConversionRoutines\Column.cs" />
     <Compile Include="ConversionRoutines\FamilyInstance.cs" />
     <Compile Include="ConversionRoutines\Level.cs" />
