@@ -1,5 +1,7 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using Autodesk.Revit.DB;
+using SpeckleCore.Data;
 
 namespace SpeckleElementsRevit
 {
@@ -50,14 +52,36 @@ namespace SpeckleElementsRevit
       else
       {
         Element el = null;
+
+
         if (myCurve.curveType == SpeckleElementsClasses.CurveType.DetailCurve)
-          el = Doc.Create.NewDetailCurve(Doc.ActiveView, baseCurve);
+        {
+
+          try
+          {
+            el = Doc.Create.NewDetailCurve(Doc.ActiveView, baseCurve);
+          }
+          catch (Exception e)
+          {
+            ConversionErrors.Add(new SpeckleConversionError { Message = $"View is not valid for detail line creation." });
+            return null;
+          }
+        }
+         
 
         else if (myCurve.curveType == SpeckleElementsClasses.CurveType.RoomBounding)
         {
-          CurveArray tmpca = new CurveArray();
-          tmpca.Append(baseCurve);
-          el = Doc.Create.NewRoomBoundaryLines(NewSketchPlaneFromCurve(Doc, baseCurve), tmpca, Doc.ActiveView).get_Item(0);
+          try
+          {
+            CurveArray tmpca = new CurveArray();
+            tmpca.Append(baseCurve);
+            el = Doc.Create.NewRoomBoundaryLines(NewSketchPlaneFromCurve(Doc, baseCurve), tmpca, Doc.ActiveView).get_Item(0);
+          }
+          catch(Exception e)
+          {
+            ConversionErrors.Add(new SpeckleConversionError { Message = $"View is not valid for room boundary line creation." });
+            return null;
+          }
         }
         else
         {
