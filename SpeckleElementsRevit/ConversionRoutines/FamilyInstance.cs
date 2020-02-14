@@ -28,27 +28,87 @@ namespace SpeckleElementsRevit
         throw new RevitFamilyNotFoundException($"No such family found in the project");
       }
 
+      if (myFamInst.basePoint == null)
+      {
+        ConversionErrors.Add(new SpeckleConversionError { Message = $"Could not create: {myFamInst.familyName} {myFamInst.familyType}" });
+        throw new RevitFamilyNotFoundException($"Missing base point");
+      }
+
       // Activate the symbol yo! 
       if (!familySymbol.IsActive) familySymbol.Activate();
 
       XYZ xyz = (XYZ)SpeckleCore.Converter.Deserialise(obj: myFamInst.basePoint, excludeAssebmlies: new string[] { "SpeckleCoreGeometryDynamo" });
 
 
-      var myTypeBasedFamInst = Doc.Create.NewFamilyInstance(xyz, familySymbol, Autodesk.Revit.DB.Structure.StructuralType.NonStructural);
-
-      SetElementParams(myTypeBasedFamInst, myFamInst.parameters);
-
-      if (myFamInst.rotation != null && myFamInst.rotation != 0)
+      if (docObj != null) // we have a document object already, so check if we can edit it.
       {
-        var r = (double)myFamInst.rotation;
-        XYZ point1 = new XYZ(xyz.X, xyz.Y, 0);
-        XYZ point2 = new XYZ(xyz.X, xyz.Y, 10);
-        Autodesk.Revit.DB.Line axis = Autodesk.Revit.DB.Line.CreateBound(point1, point2);
+        var type = Doc.GetElement(docObj.GetTypeId()) as ElementType;
 
-        ElementTransformUtils.RotateElement(Doc, myTypeBasedFamInst.Id, axis, Math.PI * r / 180);
+        // if family changed, tough luck - delete and rewind
+        if (myFamInst.familyName != type.FamilyName)
+        {
+          //delete and continue crating it
+          Doc.Delete(docObj.Id);
+        }
+        // edit element
+        else
+        {
+          var existingFamilyInstance = (Autodesk.Revit.DB.FamilyInstance)docObj;
+
+          // check if type changed, and try and change it
+          if (myFamInst.familyType != null && (myFamInst.familyType != type.Name))
+          {
+            existingFamilyInstance.ChangeTypeId(familySymbol.Id);
+          }
+
+          //update location
+          var existingLocationPoint = existingFamilyInstance.Location as LocationPoint;
+          existingLocationPoint.Point = xyz;
+
+          var existingRotation = existingLocationPoint.Rotation * 180 / Math.PI;
+
+          if (existingRotation != myFamInst.rotation)
+          {
+            var r = (double)myFamInst.rotation;
+            XYZ point1 = new XYZ(xyz.X, xyz.Y, 0);
+            XYZ point2 = new XYZ(xyz.X, xyz.Y, 10);
+
+            if (existingRotation != 0)
+            {
+              r -= existingRotation;
+            }
+
+            Autodesk.Revit.DB.Line axis = Autodesk.Revit.DB.Line.CreateBound(point1, point2);
+            ElementTransformUtils.RotateElement(Doc, existingFamilyInstance.Id, axis, Math.PI * r / 180);
+          }
+
+
+
+          SetElementParams(existingFamilyInstance, myFamInst.parameters);
+          return existingFamilyInstance;
+        }
       }
 
-      return myTypeBasedFamInst;
+      else
+      {
+
+        var myTypeBasedFamInst = Doc.Create.NewFamilyInstance(xyz, familySymbol, Autodesk.Revit.DB.Structure.StructuralType.NonStructural);
+
+        SetElementParams(myTypeBasedFamInst, myFamInst.parameters);
+
+        if (myFamInst.rotation != null && myFamInst.rotation != 0)
+        {
+          var r = (double)myFamInst.rotation;
+          XYZ point1 = new XYZ(xyz.X, xyz.Y, 0);
+          XYZ point2 = new XYZ(xyz.X, xyz.Y, 10);
+          Autodesk.Revit.DB.Line axis = Autodesk.Revit.DB.Line.CreateBound(point1, point2);
+
+          ElementTransformUtils.RotateElement(Doc, myTypeBasedFamInst.Id, axis, Math.PI * r / 180);
+        }
+
+        return myTypeBasedFamInst;
+      }
+      return null;
     }
 
     /// <summary>
