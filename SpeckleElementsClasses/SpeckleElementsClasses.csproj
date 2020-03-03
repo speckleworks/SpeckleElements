@@ -58,10 +58,6 @@
       <Private>False</Private>
     </Reference>
     <Reference Include="PresentationCore" />
-    <Reference Include="RevitAPIUI, Version=19.0.0.0, Culture=neutral, processorArchitecture=AMD64">
-      <HintPath>..\packages\Revit.RevitApiUI.x64.2019.0.0\lib\net45\RevitAPIUI.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
     <Reference Include="SpeckleCore, Version=1.6.17.0, Culture=neutral, processorArchitecture=AMD64">
       <HintPath>..\packages\SpeckleCore.1.6.17-wip\lib\net45\SpeckleCore.dll</HintPath>
       <Private>False</Private>
@@ -107,6 +103,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Base.cs" />
+    <Compile Include="Enums.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

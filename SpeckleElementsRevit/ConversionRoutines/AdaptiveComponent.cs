@@ -86,7 +86,7 @@ namespace SpeckleElementsRevit
       for (int i = 0; i < pointIds.Count; i++)
       {
         var point = Doc.GetElement(pointIds[i]) as ReferencePoint;
-        point.Position = new XYZ(points[i].Value[0], points[i].Value[1], points[i].Value[2]);
+        point.Position = (XYZ)SpeckleCore.Converter.Deserialise(obj: points[i], excludeAssebmlies: new string[] { "SpeckleCoreGeometryDynamo" });
       }
     }
   }

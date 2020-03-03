@@ -21,12 +21,7 @@ namespace SpeckleElementsClasses
   // for the various objects that support them, ie walls, floors, etc.
 
 
-  public enum CurveType
-  {
-    ModelCurve,
-    DetailCurve,
-    RoomBounding
-  }
+
 
   /// <summary>
   /// Inspired by Grevit https://github.com/grevit-dev/Grevit/blob/3c7a5cc198e00dfa4cc1e892edba7c7afd1a3f84/Grevit.Types/Types/Grevit.cs#L851
@@ -741,4 +736,47 @@ namespace SpeckleElementsClasses
 
     public Room() { }
   }
+
+  [Serializable]
+  public partial class DirectShape : SpeckleMesh, ISpeckleElement
+  {
+    public override string Type { get => base.Type + "/" + "DirectShape"; }
+
+    [JsonIgnore]
+    public string directShapeName
+    {
+      get => (Properties != null && Properties.ContainsKey("directShapeName")) ? ((string)Properties["directShapeName"]) : null;
+      set => Properties["directShapeName"] = value;
+    }
+
+    [JsonIgnore]
+    public Category category
+    {
+      get
+      {
+        if (Properties == null || !Properties.ContainsKey("category"))
+          return Category.GenericModels;
+        int i = Convert.ToInt32(Properties["category"]);
+        return (Category)i;
+      }
+      set => Properties["category"] = value;
+    }
+
+    [JsonIgnore]
+    public SpeckleMesh directShapeMesh
+    {
+      get => new SpeckleMesh() { Vertices = this.Vertices, Faces = this.Faces };
+      set { this.Vertices = value.Vertices; this.Faces = value.Faces; }
+    }
+
+    [JsonIgnore]
+    public Dictionary<string, object> parameters
+    {
+      get => (Properties != null && Properties.ContainsKey("parameters")) ? (Properties["parameters"] as Dictionary<string, object>) : null;
+      set => Properties["parameters"] = value;
+    }
+
+    public DirectShape() { }
+  }
+
 }
