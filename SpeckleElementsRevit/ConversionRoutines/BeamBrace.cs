@@ -143,6 +143,7 @@ namespace SpeckleElementsRevit
 
       myBeam.GenerateHash();
       myBeam.ApplicationId = myFamily.UniqueId;
+      myBeam.elementId = myFamily.Id.ToString();
 
       //var analyticalModel = AnalyticalStickToSpeckle(myFamily);
 

@@ -71,6 +71,7 @@ namespace SpeckleElementsRevit
       speckleLevel.parameters = GetElementParams( myLevel );
 
       speckleLevel.ApplicationId = myLevel.UniqueId;
+      speckleLevel.elementId = myLevel.Id.ToString();
       speckleLevel.GenerateHash();
       return speckleLevel;
     }

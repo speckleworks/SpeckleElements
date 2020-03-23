@@ -282,6 +282,7 @@ namespace SpeckleElementsRevit
 
       myColumn.GenerateHash();
       myColumn.ApplicationId = myFamily.UniqueId;
+      myColumn.elementId = myFamily.Id.ToString();
 
       // leaving the mesh out of the hashing process might address the randomatic hash generation we're getting
       // and hence the nuking the usability of local caching and diffing

@@ -15,6 +15,9 @@ namespace SpeckleElementsClasses
   public interface ISpeckleElement : ISpeckleInitializer
   {
     Dictionary<string, object> parameters { get; set; }
+    //the Revit ELementId
+    string elementId { get; set; }
+
   }
 
   // TODO: We need a consensus on how to define/set family types or whatever they're called
@@ -30,8 +33,14 @@ namespace SpeckleElementsClasses
   public partial class Curve : SpecklePolycurve, ISpeckleElement
   {
     public override string Type { get => base.Type + "/" + "Curve"; }
+    [JsonIgnore]
+    public string elementId
+    {
+      get => (Properties != null && Properties.ContainsKey("elementId")) ? ((string)Properties["elementId"]) : null;
+      set => Properties["elementId"] = value;
+    }
 
-    
+
     [JsonIgnore]
     public SpeckleObject baseCurve
     {
@@ -52,8 +61,6 @@ namespace SpeckleElementsClasses
       }
       set => Properties["curveType"] = value;
     }
-
-
 
     //[JsonIgnore]
     //public Level level
@@ -76,6 +83,12 @@ namespace SpeckleElementsClasses
   public partial class GridLine : SpeckleLine, ISpeckleElement
   {
     public override string Type { get => base.Type + "/" + "GridLine"; }
+    [JsonIgnore]
+    public string elementId
+    {
+      get => (Properties != null && Properties.ContainsKey("elementId")) ? ((string)Properties["elementId"]) : null;
+      set => Properties["elementId"] = value;
+    }
 
     [JsonIgnore]
     public SpeckleLine baseLine
@@ -105,6 +118,12 @@ namespace SpeckleElementsClasses
   public partial class Level : SpecklePolyline, ISpeckleElement
   {
     public override string Type { get => base.Type + "/" + "Level"; }
+    [JsonIgnore]
+    public string elementId
+    {
+      get => (Properties != null && Properties.ContainsKey("elementId")) ? ((string)Properties["elementId"]) : null;
+      set => Properties["elementId"] = value;
+    }
 
     [JsonIgnore]
     public SpecklePolyline baseCurve
@@ -148,6 +167,12 @@ namespace SpeckleElementsClasses
   public partial class Wall : SpeckleMesh, ISpeckleElement
   {
     public override string Type { get => base.Type + "/" + "Wall"; }
+    [JsonIgnore]
+    public string elementId
+    {
+      get => (Properties != null && Properties.ContainsKey("elementId")) ? ((string)Properties["elementId"]) : null;
+      set => Properties["elementId"] = value;
+    }
 
     [JsonIgnore]
     public SpeckleObject baseCurve
@@ -212,6 +237,12 @@ namespace SpeckleElementsClasses
   public partial class Floor : SpeckleMesh, ISpeckleElement
   {
     public override string Type { get => base.Type + "/" + "Floor"; }
+    [JsonIgnore]
+    public string elementId
+    {
+      get => (Properties != null && Properties.ContainsKey("elementId")) ? ((string)Properties["elementId"]) : null;
+      set => Properties["elementId"] = value;
+    }
 
     [JsonIgnore]
     public SpeckleObject baseCurve
@@ -269,6 +300,12 @@ namespace SpeckleElementsClasses
   public partial class Column : SpeckleMesh, ISpeckleElement
   {
     public override string Type { get => base.Type + "/" + "Column"; }
+    [JsonIgnore]
+    public string elementId
+    {
+      get => (Properties != null && Properties.ContainsKey("elementId")) ? ((string)Properties["elementId"]) : null;
+      set => Properties["elementId"] = value;
+    }
 
     [JsonIgnore]
     public SpeckleLine baseLine
@@ -341,6 +378,12 @@ namespace SpeckleElementsClasses
   public partial class Brace : SpeckleMesh, ISpeckleElement
   {
     public override string Type { get => base.Type + "/" + "Brace"; }
+    [JsonIgnore]
+    public string elementId
+    {
+      get => (Properties != null && Properties.ContainsKey("elementId")) ? ((string)Properties["elementId"]) : null;
+      set => Properties["elementId"] = value;
+    }
 
     [JsonIgnore]
     public SpeckleLine baseLine
@@ -392,6 +435,12 @@ namespace SpeckleElementsClasses
   public partial class Beam : SpeckleMesh, ISpeckleElement
   {
     public override string Type { get => base.Type + "/" + "Beam"; }
+    [JsonIgnore]
+    public string elementId
+    {
+      get => (Properties != null && Properties.ContainsKey("elementId")) ? ((string)Properties["elementId"]) : null;
+      set => Properties["elementId"] = value;
+    }
 
     [JsonIgnore]
     public SpeckleLine baseLine
@@ -443,6 +492,12 @@ namespace SpeckleElementsClasses
   public partial class Shaft : SpeckleMesh, ISpeckleElement
   {
     public override string Type { get => base.Type + "/" + "Shaft"; }
+    [JsonIgnore]
+    public string elementId
+    {
+      get => (Properties != null && Properties.ContainsKey("elementId")) ? ((string)Properties["elementId"]) : null;
+      set => Properties["elementId"] = value;
+    }
 
     [JsonIgnore]
     public Level bottomLevel
@@ -486,6 +541,12 @@ namespace SpeckleElementsClasses
   public partial class Topography : SpeckleMesh, ISpeckleElement
   {
     public override string Type { get => base.Type + "/" + "Topography"; }
+    [JsonIgnore]
+    public string elementId
+    {
+      get => (Properties != null && Properties.ContainsKey("elementId")) ? ((string)Properties["elementId"]) : null;
+      set => Properties["elementId"] = value;
+    }
 
     [JsonIgnore]
     public SpeckleMesh topographyMesh
@@ -509,6 +570,12 @@ namespace SpeckleElementsClasses
   {
 
     public override string Type { get => base.Type + "/" + "AdaptiveComponent"; }
+    [JsonIgnore]
+    public string elementId
+    {
+      get => (Properties != null && Properties.ContainsKey("elementId")) ? ((string)Properties["elementId"]) : null;
+      set => Properties["elementId"] = value;
+    }
 
     [JsonIgnore]
     public string familyName
@@ -560,6 +627,12 @@ namespace SpeckleElementsClasses
   {
 
     public override string Type { get => base.Type + "/" + "HostedFamilyInstance"; }
+    [JsonIgnore]
+    public string elementId
+    {
+      get => (Properties != null && Properties.ContainsKey("elementId")) ? ((string)Properties["elementId"]) : null;
+      set => Properties["elementId"] = value;
+    }
 
     [JsonIgnore]
     public Dictionary<string, object> parameters
@@ -603,6 +676,12 @@ namespace SpeckleElementsClasses
   public partial class FamilyInstance : SpeckleMesh, ISpeckleElement
   {
     public override string Type { get => base.Type + "/" + "FamilyInstance"; }
+    [JsonIgnore]
+    public string elementId
+    {
+      get => (Properties != null && Properties.ContainsKey("elementId")) ? ((string)Properties["elementId"]) : null;
+      set => Properties["elementId"] = value;
+    }
 
     [JsonIgnore]
     public SpecklePoint basePoint
@@ -661,6 +740,12 @@ namespace SpeckleElementsClasses
   public partial class GenericElement : SpeckleMesh, ISpeckleElement
   {
     public override string Type { get => base.Type + "/" + "GenericElement"; }
+    [JsonIgnore]
+    public string elementId
+    {
+      get => (Properties != null && Properties.ContainsKey("elementId")) ? ((string)Properties["elementId"]) : null;
+      set => Properties["elementId"] = value;
+    }
 
     [JsonIgnore]
     public Dictionary<string, object> parameters
@@ -676,6 +761,12 @@ namespace SpeckleElementsClasses
   public partial class Room : SpeckleMesh, ISpeckleElement
   {
     public override string Type { get => base.Type + "/" + "Room"; }
+    [JsonIgnore]
+    public string elementId
+    {
+      get => (Properties != null && Properties.ContainsKey("elementId")) ? ((string)Properties["elementId"]) : null;
+      set => Properties["elementId"] = value;
+    }
 
     [JsonIgnore]
     public SpeckleObject baseCurve
@@ -741,6 +832,12 @@ namespace SpeckleElementsClasses
   public partial class DirectShape : SpeckleMesh, ISpeckleElement
   {
     public override string Type { get => base.Type + "/" + "DirectShape"; }
+    [JsonIgnore]
+    public string elementId
+    {
+      get => (Properties != null && Properties.ContainsKey("elementId")) ? ((string)Properties["elementId"]) : null;
+      set => Properties["elementId"] = value;
+    }
 
     [JsonIgnore]
     public string directShapeName

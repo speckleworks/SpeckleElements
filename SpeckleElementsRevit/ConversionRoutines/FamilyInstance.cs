@@ -147,6 +147,8 @@ namespace SpeckleElementsRevit
 
       speckleFamily.GenerateHash();
       speckleFamily.ApplicationId = myFamily.UniqueId;
+      speckleFamily.elementId = myFamily.Id.ToString();
+
 
       return speckleFamily;
     }
