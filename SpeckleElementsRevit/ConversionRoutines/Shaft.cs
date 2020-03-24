@@ -48,6 +48,7 @@ namespace SpeckleElementsRevit
 
       spkShaft.baseCurve = poly;
       spkShaft.ApplicationId = myShaft.UniqueId;
+      spkShaft.elementId = myShaft.Id.ToString();
       spkShaft.GenerateHash();
       return null;
     }

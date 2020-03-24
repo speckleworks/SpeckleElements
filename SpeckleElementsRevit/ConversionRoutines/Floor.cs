@@ -63,6 +63,7 @@ namespace SpeckleElementsRevit
       speckleFloor.baseCurve = getFloorOutline( myFloor );
 
       speckleFloor.ApplicationId = myFloor.UniqueId;
+      speckleFloor.elementId = myFloor.Id.ToString();
       speckleFloor.GenerateHash();
 
       (speckleFloor.Faces, speckleFloor.Vertices) = GetFaceVertexArrayFromElement( myFloor, new Options() { DetailLevel = ViewDetailLevel.Fine, ComputeReferences = false } );

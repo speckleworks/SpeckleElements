@@ -71,8 +71,9 @@ namespace SpeckleElementsRevit
       (generic.Faces, generic.Vertices) = GetFaceVertexArrayFromElement(myElement);
 
       generic.parameters = GetElementParams(myElement);
-
       generic.ApplicationId = myElement.UniqueId;
+      generic.elementId = myElement.Id.ToString();
+
       generic.GenerateHash();
       return generic;
     }
@@ -169,6 +170,10 @@ namespace SpeckleElementsRevit
             break;
         }
       }
+
+      //sort parameters
+      myParamDict = myParamDict.OrderBy(obj => obj.Key).ToDictionary(obj => obj.Key, obj => obj.Value);
+
 
       // myParamDict["__units"] = unitsDict;
       // TODO: BIG CORE PROBLEM: failure to serialise things with nested dictionary (like the line above).

@@ -77,7 +77,8 @@ namespace SpeckleElementsRevit
       var myGridLine = new GridLine()
       {
         ApplicationId = myGrid.UniqueId,
-        Value = new List<double>() { start.X / Scale, start.Y / Scale, start.Z / Scale, end.X / Scale, end.Y / Scale, end.Z / Scale },
+        elementId = myGrid.Id.ToString(),
+      Value = new List<double>() { start.X / Scale, start.Y / Scale, start.Z / Scale, end.X / Scale, end.Y / Scale, end.Z / Scale },
         parameters = GetElementParams( myGrid )
       };
 

@@ -136,6 +136,7 @@ namespace SpeckleElementsRevit
       speckleWall.Properties[ "__flipped" ] = myWall.Flipped;
 
       speckleWall.ApplicationId = myWall.UniqueId;
+      speckleWall.elementId = myWall.Id.ToString();
       speckleWall.GenerateHash();
 
       // meshing for walls in case they are curtain grids

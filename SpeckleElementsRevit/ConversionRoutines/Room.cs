@@ -40,6 +40,7 @@ namespace SpeckleElementsRevit
       speckleRoom.parameters = GetElementParams( myRoom );
 
       speckleRoom.ApplicationId = myRoom.UniqueId;
+      speckleRoom.elementId = myRoom.Id.ToString();
       speckleRoom.GenerateHash();
 
       return speckleRoom;
