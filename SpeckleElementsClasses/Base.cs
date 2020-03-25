@@ -352,14 +352,14 @@ namespace SpeckleElementsClasses
     [JsonIgnore]
     public double? topOffset
     {
-      get => (Properties != null && Properties.ContainsKey("topOffset")) ? ((double)Properties["topOffset"]) : 0;
+      get => (Properties != null && Properties.ContainsKey("topOffset")) ? ((double?)Properties["topOffset"]) : null;
       set => Properties["topOffset"] = value;
     }
 
     [JsonIgnore]
     public double? bottomOffset
     {
-      get => (Properties != null && Properties.ContainsKey("bottomOffset")) ? ((double)Properties["bottomOffset"]) : 0;
+      get => (Properties != null && Properties.ContainsKey("bottomOffset")) ? ((double?)Properties["bottomOffset"]) : null;
       set => Properties["bottomOffset"] = value;
     }
 
