@@ -36,6 +36,8 @@ namespace SpeckleElementsRevit
       ds.SetShape(mesh);
       ds.Name = myDs.directShapeName;
 
+      SetElementParams(ds, myDs.parameters);
+
       return ds;
     }
 
