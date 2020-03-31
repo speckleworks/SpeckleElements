@@ -180,6 +180,57 @@ namespace SpeckleElementsRevit
       return myParamDict;
     }
 
+    public static Dictionary<string, object> GetElementTypeParams(Element myElement)
+    {
+      var myParamDict = new Dictionary<string, object>();
+
+      var myElementType = Doc.GetElement(myElement.GetTypeId());
+
+      foreach (Parameter p in myElementType.Parameters)
+      {
+        var keyName = SanitizeKeyname(p.Definition.Name);
+
+        if (myParamDict.ContainsKey(keyName)) continue;
+        switch (p.StorageType)
+        {
+          case StorageType.Double:
+            // NOTE: do not use p.AsDouble() as direct input for unit utils conversion, it doesn't work.  ¯\_(ツ)_/¯
+            var val = p.AsDouble();
+            try
+            {
+              myParamDict[keyName] = UnitUtils.ConvertFromInternalUnits(val, p.DisplayUnitType);
+              myParamDict["__unitType::" + keyName] = p.Definition.UnitType.ToString();
+              // populate units dictionary
+              UnitDictionary[p.Definition.UnitType.ToString()] = p.DisplayUnitType.ToString();
+            }
+            catch (Exception e)
+            {
+              myParamDict[keyName] = val;
+            }
+            break;
+          case StorageType.Integer:
+            myParamDict[keyName] = p.AsInteger();
+            break;
+          case StorageType.String:
+            myParamDict[keyName] = p.AsString();
+            break;
+          case StorageType.ElementId:
+            myParamDict[keyName] = p.AsValueString();
+            break;
+          case StorageType.None:
+            break;
+        }
+      }
+
+      //sort parameters
+      myParamDict = myParamDict.OrderBy(obj => obj.Key).ToDictionary(obj => obj.Key, obj => obj.Value);
+
+
+      // myParamDict["__units"] = unitsDict;
+      // TODO: BIG CORE PROBLEM: failure to serialise things with nested dictionary (like the line above).
+      return myParamDict;
+    }
+
     public static void SetElementParams(Element myElement, Dictionary<string, object> parameters, List<string> exclusions = null)
     {
       // TODO: Set parameters please
@@ -196,6 +247,67 @@ namespace SpeckleElementsRevit
         {
           var keyName = UnsanitizeKeyname(kvp.Key);
           var myParam = myElement.ParametersMap.get_Item(keyName);
+          if (myParam == null) continue;
+          if (myParam.IsReadOnly) continue;
+
+          switch (myParam.StorageType)
+          {
+            case StorageType.Double:
+              var hasUnitKey = parameters.ContainsKey("__unitType::" + myParam.Definition.Name);
+              if (hasUnitKey)
+              {
+                var unitType = (string)parameters["__unitType::" + kvp.Key];
+                var sourceUnitString = UnitDictionary[unitType];
+                DisplayUnitType sourceUnit;
+                Enum.TryParse<DisplayUnitType>(sourceUnitString, out sourceUnit);
+
+                var convertedValue = UnitUtils.ConvertToInternalUnits(Convert.ToDouble(kvp.Value), sourceUnit);
+
+                myParam.Set(convertedValue);
+              }
+              else
+              {
+                myParam.Set(Convert.ToDouble(kvp.Value));
+              }
+              break;
+
+            case StorageType.Integer:
+              myParam.Set(Convert.ToInt32(kvp.Value));
+              break;
+
+            case StorageType.String:
+              myParam.Set(Convert.ToString(kvp.Value));
+              break;
+
+            case StorageType.ElementId:
+              // TODO/Fake out: most important element id params should go as props in the object model
+              break;
+          }
+        }
+        catch (Exception e)
+        {
+        }
+      }
+
+    }
+
+    public static void SetElementTypeParams(Element myElement, Dictionary<string, object> parameters, List<string> exclusions = null)
+    {
+      // TODO: Set parameters please
+      if (myElement == null) return;
+      if (parameters == null) return;
+      var myElementType = Doc.GetElement(myElement.GetTypeId());
+
+      var questForTheBest = UnitDictionary;
+
+      foreach (var kvp in parameters)
+      {
+        if (kvp.Key.Contains("__unitType::")) continue; // skip unit types please
+        if (exclusions != null && exclusions.Contains(kvp.Key)) continue;
+        try
+        {
+          var keyName = UnsanitizeKeyname(kvp.Key);
+          var myParam = myElementType.ParametersMap.get_Item(keyName);
           if (myParam == null) continue;
           if (myParam.IsReadOnly) continue;
 

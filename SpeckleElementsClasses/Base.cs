@@ -111,6 +111,13 @@ namespace SpeckleElementsClasses
       set => Properties["parameters"] = value;
     }
 
+    [JsonIgnore]
+    public Dictionary<string, object> typeParameters
+    {
+      get => (Properties != null && Properties.ContainsKey("typeParameters")) ? (Properties["typeParameters"] as Dictionary<string, object>) : null;
+      set => Properties["typeParameters"] = value;
+    }
+
     public GridLine() { }
   }
 
@@ -160,6 +167,12 @@ namespace SpeckleElementsClasses
       set => Properties["parameters"] = value;
     }
 
+    [JsonIgnore]
+    public Dictionary<string, object> typeParameters
+    {
+      get => (Properties != null && Properties.ContainsKey("typeParameters")) ? (Properties["typeParameters"] as Dictionary<string, object>) : null;
+      set => Properties["typeParameters"] = value;
+    }
     public Level() { }
   }
 
@@ -230,6 +243,13 @@ namespace SpeckleElementsClasses
       set => Properties["parameters"] = value;
     }
 
+    [JsonIgnore]
+    public Dictionary<string, object> typeParameters
+    {
+      get => (Properties != null && Properties.ContainsKey("typeParameters")) ? (Properties["typeParameters"] as Dictionary<string, object>) : null;
+      set => Properties["typeParameters"] = value;
+    }
+
     public Wall() { }
   }
 
@@ -291,6 +311,13 @@ namespace SpeckleElementsClasses
     {
       get => (Properties != null && Properties.ContainsKey("parameters")) ? (Properties["parameters"] as Dictionary<string, object>) : null;
       set => Properties["parameters"] = value;
+    }
+
+    [JsonIgnore]
+    public Dictionary<string, object> typeParameters
+    {
+      get => (Properties != null && Properties.ContainsKey("typeParameters")) ? (Properties["typeParameters"] as Dictionary<string, object>) : null;
+      set => Properties["typeParameters"] = value;
     }
 
     public Floor() { }
@@ -369,6 +396,14 @@ namespace SpeckleElementsClasses
       get => (Properties != null && Properties.ContainsKey("parameters")) ? (Properties["parameters"] as Dictionary<string, object>) : null;
       set => Properties["parameters"] = value;
     }
+
+    [JsonIgnore]
+    public Dictionary<string, object> typeParameters
+    {
+      get => (Properties != null && Properties.ContainsKey("typeParameters")) ? (Properties["typeParameters"] as Dictionary<string, object>) : null;
+      set => Properties["typeParameters"] = value;
+    }
+
     public Column() { }
   }
 
@@ -427,6 +462,13 @@ namespace SpeckleElementsClasses
       set => Properties["parameters"] = value;
     }
 
+    [JsonIgnore]
+    public Dictionary<string, object> typeParameters
+    {
+      get => (Properties != null && Properties.ContainsKey("typeParameters")) ? (Properties["typeParameters"] as Dictionary<string, object>) : null;
+      set => Properties["typeParameters"] = value;
+    }
+
     public Brace() { }
   }
 
@@ -482,6 +524,13 @@ namespace SpeckleElementsClasses
     {
       get => (Properties != null && Properties.ContainsKey("parameters")) ? (Properties["parameters"] as Dictionary<string, object>) : null;
       set => Properties["parameters"] = value;
+    }
+
+    [JsonIgnore]
+    public Dictionary<string, object> typeParameters
+    {
+      get => (Properties != null && Properties.ContainsKey("typeParameters")) ? (Properties["typeParameters"] as Dictionary<string, object>) : null;
+      set => Properties["typeParameters"] = value;
     }
 
     public Beam() { }
@@ -642,6 +691,13 @@ namespace SpeckleElementsClasses
     }
 
     [JsonIgnore]
+    public Dictionary<string, object> typeParameters
+    {
+      get => (Properties != null && Properties.ContainsKey("typeParameters")) ? (Properties["typeParameters"] as Dictionary<string, object>) : null;
+      set => Properties["typeParameters"] = value;
+    }
+
+    [JsonIgnore]
     public string hostElementSpeckleId
     {
       get => (Properties != null && Properties.ContainsKey("hostElementSpeckleId")) ? ((string)Properties["hostElementSpeckleId"]) : null;
@@ -733,6 +789,13 @@ namespace SpeckleElementsClasses
       set => Properties["parameters"] = value;
     }
 
+    [JsonIgnore]
+    public Dictionary<string, object> typeParameters
+    {
+      get => (Properties != null && Properties.ContainsKey("typeParameters")) ? (Properties["typeParameters"] as Dictionary<string, object>) : null;
+      set => Properties["typeParameters"] = value;
+    }
+
     public FamilyInstance() { }
   }
 
@@ -752,6 +815,13 @@ namespace SpeckleElementsClasses
     {
       get => (Properties != null && Properties.ContainsKey("parameters")) ? (Properties["parameters"] as Dictionary<string, object>) : null;
       set => Properties["parameters"] = value;
+    }
+
+    [JsonIgnore]
+    public Dictionary<string, object> typeParameters
+    {
+      get => (Properties != null && Properties.ContainsKey("typeParameters")) ? (Properties["typeParameters"] as Dictionary<string, object>) : null;
+      set => Properties["typeParameters"] = value;
     }
 
     public GenericElement() { }

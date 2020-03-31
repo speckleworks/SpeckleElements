@@ -24,6 +24,7 @@ namespace SpeckleElementsRevit
         beamType = myBrace.braceType,
         baseLine = myBrace.baseLine,
         parameters = myBrace.parameters,
+        typeParameters = myBrace.typeParameters,
         level = myBrace.level
       };
 
@@ -41,6 +42,7 @@ namespace SpeckleElementsRevit
         braceType = myBeam.beamType,
         baseLine = myBeam.baseLine,
         parameters = myBeam.parameters,
+        typeParameters = myBeam.typeParameters,
         level = myBeam.level
       };
 
@@ -104,6 +106,7 @@ namespace SpeckleElementsRevit
             }
 
             SetElementParams( existingFamilyInstance, myBeam.parameters );
+            SetElementTypeParams(Doc.GetElement(existingFamilyInstance.GetTypeId()), myBeam.typeParameters);
             return existingFamilyInstance;
           }
         }
@@ -138,6 +141,7 @@ namespace SpeckleElementsRevit
       myBeam.beamType = Doc.GetElement( myFamily.GetTypeId() ).Name;
 
       myBeam.parameters = GetElementParams( myFamily );
+      myBeam.typeParameters = GetElementTypeParams( myFamily );
 
       //myFamily.just
 

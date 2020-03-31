@@ -163,6 +163,7 @@ namespace SpeckleElementsRevit
       // Final preparations
       MatchFlippingAndRotation(familyInstance, myCol, baseLine);
       SetElementParams(familyInstance, myCol.parameters, exclusions);
+      SetElementTypeParams(Doc.GetElement(familyInstance.GetTypeId()), myCol.typeParameters, exclusions);
     }
 
     public static FamilySymbol TryGetColumnFamilySymbol(string columnFamily, string columnType)
@@ -257,6 +258,7 @@ namespace SpeckleElementsRevit
       myColumn.columnType = Doc.GetElement(myFamily.GetTypeId()).Name;
 
       myColumn.parameters = GetElementParams(myFamily);
+      myColumn.typeParameters = GetElementTypeParams(myFamily);
 
 
 
