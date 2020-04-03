@@ -74,7 +74,6 @@ namespace SpeckleElementsRevit
       }
 
       SetElementParams( existingRevitWall, myWall.parameters );
-      SetElementTypeParams(existingRevitWall, myWall.parameters);
 
       return existingRevitWall;
     }

@@ -85,7 +85,6 @@ namespace SpeckleElementsRevit
 
 
           SetElementParams(existingFamilyInstance, myFamInst.parameters);
-          SetElementTypeParams(existingFamilyInstance, myFamInst.parameters);
           return existingFamilyInstance;
         }
       }

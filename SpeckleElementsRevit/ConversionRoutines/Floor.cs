@@ -38,7 +38,6 @@ namespace SpeckleElementsRevit
         var myNullTypeFloor = Doc.Create.NewFloor( slabCurves, false );
 
         SetElementParams( myNullTypeFloor, mySlab.parameters );
-        SetElementTypeParams(myNullTypeFloor, mySlab.parameters);
         return myNullTypeFloor;
       }
 

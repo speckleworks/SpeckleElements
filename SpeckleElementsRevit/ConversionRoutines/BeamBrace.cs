@@ -106,7 +106,6 @@ namespace SpeckleElementsRevit
             }
 
             SetElementParams( existingFamilyInstance, myBeam.parameters );
-            SetElementTypeParams(Doc.GetElement(existingFamilyInstance.GetTypeId()), myBeam.typeParameters);
             return existingFamilyInstance;
           }
         }
