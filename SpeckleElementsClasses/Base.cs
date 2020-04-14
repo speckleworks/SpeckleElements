@@ -15,6 +15,9 @@ namespace SpeckleElementsClasses
   public interface ISpeckleElement : ISpeckleInitializer
   {
     Dictionary<string, object> parameters { get; set; }
+
+    Dictionary<string, object> typeParameters { get; set; }
+
     //the Revit ELementId
     string elementId { get; set; }
 
@@ -74,6 +77,13 @@ namespace SpeckleElementsClasses
     {
       get => (Properties != null && Properties.ContainsKey("parameters")) ? (Properties["parameters"] as Dictionary<string, object>) : null;
       set => Properties["parameters"] = value;
+    }
+
+    [JsonIgnore]
+    public Dictionary<string, object> typeParameters
+    {
+      get => (Properties != null && Properties.ContainsKey("typeParameters")) ? (Properties["typeParameters"] as Dictionary<string, object>) : null;
+      set => Properties["typeParameters"] = value;
     }
 
     public Curve() { }
@@ -583,6 +593,13 @@ namespace SpeckleElementsClasses
       set => Properties["parameters"] = value;
     }
 
+    [JsonIgnore]
+    public Dictionary<string, object> typeParameters
+    {
+      get => (Properties != null && Properties.ContainsKey("typeParameters")) ? (Properties["typeParameters"] as Dictionary<string, object>) : null;
+      set => Properties["typeParameters"] = value;
+    }
+
     public Shaft() { }
   }
 
@@ -609,6 +626,13 @@ namespace SpeckleElementsClasses
     {
       get => (Properties != null && Properties.ContainsKey("parameters")) ? (Properties["parameters"] as Dictionary<string, object>) : null;
       set => Properties["parameters"] = value;
+    }
+
+    [JsonIgnore]
+    public Dictionary<string, object> typeParameters
+    {
+      get => (Properties != null && Properties.ContainsKey("typeParameters")) ? (Properties["typeParameters"] as Dictionary<string, object>) : null;
+      set => Properties["typeParameters"] = value;
     }
 
     public Topography() { }
@@ -666,6 +690,13 @@ namespace SpeckleElementsClasses
     {
       get => (Properties != null && Properties.ContainsKey("parameters")) ? (Properties["parameters"] as Dictionary<string, object>) : null;
       set => Properties["parameters"] = value;
+    }
+
+    [JsonIgnore]
+    public Dictionary<string, object> typeParameters
+    {
+      get => (Properties != null && Properties.ContainsKey("typeParameters")) ? (Properties["typeParameters"] as Dictionary<string, object>) : null;
+      set => Properties["typeParameters"] = value;
     }
 
     public AdaptiveComponent() { }
@@ -895,6 +926,13 @@ namespace SpeckleElementsClasses
       set => Properties["parameters"] = value;
     }
 
+    [JsonIgnore]
+    public Dictionary<string, object> typeParameters
+    {
+      get => (Properties != null && Properties.ContainsKey("typeParameters")) ? (Properties["typeParameters"] as Dictionary<string, object>) : null;
+      set => Properties["typeParameters"] = value;
+    }
+
     public Room() { }
   }
 
@@ -941,6 +979,13 @@ namespace SpeckleElementsClasses
     {
       get => (Properties != null && Properties.ContainsKey("parameters")) ? (Properties["parameters"] as Dictionary<string, object>) : null;
       set => Properties["parameters"] = value;
+    }
+
+    [JsonIgnore]
+    public Dictionary<string, object> typeParameters
+    {
+      get => (Properties != null && Properties.ContainsKey("typeParameters")) ? (Properties["typeParameters"] as Dictionary<string, object>) : null;
+      set => Properties["typeParameters"] = value;
     }
 
     public DirectShape() { }

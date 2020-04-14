@@ -71,6 +71,7 @@ namespace SpeckleElementsRevit
       (generic.Faces, generic.Vertices) = GetFaceVertexArrayFromElement(myElement);
 
       generic.parameters = GetElementParams(myElement);
+      generic.typeParameters = GetElementTypeParams(myElement);
       generic.ApplicationId = myElement.UniqueId;
       generic.elementId = myElement.Id.ToString();
 

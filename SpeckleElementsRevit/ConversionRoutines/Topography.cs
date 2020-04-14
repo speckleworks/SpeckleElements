@@ -75,6 +75,7 @@ namespace SpeckleElementsRevit
       }
 
       speckleTopo.parameters = GetElementParams( mySurface );
+      speckleTopo.typeParameters = GetElementTypeParams( mySurface );
       speckleTopo.ApplicationId = mySurface.UniqueId;
       speckleTopo.elementId = mySurface.Id.ToString();
 
