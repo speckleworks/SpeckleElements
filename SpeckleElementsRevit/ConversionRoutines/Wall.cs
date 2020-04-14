@@ -129,6 +129,7 @@ namespace SpeckleElementsRevit
       catch( Exception e ) { }
 
       speckleWall.parameters = GetElementParams( myWall );
+      speckleWall.typeParameters = GetElementTypeParams(myWall);
 
       var grid = myWall.CurtainGrid;
 

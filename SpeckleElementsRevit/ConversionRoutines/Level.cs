@@ -69,6 +69,7 @@ namespace SpeckleElementsRevit
       speckleLevel.elevation = myLevel.Elevation / Scale; // UnitUtils.ConvertFromInternalUnits(myLevel.Elevation, DisplayUnitType.Meters)
       speckleLevel.levelName = myLevel.Name;
       speckleLevel.parameters = GetElementParams( myLevel );
+      speckleLevel.typeParameters = GetElementTypeParams(myLevel);
 
       speckleLevel.ApplicationId = myLevel.UniqueId;
       speckleLevel.elementId = myLevel.Id.ToString();

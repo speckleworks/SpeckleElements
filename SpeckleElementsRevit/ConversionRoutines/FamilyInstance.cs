@@ -134,6 +134,7 @@ namespace SpeckleElementsRevit
       var speckleFamily = new SpeckleElementsClasses.FamilyInstance();
 
       speckleFamily.parameters = GetElementParams(myFamily);
+      speckleFamily.typeParameters = GetElementTypeParams(myFamily);
 
       var allSolids = GetElementSolids(myFamily, opt: new Options() { DetailLevel = ViewDetailLevel.Fine, ComputeReferences = true });
 

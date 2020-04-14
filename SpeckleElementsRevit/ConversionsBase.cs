@@ -71,6 +71,7 @@ namespace SpeckleElementsRevit
       (generic.Faces, generic.Vertices) = GetFaceVertexArrayFromElement(myElement);
 
       generic.parameters = GetElementParams(myElement);
+      generic.typeParameters = GetElementTypeParams(myElement);
       generic.ApplicationId = myElement.UniqueId;
       generic.elementId = myElement.Id.ToString();
 
@@ -159,6 +160,57 @@ namespace SpeckleElementsRevit
           case StorageType.Integer:
             myParamDict[keyName] = p.AsInteger();
             //myParamDict[ keyName ] = UnitUtils.ConvertFromInternalUnits( p.AsInteger(), p.DisplayUnitType);
+            break;
+          case StorageType.String:
+            myParamDict[keyName] = p.AsString();
+            break;
+          case StorageType.ElementId:
+            myParamDict[keyName] = p.AsValueString();
+            break;
+          case StorageType.None:
+            break;
+        }
+      }
+
+      //sort parameters
+      myParamDict = myParamDict.OrderBy(obj => obj.Key).ToDictionary(obj => obj.Key, obj => obj.Value);
+
+
+      // myParamDict["__units"] = unitsDict;
+      // TODO: BIG CORE PROBLEM: failure to serialise things with nested dictionary (like the line above).
+      return myParamDict;
+    }
+
+    public static Dictionary<string, object> GetElementTypeParams(Element myElement)
+    {
+      var myParamDict = new Dictionary<string, object>();
+
+      var myElementType = Doc.GetElement(myElement.GetTypeId());
+
+      foreach (Parameter p in myElementType.Parameters)
+      {
+        var keyName = SanitizeKeyname(p.Definition.Name);
+
+        if (myParamDict.ContainsKey(keyName)) continue;
+        switch (p.StorageType)
+        {
+          case StorageType.Double:
+            // NOTE: do not use p.AsDouble() as direct input for unit utils conversion, it doesn't work.  ¯\_(ツ)_/¯
+            var val = p.AsDouble();
+            try
+            {
+              myParamDict[keyName] = UnitUtils.ConvertFromInternalUnits(val, p.DisplayUnitType);
+              myParamDict["__unitType::" + keyName] = p.Definition.UnitType.ToString();
+              // populate units dictionary
+              UnitDictionary[p.Definition.UnitType.ToString()] = p.DisplayUnitType.ToString();
+            }
+            catch (Exception e)
+            {
+              myParamDict[keyName] = val;
+            }
+            break;
+          case StorageType.Integer:
+            myParamDict[keyName] = p.AsInteger();
             break;
           case StorageType.String:
             myParamDict[keyName] = p.AsString();

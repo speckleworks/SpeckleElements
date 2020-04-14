@@ -56,6 +56,7 @@ namespace SpeckleElementsRevit
       var speckleFloor = new SpeckleElementsClasses.Floor();
 
       speckleFloor.parameters = GetElementParams( myFloor );
+      speckleFloor.typeParameters = GetElementTypeParams(myFloor);
 
       var geo = myFloor.get_Geometry( new Options() { DetailLevel = ViewDetailLevel.Medium } );
 
