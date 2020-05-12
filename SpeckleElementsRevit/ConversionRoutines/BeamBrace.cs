@@ -134,7 +134,7 @@ namespace SpeckleElementsRevit
 
       (myBeam.Faces, myBeam.Vertices) = GetFaceVertexArrFromSolids( allSolids );
       var baseCurve = myFamily.Location as LocationCurve;
-      myBeam.baseLine = (SpeckleCoreGeometryClasses.SpeckleLine) SpeckleCore.Converter.Serialise( baseCurve.Curve );
+      myBeam.baseLine = (SpeckleObject) Converter.Serialise( baseCurve.Curve );
 
       myBeam.beamFamily = myFamily.Symbol.FamilyName;
       myBeam.beamType = Doc.GetElement( myFamily.GetTypeId() ).Name;

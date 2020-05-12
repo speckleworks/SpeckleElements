@@ -431,7 +431,7 @@ namespace SpeckleElementsClasses
     }
 
     [JsonIgnore]
-    public SpeckleLine baseLine
+    public SpeckleObject baseLine
     {
       get => (Properties != null && Properties.ContainsKey("baseLine")) ? ((SpeckleLine)Properties["baseLine"]) : null;
       set => Properties["baseLine"] = value;
@@ -495,7 +495,7 @@ namespace SpeckleElementsClasses
     }
 
     [JsonIgnore]
-    public SpeckleLine baseLine
+    public SpeckleObject baseLine
     {
       get => (Properties != null && Properties.ContainsKey("baseLine")) ? ((SpeckleLine)Properties["baseLine"]) : null;
       set => Properties["baseLine"] = value;
