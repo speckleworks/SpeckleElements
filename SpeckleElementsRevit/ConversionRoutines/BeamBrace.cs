@@ -61,11 +61,6 @@ namespace SpeckleElementsRevit
       var (docObj, stateObj) = GetExistingElementByApplicationId( myBeam.ApplicationId, myBeam.Type );
       try
       {
-        var baseLine = (Autodesk.Revit.DB.Curve) SpeckleCore.Converter.Deserialise( obj: myBeam.baseLine, excludeAssebmlies: new string[ ] { "SpeckleCoreGeometryDynamo" } );
-
-
-        var start = baseLine.GetEndPoint( 0 );
-        var end = baseLine.GetEndPoint( 1 );
 
         FamilySymbol familySymbol;
         familySymbol = GetFamilySymbolByFamilyNameAndTypeAndCategory( myBeam.beamFamily, myBeam.beamType, BuiltInCategory.OST_StructuralFraming );
@@ -79,6 +74,18 @@ namespace SpeckleElementsRevit
           ConversionErrors.Add(new SpeckleConversionError { Message = $"Missing family: {myBeam.beamFamily} {myBeam.beamType}" });
           throw new RevitFamilyNotFoundException($"No 'Beam' family found in the project");
         }
+
+        Autodesk.Revit.DB.Curve baseLine = null;
+        if(myBeam.baseLine!=null)
+          baseLine = (Autodesk.Revit.DB.Curve)SpeckleCore.Converter.Deserialise(obj: myBeam.baseLine, excludeAssebmlies: new string[] { "SpeckleCoreGeometryDynamo" });
+
+        Autodesk.Revit.DB.XYZ basePoint = null;
+        if (myBeam.basePoint != null)
+          basePoint = (Autodesk.Revit.DB.XYZ)SpeckleCore.Converter.Deserialise(obj: myBeam.basePoint, excludeAssebmlies: new string[] { "SpeckleCoreGeometryDynamo" });
+
+
+        //var start = baseLine.GetEndPoint( 0 );
+        //var end = baseLine.GetEndPoint( 1 );
 
         // Activate the symbol yo! 
         if ( !familySymbol.IsActive ) familySymbol.Activate();
@@ -96,8 +103,17 @@ namespace SpeckleElementsRevit
           else
           {
             var existingFamilyInstance = (Autodesk.Revit.DB.FamilyInstance) docObj;
-            var existingLocationCurve = existingFamilyInstance.Location as LocationCurve;
-            existingLocationCurve.Curve = baseLine;
+
+            if (baseLine != null)
+            {
+              var existingLocationCurve = existingFamilyInstance.Location as LocationCurve;
+              existingLocationCurve.Curve = baseLine;
+            }
+            else
+            {
+              var existingLocationPoint = existingFamilyInstance.Location as LocationPoint;
+              existingLocationPoint.Point = basePoint;
+            }
 
             // check for a type change
             if( myBeam.beamType != null && myBeam.beamType != type.Name )
@@ -114,7 +130,12 @@ namespace SpeckleElementsRevit
           myBeam.level = new SpeckleElementsClasses.Level() { elevation = 0, levelName = "Speckle Level 0" };
         var myLevel = myBeam.level.ToNative() as Autodesk.Revit.DB.Level;
 
-        var familyInstance = Doc.Create.NewFamilyInstance( baseLine, familySymbol, myLevel, structuralType);
+        Autodesk.Revit.DB.FamilyInstance familyInstance = null;
+        
+        if(baseLine!=null)
+          familyInstance= Doc.Create.NewFamilyInstance( baseLine, familySymbol, myLevel, structuralType);
+        else
+          familyInstance = Doc.Create.NewFamilyInstance(basePoint, familySymbol, myLevel, structuralType);
 
 
         SetElementParams( familyInstance, myBeam.parameters );
@@ -133,8 +154,17 @@ namespace SpeckleElementsRevit
       var allSolids = GetElementSolids( myFamily, opt: new Options() { DetailLevel = ViewDetailLevel.Fine, ComputeReferences = true } );
 
       (myBeam.Faces, myBeam.Vertices) = GetFaceVertexArrFromSolids( allSolids );
+
+      
       var baseCurve = myFamily.Location as LocationCurve;
-      myBeam.baseLine = (SpeckleObject) Converter.Serialise( baseCurve.Curve );
+      if(baseCurve!=null)
+        myBeam.baseLine = (SpeckleObject) Converter.Serialise( baseCurve.Curve );
+
+      else
+      {
+        var basePoint = myFamily.Location as LocationPoint;
+        myBeam.basePoint = (SpeckleObject)Converter.Serialise(basePoint.Point);
+      }
 
       myBeam.beamFamily = myFamily.Symbol.FamilyName;
       myBeam.beamType = Doc.GetElement( myFamily.GetTypeId() ).Name;

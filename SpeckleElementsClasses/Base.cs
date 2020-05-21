@@ -502,6 +502,13 @@ namespace SpeckleElementsClasses
     }
 
     [JsonIgnore]
+    public SpeckleObject basePoint
+    {
+      get => (Properties != null && Properties.ContainsKey("basePoint")) ? ((SpeckleLine)Properties["basePoint"]) : null;
+      set => Properties["basePoint"] = value;
+    }
+
+    [JsonIgnore]
     public string beamFamily
     {
       get => (Properties != null && Properties.ContainsKey("beamFamily")) ? ((string)Properties["beamFamily"]) : null;
