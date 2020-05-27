@@ -38,7 +38,8 @@ namespace SpeckleElementsRevit
       }
       speckleRoom.baseCurve = myPolyCurve;
       speckleRoom.parameters = GetElementParams( myRoom );
-      speckleRoom.typeParameters = GetElementTypeParams( myRoom );
+      if ( myRoom.IsValidType(myRoom.GetTypeId()) )
+        speckleRoom.typeParameters = GetElementTypeParams( myRoom );
 
       speckleRoom.ApplicationId = myRoom.UniqueId;
       speckleRoom.elementId = myRoom.Id.ToString();
