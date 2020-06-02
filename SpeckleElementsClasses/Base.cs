@@ -33,9 +33,9 @@ namespace SpeckleElementsClasses
   /// Inspired by Grevit https://github.com/grevit-dev/Grevit/blob/3c7a5cc198e00dfa4cc1e892edba7c7afd1a3f84/Grevit.Types/Types/Grevit.cs#L851
   /// </summary>
   [Serializable]
-  public partial class Curve : SpecklePolycurve, ISpeckleElement
+  public partial class ModelCurve : SpecklePolycurve, ISpeckleElement
   {
-    public override string Type { get => base.Type + "/" + "Curve"; }
+    public override string Type { get => base.Type + "/" + "ModelCurve"; }
     [JsonIgnore]
     public string elementId
     {
@@ -86,7 +86,7 @@ namespace SpeckleElementsClasses
       set => Properties["typeParameters"] = value;
     }
 
-    public Curve() { }
+    public ModelCurve() { }
   }
 
   [Serializable]

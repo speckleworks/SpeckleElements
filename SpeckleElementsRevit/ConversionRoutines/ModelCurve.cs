@@ -13,7 +13,7 @@ namespace SpeckleElementsRevit
     /// </summary>
     /// <param name="myCurve"></param>
     /// <returns></returns>
-    public static Element ToNative(this SpeckleElementsClasses.Curve myCurve)
+    public static Element ToNative(this SpeckleElementsClasses.ModelCurve myCurve)
     {
       var (docObj, stateObj) = GetExistingElementByApplicationId(myCurve.ApplicationId, myCurve.Type);
 
@@ -23,29 +23,7 @@ namespace SpeckleElementsRevit
 
       if (docObj != null) // we have a document object already, so check if we can edit it.
       {
-        //var type = Doc.GetElement(docObj.GetTypeId()) as ElementType;
-
-        //// if family changed, tough luck - delete and rewind
-        //if (myAdaptiveComponent.familyName != type.FamilyName)
-        //{
-        //  //delete and continue crating it
-        //  Doc.Delete(docObj.Id);
-        //}
-        //// edit element
-        //else
-        //{
-        //  var existingFamilyInstance = (Autodesk.Revit.DB.FamilyInstance)docObj;
-
-        //  // check if type changed, and try and change it
-        //  if (myAdaptiveComponent.familyType != null && (myAdaptiveComponent.familyType != type.Name))
-        //  {
-        //    existingFamilyInstance.ChangeTypeId(familySymbol.Id);
-        //  }
-
-        //  SetAdaptiveComponentPoints(existingFamilyInstance, myAdaptiveComponent.points);
-        //  SetElementParams(existingFamilyInstance, myAdaptiveComponent.parameters);
-        //  return existingFamilyInstance;
-        //}
+        Doc.Delete(docObj.Id);
       }
 
       // if we don't have a document object
