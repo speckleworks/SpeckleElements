@@ -23,6 +23,22 @@ namespace SpeckleElementsClasses
 
   }
 
+  /// <summary>
+  /// Minimal implementation of Level interface for multiple inheritance. Not really sure it's needed. It might go.
+  /// Guess that SpeckleElementsClases.Level have to be inherited from ILevel
+  /// </summary>
+  public interface ILevel
+  {
+    string levelElementId { get; set; }
+  }
+  /// <summary>
+  /// Minimal implementation of Phase interface for multiple inheritance. Not really sure it's needed. It might go.
+  /// </summary>
+  public interface IPhase
+  {
+    string phaseElementId { get; set; }
+  }
+
   // TODO: We need a consensus on how to define/set family types or whatever they're called
   // for the various objects that support them, ie walls, floors, etc.
 
@@ -941,6 +957,78 @@ namespace SpeckleElementsClasses
     }
 
     public Room() { }
+  }
+
+  [Serializable]
+  public partial class Space : SpeckleMesh, ISpeckleElement, ILevel, IPhase
+  {
+    public override string Type { get => base.Type + "/" + "Space"; }
+    [JsonIgnore]
+    public string elementId
+    {
+      get => (Properties != null && Properties.ContainsKey("elementId")) ? ((string)Properties["elementId"]) : null;
+      set => Properties["elementId"] = value;
+    }
+
+    [JsonIgnore]
+    public string spaceName
+    {
+      get => (Properties != null && Properties.ContainsKey("spaceName")) ? ((string)Properties["spaceName"]) : null;
+      set => Properties["spaceName"] = value;
+    }
+
+    [JsonIgnore]
+    public string spaceNumber
+    {
+      get => (Properties != null && Properties.ContainsKey("spaceNumber")) ? ((string)Properties["spaceNumber"]) : null;
+      set => Properties["spaceNumber"] = value;
+    }
+
+    [JsonIgnore]
+    public string levelElementId
+    {
+        get => (Properties != null && Properties.ContainsKey("levelId")) ? ((string)Properties["levelId"]) : null;
+        set => Properties["levelId"] = value;
+    }
+
+    [JsonIgnore]
+    public string phaseElementId
+    {
+      get => (Properties != null && Properties.ContainsKey("phaseId")) ? ((string)Properties["phaseId"]) : null;
+      set => Properties["phaseId"] = value;
+    }
+
+    [JsonIgnore]
+    public SpecklePoint spaceLocation
+    {
+      get => (Properties != null && Properties.ContainsKey("spaceLocation")) ? ((SpecklePoint)Properties["spaceLocation"]) : null;
+      set => Properties["spaceLocation"] = value;
+    }
+
+    [JsonIgnore]
+    public SpeckleObject baseCurve
+    {
+      get => (Properties != null && Properties.ContainsKey("baseCurve")) ? ((SpeckleObject)Properties["baseCurve"]) : null;
+      set => Properties["baseCurve"] = value;
+    }
+
+    [JsonIgnore]
+    public Dictionary<string, object> parameters
+    {
+      get => (Properties != null && Properties.ContainsKey("parameters")) ? (Properties["parameters"] as Dictionary<string, object>) : null;
+      set => Properties["parameters"] = value;
+    }
+
+    //Revit spaces same as rooms, zones and several other type don't have Type Class
+    //Look at Autodesk.Revit.DB.ElementTypeGroup Enumeration https://www.revitapidocs.com/2020/f5b57d98-c551-9693-9009-8eb17fef8a14.htm
+    [JsonIgnore]
+    public Dictionary<string, object> typeParameters
+    {
+      get => (Properties != null && Properties.ContainsKey("typeParameters")) ? (Properties["typeParameters"] as Dictionary<string, object>) : null;
+      set => Properties["typeParameters"] = value;
+    }
+
+    public Space() { }
   }
 
   [Serializable]
