@@ -58,43 +58,43 @@ namespace SpeckleElementsRevit
       return speckleSpace;
     }
 
-    public static Autodesk.Revit.DB.Mechanical.Space ToNative(this SpeckleElementsClasses.Space mySpace)
-    {
-      // Creation of space boundary, not necessary
-      //CurveArray curveArr = new CurveArray();
-      //SpecklePolycurve myPolyCurve = (SpecklePolycurve)mySpace.baseCurve;
-      //foreach (SpeckleObject segment in myPolyCurve.Segments)
-      //{
-      //  var converted = SpeckleCore.Converter.Deserialise(segment);
-      //  curveArr.Append(converted as Autodesk.Revit.DB.Curve);
-      //}
-      //ModelCurveArray crArr = Doc.Create.NewSpaceBoundaryLines(Doc.ActiveView.SketchPlane, curveArr, Doc.ActiveView);
-
-      // Get element level
-      ElementId elemLevelId = new ElementId(Int32.Parse(mySpace.levelElementId));
-      Autodesk.Revit.DB.Level level = Doc.GetElement(elemLevelId) as Autodesk.Revit.DB.Level;
-
-      // Get element phase
-      ElementId elemPhaseId = new ElementId(Int32.Parse(mySpace.phaseElementId));
-      Phase phase = Doc.GetElement(elemPhaseId) as Phase;
-
-      //Get element location point
-      Autodesk.Revit.DB.UV locPoint = new Autodesk.Revit.DB.UV(mySpace.spaceLocation.Value[0] * Scale, mySpace.spaceLocation.Value[1] * Scale);
-      
-      //TODO: check view fro space creation - must be FloorPlan
-      //if (Doc.ActiveView.ViewType == Autodesk.Revit.DB.ViewType.FloorPlan)
-
-      // Create Revit space
-      Autodesk.Revit.DB.Mechanical.Space revitSpace = Doc.Create.NewSpace(level, phase, locPoint);
-
-      //Set element parameters
-      //TODO: Check if all parameters set up
-      SetElementParams(revitSpace, mySpace.parameters);
-
-      //Add space tag (if one been loaded to project)
-      Autodesk.Revit.DB.Mechanical.SpaceTag tag = Doc.Create.NewSpaceTag(revitSpace, locPoint, Doc.ActiveView);
-
-      return revitSpace;
-    }
+    //public static Autodesk.Revit.DB.Mechanical.Space ToNative(this SpeckleElementsClasses.Space mySpace)
+    //{
+    //  // Creation of space boundary, not necessary
+    //  //CurveArray curveArr = new CurveArray();
+    //  //SpecklePolycurve myPolyCurve = (SpecklePolycurve)mySpace.baseCurve;
+    //  //foreach (SpeckleObject segment in myPolyCurve.Segments)
+    //  //{
+    //  //  var converted = SpeckleCore.Converter.Deserialise(segment);
+    //  //  curveArr.Append(converted as Autodesk.Revit.DB.Curve);
+    //  //}
+    //  //ModelCurveArray crArr = Doc.Create.NewSpaceBoundaryLines(Doc.ActiveView.SketchPlane, curveArr, Doc.ActiveView);
+    //
+    //  // Get element level
+    //  ElementId elemLevelId = new ElementId(Int32.Parse(mySpace.levelElementId));
+    //  Autodesk.Revit.DB.Level level = Doc.GetElement(elemLevelId) as Autodesk.Revit.DB.Level;
+    //
+    //  // Get element phase
+    //  ElementId elemPhaseId = new ElementId(Int32.Parse(mySpace.phaseElementId));
+    //  Phase phase = Doc.GetElement(elemPhaseId) as Phase;
+    //
+    //  //Get element location point
+    //  Autodesk.Revit.DB.UV locPoint = new Autodesk.Revit.DB.UV(mySpace.spaceLocation.Value[0] * Scale, mySpace.spaceLocation.Value[1] * Scale);
+    //  
+    //  //TODO: check view fro space creation - must be FloorPlan
+    //  //if (Doc.ActiveView.ViewType == Autodesk.Revit.DB.ViewType.FloorPlan)
+    //
+    //  // Create Revit space
+    //  Autodesk.Revit.DB.Mechanical.Space revitSpace = Doc.Create.NewSpace(level, phase, locPoint);
+    //
+    //  //Set element parameters
+    //  //TODO: Check if all parameters set up
+    //  SetElementParams(revitSpace, mySpace.parameters);
+    //
+    //  //Add space tag (if one been loaded to project)
+    //  Autodesk.Revit.DB.Mechanical.SpaceTag tag = Doc.Create.NewSpaceTag(revitSpace, locPoint, Doc.ActiveView);
+    //
+    //  return revitSpace;
+    //}
   }
 }
