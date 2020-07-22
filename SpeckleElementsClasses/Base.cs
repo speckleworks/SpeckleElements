@@ -23,21 +23,21 @@ namespace SpeckleElementsClasses
 
   }
 
-  /// <summary>
-  /// Minimal implementation of Level interface for multiple inheritance. Not really sure it's needed. It might go.
-  /// Guess that SpeckleElementsClases.Level have to be inherited from ILevel
-  /// </summary>
-  public interface ILevel
-  {
-    string levelElementId { get; set; }
-  }
-  /// <summary>
-  /// Minimal implementation of Phase interface for multiple inheritance. Not really sure it's needed. It might go.
-  /// </summary>
-  public interface IPhase
-  {
-    string phaseElementId { get; set; }
-  }
+  ///// <summary>
+  ///// Minimal implementation of Level interface for multiple inheritance. Not really sure it's needed. It might go.
+  ///// Guess that SpeckleElementsClases.Level have to be inherited from ILevel
+  ///// </summary>
+  //public interface ILevel
+  //{
+  //  string levelElementId { get; set; }
+  //}
+  ///// <summary>
+  ///// Minimal implementation of Phase interface for multiple inheritance. Not really sure it's needed. It might go.
+  ///// </summary>
+  //public interface IPhase
+  //{
+  //  string phaseElementId { get; set; }
+  //}
 
   // TODO: We need a consensus on how to define/set family types or whatever they're called
   // for the various objects that support them, ie walls, floors, etc.
@@ -960,7 +960,7 @@ namespace SpeckleElementsClasses
   }
 
   [Serializable]
-  public partial class Space : SpeckleMesh, ISpeckleElement, ILevel, IPhase
+  public partial class Space : SpeckleMesh, ISpeckleElement//, ILevel, IPhase
   {
     public override string Type { get => base.Type + "/" + "Space"; }
     [JsonIgnore]
@@ -984,19 +984,19 @@ namespace SpeckleElementsClasses
       set => Properties["spaceNumber"] = value;
     }
 
-    [JsonIgnore]
-    public string levelElementId
-    {
-        get => (Properties != null && Properties.ContainsKey("levelId")) ? ((string)Properties["levelId"]) : null;
-        set => Properties["levelId"] = value;
-    }
+    //[JsonIgnore]
+    //public string levelElementId
+    //{
+    //    get => (Properties != null && Properties.ContainsKey("levelId")) ? ((string)Properties["levelId"]) : null;
+    //    set => Properties["levelId"] = value;
+    //}
 
-    [JsonIgnore]
-    public string phaseElementId
-    {
-      get => (Properties != null && Properties.ContainsKey("phaseId")) ? ((string)Properties["phaseId"]) : null;
-      set => Properties["phaseId"] = value;
-    }
+    //[JsonIgnore]
+    //public string phaseElementId
+    //{
+    //  get => (Properties != null && Properties.ContainsKey("phaseId")) ? ((string)Properties["phaseId"]) : null;
+    //  set => Properties["phaseId"] = value;
+    //}
 
     [JsonIgnore]
     public SpecklePoint spaceLocation
