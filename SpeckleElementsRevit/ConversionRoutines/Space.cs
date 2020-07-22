@@ -26,8 +26,8 @@ namespace SpeckleElementsRevit
       //Location
       var locPt = ((Autodesk.Revit.DB.LocationPoint)mySpace.Location).Point;
       speckleSpace.spaceLocation = new SpecklePoint(locPt.X / Scale, locPt.Y / Scale, locPt.Z / Scale);
-      speckleSpace.levelElementId = mySpace.LevelId.IntegerValue.ToString();
-      speckleSpace.phaseElementId = mySpace.GetParameters("Phase Id").FirstOrDefault().AsElementId().ToString();
+      //speckleSpace.levelElementId = mySpace.LevelId.IntegerValue.ToString();
+      //speckleSpace.phaseElementId = mySpace.GetParameters("Phase Id").FirstOrDefault().AsElementId().ToString();
       
       //3d geometry
       (speckleSpace.Faces, speckleSpace.Vertices) = GetFaceVertexArrayFromElement(mySpace);
