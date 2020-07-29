@@ -138,7 +138,9 @@ namespace SpeckleElementsRevit
       if (myCol.topLevel != null)
       {
         myTopLevel = myCol.topLevel.ToNative();
-        familyInstance.get_Parameter(BuiltInParameter.FAMILY_TOP_LEVEL_PARAM).Set(myTopLevel.Id);
+        var param = familyInstance.get_Parameter(BuiltInParameter.FAMILY_TOP_LEVEL_PARAM);
+        if (param != null)
+          param.Set(myTopLevel.Id);
       }
 
       SetColParams(myCol, familyInstance, baseLine, exclusions, myTopLevel, baseLevel);
@@ -148,16 +150,28 @@ namespace SpeckleElementsRevit
 
     private static void SetColParams(Column myCol, Autodesk.Revit.DB.FamilyInstance familyInstance, Autodesk.Revit.DB.Curve baseLine, List<string> exclusions, Autodesk.Revit.DB.Level myTopLevel, Autodesk.Revit.DB.Level baseLevel)
     {
+      if (myCol.bottomOffset == null)
+        myCol.bottomOffset = 0;
+      if (myCol.topOffset == null)
+        myCol.topOffset = 0;
+
+      var topParam = familyInstance.get_Parameter(BuiltInParameter.FAMILY_TOP_LEVEL_OFFSET_PARAM);
+      var bottomParam = familyInstance.get_Parameter(BuiltInParameter.FAMILY_BASE_LEVEL_OFFSET_PARAM);
+
       //checking if BASE offset needs to be set before or after TOP offset
       if (myTopLevel != null && myTopLevel.Elevation + (double)myCol.bottomOffset / Scale <= baseLevel.Elevation)
       {
-        familyInstance.get_Parameter(BuiltInParameter.FAMILY_BASE_LEVEL_OFFSET_PARAM).Set((double)myCol.bottomOffset * Scale);
-        familyInstance.get_Parameter(BuiltInParameter.FAMILY_TOP_LEVEL_OFFSET_PARAM).Set((double)myCol.topOffset * Scale);
+        if (bottomParam != null)
+          bottomParam.Set((double)myCol.bottomOffset * Scale);
+        if (topParam != null)
+          topParam.Set((double)myCol.topOffset * Scale);
       }
       else
       {
-        familyInstance.get_Parameter(BuiltInParameter.FAMILY_TOP_LEVEL_OFFSET_PARAM).Set((double)myCol.topOffset * Scale);
-        familyInstance.get_Parameter(BuiltInParameter.FAMILY_BASE_LEVEL_OFFSET_PARAM).Set((double)myCol.bottomOffset * Scale);
+        if (topParam != null)
+          topParam.Set((double)myCol.topOffset * Scale);
+        if (bottomParam != null)
+          bottomParam.Set((double)myCol.bottomOffset * Scale);
       }
 
       // Final preparations

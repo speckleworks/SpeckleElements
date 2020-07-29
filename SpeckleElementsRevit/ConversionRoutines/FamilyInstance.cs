@@ -8,6 +8,7 @@ using SpeckleCore;
 using SpeckleElementsClasses;
 using SpeckleCoreGeometryClasses;
 using SpeckleCore.Data;
+using Autodesk.Revit.DB.Structure;
 
 namespace SpeckleElementsRevit
 {
@@ -123,7 +124,10 @@ namespace SpeckleElementsRevit
 
       if (myFamily.Category.Id.IntegerValue == (int)BuiltInCategory.OST_StructuralFraming)
       {
-        return BeamToSpeckle(myFamily);
+        if(myFamily.StructuralType == StructuralType.Beam)
+          return BeamToSpeckle(myFamily);
+        else if(myFamily.StructuralType == StructuralType.Brace)
+          return BraceToSpeckle(myFamily);
       }
 
       if (myFamily.Category.Id.IntegerValue == (int)BuiltInCategory.OST_StructuralColumns || myFamily.Category.Id.IntegerValue == (int)BuiltInCategory.OST_Columns)

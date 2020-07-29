@@ -175,9 +175,6 @@ namespace SpeckleElementsRevit
       //sort parameters
       myParamDict = myParamDict.OrderBy(obj => obj.Key).ToDictionary(obj => obj.Key, obj => obj.Value);
 
-
-      // myParamDict["__units"] = unitsDict;
-      // TODO: BIG CORE PROBLEM: failure to serialise things with nested dictionary (like the line above).
       return myParamDict;
     }
 
@@ -226,9 +223,6 @@ namespace SpeckleElementsRevit
       //sort parameters
       myParamDict = myParamDict.OrderBy(obj => obj.Key).ToDictionary(obj => obj.Key, obj => obj.Value);
 
-
-      // myParamDict["__units"] = unitsDict;
-      // TODO: BIG CORE PROBLEM: failure to serialise things with nested dictionary (like the line above).
       return myParamDict;
     }
 
@@ -237,8 +231,6 @@ namespace SpeckleElementsRevit
       // TODO: Set parameters please
       if (myElement == null) return;
       if (parameters == null) return;
-
-      var questForTheBest = UnitDictionary;
 
       foreach (var kvp in parameters)
       {
