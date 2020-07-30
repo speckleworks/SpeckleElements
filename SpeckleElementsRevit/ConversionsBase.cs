@@ -91,7 +91,7 @@ namespace SpeckleElementsRevit
       var myParamDict = new Dictionary<string, object>();
 
       if (UnitDictionary == null)
-        UnitDictionary = new Dictionary<string, string>();
+        Initialiser.UnitDictionary = new Dictionary<string, string>();
 
 
         // Get params from the unique list

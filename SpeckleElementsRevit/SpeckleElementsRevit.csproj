@@ -127,6 +127,7 @@
     <Compile Include="ConversionRoutines\Room.cs" />
     <Compile Include="ConversionRoutines\Shaft.cs" />
     <Compile Include="ConversionRoutines\DirectShape.cs" />
+    <Compile Include="ConversionRoutines\Space.cs" />
     <Compile Include="ConversionRoutines\Topography.cs" />
     <Compile Include="ConversionRoutines\Wall.cs" />
     <Compile Include="ConversionsBase.cs" />
