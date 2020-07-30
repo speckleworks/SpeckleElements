@@ -61,12 +61,7 @@ namespace SpeckleElementsRevit
       var (docObj, stateObj) = GetExistingElementByApplicationId( myBeam.ApplicationId, myBeam.Type );
       try
       {
-
-        FamilySymbol familySymbol;
-        familySymbol = GetFamilySymbolByFamilyNameAndTypeAndCategory( myBeam.beamFamily, myBeam.beamType, BuiltInCategory.OST_StructuralFraming );
-
-        if( familySymbol == null )
-          familySymbol = GetFamilySymbolByFamilyNameAndTypeAndCategory( myBeam.beamFamily, myBeam.beamType, BuiltInCategory.OST_BeamAnalytical );
+        var familySymbol = GetFamilySymbolByFamilyNameAndTypeAndCategory( myBeam.beamFamily, myBeam.beamType, new List<BuiltInCategory> { BuiltInCategory.OST_StructuralFraming, BuiltInCategory.OST_BeamAnalytical } );
 
         // Freak out if we don't have a symbol.
         if( familySymbol == null )

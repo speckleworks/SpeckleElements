@@ -181,13 +181,7 @@ namespace SpeckleElementsRevit
 
     public static FamilySymbol TryGetColumnFamilySymbol(string columnFamily, string columnType)
     {
-      FamilySymbol sym;
-      sym = GetFamilySymbolByFamilyNameAndTypeAndCategory(columnFamily, columnType, BuiltInCategory.OST_StructuralColumns);
-
-      if (sym == null)
-      {
-        sym = GetFamilySymbolByFamilyNameAndTypeAndCategory(columnFamily, columnType, BuiltInCategory.OST_Columns);
-      }
+      var sym = GetFamilySymbolByFamilyNameAndTypeAndCategory(columnFamily, columnType, new List<BuiltInCategory> { BuiltInCategory.OST_StructuralColumns, BuiltInCategory.OST_Columns });
 
       return sym;
     }
@@ -253,6 +247,12 @@ namespace SpeckleElementsRevit
       var baseLevel = (Autodesk.Revit.DB.Level)Doc.GetElement(myFamily.get_Parameter(BuiltInParameter.FAMILY_BASE_LEVEL_PARAM).AsElementId());
       var topLevel = (Autodesk.Revit.DB.Level)Doc.GetElement(myFamily.get_Parameter(BuiltInParameter.FAMILY_TOP_LEVEL_PARAM).AsElementId());
 
+      var topOffsetParam = myFamily.get_Parameter(BuiltInParameter.FAMILY_TOP_LEVEL_OFFSET_PARAM);
+      var bottomOffsetParam = myFamily.get_Parameter(BuiltInParameter.FAMILY_BASE_LEVEL_OFFSET_PARAM);
+
+      var topOffset = topOffsetParam != null ? UnitUtils.ConvertFromInternalUnits(topOffsetParam.AsDouble(), topOffsetParam.DisplayUnitType) : 0;
+      var bottomOffset = bottomOffsetParam != null ? UnitUtils.ConvertFromInternalUnits(bottomOffsetParam.AsDouble(), bottomOffsetParam.DisplayUnitType) : 0;
+
       myColumn.baseLevel = baseLevel?.ToSpeckle();
       myColumn.topLevel = topLevel?.ToSpeckle();
 
@@ -263,7 +263,8 @@ namespace SpeckleElementsRevit
       catch
       {
         var basePt = (myFamily.Location as LocationPoint).Point;
-        var topPt = new XYZ(basePt.X, basePt.Y, topLevel.Elevation);
+        basePt = new XYZ(basePt.X, basePt.Y, basePt.Z + bottomOffset);
+        var topPt = new XYZ(basePt.X, basePt.Y, topLevel.Elevation + topOffset);
         myColumn.baseLine = (SpeckleCoreGeometryClasses.SpeckleLine)SpeckleCore.Converter.Serialise(Autodesk.Revit.DB.Line.CreateBound(basePt, topPt));
       }
 

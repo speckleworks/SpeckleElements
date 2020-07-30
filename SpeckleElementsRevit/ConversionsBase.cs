@@ -90,8 +90,12 @@ namespace SpeckleElementsRevit
     {
       var myParamDict = new Dictionary<string, object>();
 
-      // Get params from the unique list
-      foreach (Parameter p in myElement.ParametersMap)
+      if (UnitDictionary == null)
+        UnitDictionary = new Dictionary<string, string>();
+
+
+        // Get params from the unique list
+        foreach (Parameter p in myElement.ParametersMap)
       {
         var keyName = SanitizeKeyname(p.Definition.Name);
         switch (p.StorageType)
@@ -430,9 +434,11 @@ namespace SpeckleElementsRevit
     }
 
 
-    public static FamilySymbol GetFamilySymbolByFamilyNameAndTypeAndCategory(string familyName, string typeName, BuiltInCategory category)
+    public static FamilySymbol GetFamilySymbolByFamilyNameAndTypeAndCategory(string familyName, string typeName, List<BuiltInCategory> categories)
     {
-      var collectorElems = new FilteredElementCollector(Doc).WhereElementIsElementType().OfClass(typeof(FamilySymbol)).OfCategory(category).ToElements().Cast<FamilySymbol>();
+      var filter = new ElementMulticategoryFilter(categories);
+      var collectorElems = new FilteredElementCollector(Doc).WhereElementIsElementType().OfClass(typeof(FamilySymbol)).WherePasses(filter).ToElements().Cast<FamilySymbol>();
+
       return GetFamilySymbol(collectorElems, familyName, typeName);
     }
 
