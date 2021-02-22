@@ -2,6 +2,12 @@
 
 [![Build status](https://ci.appveyor.com/api/projects/status/e9yeqdpjbmiv3pc4?svg=true)](https://ci.appveyor.com/project/SpeckleWorks/speckleelements)
 
+## ⚠️ IMPORTANT ⚠️
+
+Speckle v1 has reached EOL and is no longer mainatined. Check out our brand new 👉 [Speckle v2](https://github.com/specklesystems)!
+Read more about the announcemnt [here](https://speckle.systems/blog/speckle2-vision-and-faq) and check out or new [website](https://speckle.systems).
+
+## Intro
 
 A work in progress, revit-centric, object model and its conversion routines to and from speckle. Includes the following, in progress, object defintions: 
 
